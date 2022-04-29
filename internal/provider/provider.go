@@ -259,27 +259,31 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 
 func (p *provider) GetResources(ctx context.Context) (map[string]tfsdk.ResourceType, diag.Diagnostics) {
 	return map[string]tfsdk.ResourceType{
-		"iosxe_restconf":     resourceRestconfType{},
-		"iosxe_banner":       resourceBannerType{},
-		"iosxe_ospf":         resourceOSPFType{},
-		"iosxe_ospf_vrf":     resourceOSPFVRFType{},
-		"iosxe_static_route": resourceStaticRouteType{},
-		"iosxe_system":       resourceSystemType{},
-		"iosxe_username":     resourceUsernameType{},
-		"iosxe_vrf":          resourceVRFType{},
+		"iosxe_restconf":           resourceRestconfType{},
+		"iosxe_banner":             resourceBannerType{},
+		"iosxe_ospf":               resourceOSPFType{},
+		"iosxe_ospf_vrf":           resourceOSPFVRFType{},
+		"iosxe_static_route":       resourceStaticRouteType{},
+		"iosxe_system":             resourceSystemType{},
+		"iosxe_username":           resourceUsernameType{},
+		"iosxe_vlan":               resourceVLANType{},
+		"iosxe_vlan_configuration": resourceVLANConfigurationType{},
+		"iosxe_vrf":                resourceVRFType{},
 	}, nil
 }
 
 func (p *provider) GetDataSources(ctx context.Context) (map[string]tfsdk.DataSourceType, diag.Diagnostics) {
 	return map[string]tfsdk.DataSourceType{
-		"iosxe_restconf":     dataSourceRestconfType{},
-		"iosxe_banner":       dataSourceBannerType{},
-		"iosxe_ospf":         dataSourceOSPFType{},
-		"iosxe_ospf_vrf":     dataSourceOSPFVRFType{},
-		"iosxe_static_route": dataSourceStaticRouteType{},
-		"iosxe_system":       dataSourceSystemType{},
-		"iosxe_username":     dataSourceUsernameType{},
-		"iosxe_vrf":          dataSourceVRFType{},
+		"iosxe_restconf":           dataSourceRestconfType{},
+		"iosxe_banner":             dataSourceBannerType{},
+		"iosxe_ospf":               dataSourceOSPFType{},
+		"iosxe_ospf_vrf":           dataSourceOSPFVRFType{},
+		"iosxe_static_route":       dataSourceStaticRouteType{},
+		"iosxe_system":             dataSourceSystemType{},
+		"iosxe_username":           dataSourceUsernameType{},
+		"iosxe_vlan":               dataSourceVLANType{},
+		"iosxe_vlan_configuration": dataSourceVLANConfigurationType{},
+		"iosxe_vrf":                dataSourceVRFType{},
 	}, nil
 }
 

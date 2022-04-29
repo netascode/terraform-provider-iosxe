@@ -7,7 +7,7 @@ import (
 	{{- if hasId .Attributes }}
 	"fmt"
 	{{- end}}
-	{{- $strconv := false }}{{ range .Attributes}}{{ if or (and (eq .Type "Int64") (ne .Id true) (ne .Reference true)) (eq .Type "List")}}{{ $strconv = true }}{{ end}}{{ end}}
+	{{- $strconv := false }}{{ range .Attributes}}{{ if or (and (eq .Type "Int64") (ne .Reference true)) (eq .Type "List")}}{{ $strconv = true }}{{ end}}{{ end}}
 	{{- if $strconv }}
 	"strconv"
 	{{- end}}

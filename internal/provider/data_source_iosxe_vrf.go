@@ -69,6 +69,11 @@ func (t dataSourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Di
 						Type:                types.StringType,
 						Computed:            true,
 					},
+					"stitching": {
+						MarkdownDescription: "VXLAN route target set",
+						Type:                types.BoolType,
+						Computed:            true,
+					},
 				}, tfsdk.ListNestedAttributesOptions{}),
 			},
 			"route_target_export": {
@@ -78,6 +83,11 @@ func (t dataSourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Di
 					"value": {
 						MarkdownDescription: "Value",
 						Type:                types.StringType,
+						Computed:            true,
+					},
+					"stitching": {
+						MarkdownDescription: "VXLAN route target set",
+						Type:                types.BoolType,
 						Computed:            true,
 					},
 				}, tfsdk.ListNestedAttributesOptions{}),

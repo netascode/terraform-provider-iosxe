@@ -1,0 +1,20 @@
+---
+name: VLAN Configuration
+path: Cisco-IOS-XE-native:native/vlan/ios-vlan:configuration-entry=%v
+exclude_test: true
+doc_category: Switching
+attributes:
+  - yang_name: vlan-id
+    example: 123
+  - yang_name: member/vni
+    tf_name: vni
+    example: 10123
+  - yang_name: member/access-vfi
+    tf_name: access_vfi
+    example: VFI123
+  - yang_name: member/evpn-instance/evpn-instance
+    tf_name: evpn_instance
+    example: 123
+  - yang_name: member/evpn-instance/vni
+    tf_name: evpn_instance_vni
+    example: 10123

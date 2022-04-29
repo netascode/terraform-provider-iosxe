@@ -22,7 +22,9 @@ func TestAccDataSourceIosxeVRF(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_vrf.test", "address_family_ipv6", "true"),
 					resource.TestCheckResourceAttr("data.iosxe_vrf.test", "vpn_id", "1:1"),
 					resource.TestCheckResourceAttr("data.iosxe_vrf.test", "route_target_import.0.value", "1:1"),
+					resource.TestCheckResourceAttr("data.iosxe_vrf.test", "route_target_import.0.stitching", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_vrf.test", "route_target_export.0.value", "1:1"),
+					resource.TestCheckResourceAttr("data.iosxe_vrf.test", "route_target_export.0.stitching", "false"),
 				),
 			},
 		},
@@ -40,9 +42,11 @@ resource "iosxe_vrf" "test" {
   vpn_id = "1:1"
   route_target_import = [{
     value = "1:1"
+    stitching = false
   }]
   route_target_export = [{
     value = "1:1"
+    stitching = false
   }]
 }
 

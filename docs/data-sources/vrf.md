@@ -45,6 +45,7 @@ data "iosxe_vrf" "example" {
 
 Read-Only:
 
+- `stitching` (Boolean) VXLAN route target set
 - `value` (String) Value
 
 
@@ -53,6 +54,7 @@ Read-Only:
 
 Read-Only:
 
+- `stitching` (Boolean) VXLAN route target set
 - `value` (String) Value
 
 

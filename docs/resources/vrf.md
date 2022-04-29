@@ -22,12 +22,14 @@ resource "iosxe_vrf" "example" {
   vpn_id              = "1:1"
   route_target_import = [
     {
-      value = "1:1"
+      value     = "1:1"
+      stitching = false
     }
   ]
   route_target_export = [
     {
-      value = "1:1"
+      value     = "1:1"
+      stitching = false
     }
   ]
 }
@@ -60,6 +62,7 @@ resource "iosxe_vrf" "example" {
 
 Optional:
 
+- `stitching` (Boolean) VXLAN route target set
 - `value` (String) Value
 
 
@@ -68,6 +71,7 @@ Optional:
 
 Optional:
 
+- `stitching` (Boolean) VXLAN route target set
 - `value` (String) Value
 
 ## Import

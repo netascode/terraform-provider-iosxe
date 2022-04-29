@@ -15,12 +15,12 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceVRFType struct{}
+type resourceVLANConfigurationType struct{}
 
-func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t resourceVLANConfigurationType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the VRF configuration.",
+		MarkdownDescription: "This resource can manage the VLAN Configuration configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -36,112 +36,68 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 					tfsdk.UseStateForUnknown(),
 				},
 			},
-			"name": {
-				MarkdownDescription: helpers.NewAttributeDescription("WORD;;VRF name").String,
+			"vlan_id": {
+				MarkdownDescription: helpers.NewAttributeDescription("VLAN ID List Eg. 1-10,15").String,
 				Type:                types.StringType,
 				Required:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.StringPatternValidator(0, 0, `(((409[0-4]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{1,2}|[1-9])(\-(409[0-4]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{1,2}|[1-9]))?)(,((409[0-4]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{1,2}|[1-9])(\-(409[0-4]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{1,2}|[1-9]))?))*)`),
+				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					tfsdk.RequiresReplace(),
 				},
 			},
-			"description": {
-				MarkdownDescription: helpers.NewAttributeDescription("VRF specific description").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"rd": {
-				MarkdownDescription: helpers.NewAttributeDescription("Specify Route Distinguisher").String,
-				Type:                types.StringType,
+			"vni": {
+				MarkdownDescription: helpers.NewAttributeDescription("VxLAN VNI value").AddIntegerRangeDescription(4096, 16777215).String,
+				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
 				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+					helpers.IntegerRangeValidator(4096, 16777215),
 				},
 			},
-			"address_family_ipv4": {
-				MarkdownDescription: helpers.NewAttributeDescription("Address family").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"address_family_ipv6": {
-				MarkdownDescription: helpers.NewAttributeDescription("Address family").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"vpn_id": {
-				MarkdownDescription: helpers.NewAttributeDescription("Configure VPN ID in rfc2685 format").String,
+			"access_vfi": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enter VFI name").String,
 				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
+			},
+			"evpn_instance": {
+				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 65535).String,
+				Type:                types.Int64Type,
+				Optional:            true,
+				Computed:            true,
 				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `[0-9a-fA-F][0-9a-fA-F]?[0-9a-fA-F]?:[0-9a-fA-F][0-9a-fA-F]?[0-9a-fA-F]?[0-9a-fA-F]?`),
+					helpers.IntegerRangeValidator(1, 65535),
 				},
 			},
-			"route_target_import": {
-				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
+			"evpn_instance_vni": {
+				MarkdownDescription: helpers.NewAttributeDescription("VxLAN VNI value").AddIntegerRangeDescription(4096, 16777215).String,
+				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
-						},
-					},
-					"stitching": {
-						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}, tfsdk.ListNestedAttributesOptions{}),
-			},
-			"route_target_export": {
-				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
-				Optional:            true,
-				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
-						},
-					},
-					"stitching": {
-						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				Validators: []tfsdk.AttributeValidator{
+					helpers.IntegerRangeValidator(4096, 16777215),
+				},
 			},
 		},
 	}, nil
 }
 
-func (t resourceVRFType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceVLANConfigurationType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return resourceVRF{
+	return resourceVLANConfiguration{
 		provider: provider,
 	}, diags
 }
 
-type resourceVRF struct {
+type resourceVLANConfiguration struct {
 	provider provider
 }
 
-func (r resourceVRF) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan, state VRF
+func (r resourceVLANConfiguration) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+	var plan, state VLANConfiguration
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -187,8 +143,8 @@ func (r resourceVRF) Create(ctx context.Context, req tfsdk.CreateResourceRequest
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVRF) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state, newState VRF
+func (r resourceVLANConfiguration) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+	var state, newState VLANConfiguration
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -217,8 +173,8 @@ func (r resourceVRF) Read(ctx context.Context, req tfsdk.ReadResourceRequest, re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVRF) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan, state VRF
+func (r resourceVLANConfiguration) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+	var plan, state VLANConfiguration
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -263,8 +219,8 @@ func (r resourceVRF) Update(ctx context.Context, req tfsdk.UpdateResourceRequest
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
-	var state VRF
+func (r resourceVLANConfiguration) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+	var state VLANConfiguration
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -286,6 +242,6 @@ func (r resourceVRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceVRF) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+func (r resourceVLANConfiguration) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
 	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
 }

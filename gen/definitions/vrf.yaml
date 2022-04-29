@@ -22,6 +22,8 @@ attributes:
         tf_name: value
         description: Value
         example: 1:1
+      - yang_name: stitching
+        example: false
   - yang_name: route-target/export
     type: List
     attributes:
@@ -29,3 +31,5 @@ attributes:
         tf_name: value
         description: Value
         example: 1:1
+      - yang_name: stitching
+        example: false
