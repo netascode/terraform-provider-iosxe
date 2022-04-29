@@ -1,0 +1,31 @@
+---
+name: VRF
+path: Cisco-IOS-XE-native:native/vrf/definition=%s
+doc_category: VRF
+attributes:
+  - yang_name: name
+    example: VRF1
+  - yang_name: description
+    example: VRF1 description
+  - yang_name: rd
+    example: 1:1
+  - yang_name: address-family/ipv4
+    example: true
+  - yang_name: address-family/ipv6
+    example: true
+  - yang_name: vpn/id
+    example: 1:1
+  - yang_name: route-target/import
+    type: List
+    attributes:
+      - yang_name: asn-ip
+        tf_name: value
+        description: Value
+        example: 1:1
+  - yang_name: route-target/export
+    type: List
+    attributes:
+      - yang_name: asn-ip
+        tf_name: value
+        description: Value
+        example: 1:1

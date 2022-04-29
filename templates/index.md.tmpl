@@ -1,0 +1,24 @@
+
+---
+layout: ""
+page_title: "Provider: IOSXE"
+description: |-
+  The IOSXE provider provides resources to interact with one or more Cisco IOS-XE devices.
+---
+
+# IOSXE Provider
+
+The IOSXE provider provides resources to interact with one or more Cisco IOS-XE devices.
+
+It communicates with IOS-XE devices via the RESTCONF API, which requires the following device configuration.
+
+```
+ip http secure-server
+restconf
+```
+
+## Example Usage
+
+{{tffile "examples/provider/provider.tf"}}
+
+{{ .SchemaMarkdown | trimspace }}

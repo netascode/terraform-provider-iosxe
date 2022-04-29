@@ -1,0 +1,8 @@
+---
+name: System
+path: Cisco-IOS-XE-native:native
+no_delete: true
+doc_category: System
+attributes:
+  - yang_name: hostname
+    example: ROUTER-1

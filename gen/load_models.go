@@ -1,0 +1,67 @@
+//go:build ignore
+
+package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+var models = []string{
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-native.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/cisco-semver.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/ietf-inet-types.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-types.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-features.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-interface-common.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-parser.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-license.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-line.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-logging.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-ip.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-ipv6.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-interfaces.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-isis.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-snmp.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-segment-routing.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-ospf-obsolete.yang",
+}
+
+const (
+	modelsPath = "./gen/models/"
+)
+
+func main() {
+	for _, model := range models {
+		f := strings.Split(model, "/")
+		path := filepath.Join(modelsPath, f[len(f)-1])
+		if _, err := os.Stat(path); err != nil {
+			err := downloadModel(path, model)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println("Downloaded model: " + path)
+		}
+	}
+}
+
+func downloadModel(filepath string, url string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
