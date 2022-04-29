@@ -31,7 +31,7 @@ func (t dataSourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 				Computed:            true,
 			},
 			"path": {
-				MarkdownDescription: "A RESTCONF path, e.g. `openconfig-interfaces:/interfaces`.",
+				MarkdownDescription: "A RESTCONF path, e.g. `openconfig-interfaces:interfaces`.",
 				Type:                types.StringType,
 				Required:            true,
 			},

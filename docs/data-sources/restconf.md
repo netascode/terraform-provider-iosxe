@@ -23,7 +23,7 @@ data "iosxe_restconf" "example" {
 
 ### Required
 
-- `path` (String) A RESTCONF path, e.g. `openconfig-interfaces:/interfaces`.
+- `path` (String) A RESTCONF path, e.g. `openconfig-interfaces:interfaces`.
 
 ### Optional
 
