@@ -1,0 +1,39 @@
+---
+name: BGP L2VPN Neighbor
+path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=%s/l2vpn-evpn/neighbor=%s
+doc_category: BGP
+attributes:
+  - yang_name: id
+    yang_scope: bgp
+    tf_name: asn
+    example: 65000
+  - yang_name: af-name
+    example: evpn
+  - yang_name: id
+    yang_scope: neighbor
+    tf_name: ip
+    example: 3.3.3.3
+  - yang_name: activate
+    example: true
+  - yang_name: send-community/send-community-where
+    tf_name: send_community
+    example: both
+  - yang_name: route-reflector-client
+    example: false
+test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000
+    attributes:
+      - name: id
+        value: 65000
+  - path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/l2vpn=evpn
+    attributes:
+      - name: af-name
+        value: evpn
+    dependencies: [0]
+  - path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/neighbor=3.3.3.3
+    attributes:
+      - name: id
+        value: 3.3.3.3
+      - name: remote-as
+        value: 65000
+    dependencies: [0]
