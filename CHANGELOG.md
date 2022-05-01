@@ -3,6 +3,10 @@
 - Add iosxe_vlan resource and data source
 - Add iosxe_vlan_configuration resource and data source
 - Add stitching option to vrf route targets
+- Add iosxe_interface_vlan resource and data source
+- Add iosxe_interface_loopback resource and data source
+- Add iosxe_interface_nve resource and data source
+- Add iosxe_evpn resource and data source
 
 ## 0.1.0
 

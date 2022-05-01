@@ -33,6 +33,13 @@ var models = []string{
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-vtp.yang",
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-device-tracking.yang",
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-nd.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-multicast.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-l2vpn.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-ethernet.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-mpls.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-ethernet-oam.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-ethernet-cfm-efp.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-pppoe.yang",
 }
 
 const (

@@ -92,6 +92,7 @@ type YamlConfig struct {
 type YamlConfigAttribute struct {
 	YangName        string                `yaml:"yang_name"`
 	TfName          string                `yaml:"tf_name"`
+	XPath           string                `yaml:"xpath"`
 	Type            string                `yaml:"type"`
 	Id              bool                  `yaml:"id"`
 	Reference       bool                  `yaml:"reference"`
@@ -151,7 +152,10 @@ func ToGoName(s string) string {
 }
 
 // Templating helper function to convert YANG name to GO name
-func ToJsonPath(yangPath string) string {
+func ToJsonPath(yangPath, xPath string) string {
+	if xPath != "" {
+		return strings.ReplaceAll(xPath, "/", ".")
+	}
 	return strings.ReplaceAll(yangPath, "/", ".")
 }
 

@@ -261,6 +261,10 @@ func (p *provider) GetResources(ctx context.Context) (map[string]tfsdk.ResourceT
 	return map[string]tfsdk.ResourceType{
 		"iosxe_restconf":           resourceRestconfType{},
 		"iosxe_banner":             resourceBannerType{},
+		"iosxe_evpn":               resourceEVPNType{},
+		"iosxe_interface_loopback": resourceInterfaceLoopbackType{},
+		"iosxe_interface_nve":      resourceInterfaceNVEType{},
+		"iosxe_interface_vlan":     resourceInterfaceVLANType{},
 		"iosxe_ospf":               resourceOSPFType{},
 		"iosxe_ospf_vrf":           resourceOSPFVRFType{},
 		"iosxe_static_route":       resourceStaticRouteType{},
@@ -276,6 +280,10 @@ func (p *provider) GetDataSources(ctx context.Context) (map[string]tfsdk.DataSou
 	return map[string]tfsdk.DataSourceType{
 		"iosxe_restconf":           dataSourceRestconfType{},
 		"iosxe_banner":             dataSourceBannerType{},
+		"iosxe_evpn":               dataSourceEVPNType{},
+		"iosxe_interface_loopback": dataSourceInterfaceLoopbackType{},
+		"iosxe_interface_nve":      dataSourceInterfaceNVEType{},
+		"iosxe_interface_vlan":     dataSourceInterfaceVLANType{},
 		"iosxe_ospf":               dataSourceOSPFType{},
 		"iosxe_ospf_vrf":           dataSourceOSPFVRFType{},
 		"iosxe_static_route":       dataSourceStaticRouteType{},
