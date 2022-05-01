@@ -35,9 +35,7 @@ func (data InterfaceVLAN) toBody() string {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.Value, 10))
 	}
 	if !data.Autostate.Null && !data.Autostate.Unknown {
-		if data.Autostate.Value {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"autostate", map[string]string{})
-		}
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"autostate", data.Autostate.Value)
 	}
 	if !data.Description.Null && !data.Description.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.Value)
@@ -66,7 +64,7 @@ func (data InterfaceVLAN) toBody() string {
 
 func (data *InterfaceVLAN) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "autostate"); value.Exists() {
-		data.Autostate.Value = true
+		data.Autostate.Value = value.Bool()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()

@@ -94,6 +94,7 @@ type YamlConfigAttribute struct {
 	TfName          string                `yaml:"tf_name"`
 	XPath           string                `yaml:"xpath"`
 	Type            string                `yaml:"type"`
+	TypeYangBool    bool                  `yaml:"type_yang_bool"`
 	Id              bool                  `yaml:"id"`
 	Reference       bool                  `yaml:"reference"`
 	Mandatory       bool                  `yaml:"mandatory"`
@@ -312,6 +313,9 @@ func parseAttribute(e *yang.Entry, attr *YamlConfigAttribute) {
 				attr.MaxInt = int64(max)
 			}
 		} else if contains([]string{"boolean", "empty"}, leaf.Type.Kind.String()) {
+			if leaf.Type.Kind.String() == "boolean" {
+				attr.TypeYangBool = true
+			}
 			attr.Type = "Bool"
 		} else if contains([]string{"enumeration"}, leaf.Type.Kind.String()) {
 			attr.Type = "String"

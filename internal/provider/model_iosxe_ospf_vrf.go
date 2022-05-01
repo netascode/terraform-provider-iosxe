@@ -133,9 +133,7 @@ func (data OSPFVRF) toBody() string {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"router-id", data.RouterId.Value)
 	}
 	if !data.Shutdown.Null && !data.Shutdown.Unknown {
-		if data.Shutdown.Value {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"shutdown", map[string]string{})
-		}
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"shutdown", data.Shutdown.Value)
 	}
 	return body
 }
@@ -206,7 +204,7 @@ func (data *OSPFVRF) fromBody(res gjson.Result) {
 		data.RouterId.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
-		data.Shutdown.Value = true
+		data.Shutdown.Value = value.Bool()
 	}
 	data.SummaryAddress = make([]OSPFVRFSummaryAddress, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "summary-address"); value.Exists() {

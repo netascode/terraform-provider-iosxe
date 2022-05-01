@@ -7,7 +7,7 @@ import (
 	{{- if hasId .Attributes }}
 	"fmt"
 	{{- end}}
-	{{- $strconv := false }}{{ range .Attributes}}{{ if or (and (eq .Type "Int64") (ne .Reference true)) (eq .Type "List")}}{{ $strconv = true }}{{ end}}{{ end}}
+	{{- $strconv := false }}{{ range .Attributes}}{{ if or (and (eq .Type "Int64") (ne .Reference true)) (eq .Type "List") }}{{ $strconv = true }}{{ end}}{{ end}}
 	{{- if $strconv }}
 	"strconv"
 	{{- end}}
@@ -66,10 +66,12 @@ func (data {{camelCase .Name}}) toBody() string {
 		if !item.{{toGoName .YangName}}.Null && !item.{{toGoName .YangName}}.Unknown {
 			{{- if eq .Type "Int64"}}
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(item.{{toGoName .YangName}}.Value, 10))
-			{{- else if eq .Type "Bool"}}
+			{{- else if and (eq .Type "Bool") (eq .TypeYangBool false)}}
 			if item.{{toGoName .YangName}}.Value {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
 			}
+			{{- else if and (eq .Type "Bool") (eq .TypeYangBool true)}}
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", (data.{{toGoName .YangName}}.Value)
 			{{- else if eq .Type "String"}}
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", item.{{toGoName .YangName}}.Value)
 			{{- end}}
@@ -83,10 +85,12 @@ func (data {{camelCase .Name}}) toBody() string {
 	if !data.{{toGoName .YangName}}.Null && !data.{{toGoName .YangName}}.Unknown {
 		{{- if eq .Type "Int64"}}
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(data.{{toGoName .YangName}}.Value, 10))
-		{{- else if eq .Type "Bool"}}
+		{{- else if and (eq .Type "Bool") (eq .TypeYangBool false)}}
 		if data.{{toGoName .YangName}}.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
 		}
+		{{- else if and (eq .Type "Bool") (eq .TypeYangBool true)}}
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", data.{{toGoName .YangName}}.Value)
 		{{- else if eq .Type "String"}}
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", data.{{toGoName .YangName}}.Value)
 		{{- end}}
@@ -105,7 +109,11 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 	}
 	{{- else if eq .Type "Bool"}}
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		{{- if .TypeYangBool}}
+		data.{{toGoName .YangName}}.Value = value.Bool()
+		{{- else}}
 		data.{{toGoName .YangName}}.Value = true
+		{{- end}}
 	}
 	{{- else if eq .Type "String"}}
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
@@ -121,7 +129,9 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 			if cValue := v.Get("{{toJsonPath .YangName .XPath}}"); cValue.Exists() {
 				{{- if eq .Type "Int64"}}
 				item.{{toGoName .YangName}}.Value = cValue.Int()
-				{{- else if eq .Type "Bool"}}
+				{{- else if and (eq .Type "Bool") (eq .TypeYangBool true)}}
+				item.{{toGoName .YangName}}.Value = value.Bool()
+				{{- else if and (eq .Type "Bool") (eq .TypeYangBool false)}}
 				item.{{toGoName .YangName}}.Value = true
 				{{- else if eq .Type "String"}}
 				item.{{toGoName .YangName}}.Value = cValue.String()

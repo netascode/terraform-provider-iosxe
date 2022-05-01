@@ -66,9 +66,7 @@ func (data EVPNInstance) toBody() string {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.encapsulation", data.EvpnServiceTypeVlanBasedVlanBasedEncapsulation.Value)
 	}
 	if !data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Null && !data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Unknown {
-		if data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Value {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.auto-route-target_cont.auto-route-target-boolean", map[string]string{})
-		}
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.auto-route-target_cont.auto-route-target-boolean", data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Value)
 	}
 	if !data.EvpnServiceTypeVlanBasedVlanBasedRdRdValue.Null && !data.EvpnServiceTypeVlanBasedVlanBasedRdRdValue.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.rd.rd-value", data.EvpnServiceTypeVlanBasedVlanBasedRdRdValue.Value)
@@ -123,7 +121,7 @@ func (data *EVPNInstance) fromBody(res gjson.Result) {
 		data.EvpnServiceTypeVlanBasedVlanBasedEncapsulation.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.auto-route-target_cont.auto-route-target-boolean"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Value = true
+		data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Value = value.Bool()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.rd.rd-value"); value.Exists() {
 		data.EvpnServiceTypeVlanBasedVlanBasedRdRdValue.Value = value.String()
