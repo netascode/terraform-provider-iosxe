@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-type dataSourceBGPAddressFamilyIPv4VRFType struct{}
+type dataSourceBGPAddressFamilyIPv6VRFType struct{}
 
-func (t dataSourceBGPAddressFamilyIPv4VRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t dataSourceBGPAddressFamilyIPv6VRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This data source can read the BGP Address Family IPv4 VRF configuration.",
+		MarkdownDescription: "This data source can read the BGP Address Family IPv6 VRF configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -70,20 +70,20 @@ func (t dataSourceBGPAddressFamilyIPv4VRFType) GetSchema(ctx context.Context) (t
 	}, nil
 }
 
-func (t dataSourceBGPAddressFamilyIPv4VRFType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceBGPAddressFamilyIPv6VRFType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return dataSourceBGPAddressFamilyIPv4VRF{
+	return dataSourceBGPAddressFamilyIPv6VRF{
 		provider: provider,
 	}, diags
 }
 
-type dataSourceBGPAddressFamilyIPv4VRF struct {
+type dataSourceBGPAddressFamilyIPv6VRF struct {
 	provider provider
 }
 
-func (d dataSourceBGPAddressFamilyIPv4VRF) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config, state BGPAddressFamilyIPv4VRF
+func (d dataSourceBGPAddressFamilyIPv6VRF) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+	var config, state BGPAddressFamilyIPv6VRF
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)

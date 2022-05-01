@@ -15,12 +15,12 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceBGPAddressFamilyIPv4VRFType struct{}
+type resourceBGPAddressFamilyIPv6VRFType struct{}
 
-func (t resourceBGPAddressFamilyIPv4VRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t resourceBGPAddressFamilyIPv6VRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the BGP Address Family IPv4 VRF configuration.",
+		MarkdownDescription: "This resource can manage the BGP Address Family IPv6 VRF configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -45,11 +45,11 @@ func (t resourceBGPAddressFamilyIPv4VRFType) GetSchema(ctx context.Context) (tfs
 				},
 			},
 			"af_name": {
-				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("flowspec", "labeled-unicast", "mdt", "multicast", "mvpn", "sr-policy", "tunnel", "unicast").String,
+				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("flowspec", "mdt", "multicast", "mvpn", "unicast").String,
 				Type:                types.StringType,
 				Required:            true,
 				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("flowspec", "labeled-unicast", "mdt", "multicast", "mvpn", "sr-policy", "tunnel", "unicast"),
+					helpers.StringEnumValidator("flowspec", "mdt", "multicast", "mvpn", "unicast"),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					tfsdk.RequiresReplace(),
@@ -89,20 +89,20 @@ func (t resourceBGPAddressFamilyIPv4VRFType) GetSchema(ctx context.Context) (tfs
 	}, nil
 }
 
-func (t resourceBGPAddressFamilyIPv4VRFType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceBGPAddressFamilyIPv6VRFType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return resourceBGPAddressFamilyIPv4VRF{
+	return resourceBGPAddressFamilyIPv6VRF{
 		provider: provider,
 	}, diags
 }
 
-type resourceBGPAddressFamilyIPv4VRF struct {
+type resourceBGPAddressFamilyIPv6VRF struct {
 	provider provider
 }
 
-func (r resourceBGPAddressFamilyIPv4VRF) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan, state BGPAddressFamilyIPv4VRF
+func (r resourceBGPAddressFamilyIPv6VRF) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+	var plan, state BGPAddressFamilyIPv6VRF
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -148,8 +148,8 @@ func (r resourceBGPAddressFamilyIPv4VRF) Create(ctx context.Context, req tfsdk.C
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPAddressFamilyIPv4VRF) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state, newState BGPAddressFamilyIPv4VRF
+func (r resourceBGPAddressFamilyIPv6VRF) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+	var state, newState BGPAddressFamilyIPv6VRF
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -178,8 +178,8 @@ func (r resourceBGPAddressFamilyIPv4VRF) Read(ctx context.Context, req tfsdk.Rea
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPAddressFamilyIPv4VRF) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan, state BGPAddressFamilyIPv4VRF
+func (r resourceBGPAddressFamilyIPv6VRF) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+	var plan, state BGPAddressFamilyIPv6VRF
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -224,8 +224,8 @@ func (r resourceBGPAddressFamilyIPv4VRF) Update(ctx context.Context, req tfsdk.U
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPAddressFamilyIPv4VRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
-	var state BGPAddressFamilyIPv4VRF
+func (r resourceBGPAddressFamilyIPv6VRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+	var state BGPAddressFamilyIPv6VRF
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -247,6 +247,6 @@ func (r resourceBGPAddressFamilyIPv4VRF) Delete(ctx context.Context, req tfsdk.D
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceBGPAddressFamilyIPv4VRF) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+func (r resourceBGPAddressFamilyIPv6VRF) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
 	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
 }

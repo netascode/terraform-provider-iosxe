@@ -20,7 +20,10 @@ type BGPAddressFamilyIPv4VRF struct {
 	Vrf    []BGPAddressFamilyIPv4VRFVrf `tfsdk:"vrfs"`
 }
 type BGPAddressFamilyIPv4VRFVrf struct {
-	Name types.String `tfsdk:"name"`
+	Name                                types.String `tfsdk:"name"`
+	Ipv4UnicastAdvertiseL2vpnEvpn       types.Bool   `tfsdk:"advertise_l2vpn_evpn"`
+	Ipv4UnicastRedistributeVrfConnected types.Bool   `tfsdk:"redistribute_connected"`
+	Ipv4UnicastRedistributeVrfStatic    types.Bool   `tfsdk:"redistribute_static"`
 }
 
 func (data BGPAddressFamilyIPv4VRF) getPath() string {
@@ -38,6 +41,21 @@ func (data BGPAddressFamilyIPv4VRF) toBody() string {
 			if !item.Name.Null && !item.Name.Unknown {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf"+"."+strconv.Itoa(index)+"."+"name", item.Name.Value)
 			}
+			if !item.Ipv4UnicastAdvertiseL2vpnEvpn.Null && !item.Ipv4UnicastAdvertiseL2vpnEvpn.Unknown {
+				if item.Ipv4UnicastAdvertiseL2vpnEvpn.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf"+"."+strconv.Itoa(index)+"."+"ipv4-unicast.advertise.l2vpn.evpn", map[string]string{})
+				}
+			}
+			if !item.Ipv4UnicastRedistributeVrfConnected.Null && !item.Ipv4UnicastRedistributeVrfConnected.Unknown {
+				if item.Ipv4UnicastRedistributeVrfConnected.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf"+"."+strconv.Itoa(index)+"."+"ipv4-unicast.redistribute-vrf.connected", map[string]string{})
+				}
+			}
+			if !item.Ipv4UnicastRedistributeVrfStatic.Null && !item.Ipv4UnicastRedistributeVrfStatic.Unknown {
+				if item.Ipv4UnicastRedistributeVrfStatic.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf"+"."+strconv.Itoa(index)+"."+"ipv4-unicast.redistribute-vrf.static", map[string]string{})
+				}
+			}
 		}
 	}
 	return body
@@ -50,6 +68,15 @@ func (data *BGPAddressFamilyIPv4VRF) fromBody(res gjson.Result) {
 			item := BGPAddressFamilyIPv4VRFVrf{}
 			if cValue := v.Get("name"); cValue.Exists() {
 				item.Name.Value = cValue.String()
+			}
+			if cValue := v.Get("ipv4-unicast.advertise.l2vpn.evpn"); cValue.Exists() {
+				item.Ipv4UnicastAdvertiseL2vpnEvpn.Value = true
+			}
+			if cValue := v.Get("ipv4-unicast.redistribute-vrf.connected"); cValue.Exists() {
+				item.Ipv4UnicastRedistributeVrfConnected.Value = true
+			}
+			if cValue := v.Get("ipv4-unicast.redistribute-vrf.static"); cValue.Exists() {
+				item.Ipv4UnicastRedistributeVrfStatic.Value = true
 			}
 			data.Vrf = append(data.Vrf, item)
 			return true

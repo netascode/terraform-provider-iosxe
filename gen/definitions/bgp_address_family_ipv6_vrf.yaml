@@ -1,6 +1,7 @@
 ---
-name: BGP Address Family IPv4 VRF
-path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv4=%s
+name: BGP Address Family IPv6 VRF
+path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv6=%s
+exclude_test: true
 doc_category: BGP
 attributes:
   - yang_name: id
@@ -14,13 +15,13 @@ attributes:
     attributes:
       - yang_name: name
         example: VRF1
-      - yang_name: ipv4-unicast/advertise/l2vpn/evpn
+      - yang_name: ipv6-unicast/advertise/l2vpn/evpn
         tf_name: advertise_l2vpn_evpn
         example: true
-      - yang_name: ipv4-unicast/redistribute-vrf/connected
+      - yang_name: ipv6-unicast/redistribute-v6/connected
         tf_name: redistribute_connected
         example: true
-      - yang_name: ipv4-unicast/redistribute-vrf/static
+      - yang_name: ipv6-unicast/redistribute-v6/static
         tf_name: redistribute_static
         example: true
 test_prerequisites:
@@ -33,7 +34,7 @@ test_prerequisites:
         value: 1:1
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family
     attributes:
-      - name: ipv4
+      - name: ipv6
         value: ''
     dependencies: [0]
   - path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000
