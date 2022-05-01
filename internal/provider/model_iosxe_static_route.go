@@ -34,43 +34,45 @@ func (data StaticRoute) getPath() string {
 
 func (data StaticRoute) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list", []interface{}{})
-	for index, item := range data.FwdList {
-		if !item.Fwd.Null && !item.Fwd.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"fwd", item.Fwd.Value)
-		}
-		if !item.Metric.Null && !item.Metric.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"metric", strconv.FormatInt(item.Metric.Value, 10))
-		}
-		if !item.Global.Null && !item.Global.Unknown {
-			if item.Global.Value {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"global", map[string]string{})
-			}
-		}
-		if !item.Name.Null && !item.Name.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"name", item.Name.Value)
-		}
-		if !item.Permanent.Null && !item.Permanent.Unknown {
-			if item.Permanent.Value {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"permanent", map[string]string{})
-			}
-		}
-		if !item.Tag.Null && !item.Tag.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"tag", strconv.FormatInt(item.Tag.Value, 10))
-		}
-	}
 	if !data.Prefix.Null && !data.Prefix.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"prefix", data.Prefix.Value)
 	}
 	if !data.Mask.Null && !data.Mask.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"mask", data.Mask.Value)
 	}
+	if len(data.FwdList) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list", []interface{}{})
+		for index, item := range data.FwdList {
+			if !item.Fwd.Null && !item.Fwd.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"fwd", item.Fwd.Value)
+			}
+			if !item.Metric.Null && !item.Metric.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"metric", strconv.FormatInt(item.Metric.Value, 10))
+			}
+			if !item.Global.Null && !item.Global.Unknown {
+				if item.Global.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"global", map[string]string{})
+				}
+			}
+			if !item.Name.Null && !item.Name.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"name", item.Name.Value)
+			}
+			if !item.Permanent.Null && !item.Permanent.Unknown {
+				if item.Permanent.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"permanent", map[string]string{})
+				}
+			}
+			if !item.Tag.Null && !item.Tag.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"tag", strconv.FormatInt(item.Tag.Value, 10))
+			}
+		}
+	}
 	return body
 }
 
 func (data *StaticRoute) fromBody(res gjson.Result) {
-	data.FwdList = make([]StaticRouteFwdList, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list"); value.Exists() {
+		data.FwdList = make([]StaticRouteFwdList, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := StaticRouteFwdList{}
 			if cValue := v.Get("fwd"); cValue.Exists() {

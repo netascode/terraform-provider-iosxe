@@ -39,29 +39,6 @@ func (data InterfaceNVE) getPath() string {
 
 func (data InterfaceNVE) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni", []interface{}{})
-	for index, item := range data.MemberInOneLineMemberVni {
-		if !item.VniRange.Null && !item.VniRange.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.Value)
-		}
-		if !item.Vrf.Null && !item.Vrf.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
-		}
-	}
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni", []interface{}{})
-	for index, item := range data.MemberVni {
-		if !item.VniRange.Null && !item.VniRange.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.Value)
-		}
-		if !item.McastGroupMulticastGroupMin.Null && !item.McastGroupMulticastGroupMin.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"mcast-group.multicast-group-min", item.McastGroupMulticastGroupMin.Value)
-		}
-		if !item.IrCpConfigIngressReplication.Null && !item.IrCpConfigIngressReplication.Unknown {
-			if item.IrCpConfigIngressReplication.Value {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"ir-cp-config.ingress-replication", map[string]string{})
-			}
-		}
-	}
 	if !data.Name.Null && !data.Name.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.Value, 10))
 	}
@@ -81,6 +58,33 @@ func (data InterfaceNVE) toBody() string {
 	if !data.SourceInterfaceInterfaceChoiceLoopbackLoopback.Null && !data.SourceInterfaceInterfaceChoiceLoopbackLoopback.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface.Loopback", strconv.FormatInt(data.SourceInterfaceInterfaceChoiceLoopbackLoopback.Value, 10))
 	}
+	if len(data.MemberInOneLineMemberVni) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni", []interface{}{})
+		for index, item := range data.MemberInOneLineMemberVni {
+			if !item.VniRange.Null && !item.VniRange.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.Value)
+			}
+			if !item.Vrf.Null && !item.Vrf.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
+			}
+		}
+	}
+	if len(data.MemberVni) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni", []interface{}{})
+		for index, item := range data.MemberVni {
+			if !item.VniRange.Null && !item.VniRange.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.Value)
+			}
+			if !item.McastGroupMulticastGroupMin.Null && !item.McastGroupMulticastGroupMin.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"mcast-group.multicast-group-min", item.McastGroupMulticastGroupMin.Value)
+			}
+			if !item.IrCpConfigIngressReplication.Null && !item.IrCpConfigIngressReplication.Unknown {
+				if item.IrCpConfigIngressReplication.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"ir-cp-config.ingress-replication", map[string]string{})
+				}
+			}
+		}
+	}
 	return body
 }
 
@@ -97,8 +101,8 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "source-interface.Loopback"); value.Exists() {
 		data.SourceInterfaceInterfaceChoiceLoopbackLoopback.Value = value.Int()
 	}
-	data.MemberInOneLineMemberVni = make([]InterfaceNVEMemberInOneLineMemberVni, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member-in-one-line.member.vni"); value.Exists() {
+		data.MemberInOneLineMemberVni = make([]InterfaceNVEMemberInOneLineMemberVni, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfaceNVEMemberInOneLineMemberVni{}
 			if cValue := v.Get("vni-range"); cValue.Exists() {
@@ -111,8 +115,8 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	data.MemberVni = make([]InterfaceNVEMemberVni, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
+		data.MemberVni = make([]InterfaceNVEMemberVni, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfaceNVEMemberVni{}
 			if cValue := v.Get("vni-range"); cValue.Exists() {

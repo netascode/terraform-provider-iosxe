@@ -115,7 +115,6 @@ func (t resourceOSPFVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.
 			"neighbor": {
 				MarkdownDescription: helpers.NewAttributeDescription("Specify a neighbor router").String,
 				Optional:            true,
-				Computed:            true,
 				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
 					"ip": {
 						MarkdownDescription: helpers.NewAttributeDescription("Neighbor address").String,
@@ -149,7 +148,6 @@ func (t resourceOSPFVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.
 			"network": {
 				MarkdownDescription: helpers.NewAttributeDescription("Enable routing on an IP network").String,
 				Optional:            true,
-				Computed:            true,
 				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
 					"ip": {
 						MarkdownDescription: helpers.NewAttributeDescription("Network number").String,
@@ -204,7 +202,6 @@ func (t resourceOSPFVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.
 			"summary_address": {
 				MarkdownDescription: helpers.NewAttributeDescription("Configure IP address summaries").String,
 				Optional:            true,
-				Computed:            true,
 				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
 					"ip": {
 						MarkdownDescription: helpers.NewAttributeDescription("IP summary address").String,

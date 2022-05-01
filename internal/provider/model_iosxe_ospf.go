@@ -52,39 +52,6 @@ func (data OSPF) getPath() string {
 
 func (data OSPF) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"neighbor", []interface{}{})
-	for index, item := range data.Neighbor {
-		if !item.Ip.Null && !item.Ip.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"neighbor"+"."+strconv.Itoa(index)+"."+"ip", item.Ip.Value)
-		}
-		if !item.Priority.Null && !item.Priority.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"neighbor"+"."+strconv.Itoa(index)+"."+"priority", strconv.FormatInt(item.Priority.Value, 10))
-		}
-		if !item.Cost.Null && !item.Cost.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"neighbor"+"."+strconv.Itoa(index)+"."+"cost", strconv.FormatInt(item.Cost.Value, 10))
-		}
-	}
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"network", []interface{}{})
-	for index, item := range data.Network {
-		if !item.Ip.Null && !item.Ip.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"network"+"."+strconv.Itoa(index)+"."+"ip", item.Ip.Value)
-		}
-		if !item.Wildcard.Null && !item.Wildcard.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"network"+"."+strconv.Itoa(index)+"."+"wildcard", item.Wildcard.Value)
-		}
-		if !item.Area.Null && !item.Area.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"network"+"."+strconv.Itoa(index)+"."+"area", item.Area.Value)
-		}
-	}
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"summary-address", []interface{}{})
-	for index, item := range data.SummaryAddress {
-		if !item.Ip.Null && !item.Ip.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"summary-address"+"."+strconv.Itoa(index)+"."+"ip", item.Ip.Value)
-		}
-		if !item.Mask.Null && !item.Mask.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"summary-address"+"."+strconv.Itoa(index)+"."+"mask", item.Mask.Value)
-		}
-	}
 	if !data.YangId.Null && !data.YangId.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.YangId.Value, 10))
 	}
@@ -131,6 +98,45 @@ func (data OSPF) toBody() string {
 	if !data.Shutdown.Null && !data.Shutdown.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"shutdown", data.Shutdown.Value)
 	}
+	if len(data.Neighbor) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"neighbor", []interface{}{})
+		for index, item := range data.Neighbor {
+			if !item.Ip.Null && !item.Ip.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"neighbor"+"."+strconv.Itoa(index)+"."+"ip", item.Ip.Value)
+			}
+			if !item.Priority.Null && !item.Priority.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"neighbor"+"."+strconv.Itoa(index)+"."+"priority", strconv.FormatInt(item.Priority.Value, 10))
+			}
+			if !item.Cost.Null && !item.Cost.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"neighbor"+"."+strconv.Itoa(index)+"."+"cost", strconv.FormatInt(item.Cost.Value, 10))
+			}
+		}
+	}
+	if len(data.Network) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"network", []interface{}{})
+		for index, item := range data.Network {
+			if !item.Ip.Null && !item.Ip.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"network"+"."+strconv.Itoa(index)+"."+"ip", item.Ip.Value)
+			}
+			if !item.Wildcard.Null && !item.Wildcard.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"network"+"."+strconv.Itoa(index)+"."+"wildcard", item.Wildcard.Value)
+			}
+			if !item.Area.Null && !item.Area.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"network"+"."+strconv.Itoa(index)+"."+"area", item.Area.Value)
+			}
+		}
+	}
+	if len(data.SummaryAddress) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"summary-address", []interface{}{})
+		for index, item := range data.SummaryAddress {
+			if !item.Ip.Null && !item.Ip.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"summary-address"+"."+strconv.Itoa(index)+"."+"ip", item.Ip.Value)
+			}
+			if !item.Mask.Null && !item.Mask.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"summary-address"+"."+strconv.Itoa(index)+"."+"mask", item.Mask.Value)
+			}
+		}
+	}
 	return body
 }
 
@@ -159,8 +165,8 @@ func (data *OSPF) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.sync"); value.Exists() {
 		data.MplsLdpSync.Value = true
 	}
-	data.Neighbor = make([]OSPFNeighbor, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor"); value.Exists() {
+		data.Neighbor = make([]OSPFNeighbor, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := OSPFNeighbor{}
 			if cValue := v.Get("ip"); cValue.Exists() {
@@ -176,8 +182,8 @@ func (data *OSPF) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	data.Network = make([]OSPFNetwork, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network"); value.Exists() {
+		data.Network = make([]OSPFNetwork, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := OSPFNetwork{}
 			if cValue := v.Get("ip"); cValue.Exists() {
@@ -202,8 +208,8 @@ func (data *OSPF) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
 		data.Shutdown.Value = value.Bool()
 	}
-	data.SummaryAddress = make([]OSPFSummaryAddress, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "summary-address"); value.Exists() {
+		data.SummaryAddress = make([]OSPFSummaryAddress, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := OSPFSummaryAddress{}
 			if cValue := v.Get("ip"); cValue.Exists() {

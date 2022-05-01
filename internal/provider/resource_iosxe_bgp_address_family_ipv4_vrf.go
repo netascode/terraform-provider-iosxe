@@ -15,12 +15,12 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceInterfaceNVEType struct{}
+type resourceBGPAddressFamilyIPv4VRFType struct{}
 
-func (t resourceInterfaceNVEType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t resourceBGPAddressFamilyIPv4VRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the Interface NVE configuration.",
+		MarkdownDescription: "This resource can manage the BGP Address Family IPv4 VRF configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -36,87 +36,32 @@ func (t resourceInterfaceNVEType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 					tfsdk.UseStateForUnknown(),
 				},
 			},
-			"name": {
-				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4096).String,
-				Type:                types.Int64Type,
+			"asn": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
+				Type:                types.StringType,
+				Required:            true,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					tfsdk.RequiresReplace(),
+				},
+			},
+			"af_name": {
+				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("flowspec", "labeled-unicast", "mdt", "multicast", "mvpn", "sr-policy", "tunnel", "unicast").String,
+				Type:                types.StringType,
 				Required:            true,
 				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4096),
+					helpers.StringEnumValidator("flowspec", "labeled-unicast", "mdt", "multicast", "mvpn", "sr-policy", "tunnel", "unicast"),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					tfsdk.RequiresReplace(),
 				},
 			},
-			"description": {
-				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 200, `.*`),
-				},
-			},
-			"shutdown": {
-				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"host_reachability_protocol_bgp": {
+			"vrfs": {
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"source_interface_loopback": {
-				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
-				Type:                types.Int64Type,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 2147483647),
-				},
-			},
-			"vni_vrfs": {
-				MarkdownDescription: helpers.NewAttributeDescription("Configure VNI information").String,
 				Optional:            true,
 				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vni_range": {
-						MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
+					"name": {
+						MarkdownDescription: helpers.NewAttributeDescription("").String,
 						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"vrf": {
-						MarkdownDescription: helpers.NewAttributeDescription("Specify a particular VRF").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}, tfsdk.ListNestedAttributesOptions{}),
-			},
-			"vnis": {
-				MarkdownDescription: helpers.NewAttributeDescription("Configure VNI information").String,
-				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vni_range": {
-						MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"ipv4_multicast_group": {
-						MarkdownDescription: helpers.NewAttributeDescription("Starting Multicast Group IPv4 Address").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-						},
-					},
-					"ingress_replication": {
-						MarkdownDescription: helpers.NewAttributeDescription("Ingress Replication control-plane (BGP) signaling").String,
-						Type:                types.BoolType,
 						Optional:            true,
 						Computed:            true,
 					},
@@ -126,20 +71,20 @@ func (t resourceInterfaceNVEType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 	}, nil
 }
 
-func (t resourceInterfaceNVEType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceBGPAddressFamilyIPv4VRFType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return resourceInterfaceNVE{
+	return resourceBGPAddressFamilyIPv4VRF{
 		provider: provider,
 	}, diags
 }
 
-type resourceInterfaceNVE struct {
+type resourceBGPAddressFamilyIPv4VRF struct {
 	provider provider
 }
 
-func (r resourceInterfaceNVE) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan, state InterfaceNVE
+func (r resourceBGPAddressFamilyIPv4VRF) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+	var plan, state BGPAddressFamilyIPv4VRF
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -185,8 +130,8 @@ func (r resourceInterfaceNVE) Create(ctx context.Context, req tfsdk.CreateResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state, newState InterfaceNVE
+func (r resourceBGPAddressFamilyIPv4VRF) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+	var state, newState BGPAddressFamilyIPv4VRF
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -215,8 +160,8 @@ func (r resourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadResourceRe
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceNVE) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan, state InterfaceNVE
+func (r resourceBGPAddressFamilyIPv4VRF) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+	var plan, state BGPAddressFamilyIPv4VRF
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -261,8 +206,8 @@ func (r resourceInterfaceNVE) Update(ctx context.Context, req tfsdk.UpdateResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceNVE) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
-	var state InterfaceNVE
+func (r resourceBGPAddressFamilyIPv4VRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+	var state BGPAddressFamilyIPv4VRF
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -284,6 +229,6 @@ func (r resourceInterfaceNVE) Delete(ctx context.Context, req tfsdk.DeleteResour
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfaceNVE) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+func (r resourceBGPAddressFamilyIPv4VRF) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
 	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
 }

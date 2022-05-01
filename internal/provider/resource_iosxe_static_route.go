@@ -61,7 +61,6 @@ func (t resourceStaticRouteType) GetSchema(ctx context.Context) (tfsdk.Schema, d
 			"next_hops": {
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
 					"next_hop": {
 						MarkdownDescription: helpers.NewAttributeDescription("").String,

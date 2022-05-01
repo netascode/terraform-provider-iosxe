@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // booleanDefaultModifier is a plan modifier that sets a default value for a
@@ -37,7 +36,6 @@ func (m booleanDefaultModifier) Modify(ctx context.Context, req tfsdk.ModifyAttr
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("DSDEBUG Bool %+v", bool))
 	if !bool.Unknown {
 		return
 	}

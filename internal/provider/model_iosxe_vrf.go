@@ -39,28 +39,6 @@ func (data VRF) getPath() string {
 
 func (data VRF) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import", []interface{}{})
-	for index, item := range data.RouteTargetImport {
-		if !item.AsnIp.Null && !item.AsnIp.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import"+"."+strconv.Itoa(index)+"."+"asn-ip", item.AsnIp.Value)
-		}
-		if !item.Stitching.Null && !item.Stitching.Unknown {
-			if item.Stitching.Value {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import"+"."+strconv.Itoa(index)+"."+"stitching", map[string]string{})
-			}
-		}
-	}
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export", []interface{}{})
-	for index, item := range data.RouteTargetExport {
-		if !item.AsnIp.Null && !item.AsnIp.Unknown {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export"+"."+strconv.Itoa(index)+"."+"asn-ip", item.AsnIp.Value)
-		}
-		if !item.Stitching.Null && !item.Stitching.Unknown {
-			if item.Stitching.Value {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export"+"."+strconv.Itoa(index)+"."+"stitching", map[string]string{})
-			}
-		}
-	}
 	if !data.Name.Null && !data.Name.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Name.Value)
 	}
@@ -83,6 +61,32 @@ func (data VRF) toBody() string {
 	if !data.VpnId.Null && !data.VpnId.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vpn.id", data.VpnId.Value)
 	}
+	if len(data.RouteTargetImport) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import", []interface{}{})
+		for index, item := range data.RouteTargetImport {
+			if !item.AsnIp.Null && !item.AsnIp.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import"+"."+strconv.Itoa(index)+"."+"asn-ip", item.AsnIp.Value)
+			}
+			if !item.Stitching.Null && !item.Stitching.Unknown {
+				if item.Stitching.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import"+"."+strconv.Itoa(index)+"."+"stitching", map[string]string{})
+				}
+			}
+		}
+	}
+	if len(data.RouteTargetExport) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export", []interface{}{})
+		for index, item := range data.RouteTargetExport {
+			if !item.AsnIp.Null && !item.AsnIp.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export"+"."+strconv.Itoa(index)+"."+"asn-ip", item.AsnIp.Value)
+			}
+			if !item.Stitching.Null && !item.Stitching.Unknown {
+				if item.Stitching.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export"+"."+strconv.Itoa(index)+"."+"stitching", map[string]string{})
+				}
+			}
+		}
+	}
 	return body
 }
 
@@ -102,8 +106,8 @@ func (data *VRF) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vpn.id"); value.Exists() {
 		data.VpnId.Value = value.String()
 	}
-	data.RouteTargetImport = make([]VRFRouteTargetImport, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.import"); value.Exists() {
+		data.RouteTargetImport = make([]VRFRouteTargetImport, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := VRFRouteTargetImport{}
 			if cValue := v.Get("asn-ip"); cValue.Exists() {
@@ -116,8 +120,8 @@ func (data *VRF) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	data.RouteTargetExport = make([]VRFRouteTargetExport, 0)
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.export"); value.Exists() {
+		data.RouteTargetExport = make([]VRFRouteTargetExport, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := VRFRouteTargetExport{}
 			if cValue := v.Get("asn-ip"); cValue.Exists() {

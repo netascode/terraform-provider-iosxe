@@ -58,29 +58,6 @@ func (data {{camelCase .Name}}) getPath() string {
 func (data {{camelCase .Name}}) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	{{- range .Attributes}}
-	{{- if eq .Type "List"}}
-	{{- $list := toJsonPath .YangName .XPath }}
-	body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", []interface{}{})
-	for index, item := range data.{{toGoName .YangName}} {
-		{{- range .Attributes}}
-		if !item.{{toGoName .YangName}}.Null && !item.{{toGoName .YangName}}.Unknown {
-			{{- if eq .Type "Int64"}}
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(item.{{toGoName .YangName}}.Value, 10))
-			{{- else if and (eq .Type "Bool") (eq .TypeYangBool false)}}
-			if item.{{toGoName .YangName}}.Value {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
-			}
-			{{- else if and (eq .Type "Bool") (eq .TypeYangBool true)}}
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", (data.{{toGoName .YangName}}.Value)
-			{{- else if eq .Type "String"}}
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", item.{{toGoName .YangName}}.Value)
-			{{- end}}
-		}
-		{{- end}}
-	}
-	{{- end}}
-	{{- end}}
-	{{- range .Attributes}}
 	{{- if and (ne .Reference true) (ne .Type "List")}}
 	if !data.{{toGoName .YangName}}.Null && !data.{{toGoName .YangName}}.Unknown {
 		{{- if eq .Type "Int64"}}
@@ -94,6 +71,31 @@ func (data {{camelCase .Name}}) toBody() string {
 		{{- else if eq .Type "String"}}
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", data.{{toGoName .YangName}}.Value)
 		{{- end}}
+	}
+	{{- end}}
+	{{- end}}
+	{{- range .Attributes}}
+	{{- if eq .Type "List"}}
+	{{- $list := toJsonPath .YangName .XPath }}
+	if len(data.{{toGoName .YangName}}) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", []interface{}{})
+		for index, item := range data.{{toGoName .YangName}} {
+			{{- range .Attributes}}
+			if !item.{{toGoName .YangName}}.Null && !item.{{toGoName .YangName}}.Unknown {
+				{{- if eq .Type "Int64"}}
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(item.{{toGoName .YangName}}.Value, 10))
+				{{- else if and (eq .Type "Bool") (eq .TypeYangBool false)}}
+				if item.{{toGoName .YangName}}.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
+				}
+				{{- else if and (eq .Type "Bool") (eq .TypeYangBool true)}}
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", (data.{{toGoName .YangName}}.Value)
+				{{- else if eq .Type "String"}}
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", item.{{toGoName .YangName}}.Value)
+				{{- end}}
+			}
+			{{- end}}
+		}
 	}
 	{{- end}}
 	{{- end}}
@@ -120,8 +122,8 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 		data.{{toGoName .YangName}}.Value = value.String()
 	}
 	{{- else if eq .Type "List"}}
-	data.{{toGoName .YangName}} = make([]{{$name}}{{toGoName .YangName}}, 0)
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		data.{{toGoName .YangName}} = make([]{{$name}}{{toGoName .YangName}}, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := {{$name}}{{toGoName .YangName}}{}
 			{{- range .Attributes}}

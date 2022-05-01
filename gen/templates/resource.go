@@ -57,7 +57,9 @@ func (t resource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk.S
 				Required:            true,
 				{{- else}}
 				Optional:            true,
+				{{- if ne .Type "List"}}
 				Computed:            true,
+				{{- end}}
 				{{- end}}
 				{{- if len .EnumValues}}
 				Validators: []tfsdk.AttributeValidator{

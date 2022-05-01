@@ -83,7 +83,6 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 			"route_target_import": {
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
 				Optional:            true,
-				Computed:            true,
 				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
 					"value": {
 						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
@@ -105,7 +104,6 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 			"route_target_export": {
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
 				Optional:            true,
-				Computed:            true,
 				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
 					"value": {
 						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
