@@ -11,6 +11,7 @@
 - Add iosxe_bgp resource and data source
 - Add iosxe_bgp_address_family_ipv4_vrf resource and data source
 - Add iosxe_bgp_address_family_ipv6_vrf resource and data source
+- Add iosxe_bgp_neighbor resource and data source
 
 ## 0.1.0
 

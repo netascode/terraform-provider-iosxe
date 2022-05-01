@@ -15,7 +15,7 @@ import (
 type VLAN struct {
 	Device                 types.String `tfsdk:"device"`
 	Id                     types.String `tfsdk:"id"`
-	YangId                 types.Int64  `tfsdk:"vlan_id"`
+	VlanId                 types.Int64  `tfsdk:"vlan_id"`
 	RemoteSpan             types.Bool   `tfsdk:"remote_span"`
 	PrivateVlanPrimary     types.Bool   `tfsdk:"private_vlan_primary"`
 	PrivateVlanAssociation types.String `tfsdk:"private_vlan_association"`
@@ -26,13 +26,13 @@ type VLAN struct {
 }
 
 func (data VLAN) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/ios-vlan:vlan-list=%v", data.YangId.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/ios-vlan:vlan-list=%v", data.VlanId.Value)
 }
 
 func (data VLAN) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.YangId.Null && !data.YangId.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.YangId.Value, 10))
+	if !data.VlanId.Null && !data.VlanId.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.VlanId.Value, 10))
 	}
 	if !data.RemoteSpan.Null && !data.RemoteSpan.Unknown {
 		if data.RemoteSpan.Value {
@@ -94,5 +94,5 @@ func (data *VLAN) fromBody(res gjson.Result) {
 
 func (data *VLAN) fromPlan(plan VLAN) {
 	data.Device = plan.Device
-	data.YangId.Value = plan.YangId.Value
+	data.VlanId.Value = plan.VlanId.Value
 }

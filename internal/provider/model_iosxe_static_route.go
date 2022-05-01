@@ -13,14 +13,14 @@ import (
 )
 
 type StaticRoute struct {
-	Device  types.String         `tfsdk:"device"`
-	Id      types.String         `tfsdk:"id"`
-	Prefix  types.String         `tfsdk:"prefix"`
-	Mask    types.String         `tfsdk:"mask"`
-	FwdList []StaticRouteFwdList `tfsdk:"next_hops"`
+	Device   types.String          `tfsdk:"device"`
+	Id       types.String          `tfsdk:"id"`
+	Prefix   types.String          `tfsdk:"prefix"`
+	Mask     types.String          `tfsdk:"mask"`
+	NextHops []StaticRouteNextHops `tfsdk:"next_hops"`
 }
-type StaticRouteFwdList struct {
-	Fwd       types.String `tfsdk:"next_hop"`
+type StaticRouteNextHops struct {
+	NextHop   types.String `tfsdk:"next_hop"`
 	Metric    types.Int64  `tfsdk:"metric"`
 	Global    types.Bool   `tfsdk:"global"`
 	Name      types.String `tfsdk:"name"`
@@ -40,11 +40,11 @@ func (data StaticRoute) toBody() string {
 	if !data.Mask.Null && !data.Mask.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"mask", data.Mask.Value)
 	}
-	if len(data.FwdList) > 0 {
+	if len(data.NextHops) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list", []interface{}{})
-		for index, item := range data.FwdList {
-			if !item.Fwd.Null && !item.Fwd.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"fwd", item.Fwd.Value)
+		for index, item := range data.NextHops {
+			if !item.NextHop.Null && !item.NextHop.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"fwd", item.NextHop.Value)
 			}
 			if !item.Metric.Null && !item.Metric.Unknown {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"fwd-list"+"."+strconv.Itoa(index)+"."+"metric", strconv.FormatInt(item.Metric.Value, 10))
@@ -72,11 +72,11 @@ func (data StaticRoute) toBody() string {
 
 func (data *StaticRoute) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list"); value.Exists() {
-		data.FwdList = make([]StaticRouteFwdList, 0)
+		data.NextHops = make([]StaticRouteNextHops, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
-			item := StaticRouteFwdList{}
+			item := StaticRouteNextHops{}
 			if cValue := v.Get("fwd"); cValue.Exists() {
-				item.Fwd.Value = cValue.String()
+				item.NextHop.Value = cValue.String()
 			}
 			if cValue := v.Get("metric"); cValue.Exists() {
 				item.Metric.Value = cValue.Int()
@@ -93,7 +93,7 @@ func (data *StaticRoute) fromBody(res gjson.Result) {
 			if cValue := v.Get("tag"); cValue.Exists() {
 				item.Tag.Value = cValue.Int()
 			}
-			data.FwdList = append(data.FwdList, item)
+			data.NextHops = append(data.NextHops, item)
 			return true
 		})
 	}

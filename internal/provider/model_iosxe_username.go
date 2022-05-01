@@ -19,9 +19,9 @@ type Username struct {
 	Privilege          types.Int64  `tfsdk:"privilege"`
 	Description        types.String `tfsdk:"description"`
 	PasswordEncryption types.String `tfsdk:"password_encryption"`
-	PasswordPassword   types.String `tfsdk:"password"`
+	Password           types.String `tfsdk:"password"`
 	SecretEncryption   types.String `tfsdk:"secret_encryption"`
-	SecretSecret       types.String `tfsdk:"secret"`
+	Secret             types.String `tfsdk:"secret"`
 }
 
 func (data Username) getPath() string {
@@ -42,14 +42,14 @@ func (data Username) toBody() string {
 	if !data.PasswordEncryption.Null && !data.PasswordEncryption.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"password.encryption", data.PasswordEncryption.Value)
 	}
-	if !data.PasswordPassword.Null && !data.PasswordPassword.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"password.password", data.PasswordPassword.Value)
+	if !data.Password.Null && !data.Password.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"password.password", data.Password.Value)
 	}
 	if !data.SecretEncryption.Null && !data.SecretEncryption.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"secret.encryption", data.SecretEncryption.Value)
 	}
-	if !data.SecretSecret.Null && !data.SecretSecret.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"secret.secret", data.SecretSecret.Value)
+	if !data.Secret.Null && !data.Secret.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"secret.secret", data.Secret.Value)
 	}
 	return body
 }
@@ -65,13 +65,13 @@ func (data *Username) fromBody(res gjson.Result) {
 		data.PasswordEncryption.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.password"); value.Exists() {
-		data.PasswordPassword.Value = value.String()
+		data.Password.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.encryption"); value.Exists() {
 		data.SecretEncryption.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.secret"); value.Exists() {
-		data.SecretSecret.Value = value.String()
+		data.Secret.Value = value.String()
 	}
 }
 

@@ -15,12 +15,12 @@ import (
 type OSPF struct {
 	Device                            types.String         `tfsdk:"device"`
 	Id                                types.String         `tfsdk:"id"`
-	YangId                            types.Int64          `tfsdk:"process_id"`
+	ProcessId                         types.Int64          `tfsdk:"process_id"`
 	BfdAllInterfaces                  types.Bool           `tfsdk:"bfd_all_interfaces"`
 	DefaultInformationOriginate       types.Bool           `tfsdk:"default_information_originate"`
 	DefaultInformationOriginateAlways types.Bool           `tfsdk:"default_information_originate_always"`
 	DefaultMetric                     types.Int64          `tfsdk:"default_metric"`
-	DistanceDistance                  types.Int64          `tfsdk:"distance"`
+	Distance                          types.Int64          `tfsdk:"distance"`
 	DomainTag                         types.Int64          `tfsdk:"domain_tag"`
 	MplsLdpAutoconfig                 types.Bool           `tfsdk:"mpls_ldp_autoconfig"`
 	MplsLdpSync                       types.Bool           `tfsdk:"mpls_ldp_sync"`
@@ -47,13 +47,13 @@ type OSPFSummaryAddress struct {
 }
 
 func (data OSPF) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v", data.YangId.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v", data.ProcessId.Value)
 }
 
 func (data OSPF) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.YangId.Null && !data.YangId.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.YangId.Value, 10))
+	if !data.ProcessId.Null && !data.ProcessId.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.ProcessId.Value, 10))
 	}
 	if !data.BfdAllInterfaces.Null && !data.BfdAllInterfaces.Unknown {
 		if data.BfdAllInterfaces.Value {
@@ -73,8 +73,8 @@ func (data OSPF) toBody() string {
 	if !data.DefaultMetric.Null && !data.DefaultMetric.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"default-metric", strconv.FormatInt(data.DefaultMetric.Value, 10))
 	}
-	if !data.DistanceDistance.Null && !data.DistanceDistance.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"distance.distance", strconv.FormatInt(data.DistanceDistance.Value, 10))
+	if !data.Distance.Null && !data.Distance.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"distance.distance", strconv.FormatInt(data.Distance.Value, 10))
 	}
 	if !data.DomainTag.Null && !data.DomainTag.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"domain-tag", strconv.FormatInt(data.DomainTag.Value, 10))
@@ -154,7 +154,7 @@ func (data *OSPF) fromBody(res gjson.Result) {
 		data.DefaultMetric.Value = value.Int()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "distance.distance"); value.Exists() {
-		data.DistanceDistance.Value = value.Int()
+		data.Distance.Value = value.Int()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "domain-tag"); value.Exists() {
 		data.DomainTag.Value = value.Int()
@@ -226,5 +226,5 @@ func (data *OSPF) fromBody(res gjson.Result) {
 
 func (data *OSPF) fromPlan(plan OSPF) {
 	data.Device = plan.Device
-	data.YangId.Value = plan.YangId.Value
+	data.ProcessId.Value = plan.ProcessId.Value
 }

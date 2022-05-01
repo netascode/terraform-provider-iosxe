@@ -13,48 +13,48 @@ import (
 )
 
 type BGP struct {
-	Device                                                               types.String `tfsdk:"device"`
-	Id                                                                   types.String `tfsdk:"id"`
-	YangId                                                               types.String `tfsdk:"asn"`
-	BgpDefaultIpv4Unicast                                                types.Bool   `tfsdk:"default_ipv4_unicast"`
-	BgpLogNeighborChanges                                                types.Bool   `tfsdk:"log_neighbor_changes"`
-	BgpRouterIdIdChoiceInterfaceInterfaceInterfaceChoiceLoopbackLoopback types.Int64  `tfsdk:"router_id_loopback"`
+	Device             types.String `tfsdk:"device"`
+	Id                 types.String `tfsdk:"id"`
+	Asn                types.String `tfsdk:"asn"`
+	DefaultIpv4Unicast types.Bool   `tfsdk:"default_ipv4_unicast"`
+	LogNeighborChanges types.Bool   `tfsdk:"log_neighbor_changes"`
+	RouterIdLoopback   types.Int64  `tfsdk:"router_id_loopback"`
 }
 
 func (data BGP) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v", data.YangId.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v", data.Asn.Value)
 }
 
 func (data BGP) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.YangId.Null && !data.YangId.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.YangId.Value)
+	if !data.Asn.Null && !data.Asn.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Asn.Value)
 	}
-	if !data.BgpDefaultIpv4Unicast.Null && !data.BgpDefaultIpv4Unicast.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.default.ipv4-unicast", data.BgpDefaultIpv4Unicast.Value)
+	if !data.DefaultIpv4Unicast.Null && !data.DefaultIpv4Unicast.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.default.ipv4-unicast", data.DefaultIpv4Unicast.Value)
 	}
-	if !data.BgpLogNeighborChanges.Null && !data.BgpLogNeighborChanges.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.log-neighbor-changes", data.BgpLogNeighborChanges.Value)
+	if !data.LogNeighborChanges.Null && !data.LogNeighborChanges.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.log-neighbor-changes", data.LogNeighborChanges.Value)
 	}
-	if !data.BgpRouterIdIdChoiceInterfaceInterfaceInterfaceChoiceLoopbackLoopback.Null && !data.BgpRouterIdIdChoiceInterfaceInterfaceInterfaceChoiceLoopbackLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.router-id.interface.Loopback", strconv.FormatInt(data.BgpRouterIdIdChoiceInterfaceInterfaceInterfaceChoiceLoopbackLoopback.Value, 10))
+	if !data.RouterIdLoopback.Null && !data.RouterIdLoopback.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.router-id.interface.Loopback", strconv.FormatInt(data.RouterIdLoopback.Value, 10))
 	}
 	return body
 }
 
 func (data *BGP) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.default.ipv4-unicast"); value.Exists() {
-		data.BgpDefaultIpv4Unicast.Value = value.Bool()
+		data.DefaultIpv4Unicast.Value = value.Bool()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.log-neighbor-changes"); value.Exists() {
-		data.BgpLogNeighborChanges.Value = value.Bool()
+		data.LogNeighborChanges.Value = value.Bool()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.router-id.interface.Loopback"); value.Exists() {
-		data.BgpRouterIdIdChoiceInterfaceInterfaceInterfaceChoiceLoopbackLoopback.Value = value.Int()
+		data.RouterIdLoopback.Value = value.Int()
 	}
 }
 
 func (data *BGP) fromPlan(plan BGP) {
 	data.Device = plan.Device
-	data.YangId.Value = plan.YangId.Value
+	data.Asn.Value = plan.Asn.Value
 }

@@ -13,13 +13,13 @@ import (
 )
 
 type VLANConfiguration struct {
-	Device                         types.String `tfsdk:"device"`
-	Id                             types.String `tfsdk:"id"`
-	VlanId                         types.String `tfsdk:"vlan_id"`
-	MemberVni                      types.Int64  `tfsdk:"vni"`
-	MemberAccessVfi                types.String `tfsdk:"access_vfi"`
-	MemberEvpnInstanceEvpnInstance types.Int64  `tfsdk:"evpn_instance"`
-	MemberEvpnInstanceVni          types.Int64  `tfsdk:"evpn_instance_vni"`
+	Device          types.String `tfsdk:"device"`
+	Id              types.String `tfsdk:"id"`
+	VlanId          types.String `tfsdk:"vlan_id"`
+	Vni             types.Int64  `tfsdk:"vni"`
+	AccessVfi       types.String `tfsdk:"access_vfi"`
+	EvpnInstance    types.Int64  `tfsdk:"evpn_instance"`
+	EvpnInstanceVni types.Int64  `tfsdk:"evpn_instance_vni"`
 }
 
 func (data VLANConfiguration) getPath() string {
@@ -31,33 +31,33 @@ func (data VLANConfiguration) toBody() string {
 	if !data.VlanId.Null && !data.VlanId.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-id", data.VlanId.Value)
 	}
-	if !data.MemberVni.Null && !data.MemberVni.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni", strconv.FormatInt(data.MemberVni.Value, 10))
+	if !data.Vni.Null && !data.Vni.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni", strconv.FormatInt(data.Vni.Value, 10))
 	}
-	if !data.MemberAccessVfi.Null && !data.MemberAccessVfi.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.access-vfi", data.MemberAccessVfi.Value)
+	if !data.AccessVfi.Null && !data.AccessVfi.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.access-vfi", data.AccessVfi.Value)
 	}
-	if !data.MemberEvpnInstanceEvpnInstance.Null && !data.MemberEvpnInstanceEvpnInstance.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.evpn-instance.evpn-instance", strconv.FormatInt(data.MemberEvpnInstanceEvpnInstance.Value, 10))
+	if !data.EvpnInstance.Null && !data.EvpnInstance.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.evpn-instance.evpn-instance", strconv.FormatInt(data.EvpnInstance.Value, 10))
 	}
-	if !data.MemberEvpnInstanceVni.Null && !data.MemberEvpnInstanceVni.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.evpn-instance.vni", strconv.FormatInt(data.MemberEvpnInstanceVni.Value, 10))
+	if !data.EvpnInstanceVni.Null && !data.EvpnInstanceVni.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.evpn-instance.vni", strconv.FormatInt(data.EvpnInstanceVni.Value, 10))
 	}
 	return body
 }
 
 func (data *VLANConfiguration) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
-		data.MemberVni.Value = value.Int()
+		data.Vni.Value = value.Int()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.access-vfi"); value.Exists() {
-		data.MemberAccessVfi.Value = value.String()
+		data.AccessVfi.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.evpn-instance"); value.Exists() {
-		data.MemberEvpnInstanceEvpnInstance.Value = value.Int()
+		data.EvpnInstance.Value = value.Int()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.vni"); value.Exists() {
-		data.MemberEvpnInstanceVni.Value = value.Int()
+		data.EvpnInstanceVni.Value = value.Int()
 	}
 }
 

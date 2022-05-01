@@ -25,11 +25,11 @@ type VRF struct {
 	RouteTargetExport []VRFRouteTargetExport `tfsdk:"route_target_export"`
 }
 type VRFRouteTargetImport struct {
-	AsnIp     types.String `tfsdk:"value"`
+	Value     types.String `tfsdk:"value"`
 	Stitching types.Bool   `tfsdk:"stitching"`
 }
 type VRFRouteTargetExport struct {
-	AsnIp     types.String `tfsdk:"value"`
+	Value     types.String `tfsdk:"value"`
 	Stitching types.Bool   `tfsdk:"stitching"`
 }
 
@@ -64,8 +64,8 @@ func (data VRF) toBody() string {
 	if len(data.RouteTargetImport) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import", []interface{}{})
 		for index, item := range data.RouteTargetImport {
-			if !item.AsnIp.Null && !item.AsnIp.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import"+"."+strconv.Itoa(index)+"."+"asn-ip", item.AsnIp.Value)
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.import"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
 			}
 			if !item.Stitching.Null && !item.Stitching.Unknown {
 				if item.Stitching.Value {
@@ -77,8 +77,8 @@ func (data VRF) toBody() string {
 	if len(data.RouteTargetExport) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export", []interface{}{})
 		for index, item := range data.RouteTargetExport {
-			if !item.AsnIp.Null && !item.AsnIp.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export"+"."+strconv.Itoa(index)+"."+"asn-ip", item.AsnIp.Value)
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.export"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
 			}
 			if !item.Stitching.Null && !item.Stitching.Unknown {
 				if item.Stitching.Value {
@@ -111,7 +111,7 @@ func (data *VRF) fromBody(res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := VRFRouteTargetImport{}
 			if cValue := v.Get("asn-ip"); cValue.Exists() {
-				item.AsnIp.Value = cValue.String()
+				item.Value.Value = cValue.String()
 			}
 			if cValue := v.Get("stitching"); cValue.Exists() {
 				item.Stitching.Value = true
@@ -125,7 +125,7 @@ func (data *VRF) fromBody(res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := VRFRouteTargetExport{}
 			if cValue := v.Get("asn-ip"); cValue.Exists() {
-				item.AsnIp.Value = cValue.String()
+				item.Value.Value = cValue.String()
 			}
 			if cValue := v.Get("stitching"); cValue.Exists() {
 				item.Stitching.Value = true

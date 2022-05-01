@@ -12,20 +12,20 @@ import (
 )
 
 type EVPN struct {
-	Device                                             types.String `tfsdk:"device"`
-	Id                                                 types.String `tfsdk:"id"`
-	ReplicationTypeReplicationTypeChoiceIngressIngress types.Bool   `tfsdk:"replication_type_ingress"`
-	ReplicationTypeReplicationTypeChoiceStaticStatic   types.Bool   `tfsdk:"replication_type_static"`
-	ReplicationTypeReplicationTypeChoiceP2mpP2mp       types.Bool   `tfsdk:"replication_type_p2mp"`
-	ReplicationTypeReplicationTypeChoiceMp2mpMp2mp     types.Bool   `tfsdk:"replication_type_mp2mp"`
-	MacDuplicationLimit                                types.Int64  `tfsdk:"mac_duplication_limit"`
-	MacDuplicationTime                                 types.Int64  `tfsdk:"mac_duplication_time"`
-	IpDuplicationLimit                                 types.Int64  `tfsdk:"ip_duplication_limit"`
-	IpDuplicationTime                                  types.Int64  `tfsdk:"ip_duplication_time"`
-	RouterIdInterfaceInterfaceChoiceLoopbackLoopback   types.Int64  `tfsdk:"router_id_loopback"`
-	DefaultGatewayAdvertise                            types.Bool   `tfsdk:"default_gateway_advertise"`
-	LoggingPeerState                                   types.Bool   `tfsdk:"logging_peer_state"`
-	RouteTargetAutoVni                                 types.Bool   `tfsdk:"route_target_auto_vni"`
+	Device                  types.String `tfsdk:"device"`
+	Id                      types.String `tfsdk:"id"`
+	ReplicationTypeIngress  types.Bool   `tfsdk:"replication_type_ingress"`
+	ReplicationTypeStatic   types.Bool   `tfsdk:"replication_type_static"`
+	ReplicationTypeP2mp     types.Bool   `tfsdk:"replication_type_p2mp"`
+	ReplicationTypeMp2mp    types.Bool   `tfsdk:"replication_type_mp2mp"`
+	MacDuplicationLimit     types.Int64  `tfsdk:"mac_duplication_limit"`
+	MacDuplicationTime      types.Int64  `tfsdk:"mac_duplication_time"`
+	IpDuplicationLimit      types.Int64  `tfsdk:"ip_duplication_limit"`
+	IpDuplicationTime       types.Int64  `tfsdk:"ip_duplication_time"`
+	RouterIdLoopback        types.Int64  `tfsdk:"router_id_loopback"`
+	DefaultGatewayAdvertise types.Bool   `tfsdk:"default_gateway_advertise"`
+	LoggingPeerState        types.Bool   `tfsdk:"logging_peer_state"`
+	RouteTargetAutoVni      types.Bool   `tfsdk:"route_target_auto_vni"`
 }
 
 func (data EVPN) getPath() string {
@@ -34,23 +34,23 @@ func (data EVPN) getPath() string {
 
 func (data EVPN) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.ReplicationTypeReplicationTypeChoiceIngressIngress.Null && !data.ReplicationTypeReplicationTypeChoiceIngressIngress.Unknown {
-		if data.ReplicationTypeReplicationTypeChoiceIngressIngress.Value {
+	if !data.ReplicationTypeIngress.Null && !data.ReplicationTypeIngress.Unknown {
+		if data.ReplicationTypeIngress.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"replication-type.ingress", map[string]string{})
 		}
 	}
-	if !data.ReplicationTypeReplicationTypeChoiceStaticStatic.Null && !data.ReplicationTypeReplicationTypeChoiceStaticStatic.Unknown {
-		if data.ReplicationTypeReplicationTypeChoiceStaticStatic.Value {
+	if !data.ReplicationTypeStatic.Null && !data.ReplicationTypeStatic.Unknown {
+		if data.ReplicationTypeStatic.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"replication-type.static", map[string]string{})
 		}
 	}
-	if !data.ReplicationTypeReplicationTypeChoiceP2mpP2mp.Null && !data.ReplicationTypeReplicationTypeChoiceP2mpP2mp.Unknown {
-		if data.ReplicationTypeReplicationTypeChoiceP2mpP2mp.Value {
+	if !data.ReplicationTypeP2mp.Null && !data.ReplicationTypeP2mp.Unknown {
+		if data.ReplicationTypeP2mp.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"replication-type.p2mp", map[string]string{})
 		}
 	}
-	if !data.ReplicationTypeReplicationTypeChoiceMp2mpMp2mp.Null && !data.ReplicationTypeReplicationTypeChoiceMp2mpMp2mp.Unknown {
-		if data.ReplicationTypeReplicationTypeChoiceMp2mpMp2mp.Value {
+	if !data.ReplicationTypeMp2mp.Null && !data.ReplicationTypeMp2mp.Unknown {
+		if data.ReplicationTypeMp2mp.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"replication-type.mp2mp", map[string]string{})
 		}
 	}
@@ -66,8 +66,8 @@ func (data EVPN) toBody() string {
 	if !data.IpDuplicationTime.Null && !data.IpDuplicationTime.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.duplication.time", strconv.FormatInt(data.IpDuplicationTime.Value, 10))
 	}
-	if !data.RouterIdInterfaceInterfaceChoiceLoopbackLoopback.Null && !data.RouterIdInterfaceInterfaceChoiceLoopbackLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"router-id.interface.Loopback", strconv.FormatInt(data.RouterIdInterfaceInterfaceChoiceLoopbackLoopback.Value, 10))
+	if !data.RouterIdLoopback.Null && !data.RouterIdLoopback.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"router-id.interface.Loopback", strconv.FormatInt(data.RouterIdLoopback.Value, 10))
 	}
 	if !data.DefaultGatewayAdvertise.Null && !data.DefaultGatewayAdvertise.Unknown {
 		if data.DefaultGatewayAdvertise.Value {
@@ -89,16 +89,16 @@ func (data EVPN) toBody() string {
 
 func (data *EVPN) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.ingress"); value.Exists() {
-		data.ReplicationTypeReplicationTypeChoiceIngressIngress.Value = true
+		data.ReplicationTypeIngress.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.static"); value.Exists() {
-		data.ReplicationTypeReplicationTypeChoiceStaticStatic.Value = true
+		data.ReplicationTypeStatic.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.p2mp"); value.Exists() {
-		data.ReplicationTypeReplicationTypeChoiceP2mpP2mp.Value = true
+		data.ReplicationTypeP2mp.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.mp2mp"); value.Exists() {
-		data.ReplicationTypeReplicationTypeChoiceMp2mpMp2mp.Value = true
+		data.ReplicationTypeMp2mp.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mac.duplication.limit"); value.Exists() {
 		data.MacDuplicationLimit.Value = value.Int()
@@ -113,7 +113,7 @@ func (data *EVPN) fromBody(res gjson.Result) {
 		data.IpDuplicationTime.Value = value.Int()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "router-id.interface.Loopback"); value.Exists() {
-		data.RouterIdInterfaceInterfaceChoiceLoopbackLoopback.Value = value.Int()
+		data.RouterIdLoopback.Value = value.Int()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-gateway.advertise"); value.Exists() {
 		data.DefaultGatewayAdvertise.Value = true

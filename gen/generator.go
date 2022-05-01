@@ -91,6 +91,7 @@ type YamlConfig struct {
 
 type YamlConfigAttribute struct {
 	YangName        string                `yaml:"yang_name"`
+	YangScope       string                `yaml:"yang_scope"`
 	TfName          string                `yaml:"tf_name"`
 	XPath           string                `yaml:"xpath"`
 	Type            string                `yaml:"type"`
@@ -134,21 +135,16 @@ func ToYangShortName(s string) string {
 	return s
 }
 
-// Templating helper function to convert YANG name to GO name
+// Templating helper function to convert TF name to GO name
 func ToGoName(s string) string {
-	s = ToYangShortName(s)
 	var g []string
 
-	p := strings.Split(s, "-")
+	p := strings.Split(s, "_")
 
 	for _, value := range p {
 		g = append(g, strings.Title(value))
 	}
 	s = strings.Join(g, "")
-	s = strings.ReplaceAll(s, "/", "")
-	if s == "Id" {
-		s = "YangId"
-	}
 	return s
 }
 
@@ -260,8 +256,12 @@ func addKeys(e *yang.Entry, config *YamlConfig) {
 				var keyAttr *YamlConfigAttribute
 				// check if key attribute already in config
 				for i := range config.Attributes {
+					if config.Attributes[i].YangScope != "" && config.Attributes[i].YangScope != e.Name {
+						continue
+					}
 					if config.Attributes[i].YangName == key {
 						keyAttr = &config.Attributes[i]
+						break
 					}
 				}
 				if keyAttr == nil {

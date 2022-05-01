@@ -13,16 +13,16 @@ import (
 )
 
 type InterfaceVLAN struct {
-	Device                                                            types.String `tfsdk:"device"`
-	Id                                                                types.String `tfsdk:"id"`
-	Name                                                              types.Int64  `tfsdk:"name"`
-	Autostate                                                         types.Bool   `tfsdk:"autostate"`
-	Description                                                       types.String `tfsdk:"description"`
-	Shutdown                                                          types.Bool   `tfsdk:"shutdown"`
-	VrfChoiceVrfVrfForwarding                                         types.String `tfsdk:"vrf_forwarding"`
-	IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryAddress types.String `tfsdk:"ipv4_address"`
-	IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryMask    types.String `tfsdk:"ipv4_address_mask"`
-	PimModeChoiceCfgPimModeChoiceSparseSparseMode                     types.Bool   `tfsdk:"pim_sparse_mode"`
+	Device          types.String `tfsdk:"device"`
+	Id              types.String `tfsdk:"id"`
+	Name            types.Int64  `tfsdk:"name"`
+	Autostate       types.Bool   `tfsdk:"autostate"`
+	Description     types.String `tfsdk:"description"`
+	Shutdown        types.Bool   `tfsdk:"shutdown"`
+	VrfForwarding   types.String `tfsdk:"vrf_forwarding"`
+	Ipv4Address     types.String `tfsdk:"ipv4_address"`
+	Ipv4AddressMask types.String `tfsdk:"ipv4_address_mask"`
+	PimSparseMode   types.Bool   `tfsdk:"pim_sparse_mode"`
 }
 
 func (data InterfaceVLAN) getPath() string {
@@ -45,17 +45,17 @@ func (data InterfaceVLAN) toBody() string {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"shutdown", map[string]string{})
 		}
 	}
-	if !data.VrfChoiceVrfVrfForwarding.Null && !data.VrfChoiceVrfVrfForwarding.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf.forwarding", data.VrfChoiceVrfVrfForwarding.Value)
+	if !data.VrfForwarding.Null && !data.VrfForwarding.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf.forwarding", data.VrfForwarding.Value)
 	}
-	if !data.IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryAddress.Null && !data.IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryAddress.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.address", data.IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryAddress.Value)
+	if !data.Ipv4Address.Null && !data.Ipv4Address.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.address", data.Ipv4Address.Value)
 	}
-	if !data.IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryMask.Null && !data.IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryMask.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.mask", data.IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryMask.Value)
+	if !data.Ipv4AddressMask.Null && !data.Ipv4AddressMask.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.mask", data.Ipv4AddressMask.Value)
 	}
-	if !data.PimModeChoiceCfgPimModeChoiceSparseSparseMode.Null && !data.PimModeChoiceCfgPimModeChoiceSparseSparseMode.Unknown {
-		if data.PimModeChoiceCfgPimModeChoiceSparseSparseMode.Value {
+	if !data.PimSparseMode.Null && !data.PimSparseMode.Unknown {
+		if data.PimSparseMode.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode", map[string]string{})
 		}
 	}
@@ -73,16 +73,16 @@ func (data *InterfaceVLAN) fromBody(res gjson.Result) {
 		data.Shutdown.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.forwarding"); value.Exists() {
-		data.VrfChoiceVrfVrfForwarding.Value = value.String()
+		data.VrfForwarding.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.address"); value.Exists() {
-		data.IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryAddress.Value = value.String()
+		data.Ipv4Address.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.mask"); value.Exists() {
-		data.IpAddressChoiceAddressAddressAddressChoiceFixedCasePrimaryMask.Value = value.String()
+		data.Ipv4AddressMask.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
-		data.PimModeChoiceCfgPimModeChoiceSparseSparseMode.Value = true
+		data.PimSparseMode.Value = true
 	}
 }
 

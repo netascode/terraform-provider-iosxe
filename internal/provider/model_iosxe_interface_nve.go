@@ -13,24 +13,24 @@ import (
 )
 
 type InterfaceNVE struct {
-	Device                                         types.String                           `tfsdk:"device"`
-	Id                                             types.String                           `tfsdk:"id"`
-	Name                                           types.Int64                            `tfsdk:"name"`
-	Description                                    types.String                           `tfsdk:"description"`
-	Shutdown                                       types.Bool                             `tfsdk:"shutdown"`
-	HostReachabilityProtocolBgp                    types.Bool                             `tfsdk:"host_reachability_protocol_bgp"`
-	SourceInterfaceInterfaceChoiceLoopbackLoopback types.Int64                            `tfsdk:"source_interface_loopback"`
-	MemberInOneLineMemberVni                       []InterfaceNVEMemberInOneLineMemberVni `tfsdk:"vni_vrfs"`
-	MemberVni                                      []InterfaceNVEMemberVni                `tfsdk:"vnis"`
+	Device                      types.String          `tfsdk:"device"`
+	Id                          types.String          `tfsdk:"id"`
+	Name                        types.Int64           `tfsdk:"name"`
+	Description                 types.String          `tfsdk:"description"`
+	Shutdown                    types.Bool            `tfsdk:"shutdown"`
+	HostReachabilityProtocolBgp types.Bool            `tfsdk:"host_reachability_protocol_bgp"`
+	SourceInterfaceLoopback     types.Int64           `tfsdk:"source_interface_loopback"`
+	VniVrfs                     []InterfaceNVEVniVrfs `tfsdk:"vni_vrfs"`
+	Vnis                        []InterfaceNVEVnis    `tfsdk:"vnis"`
 }
-type InterfaceNVEMemberInOneLineMemberVni struct {
+type InterfaceNVEVniVrfs struct {
 	VniRange types.String `tfsdk:"vni_range"`
 	Vrf      types.String `tfsdk:"vrf"`
 }
-type InterfaceNVEMemberVni struct {
-	VniRange                     types.String `tfsdk:"vni_range"`
-	McastGroupMulticastGroupMin  types.String `tfsdk:"ipv4_multicast_group"`
-	IrCpConfigIngressReplication types.Bool   `tfsdk:"ingress_replication"`
+type InterfaceNVEVnis struct {
+	VniRange           types.String `tfsdk:"vni_range"`
+	Ipv4MulticastGroup types.String `tfsdk:"ipv4_multicast_group"`
+	IngressReplication types.Bool   `tfsdk:"ingress_replication"`
 }
 
 func (data InterfaceNVE) getPath() string {
@@ -55,12 +55,12 @@ func (data InterfaceNVE) toBody() string {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host-reachability.protocol.bgp", map[string]string{})
 		}
 	}
-	if !data.SourceInterfaceInterfaceChoiceLoopbackLoopback.Null && !data.SourceInterfaceInterfaceChoiceLoopbackLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface.Loopback", strconv.FormatInt(data.SourceInterfaceInterfaceChoiceLoopbackLoopback.Value, 10))
+	if !data.SourceInterfaceLoopback.Null && !data.SourceInterfaceLoopback.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface.Loopback", strconv.FormatInt(data.SourceInterfaceLoopback.Value, 10))
 	}
-	if len(data.MemberInOneLineMemberVni) > 0 {
+	if len(data.VniVrfs) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni", []interface{}{})
-		for index, item := range data.MemberInOneLineMemberVni {
+		for index, item := range data.VniVrfs {
 			if !item.VniRange.Null && !item.VniRange.Unknown {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.Value)
 			}
@@ -69,17 +69,17 @@ func (data InterfaceNVE) toBody() string {
 			}
 		}
 	}
-	if len(data.MemberVni) > 0 {
+	if len(data.Vnis) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni", []interface{}{})
-		for index, item := range data.MemberVni {
+		for index, item := range data.Vnis {
 			if !item.VniRange.Null && !item.VniRange.Unknown {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.Value)
 			}
-			if !item.McastGroupMulticastGroupMin.Null && !item.McastGroupMulticastGroupMin.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"mcast-group.multicast-group-min", item.McastGroupMulticastGroupMin.Value)
+			if !item.Ipv4MulticastGroup.Null && !item.Ipv4MulticastGroup.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"mcast-group.multicast-group-min", item.Ipv4MulticastGroup.Value)
 			}
-			if !item.IrCpConfigIngressReplication.Null && !item.IrCpConfigIngressReplication.Unknown {
-				if item.IrCpConfigIngressReplication.Value {
+			if !item.IngressReplication.Null && !item.IngressReplication.Unknown {
+				if item.IngressReplication.Value {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"ir-cp-config.ingress-replication", map[string]string{})
 				}
 			}
@@ -99,36 +99,36 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 		data.HostReachabilityProtocolBgp.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "source-interface.Loopback"); value.Exists() {
-		data.SourceInterfaceInterfaceChoiceLoopbackLoopback.Value = value.Int()
+		data.SourceInterfaceLoopback.Value = value.Int()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member-in-one-line.member.vni"); value.Exists() {
-		data.MemberInOneLineMemberVni = make([]InterfaceNVEMemberInOneLineMemberVni, 0)
+		data.VniVrfs = make([]InterfaceNVEVniVrfs, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
-			item := InterfaceNVEMemberInOneLineMemberVni{}
+			item := InterfaceNVEVniVrfs{}
 			if cValue := v.Get("vni-range"); cValue.Exists() {
 				item.VniRange.Value = cValue.String()
 			}
 			if cValue := v.Get("vrf"); cValue.Exists() {
 				item.Vrf.Value = cValue.String()
 			}
-			data.MemberInOneLineMemberVni = append(data.MemberInOneLineMemberVni, item)
+			data.VniVrfs = append(data.VniVrfs, item)
 			return true
 		})
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
-		data.MemberVni = make([]InterfaceNVEMemberVni, 0)
+		data.Vnis = make([]InterfaceNVEVnis, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
-			item := InterfaceNVEMemberVni{}
+			item := InterfaceNVEVnis{}
 			if cValue := v.Get("vni-range"); cValue.Exists() {
 				item.VniRange.Value = cValue.String()
 			}
 			if cValue := v.Get("mcast-group.multicast-group-min"); cValue.Exists() {
-				item.McastGroupMulticastGroupMin.Value = cValue.String()
+				item.Ipv4MulticastGroup.Value = cValue.String()
 			}
 			if cValue := v.Get("ir-cp-config.ingress-replication"); cValue.Exists() {
-				item.IrCpConfigIngressReplication.Value = true
+				item.IngressReplication.Value = true
 			}
-			data.MemberVni = append(data.MemberVni, item)
+			data.Vnis = append(data.Vnis, item)
 			return true
 		})
 	}

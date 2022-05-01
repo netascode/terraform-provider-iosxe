@@ -13,24 +13,24 @@ import (
 )
 
 type EVPNInstance struct {
-	Device                                                                                  types.String `tfsdk:"device"`
-	Id                                                                                      types.String `tfsdk:"id"`
-	EvpnInstanceNum                                                                         types.Int64  `tfsdk:"evpn_instance_num"`
-	EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceIngressCaseIngress types.Bool   `tfsdk:"vlan_based_replication_type_ingress"`
-	EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticCaseStatic   types.Bool   `tfsdk:"vlan_based_replication_type_static"`
-	EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticP2mpP2mp     types.Bool   `tfsdk:"vlan_based_replication_type_p2mp"`
-	EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticMp2mpMp2mp   types.Bool   `tfsdk:"vlan_based_replication_type_mp2mp"`
-	EvpnServiceTypeVlanBasedVlanBasedEncapsulation                                          types.String `tfsdk:"vlan_based_encapsulation"`
-	EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean             types.Bool   `tfsdk:"vlan_based_auto_route_target"`
-	EvpnServiceTypeVlanBasedVlanBasedRdRdValue                                              types.String `tfsdk:"vlan_based_rd"`
-	EvpnServiceTypeVlanBasedVlanBasedRouteTargetRtValue                                     types.String `tfsdk:"vlan_based_route_target"`
-	EvpnServiceTypeVlanBasedVlanBasedRouteTargetBothRtValue                                 types.String `tfsdk:"vlan_based_route_target_both"`
-	EvpnServiceTypeVlanBasedVlanBasedRouteTargetImportRtValue                               types.String `tfsdk:"vlan_based_route_target_import"`
-	EvpnServiceTypeVlanBasedVlanBasedRouteTargetExportRtValue                               types.String `tfsdk:"vlan_based_route_target_export"`
-	EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceDisableCaseDisable   types.Bool   `tfsdk:"vlan_based_ip_local_learning_disable"`
-	EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceEnableCaseEnable     types.Bool   `tfsdk:"vlan_based_ip_local_learning_enable"`
-	EvpnServiceTypeVlanBasedVlanBasedDefaultGatewayAdvertise                                types.String `tfsdk:"vlan_based_default_gateway_advertise"`
-	EvpnServiceTypeVlanBasedVlanBasedReOriginateRouteType5                                  types.Bool   `tfsdk:"vlan_based_re_originate_route_type5"`
+	Device                           types.String `tfsdk:"device"`
+	Id                               types.String `tfsdk:"id"`
+	EvpnInstanceNum                  types.Int64  `tfsdk:"evpn_instance_num"`
+	VlanBasedReplicationTypeIngress  types.Bool   `tfsdk:"vlan_based_replication_type_ingress"`
+	VlanBasedReplicationTypeStatic   types.Bool   `tfsdk:"vlan_based_replication_type_static"`
+	VlanBasedReplicationTypeP2mp     types.Bool   `tfsdk:"vlan_based_replication_type_p2mp"`
+	VlanBasedReplicationTypeMp2mp    types.Bool   `tfsdk:"vlan_based_replication_type_mp2mp"`
+	VlanBasedEncapsulation           types.String `tfsdk:"vlan_based_encapsulation"`
+	VlanBasedAutoRouteTarget         types.Bool   `tfsdk:"vlan_based_auto_route_target"`
+	VlanBasedRd                      types.String `tfsdk:"vlan_based_rd"`
+	VlanBasedRouteTarget             types.String `tfsdk:"vlan_based_route_target"`
+	VlanBasedRouteTargetBoth         types.String `tfsdk:"vlan_based_route_target_both"`
+	VlanBasedRouteTargetImport       types.String `tfsdk:"vlan_based_route_target_import"`
+	VlanBasedRouteTargetExport       types.String `tfsdk:"vlan_based_route_target_export"`
+	VlanBasedIpLocalLearningDisable  types.Bool   `tfsdk:"vlan_based_ip_local_learning_disable"`
+	VlanBasedIpLocalLearningEnable   types.Bool   `tfsdk:"vlan_based_ip_local_learning_enable"`
+	VlanBasedDefaultGatewayAdvertise types.String `tfsdk:"vlan_based_default_gateway_advertise"`
+	VlanBasedReOriginateRouteType5   types.Bool   `tfsdk:"vlan_based_re_originate_route_type5"`
 }
 
 func (data EVPNInstance) getPath() string {
@@ -42,62 +42,62 @@ func (data EVPNInstance) toBody() string {
 	if !data.EvpnInstanceNum.Null && !data.EvpnInstanceNum.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"evpn-instance-num", strconv.FormatInt(data.EvpnInstanceNum.Value, 10))
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceIngressCaseIngress.Null && !data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceIngressCaseIngress.Unknown {
-		if data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceIngressCaseIngress.Value {
+	if !data.VlanBasedReplicationTypeIngress.Null && !data.VlanBasedReplicationTypeIngress.Unknown {
+		if data.VlanBasedReplicationTypeIngress.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.replication-type.ingress", map[string]string{})
 		}
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticCaseStatic.Null && !data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticCaseStatic.Unknown {
-		if data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticCaseStatic.Value {
+	if !data.VlanBasedReplicationTypeStatic.Null && !data.VlanBasedReplicationTypeStatic.Unknown {
+		if data.VlanBasedReplicationTypeStatic.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.replication-type.static", map[string]string{})
 		}
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticP2mpP2mp.Null && !data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticP2mpP2mp.Unknown {
-		if data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticP2mpP2mp.Value {
+	if !data.VlanBasedReplicationTypeP2mp.Null && !data.VlanBasedReplicationTypeP2mp.Unknown {
+		if data.VlanBasedReplicationTypeP2mp.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.replication-type.p2mp", map[string]string{})
 		}
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticMp2mpMp2mp.Null && !data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticMp2mpMp2mp.Unknown {
-		if data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticMp2mpMp2mp.Value {
+	if !data.VlanBasedReplicationTypeMp2mp.Null && !data.VlanBasedReplicationTypeMp2mp.Unknown {
+		if data.VlanBasedReplicationTypeMp2mp.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.replication-type.mp2mp", map[string]string{})
 		}
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedEncapsulation.Null && !data.EvpnServiceTypeVlanBasedVlanBasedEncapsulation.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.encapsulation", data.EvpnServiceTypeVlanBasedVlanBasedEncapsulation.Value)
+	if !data.VlanBasedEncapsulation.Null && !data.VlanBasedEncapsulation.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.encapsulation", data.VlanBasedEncapsulation.Value)
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Null && !data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.auto-route-target_cont.auto-route-target-boolean", data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Value)
+	if !data.VlanBasedAutoRouteTarget.Null && !data.VlanBasedAutoRouteTarget.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.auto-route-target_cont.auto-route-target-boolean", data.VlanBasedAutoRouteTarget.Value)
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedRdRdValue.Null && !data.EvpnServiceTypeVlanBasedVlanBasedRdRdValue.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.rd.rd-value", data.EvpnServiceTypeVlanBasedVlanBasedRdRdValue.Value)
+	if !data.VlanBasedRd.Null && !data.VlanBasedRd.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.rd.rd-value", data.VlanBasedRd.Value)
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetRtValue.Null && !data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetRtValue.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.rt-value", data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetRtValue.Value)
+	if !data.VlanBasedRouteTarget.Null && !data.VlanBasedRouteTarget.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.rt-value", data.VlanBasedRouteTarget.Value)
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetBothRtValue.Null && !data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetBothRtValue.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.both.rt-value", data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetBothRtValue.Value)
+	if !data.VlanBasedRouteTargetBoth.Null && !data.VlanBasedRouteTargetBoth.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.both.rt-value", data.VlanBasedRouteTargetBoth.Value)
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetImportRtValue.Null && !data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetImportRtValue.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.import.rt-value", data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetImportRtValue.Value)
+	if !data.VlanBasedRouteTargetImport.Null && !data.VlanBasedRouteTargetImport.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.import.rt-value", data.VlanBasedRouteTargetImport.Value)
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetExportRtValue.Null && !data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetExportRtValue.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.export.rt-value", data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetExportRtValue.Value)
+	if !data.VlanBasedRouteTargetExport.Null && !data.VlanBasedRouteTargetExport.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.export.rt-value", data.VlanBasedRouteTargetExport.Value)
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceDisableCaseDisable.Null && !data.EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceDisableCaseDisable.Unknown {
-		if data.EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceDisableCaseDisable.Value {
+	if !data.VlanBasedIpLocalLearningDisable.Null && !data.VlanBasedIpLocalLearningDisable.Unknown {
+		if data.VlanBasedIpLocalLearningDisable.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.export.ip.local-learning.disable", map[string]string{})
 		}
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceEnableCaseEnable.Null && !data.EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceEnableCaseEnable.Unknown {
-		if data.EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceEnableCaseEnable.Value {
+	if !data.VlanBasedIpLocalLearningEnable.Null && !data.VlanBasedIpLocalLearningEnable.Unknown {
+		if data.VlanBasedIpLocalLearningEnable.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.export.ip.local-learning.enable", map[string]string{})
 		}
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedDefaultGatewayAdvertise.Null && !data.EvpnServiceTypeVlanBasedVlanBasedDefaultGatewayAdvertise.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.default-gateway.advertise", data.EvpnServiceTypeVlanBasedVlanBasedDefaultGatewayAdvertise.Value)
+	if !data.VlanBasedDefaultGatewayAdvertise.Null && !data.VlanBasedDefaultGatewayAdvertise.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.default-gateway.advertise", data.VlanBasedDefaultGatewayAdvertise.Value)
 	}
-	if !data.EvpnServiceTypeVlanBasedVlanBasedReOriginateRouteType5.Null && !data.EvpnServiceTypeVlanBasedVlanBasedReOriginateRouteType5.Unknown {
-		if data.EvpnServiceTypeVlanBasedVlanBasedReOriginateRouteType5.Value {
+	if !data.VlanBasedReOriginateRouteType5.Null && !data.VlanBasedReOriginateRouteType5.Unknown {
+		if data.VlanBasedReOriginateRouteType5.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.re-originate.route-type5", map[string]string{})
 		}
 	}
@@ -106,49 +106,49 @@ func (data EVPNInstance) toBody() string {
 
 func (data *EVPNInstance) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.ingress"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceIngressCaseIngress.Value = true
+		data.VlanBasedReplicationTypeIngress.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.static"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticCaseStatic.Value = true
+		data.VlanBasedReplicationTypeStatic.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.p2mp"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticP2mpP2mp.Value = true
+		data.VlanBasedReplicationTypeP2mp.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.mp2mp"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedReplicationTypeReplicationTypeChoiceStaticMp2mpMp2mp.Value = true
+		data.VlanBasedReplicationTypeMp2mp.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.encapsulation"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedEncapsulation.Value = value.String()
+		data.VlanBasedEncapsulation.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.auto-route-target_cont.auto-route-target-boolean"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedAutoRouteTarget_contAutoRouteTargetBoolean.Value = value.Bool()
+		data.VlanBasedAutoRouteTarget.Value = value.Bool()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.rd.rd-value"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedRdRdValue.Value = value.String()
+		data.VlanBasedRd.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.rt-value"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetRtValue.Value = value.String()
+		data.VlanBasedRouteTarget.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.both.rt-value"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetBothRtValue.Value = value.String()
+		data.VlanBasedRouteTargetBoth.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.import.rt-value"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetImportRtValue.Value = value.String()
+		data.VlanBasedRouteTargetImport.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.export.rt-value"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedRouteTargetExportRtValue.Value = value.String()
+		data.VlanBasedRouteTargetExport.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.export.ip.local-learning.disable"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceDisableCaseDisable.Value = true
+		data.VlanBasedIpLocalLearningDisable.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.export.ip.local-learning.enable"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedIpLocalLearningLocalLearningChoiceEnableCaseEnable.Value = true
+		data.VlanBasedIpLocalLearningEnable.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.default-gateway.advertise"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedDefaultGatewayAdvertise.Value = value.String()
+		data.VlanBasedDefaultGatewayAdvertise.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.re-originate.route-type5"); value.Exists() {
-		data.EvpnServiceTypeVlanBasedVlanBasedReOriginateRouteType5.Value = true
+		data.VlanBasedReOriginateRouteType5.Value = true
 	}
 }
 
