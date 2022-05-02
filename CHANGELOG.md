@@ -1,4 +1,4 @@
-## 0.1.1 (unreleased)
+## 0.1.1
 
 - Add iosxe_vlan resource and data source
 - Add iosxe_vlan_configuration resource and data source
