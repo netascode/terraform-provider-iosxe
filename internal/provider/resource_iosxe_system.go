@@ -45,6 +45,12 @@ func (t resourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 					helpers.StringPatternValidator(1, 246, `([0-9.]*[A-Za-z\-_]+[A-Za-z0-9.\-_]*)`),
 				},
 			},
+			"ipv6_unicast_routing": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable unicast routing").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
 		},
 	}, nil
 }

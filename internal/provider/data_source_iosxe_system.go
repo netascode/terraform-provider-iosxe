@@ -35,6 +35,11 @@ func (t dataSourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 				Type:                types.StringType,
 				Computed:            true,
 			},
+			"ipv6_unicast_routing": {
+				MarkdownDescription: "Enable unicast routing",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
 		},
 	}, nil
 }

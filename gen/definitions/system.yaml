@@ -6,3 +6,5 @@ doc_category: System
 attributes:
   - yang_name: hostname
     example: ROUTER-1
+  - yang_name: ipv6/unicast-routing
+    example: true

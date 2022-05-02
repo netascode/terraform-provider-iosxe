@@ -14,6 +14,7 @@
 - Add iosxe_bgp_neighbor resource and data source
 - Add iosxe_bgp_address_family_l2vpn resource and data source
 - Add iosxe_bgp_l2vpn_neighbor resource and data source
+- Add ipv6_unicast_routing option to iosxe_system resource
 
 ## 0.1.0
 

@@ -86,9 +86,11 @@ func (d dataSourceRestconf) Read(ctx context.Context, req tfsdk.ReadDataSourceRe
 			// handle empty maps
 			if value.IsObject() && len(value.Map()) == 0 {
 				attributes[attr] = types.String{Value: ""}
-				continue
+			} else if value.Raw == "[null]" {
+				attributes[attr] = types.String{Value: ""}
+			} else {
+				attributes[attr] = types.String{Value: value.String()}
 			}
-			attributes[attr] = types.String{Value: value.String()}
 		}
 		state.Attributes.Elems = attributes
 		state.Attributes.ElemType = types.StringType

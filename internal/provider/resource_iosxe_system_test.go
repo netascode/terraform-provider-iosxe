@@ -17,6 +17,7 @@ func TestAccIosxeSystem(t *testing.T) {
 				Config: testAccIosxeSystemConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("iosxe_system.test", "hostname", "ROUTER-1"),
+					resource.TestCheckResourceAttr("iosxe_system.test", "ipv6_unicast_routing", "true"),
 				),
 			},
 			{
@@ -39,6 +40,7 @@ func testAccIosxeSystemConfig_all() string {
 	return `
 	resource "iosxe_system" "test" {
 		hostname = "ROUTER-1"
+		ipv6_unicast_routing = true
 	}
 	`
 }

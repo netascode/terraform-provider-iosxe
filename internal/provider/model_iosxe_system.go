@@ -10,9 +10,10 @@ import (
 )
 
 type System struct {
-	Device   types.String `tfsdk:"device"`
-	Id       types.String `tfsdk:"id"`
-	Hostname types.String `tfsdk:"hostname"`
+	Device             types.String `tfsdk:"device"`
+	Id                 types.String `tfsdk:"id"`
+	Hostname           types.String `tfsdk:"hostname"`
+	Ipv6UnicastRouting types.Bool   `tfsdk:"ipv6_unicast_routing"`
 }
 
 func (data System) getPath() string {
@@ -24,12 +25,20 @@ func (data System) toBody() string {
 	if !data.Hostname.Null && !data.Hostname.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"hostname", data.Hostname.Value)
 	}
+	if !data.Ipv6UnicastRouting.Null && !data.Ipv6UnicastRouting.Unknown {
+		if data.Ipv6UnicastRouting.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ipv6.unicast-routing", map[string]string{})
+		}
+	}
 	return body
 }
 
 func (data *System) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "hostname"); value.Exists() {
 		data.Hostname.Value = value.String()
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ipv6.unicast-routing"); value.Exists() {
+		data.Ipv6UnicastRouting.Value = true
 	}
 }
 
