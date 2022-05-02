@@ -48,5 +48,5 @@ resource "iosxe_vlan" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import iosxe_vlan.example "Cisco-IOS-XE-native:native/vlan/ios-vlan:vlan-list=123"
+terraform import iosxe_vlan.example "Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=123"
 ```

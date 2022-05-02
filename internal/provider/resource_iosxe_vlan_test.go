@@ -26,7 +26,7 @@ func TestAccIosxeVLAN(t *testing.T) {
 			{
 				ResourceName:  "iosxe_vlan.test",
 				ImportState:   true,
-				ImportStateId: "Cisco-IOS-XE-native:native/vlan/ios-vlan:vlan-list=123",
+				ImportStateId: "Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=123",
 			},
 		},
 	})

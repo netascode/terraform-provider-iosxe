@@ -18,8 +18,6 @@ func TestAccDataSourceIosxeVLANConfiguration(t *testing.T) {
 			{
 				Config: testAccDataSourceIosxeVLANConfigurationConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_vlan_configuration.test", "vni", "10123"),
-					resource.TestCheckResourceAttr("data.iosxe_vlan_configuration.test", "access_vfi", "VFI123"),
 					resource.TestCheckResourceAttr("data.iosxe_vlan_configuration.test", "evpn_instance", "123"),
 					resource.TestCheckResourceAttr("data.iosxe_vlan_configuration.test", "evpn_instance_vni", "10123"),
 				),
@@ -32,8 +30,6 @@ const testAccDataSourceIosxeVLANConfigurationConfig = `
 
 resource "iosxe_vlan_configuration" "test" {
   vlan_id = "123"
-  vni = 10123
-  access_vfi = "VFI123"
   evpn_instance = 123
   evpn_instance_vni = 10123
 }

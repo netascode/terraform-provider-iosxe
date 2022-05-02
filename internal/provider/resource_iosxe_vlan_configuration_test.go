@@ -19,8 +19,6 @@ func TestAccIosxeVLANConfiguration(t *testing.T) {
 				Config: testAccIosxeVLANConfigurationConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "vlan_id", "123"),
-					resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "vni", "10123"),
-					resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "access_vfi", "VFI123"),
 					resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "evpn_instance", "123"),
 					resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "evpn_instance_vni", "10123"),
 				),
@@ -28,7 +26,7 @@ func TestAccIosxeVLANConfiguration(t *testing.T) {
 			{
 				ResourceName:  "iosxe_vlan_configuration.test",
 				ImportState:   true,
-				ImportStateId: "Cisco-IOS-XE-native:native/vlan/ios-vlan:configuration-entry=123",
+				ImportStateId: "Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:configuration-entry=123",
 			},
 		},
 	})
@@ -46,8 +44,6 @@ func testAccIosxeVLANConfigurationConfig_all() string {
 	return `
 	resource "iosxe_vlan_configuration" "test" {
 		vlan_id = "123"
-		vni = 10123
-		access_vfi = "VFI123"
 		evpn_instance = 123
 		evpn_instance_vni = 10123
 	}

@@ -22,7 +22,7 @@ func TestAccDataSourceIosxeEVPNInstance(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_evpn_instance.test", "vlan_based_replication_type_static", "true"),
 					resource.TestCheckResourceAttr("data.iosxe_evpn_instance.test", "vlan_based_replication_type_p2mp", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_evpn_instance.test", "vlan_based_replication_type_mp2mp", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_evpn_instance.test", "vlan_based_encapsulation", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_evpn_instance.test", "vlan_based_encapsulation", "vxlan"),
 					resource.TestCheckResourceAttr("data.iosxe_evpn_instance.test", "vlan_based_auto_route_target", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_evpn_instance.test", "vlan_based_rd", "10:10"),
 					resource.TestCheckResourceAttr("data.iosxe_evpn_instance.test", "vlan_based_route_target", "10:10"),
@@ -47,7 +47,7 @@ resource "iosxe_evpn_instance" "test" {
   vlan_based_replication_type_static = true
   vlan_based_replication_type_p2mp = false
   vlan_based_replication_type_mp2mp = false
-  vlan_based_encapsulation = "false"
+  vlan_based_encapsulation = "vxlan"
   vlan_based_auto_route_target = false
   vlan_based_rd = "10:10"
   vlan_based_route_target = "10:10"

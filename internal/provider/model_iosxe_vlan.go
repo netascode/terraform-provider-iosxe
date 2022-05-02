@@ -26,7 +26,7 @@ type VLAN struct {
 }
 
 func (data VLAN) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/ios-vlan:vlan-list=%v", data.VlanId.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=%v", data.VlanId.Value)
 }
 
 func (data VLAN) toBody() string {

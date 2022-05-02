@@ -66,7 +66,9 @@ func (data EVPNInstance) toBody() string {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.encapsulation", data.VlanBasedEncapsulation.Value)
 	}
 	if !data.VlanBasedAutoRouteTarget.Null && !data.VlanBasedAutoRouteTarget.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.auto-route-target_cont.auto-route-target-boolean", data.VlanBasedAutoRouteTarget.Value)
+		if data.VlanBasedAutoRouteTarget.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.auto-route-target_cont.auto-route-target", map[string]string{})
+		}
 	}
 	if !data.VlanBasedRd.Null && !data.VlanBasedRd.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.rd.rd-value", data.VlanBasedRd.Value)
@@ -85,12 +87,12 @@ func (data EVPNInstance) toBody() string {
 	}
 	if !data.VlanBasedIpLocalLearningDisable.Null && !data.VlanBasedIpLocalLearningDisable.Unknown {
 		if data.VlanBasedIpLocalLearningDisable.Value {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.export.ip.local-learning.disable", map[string]string{})
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.ip.local-learning.disable", map[string]string{})
 		}
 	}
 	if !data.VlanBasedIpLocalLearningEnable.Null && !data.VlanBasedIpLocalLearningEnable.Unknown {
 		if data.VlanBasedIpLocalLearningEnable.Value {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.route-target.export.ip.local-learning.enable", map[string]string{})
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-based.ip.local-learning.enable", map[string]string{})
 		}
 	}
 	if !data.VlanBasedDefaultGatewayAdvertise.Null && !data.VlanBasedDefaultGatewayAdvertise.Unknown {
@@ -120,8 +122,8 @@ func (data *EVPNInstance) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.encapsulation"); value.Exists() {
 		data.VlanBasedEncapsulation.Value = value.String()
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.auto-route-target_cont.auto-route-target-boolean"); value.Exists() {
-		data.VlanBasedAutoRouteTarget.Value = value.Bool()
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.auto-route-target_cont.auto-route-target"); value.Exists() {
+		data.VlanBasedAutoRouteTarget.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.rd.rd-value"); value.Exists() {
 		data.VlanBasedRd.Value = value.String()
@@ -138,10 +140,10 @@ func (data *EVPNInstance) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.export.rt-value"); value.Exists() {
 		data.VlanBasedRouteTargetExport.Value = value.String()
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.export.ip.local-learning.disable"); value.Exists() {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.ip.local-learning.disable"); value.Exists() {
 		data.VlanBasedIpLocalLearningDisable.Value = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.export.ip.local-learning.enable"); value.Exists() {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.ip.local-learning.enable"); value.Exists() {
 		data.VlanBasedIpLocalLearningEnable.Value = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.default-gateway.advertise"); value.Exists() {

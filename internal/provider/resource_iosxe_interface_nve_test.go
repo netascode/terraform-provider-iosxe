@@ -23,11 +23,8 @@ func TestAccIosxeInterfaceNVE(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "shutdown", "false"),
 					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "host_reachability_protocol_bgp", "true"),
 					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "source_interface_loopback", "100"),
-					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "vni_vrfs.0.vni_range", "10000"),
-					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "vni_vrfs.0.vrf", "VRF1"),
 					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "vnis.0.vni_range", "10000"),
-					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "vnis.0.ipv4_multicast_group", "255.1.1.1"),
-					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "vnis.0.ingress_replication", "true"),
+					resource.TestCheckResourceAttr("iosxe_interface_nve.test", "vnis.0.ipv4_multicast_group", "225.1.1.1"),
 				),
 			},
 			{
@@ -55,14 +52,9 @@ func testAccIosxeInterfaceNVEConfig_all() string {
 		shutdown = false
 		host_reachability_protocol_bgp = true
 		source_interface_loopback = 100
-		vni_vrfs = [{
-		vni_range = "10000"
-		vrf = "VRF1"
-		}]
 		vnis = [{
 		vni_range = "10000"
-		ipv4_multicast_group = "255.1.1.1"
-		ingress_replication = true
+		ipv4_multicast_group = "225.1.1.1"
 		}]
 	}
 	`

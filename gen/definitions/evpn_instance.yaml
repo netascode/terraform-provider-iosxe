@@ -25,9 +25,9 @@ attributes:
   - yang_name: evpn-service-type/vlan-based/vlan-based/encapsulation
     xpath: vlan-based/encapsulation
     tf_name: vlan_based_encapsulation
-    example: false
-  - yang_name: evpn-service-type/vlan-based/vlan-based/auto-route-target_cont/auto-route-target-boolean
-    xpath: vlan-based/auto-route-target_cont/auto-route-target-boolean
+    example: vxlan
+  - yang_name: evpn-service-type/vlan-based/vlan-based/auto-route-target_cont/auto-route-target
+    xpath: vlan-based/auto-route-target_cont/auto-route-target
     tf_name: vlan_based_auto_route_target
     example: false
   - yang_name: evpn-service-type/vlan-based/vlan-based/rd/rd-value
@@ -51,11 +51,11 @@ attributes:
     tf_name: vlan_based_route_target_export
     example: 10:10
   - yang_name: evpn-service-type/vlan-based/vlan-based/ip/local-learning/local-learning-choice/disable-case/disable
-    xpath: vlan-based/route-target/export/ip/local-learning/disable
+    xpath: vlan-based/ip/local-learning/disable
     tf_name: vlan_based_ip_local_learning_disable
     example: false
   - yang_name: evpn-service-type/vlan-based/vlan-based/ip/local-learning/local-learning-choice/enable-case/enable
-    xpath: vlan-based/route-target/export/ip/local-learning/enable
+    xpath: vlan-based/ip/local-learning/enable
     tf_name: vlan_based_ip_local_learning_enable
     example: true
   - yang_name: evpn-service-type/vlan-based/vlan-based/default-gateway/advertise
