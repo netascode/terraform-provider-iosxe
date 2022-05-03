@@ -15,7 +15,7 @@ import (
 type VLANConfiguration struct {
 	Device          types.String `tfsdk:"device"`
 	Id              types.String `tfsdk:"id"`
-	VlanId          types.String `tfsdk:"vlan_id"`
+	VlanId          types.Int64  `tfsdk:"vlan_id"`
 	Vni             types.Int64  `tfsdk:"vni"`
 	AccessVfi       types.String `tfsdk:"access_vfi"`
 	EvpnInstance    types.Int64  `tfsdk:"evpn_instance"`
@@ -23,13 +23,13 @@ type VLANConfiguration struct {
 }
 
 func (data VLANConfiguration) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:configuration-entry=%v", data.VlanId.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:configuration=%v", data.VlanId.Value)
 }
 
 func (data VLANConfiguration) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.VlanId.Null && !data.VlanId.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-id", data.VlanId.Value)
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-id", strconv.FormatInt(data.VlanId.Value, 10))
 	}
 	if !data.Vni.Null && !data.Vni.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni", strconv.FormatInt(data.Vni.Value, 10))

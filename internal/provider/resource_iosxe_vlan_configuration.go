@@ -37,11 +37,11 @@ func (t resourceVLANConfigurationType) GetSchema(ctx context.Context) (tfsdk.Sch
 				},
 			},
 			"vlan_id": {
-				MarkdownDescription: helpers.NewAttributeDescription("VLAN ID List Eg. 1-10,15").String,
-				Type:                types.StringType,
+				MarkdownDescription: helpers.NewAttributeDescription("VLAN ID List Eg. 1-10,15").AddIntegerRangeDescription(1, 4094).String,
+				Type:                types.Int64Type,
 				Required:            true,
 				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(((409[0-4]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{1,2}|[1-9])(\-(409[0-4]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{1,2}|[1-9]))?)(,((409[0-4]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{1,2}|[1-9])(\-(409[0-4]|40[0-8][0-9]|[1-3][0-9]{3}|[1-9][0-9]{1,2}|[1-9]))?))*)`),
+					helpers.IntegerRangeValidator(1, 4094),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					tfsdk.RequiresReplace(),

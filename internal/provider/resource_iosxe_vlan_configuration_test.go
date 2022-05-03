@@ -26,7 +26,7 @@ func TestAccIosxeVLANConfiguration(t *testing.T) {
 			{
 				ResourceName:  "iosxe_vlan_configuration.test",
 				ImportState:   true,
-				ImportStateId: "Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:configuration-entry=123",
+				ImportStateId: "Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:configuration=123",
 			},
 		},
 	})
@@ -35,7 +35,7 @@ func TestAccIosxeVLANConfiguration(t *testing.T) {
 func testAccIosxeVLANConfigurationConfig_minimum() string {
 	return `
 	resource "iosxe_vlan_configuration" "test" {
-		vlan_id = "123"
+		vlan_id = 123
 	}
 	`
 }
@@ -43,7 +43,7 @@ func testAccIosxeVLANConfigurationConfig_minimum() string {
 func testAccIosxeVLANConfigurationConfig_all() string {
 	return `
 	resource "iosxe_vlan_configuration" "test" {
-		vlan_id = "123"
+		vlan_id = 123
 		evpn_instance = 123
 		evpn_instance_vni = 10123
 	}

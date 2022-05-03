@@ -14,7 +14,7 @@ This data source can read the VLAN Configuration configuration.
 
 ```terraform
 data "iosxe_vlan_configuration" "example" {
-  vlan_id = "123"
+  vlan_id = 123
 }
 ```
 
@@ -23,7 +23,7 @@ data "iosxe_vlan_configuration" "example" {
 
 ### Required
 
-- `vlan_id` (String) VLAN ID List Eg. 1-10,15
+- `vlan_id` (Number) VLAN ID List Eg. 1-10,15
 
 ### Optional
 

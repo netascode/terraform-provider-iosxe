@@ -32,7 +32,7 @@ func (t dataSourceVLANConfigurationType) GetSchema(ctx context.Context) (tfsdk.S
 			},
 			"vlan_id": {
 				MarkdownDescription: "VLAN ID List Eg. 1-10,15",
-				Type:                types.StringType,
+				Type:                types.Int64Type,
 				Required:            true,
 			},
 			"vni": {

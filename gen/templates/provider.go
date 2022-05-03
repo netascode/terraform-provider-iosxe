@@ -72,11 +72,11 @@ func (p *provider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostic
 				Optional:            true,
 			},
 			"retries": {
-				MarkdownDescription: "Number of retries for REST API calls. This can also be set as the IOSXE_RETRIES environment variable. Defaults to `2`.",
+				MarkdownDescription: "Number of retries for REST API calls. This can also be set as the IOSXE_RETRIES environment variable. Defaults to `10`.",
 				Type:                types.Int64Type,
 				Optional:            true,
 				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 9),
+					helpers.IntegerRangeValidator(0, 99),
 				},
 			},
 			"devices": {
@@ -223,7 +223,7 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 	if config.Retries.Null {
 		retriesStr := os.Getenv("IOSXE_RETRIES")
 		if retriesStr == "" {
-			retries = 2
+			retries = 10
 		} else {
 			retries, _ = strconv.ParseInt(retriesStr, 0, 64)
 		}
