@@ -1,4 +1,4 @@
-## 0.1.2 (unreleased)
+## 0.1.2
 
 - Fix iosxe_vlan_configuration resource to be compatible with older IOS-XE releases
 - Optimize RESTCONF retries
