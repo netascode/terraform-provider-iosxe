@@ -33,10 +33,26 @@ resource "iosxe_restconf" "example" {
 - `attributes` (Map of String) Map of key-value pairs which represents the attributes and its values.
 - `delete` (Boolean) Delete object during destroy operation. Default value is `true`.
 - `device` (String) A device name from the provider configuration.
+- `lists` (Attributes List) YANG lists. (see [below for nested schema](#nestedatt--lists))
 
 ### Read-Only
 
 - `id` (String) The path of the object.
+
+<a id="nestedatt--lists"></a>
+### Nested Schema for `lists`
+
+Optional:
+
+- `items` (Attributes List) Items of YANG lists. (see [below for nested schema](#nestedatt--lists--items))
+- `name` (String) YANG list name.
+
+<a id="nestedatt--lists--items"></a>
+### Nested Schema for `lists.items`
+
+Optional:
+
+- `attributes` (Map of String) Map of key-value pairs which represents the attributes and its values.
 
 ## Import
 

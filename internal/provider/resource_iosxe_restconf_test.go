@@ -36,6 +36,14 @@ func TestAccIosxeRestconf(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_restconf.test", "attributes.banner", "My New Banner"),
 				),
 			},
+			{
+				Config: testAccIosxeRestconfConfig_nested(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("iosxe_restconf.nested", "attributes.hostname", "R1"),
+					resource.TestCheckResourceAttr("iosxe_restconf.nested", "lists.0.name", "username"),
+					resource.TestCheckResourceAttr("iosxe_restconf.nested", "lists.0.items.0.attributes.name", "test123"),
+				),
+			},
 		},
 	})
 }
@@ -57,4 +65,28 @@ func testAccIosxeRestconfConfig_banner(message string) string {
 		}
 	}
 	`, message)
+}
+
+func testAccIosxeRestconfConfig_nested() string {
+	return `
+	resource "iosxe_restconf" "nested" {
+		path = "Cisco-IOS-XE-native:native"
+		delete = false
+		attributes = {
+			hostname = "R1"
+		}
+		lists = [
+			{
+				name = "username"
+				items = [
+					{
+						attributes = {
+							name = "test123"
+						}
+					}
+				]
+			}
+		]
+	}
+	`
 }

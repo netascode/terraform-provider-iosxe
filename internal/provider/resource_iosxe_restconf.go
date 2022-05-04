@@ -58,6 +58,29 @@ func (t resourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 				Optional:            true,
 				Computed:            true,
 			},
+			"lists": {
+				MarkdownDescription: "YANG lists.",
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"name": {
+						MarkdownDescription: "YANG list name.",
+						Type:                types.StringType,
+						Required:            true,
+					},
+					"items": {
+						MarkdownDescription: "Items of YANG lists.",
+						Optional:            true,
+						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+							"attributes": {
+								Type:                types.MapType{ElemType: types.StringType},
+								MarkdownDescription: "Map of key-value pairs which represents the attributes and its values.",
+								Optional:            true,
+								Computed:            true,
+							},
+						}, tfsdk.ListNestedAttributesOptions{}),
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }
@@ -157,6 +180,23 @@ func (r resourceRestconf) Read(ctx context.Context, req tfsdk.ReadResourceReques
 			}
 		}
 		state.Attributes.Elems = attributes
+
+		for i := range state.Lists {
+			for ii := range state.Lists[i].Items {
+				var ca map[string]attr.Value
+				state.Lists[i].Items[ii].Attributes.ElementsAs(ctx, &ca, false)
+				for attr := range ca {
+					v := res.Res.Get(helpers.LastElement(state.Path.Value) + "." + state.Lists[i].Name.Value + "." + attr)
+					if v.IsObject() && len(v.Map()) == 0 {
+						ca[attr] = types.String{Value: ""}
+					} else if v.Raw == "[null]" {
+						ca[attr] = types.String{Value: ""}
+					} else {
+						ca[attr] = types.String{Value: v.String()}
+					}
+				}
+			}
+		}
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", state.Id.Value))
