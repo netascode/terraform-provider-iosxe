@@ -8,24 +8,24 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceIosxeBGPL2VPNNeighbor(t *testing.T) {
+func TestAccDataSourceIosxeBGPL2VPNEVPNNeighbor(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeBGPL2VPNNeighborPrerequisitesConfig + testAccDataSourceIosxeBGPL2VPNNeighborConfig,
+				Config: testAccDataSourceIosxeBGPL2VPNEVPNNeighborPrerequisitesConfig + testAccDataSourceIosxeBGPL2VPNEVPNNeighborConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_bgp_l2vpn_neighbor.test", "activate", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_l2vpn_neighbor.test", "send_community", "both"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_l2vpn_neighbor.test", "route_reflector_client", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_bgp_l2vpn_evpn_neighbor.test", "activate", "true"),
+					resource.TestCheckResourceAttr("data.iosxe_bgp_l2vpn_evpn_neighbor.test", "send_community", "both"),
+					resource.TestCheckResourceAttr("data.iosxe_bgp_l2vpn_evpn_neighbor.test", "route_reflector_client", "false"),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeBGPL2VPNNeighborPrerequisitesConfig = `
+const testAccDataSourceIosxeBGPL2VPNEVPNNeighborPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
   attributes = {
@@ -52,11 +52,10 @@ resource "iosxe_restconf" "PreReq2" {
 
 `
 
-const testAccDataSourceIosxeBGPL2VPNNeighborConfig = `
+const testAccDataSourceIosxeBGPL2VPNEVPNNeighborConfig = `
 
-resource "iosxe_bgp_l2vpn_neighbor" "test" {
+resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
   asn = "65000"
-  af_name = "evpn"
   ip = "3.3.3.3"
   activate = true
   send_community = "both"
@@ -64,10 +63,9 @@ resource "iosxe_bgp_l2vpn_neighbor" "test" {
   depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 }
 
-data "iosxe_bgp_l2vpn_neighbor" "test" {
+data "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
   asn = "65000"
-  af_name = "evpn"
   ip = "3.3.3.3"
-  depends_on = [iosxe_bgp_l2vpn_neighbor.test]
+  depends_on = [iosxe_bgp_l2vpn_evpn_neighbor.test]
 }
 `

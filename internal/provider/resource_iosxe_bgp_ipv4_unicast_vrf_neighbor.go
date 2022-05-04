@@ -15,12 +15,12 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceBGPL2VPNNeighborType struct{}
+type resourceBGPIPv4UnicastVRFNeighborType struct{}
 
-func (t resourceBGPL2VPNNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the BGP L2VPN Neighbor configuration.",
+		MarkdownDescription: "This resource can manage the BGP IPv4 Unicast VRF Neighbor configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -44,13 +44,10 @@ func (t resourceBGPL2VPNNeighborType) GetSchema(ctx context.Context) (tfsdk.Sche
 					tfsdk.RequiresReplace(),
 				},
 			},
-			"af_name": {
-				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("evpn", "vpls").String,
+			"vrf": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Type:                types.StringType,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("evpn", "vpls"),
-				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					tfsdk.RequiresReplace(),
 				},
@@ -62,6 +59,30 @@ func (t resourceBGPL2VPNNeighborType) GetSchema(ctx context.Context) (tfsdk.Sche
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					tfsdk.RequiresReplace(),
 				},
+			},
+			"remote_as": {
+				MarkdownDescription: helpers.NewAttributeDescription("Specify a BGP peer-group remote-as").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"description": {
+				MarkdownDescription: helpers.NewAttributeDescription("Neighbor specific description").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"shutdown": {
+				MarkdownDescription: helpers.NewAttributeDescription("Administratively shut down this neighbor").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"update_source_loopback": {
+				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").String,
+				Type:                types.Int64Type,
+				Optional:            true,
+				Computed:            true,
 			},
 			"activate": {
 				MarkdownDescription: helpers.NewAttributeDescription("Enable the address family for this neighbor").String,
@@ -88,20 +109,20 @@ func (t resourceBGPL2VPNNeighborType) GetSchema(ctx context.Context) (tfsdk.Sche
 	}, nil
 }
 
-func (t resourceBGPL2VPNNeighborType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceBGPIPv4UnicastVRFNeighborType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return resourceBGPL2VPNNeighbor{
+	return resourceBGPIPv4UnicastVRFNeighbor{
 		provider: provider,
 	}, diags
 }
 
-type resourceBGPL2VPNNeighbor struct {
+type resourceBGPIPv4UnicastVRFNeighbor struct {
 	provider provider
 }
 
-func (r resourceBGPL2VPNNeighbor) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan, state BGPL2VPNNeighbor
+func (r resourceBGPIPv4UnicastVRFNeighbor) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+	var plan, state BGPIPv4UnicastVRFNeighbor
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -147,8 +168,8 @@ func (r resourceBGPL2VPNNeighbor) Create(ctx context.Context, req tfsdk.CreateRe
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPL2VPNNeighbor) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state, newState BGPL2VPNNeighbor
+func (r resourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+	var state, newState BGPIPv4UnicastVRFNeighbor
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -177,8 +198,8 @@ func (r resourceBGPL2VPNNeighbor) Read(ctx context.Context, req tfsdk.ReadResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPL2VPNNeighbor) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan, state BGPL2VPNNeighbor
+func (r resourceBGPIPv4UnicastVRFNeighbor) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+	var plan, state BGPIPv4UnicastVRFNeighbor
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -223,8 +244,8 @@ func (r resourceBGPL2VPNNeighbor) Update(ctx context.Context, req tfsdk.UpdateRe
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPL2VPNNeighbor) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
-	var state BGPL2VPNNeighbor
+func (r resourceBGPIPv4UnicastVRFNeighbor) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+	var state BGPIPv4UnicastVRFNeighbor
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -246,6 +267,6 @@ func (r resourceBGPL2VPNNeighbor) Delete(ctx context.Context, req tfsdk.DeleteRe
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceBGPL2VPNNeighbor) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+func (r resourceBGPIPv4UnicastVRFNeighbor) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
 	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
 }

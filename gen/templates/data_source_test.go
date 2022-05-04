@@ -52,6 +52,26 @@ resource "iosxe_restconf" "PreReq{{$index}}" {
       {{.Name}} = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
     {{- end}}
   }
+  {{- if .Lists}}
+  lists = [
+  {{- range .Lists}}
+    {
+      name = "{{.Name}}"
+      items = [
+        {{- range .Items}}
+          {
+            attributes = {
+          {{- range .Attributes}}
+            {{.Name}} = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
+          {{- end}}
+            }
+          },
+        {{- end}}
+      ] 
+    },
+  {{- end}}
+  ]
+  {{- end}}
   {{- if .Dependencies}}
   depends_on = [{{range .Dependencies}}iosxe_restconf.PreReq{{.}}, {{end}}]
   {{- end}}

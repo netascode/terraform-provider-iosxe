@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-type dataSourceBGPL2VPNNeighborType struct{}
+type dataSourceBGPL2VPNEVPNNeighborType struct{}
 
-func (t dataSourceBGPL2VPNNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t dataSourceBGPL2VPNEVPNNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This data source can read the BGP L2VPN Neighbor configuration.",
+		MarkdownDescription: "This data source can read the BGP L2VPN EVPN Neighbor configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -31,11 +31,6 @@ func (t dataSourceBGPL2VPNNeighborType) GetSchema(ctx context.Context) (tfsdk.Sc
 				Computed:            true,
 			},
 			"asn": {
-				MarkdownDescription: "",
-				Type:                types.StringType,
-				Computed:            true,
-			},
-			"af_name": {
 				MarkdownDescription: "",
 				Type:                types.StringType,
 				Computed:            true,
@@ -64,20 +59,20 @@ func (t dataSourceBGPL2VPNNeighborType) GetSchema(ctx context.Context) (tfsdk.Sc
 	}, nil
 }
 
-func (t dataSourceBGPL2VPNNeighborType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceBGPL2VPNEVPNNeighborType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return dataSourceBGPL2VPNNeighbor{
+	return dataSourceBGPL2VPNEVPNNeighbor{
 		provider: provider,
 	}, diags
 }
 
-type dataSourceBGPL2VPNNeighbor struct {
+type dataSourceBGPL2VPNEVPNNeighbor struct {
 	provider provider
 }
 
-func (d dataSourceBGPL2VPNNeighbor) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config, state BGPL2VPNNeighbor
+func (d dataSourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+	var config, state BGPL2VPNEVPNNeighbor
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)

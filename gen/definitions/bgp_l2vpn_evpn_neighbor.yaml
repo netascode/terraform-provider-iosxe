@@ -1,14 +1,12 @@
 ---
-name: BGP L2VPN Neighbor
-path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=%s/l2vpn-evpn/neighbor=%s
+name: BGP L2VPN EVPN Neighbor
+path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s
 doc_category: BGP
 attributes:
   - yang_name: id
     yang_scope: bgp
     tf_name: asn
     example: 65000
-  - yang_name: af-name
-    example: evpn
   - yang_name: id
     yang_scope: neighbor
     tf_name: ip

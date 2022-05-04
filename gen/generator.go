@@ -118,6 +118,7 @@ type YamlTest struct {
 	Path         string              `yaml:"path"`
 	NoDelete     bool                `yaml:"no_delete"`
 	Attributes   []YamlTestAttribute `yaml:"attributes"`
+	Lists        []YamlTestList      `yaml:"lists"`
 	Dependencies []string            `yaml:"dependencies"`
 }
 
@@ -125,6 +126,15 @@ type YamlTestAttribute struct {
 	Name      string `yaml:"name"`
 	Value     string `yaml:"value"`
 	Reference string `yaml:"reference"`
+}
+
+type YamlTestList struct {
+	Name  string             `yaml:"name"`
+	Items []YamlTestListItem `yaml:"items"`
+}
+
+type YamlTestListItem struct {
+	Attributes []YamlTestAttribute `yaml:"attributes"`
 }
 
 // Templating helper function to get short YAMG name without prefix (xxx:abc -> abc)
@@ -265,7 +275,7 @@ func addKeys(e *yang.Entry, config *YamlConfig) {
 					}
 				}
 				if keyAttr == nil {
-					panic(fmt.Sprintf("Cannot find id/reference attribute in config: %s", key))
+					continue
 				}
 				if first {
 					keyAttr.Id = true

@@ -2,6 +2,8 @@
 
 - Add unnumbered option to iosxe_interface_vlan resource
 - Add option to configure lists with iosxe_restconf
+- Add iosxe_bgp_ipv4_unicast_vrf_neighbor resource and data source
+- BREAKING CHANGE: Rename iosxe_bgp_l2vpn_neighbor resource and data source to iosxe_bgp_l2vpn_evpn_neighbor and remove af_name attribute
 
 ## 0.1.2
 

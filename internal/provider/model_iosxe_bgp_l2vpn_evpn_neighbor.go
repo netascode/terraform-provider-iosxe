@@ -11,22 +11,21 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-type BGPL2VPNNeighbor struct {
+type BGPL2VPNEVPNNeighbor struct {
 	Device               types.String `tfsdk:"device"`
 	Id                   types.String `tfsdk:"id"`
 	Asn                  types.String `tfsdk:"asn"`
-	AfName               types.String `tfsdk:"af_name"`
 	Ip                   types.String `tfsdk:"ip"`
 	Activate             types.Bool   `tfsdk:"activate"`
 	SendCommunity        types.String `tfsdk:"send_community"`
 	RouteReflectorClient types.Bool   `tfsdk:"route_reflector_client"`
 }
 
-func (data BGPL2VPNNeighbor) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=%s/l2vpn-evpn/neighbor=%s", data.Asn.Value, data.AfName.Value, data.Ip.Value)
+func (data BGPL2VPNEVPNNeighbor) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s", data.Asn.Value, data.Ip.Value)
 }
 
-func (data BGPL2VPNNeighbor) toBody() string {
+func (data BGPL2VPNEVPNNeighbor) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Ip.Null && !data.Ip.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Ip.Value)
@@ -47,7 +46,7 @@ func (data BGPL2VPNNeighbor) toBody() string {
 	return body
 }
 
-func (data *BGPL2VPNNeighbor) fromBody(res gjson.Result) {
+func (data *BGPL2VPNEVPNNeighbor) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "activate"); value.Exists() {
 		data.Activate.Value = true
 	}
@@ -59,9 +58,8 @@ func (data *BGPL2VPNNeighbor) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPL2VPNNeighbor) fromPlan(plan BGPL2VPNNeighbor) {
+func (data *BGPL2VPNEVPNNeighbor) fromPlan(plan BGPL2VPNEVPNNeighbor) {
 	data.Device = plan.Device
 	data.Asn.Value = plan.Asn.Value
-	data.AfName.Value = plan.AfName.Value
 	data.Ip.Value = plan.Ip.Value
 }

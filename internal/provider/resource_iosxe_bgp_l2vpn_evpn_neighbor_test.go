@@ -8,22 +8,22 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccIosxeBGPL2VPNNeighbor(t *testing.T) {
+func TestAccIosxeBGPL2VPNEVPNNeighbor(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccIosxeBGPL2VPNNeighborPrerequisitesConfig + testAccIosxeBGPL2VPNNeighborConfig_all(),
+				Config: testAccIosxeBGPL2VPNEVPNNeighborPrerequisitesConfig + testAccIosxeBGPL2VPNEVPNNeighborConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_neighbor.test", "ip", "3.3.3.3"),
-					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_neighbor.test", "activate", "true"),
-					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_neighbor.test", "send_community", "both"),
-					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_neighbor.test", "route_reflector_client", "false"),
+					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "ip", "3.3.3.3"),
+					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "activate", "true"),
+					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "send_community", "both"),
+					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "route_reflector_client", "false"),
 				),
 			},
 			{
-				ResourceName:  "iosxe_bgp_l2vpn_neighbor.test",
+				ResourceName:  "iosxe_bgp_l2vpn_evpn_neighbor.test",
 				ImportState:   true,
 				ImportStateId: "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=3.3.3.3",
 			},
@@ -31,7 +31,7 @@ func TestAccIosxeBGPL2VPNNeighbor(t *testing.T) {
 	})
 }
 
-const testAccIosxeBGPL2VPNNeighborPrerequisitesConfig = `
+const testAccIosxeBGPL2VPNEVPNNeighborPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
   attributes = {
@@ -58,22 +58,20 @@ resource "iosxe_restconf" "PreReq2" {
 
 `
 
-func testAccIosxeBGPL2VPNNeighborConfig_minimum() string {
+func testAccIosxeBGPL2VPNEVPNNeighborConfig_minimum() string {
 	return `
-	resource "iosxe_bgp_l2vpn_neighbor" "test" {
+	resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
 		asn = "65000"
-		af_name = "evpn"
 		ip = "3.3.3.3"
   		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 	}
 	`
 }
 
-func testAccIosxeBGPL2VPNNeighborConfig_all() string {
+func testAccIosxeBGPL2VPNEVPNNeighborConfig_all() string {
 	return `
-	resource "iosxe_bgp_l2vpn_neighbor" "test" {
+	resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
 		asn = "65000"
-		af_name = "evpn"
 		ip = "3.3.3.3"
 		activate = true
 		send_community = "both"
