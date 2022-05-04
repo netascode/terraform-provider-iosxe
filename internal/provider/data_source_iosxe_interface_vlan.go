@@ -65,6 +65,11 @@ func (t dataSourceInterfaceVLANType) GetSchema(ctx context.Context) (tfsdk.Schem
 				Type:                types.StringType,
 				Computed:            true,
 			},
+			"unnumbered": {
+				MarkdownDescription: "Enable IP processing without an explicit address",
+				Type:                types.StringType,
+				Computed:            true,
+			},
 			"pim_sparse_mode": {
 				MarkdownDescription: "Enable PIM sparse-mode operation",
 				Type:                types.BoolType,

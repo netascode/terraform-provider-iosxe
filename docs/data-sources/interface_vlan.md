@@ -38,6 +38,7 @@ data "iosxe_interface_vlan" "example" {
 - `ipv4_address_mask` (String)
 - `pim_sparse_mode` (Boolean) Enable PIM sparse-mode operation
 - `shutdown` (Boolean) Shutdown the selected interface
+- `unnumbered` (String) Enable IP processing without an explicit address
 - `vrf_forwarding` (String) Configure forwarding table
 
 

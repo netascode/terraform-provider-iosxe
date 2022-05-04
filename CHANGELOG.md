@@ -1,3 +1,7 @@
+## 0.1.3 (unreleased)
+
+- Add unnumbered option to iosxe_interface_vlan resource
+
 ## 0.1.2
 
 - Fix iosxe_vlan_configuration resource to be compatible with older IOS-XE releases

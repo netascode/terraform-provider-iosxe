@@ -24,6 +24,11 @@ attributes:
     xpath: ip/address/primary/mask
     tf_name: ipv4_address_mask
     example: 255.255.255.0
+  - yang_name: ip/address-choice/unnumbered/unnumbered
+    xpath: ip/unnumbered
+    tf_name: unnumbered
+    exclude_test: true
+    example: Loopback100
   - yang_name: ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/sparse/sparse-mode
     xpath: ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode
     tf_name: pim_sparse_mode

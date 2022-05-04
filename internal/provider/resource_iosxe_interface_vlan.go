@@ -92,6 +92,12 @@ func (t resourceInterfaceVLANType) GetSchema(ctx context.Context) (tfsdk.Schema,
 					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
 				},
 			},
+			"unnumbered": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable IP processing without an explicit address").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
 			"pim_sparse_mode": {
 				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM sparse-mode operation").String,
 				Type:                types.BoolType,

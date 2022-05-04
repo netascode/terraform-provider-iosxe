@@ -22,6 +22,7 @@ type InterfaceVLAN struct {
 	VrfForwarding   types.String `tfsdk:"vrf_forwarding"`
 	Ipv4Address     types.String `tfsdk:"ipv4_address"`
 	Ipv4AddressMask types.String `tfsdk:"ipv4_address_mask"`
+	Unnumbered      types.String `tfsdk:"unnumbered"`
 	PimSparseMode   types.Bool   `tfsdk:"pim_sparse_mode"`
 }
 
@@ -54,6 +55,9 @@ func (data InterfaceVLAN) toBody() string {
 	if !data.Ipv4AddressMask.Null && !data.Ipv4AddressMask.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.mask", data.Ipv4AddressMask.Value)
 	}
+	if !data.Unnumbered.Null && !data.Unnumbered.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.unnumbered", data.Unnumbered.Value)
+	}
 	if !data.PimSparseMode.Null && !data.PimSparseMode.Unknown {
 		if data.PimSparseMode.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode", map[string]string{})
@@ -80,6 +84,9 @@ func (data *InterfaceVLAN) fromBody(res gjson.Result) {
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.mask"); value.Exists() {
 		data.Ipv4AddressMask.Value = value.String()
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.unnumbered"); value.Exists() {
+		data.Unnumbered.Value = value.String()
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
 		data.PimSparseMode.Value = true
