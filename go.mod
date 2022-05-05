@@ -6,7 +6,7 @@ require (
 	github.com/hashicorp/terraform-plugin-docs v0.8.0
 	github.com/hashicorp/terraform-plugin-framework v0.7.0
 	github.com/hashicorp/terraform-plugin-go v0.9.0
-	github.com/hashicorp/terraform-plugin-log v0.3.0
+	github.com/hashicorp/terraform-plugin-log v0.4.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.14.0
 	github.com/netascode/go-restconf v0.1.3
 	github.com/openconfig/goyang v1.0.0
