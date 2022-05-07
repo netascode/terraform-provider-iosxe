@@ -23,6 +23,7 @@ attributes:
     attributes:
       - yang_name: vni-range
         example: 10000
+        id: true
       - yang_name: vrf
         example: VRF1
   - yang_name: member/vni
@@ -31,6 +32,7 @@ attributes:
     attributes:
       - yang_name: vni-range
         example: 10000
+        id: true
       - yang_name: mcast-group/multicast-group-min
         tf_name: ipv4_multicast_group
         example: 225.1.1.1

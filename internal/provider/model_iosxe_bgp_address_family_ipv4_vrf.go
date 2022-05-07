@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -88,4 +89,15 @@ func (data *BGPAddressFamilyIPv4VRF) fromPlan(plan BGPAddressFamilyIPv4VRF) {
 	data.Device = plan.Device
 	data.Asn.Value = plan.Asn.Value
 	data.AfName.Value = plan.AfName.Value
+	sort.SliceStable(data.Vrfs, func(i, j int) bool {
+		for ii := range plan.Vrfs {
+			if plan.Vrfs[ii].Name.Value == data.Vrfs[i].Name.Value {
+				return true
+			}
+			if plan.Vrfs[ii].Name.Value == data.Vrfs[j].Name.Value {
+				return false
+			}
+		}
+		return false
+	})
 }

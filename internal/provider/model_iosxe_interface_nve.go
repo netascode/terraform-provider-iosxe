@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -137,4 +138,26 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 func (data *InterfaceNVE) fromPlan(plan InterfaceNVE) {
 	data.Device = plan.Device
 	data.Name.Value = plan.Name.Value
+	sort.SliceStable(data.VniVrfs, func(i, j int) bool {
+		for ii := range plan.VniVrfs {
+			if plan.VniVrfs[ii].VniRange.Value == data.VniVrfs[i].VniRange.Value {
+				return true
+			}
+			if plan.VniVrfs[ii].VniRange.Value == data.VniVrfs[j].VniRange.Value {
+				return false
+			}
+		}
+		return false
+	})
+	sort.SliceStable(data.Vnis, func(i, j int) bool {
+		for ii := range plan.Vnis {
+			if plan.Vnis[ii].VniRange.Value == data.Vnis[i].VniRange.Value {
+				return true
+			}
+			if plan.Vnis[ii].VniRange.Value == data.Vnis[j].VniRange.Value {
+				return false
+			}
+		}
+		return false
+	})
 }

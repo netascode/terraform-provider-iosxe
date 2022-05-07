@@ -11,6 +11,10 @@ import (
 	{{- if $strconv }}
 	"strconv"
 	{{- end}}
+	{{- $sort := false }}{{ range .Attributes}}{{ if (eq .Type "List") }}{{ $sort = true }}{{ end}}{{ end}}
+	{{- if $sort }}
+	"sort"
+	{{- end}}
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -155,6 +159,20 @@ func (data *{{camelCase .Name}}) fromPlan(plan {{camelCase .Name}}) {
 	{{- range .Attributes}}
 	{{- if or (eq .Reference true) (eq .Id true) (eq .WriteOnly true)}}
 	data.{{toGoName .TfName}}.Value = plan.{{toGoName .TfName}}.Value
+	{{- end}}
+	{{- if or (eq .Type "List")}}
+	{{- $id := "" }}{{ range .Attributes}}{{ if .Id}}{{ $id = (toGoName .TfName) }}{{ end}}{{ end}}
+	sort.SliceStable(data.{{toGoName .TfName}}, func(i, j int) bool {
+		for ii := range plan.{{toGoName .TfName}} {
+			if plan.{{toGoName .TfName}}[ii].{{$id}}.Value == data.{{toGoName .TfName}}[i].{{$id}}.Value {
+				return true
+			}
+			if plan.{{toGoName .TfName}}[ii].{{$id}}.Value == data.{{toGoName .TfName}}[j].{{$id}}.Value {
+				return false
+			}
+		}
+		return false
+	})
 	{{- end}}
 	{{- end}}
 }

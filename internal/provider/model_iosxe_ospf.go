@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -227,4 +228,37 @@ func (data *OSPF) fromBody(res gjson.Result) {
 func (data *OSPF) fromPlan(plan OSPF) {
 	data.Device = plan.Device
 	data.ProcessId.Value = plan.ProcessId.Value
+	sort.SliceStable(data.Neighbor, func(i, j int) bool {
+		for ii := range plan.Neighbor {
+			if plan.Neighbor[ii].Ip.Value == data.Neighbor[i].Ip.Value {
+				return true
+			}
+			if plan.Neighbor[ii].Ip.Value == data.Neighbor[j].Ip.Value {
+				return false
+			}
+		}
+		return false
+	})
+	sort.SliceStable(data.Network, func(i, j int) bool {
+		for ii := range plan.Network {
+			if plan.Network[ii].Ip.Value == data.Network[i].Ip.Value {
+				return true
+			}
+			if plan.Network[ii].Ip.Value == data.Network[j].Ip.Value {
+				return false
+			}
+		}
+		return false
+	})
+	sort.SliceStable(data.SummaryAddress, func(i, j int) bool {
+		for ii := range plan.SummaryAddress {
+			if plan.SummaryAddress[ii].Ip.Value == data.SummaryAddress[i].Ip.Value {
+				return true
+			}
+			if plan.SummaryAddress[ii].Ip.Value == data.SummaryAddress[j].Ip.Value {
+				return false
+			}
+		}
+		return false
+	})
 }

@@ -28,6 +28,7 @@ attributes:
     attributes:
       - yang_name: ip
         example: 2.2.2.2
+        id: true
       - yang_name: priority
         example: 10
       - yang_name: cost
@@ -37,6 +38,7 @@ attributes:
     attributes:
       - yang_name: ip
         example: 3.3.3.0
+        id: true
       - yang_name: wildcard
         example: 0.0.0.255
       - yang_name: area
@@ -52,5 +54,6 @@ attributes:
     attributes:
       - yang_name: ip
         example: 3.3.3.0
+        id: true
       - yang_name: mask
         example: 255.255.255.0

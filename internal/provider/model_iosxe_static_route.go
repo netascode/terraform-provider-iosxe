@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -103,4 +104,15 @@ func (data *StaticRoute) fromPlan(plan StaticRoute) {
 	data.Device = plan.Device
 	data.Prefix.Value = plan.Prefix.Value
 	data.Mask.Value = plan.Mask.Value
+	sort.SliceStable(data.NextHops, func(i, j int) bool {
+		for ii := range plan.NextHops {
+			if plan.NextHops[ii].NextHop.Value == data.NextHops[i].NextHop.Value {
+				return true
+			}
+			if plan.NextHops[ii].NextHop.Value == data.NextHops[j].NextHop.Value {
+				return false
+			}
+		}
+		return false
+	})
 }

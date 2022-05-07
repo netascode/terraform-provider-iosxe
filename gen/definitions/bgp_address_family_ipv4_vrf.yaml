@@ -14,6 +14,7 @@ attributes:
     attributes:
       - yang_name: name
         example: VRF1
+        id: true
       - yang_name: ipv4-unicast/advertise/l2vpn/evpn
         tf_name: advertise_l2vpn_evpn
         example: true

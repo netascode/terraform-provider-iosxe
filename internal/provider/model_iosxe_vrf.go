@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -139,4 +140,26 @@ func (data *VRF) fromBody(res gjson.Result) {
 func (data *VRF) fromPlan(plan VRF) {
 	data.Device = plan.Device
 	data.Name.Value = plan.Name.Value
+	sort.SliceStable(data.RouteTargetImport, func(i, j int) bool {
+		for ii := range plan.RouteTargetImport {
+			if plan.RouteTargetImport[ii].Value.Value == data.RouteTargetImport[i].Value.Value {
+				return true
+			}
+			if plan.RouteTargetImport[ii].Value.Value == data.RouteTargetImport[j].Value.Value {
+				return false
+			}
+		}
+		return false
+	})
+	sort.SliceStable(data.RouteTargetExport, func(i, j int) bool {
+		for ii := range plan.RouteTargetExport {
+			if plan.RouteTargetExport[ii].Value.Value == data.RouteTargetExport[i].Value.Value {
+				return true
+			}
+			if plan.RouteTargetExport[ii].Value.Value == data.RouteTargetExport[j].Value.Value {
+				return false
+			}
+		}
+		return false
+	})
 }
