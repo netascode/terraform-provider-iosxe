@@ -37,13 +37,30 @@ func TestAccIosxeBGPIPv4UnicastVRFNeighbor(t *testing.T) {
 
 const testAccIosxeBGPIPv4UnicastVRFNeighborPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
+  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+  delete = false
+  attributes = {
+      name = "VRF1"
+      rd = "1:1"
+  }
+}
+
+resource "iosxe_restconf" "PreReq1" {
+  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
+  attributes = {
+      ipv4 = ""
+  }
+  depends_on = [iosxe_restconf.PreReq0, ]
+}
+
+resource "iosxe_restconf" "PreReq2" {
   path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
   attributes = {
       id = "65000"
   }
 }
 
-resource "iosxe_restconf" "PreReq1" {
+resource "iosxe_restconf" "PreReq3" {
   path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/with-vrf/ipv4=unicast"
   attributes = {
       af-name = "unicast"
@@ -60,10 +77,10 @@ resource "iosxe_restconf" "PreReq1" {
       ] 
     },
   ]
-  depends_on = [iosxe_restconf.PreReq0, ]
+  depends_on = [iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 }
 
-resource "iosxe_restconf" "PreReq2" {
+resource "iosxe_restconf" "PreReq4" {
   path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
   attributes = {
       name = "100"
@@ -78,7 +95,7 @@ func testAccIosxeBGPIPv4UnicastVRFNeighborConfig_minimum() string {
 		asn = "65000"
 		vrf = "VRF1"
 		ip = "3.3.3.3"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, iosxe_restconf.PreReq4, ]
 	}
 	`
 }
@@ -96,7 +113,7 @@ func testAccIosxeBGPIPv4UnicastVRFNeighborConfig_all() string {
 		activate = true
 		send_community = "both"
 		route_reflector_client = false
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, iosxe_restconf.PreReq4, ]
 	}
 	`
 }

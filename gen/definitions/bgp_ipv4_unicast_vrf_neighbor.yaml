@@ -34,6 +34,18 @@ attributes:
   - yang_name: route-reflector-client
     example: false
 test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
+    no_delete: true
+    attributes:
+      - name: name
+        value: VRF1
+      - name: rd
+        value: 1:1
+  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family
+    attributes:
+      - name: ipv4
+        value: ''
+    dependencies: [0]
   - path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000
     attributes:
       - name: id
@@ -48,7 +60,7 @@ test_prerequisites:
           - attributes:
               - name: name
                 value: VRF1
-    dependencies: [0]
+    dependencies: [1, 2]
   - path: Cisco-IOS-XE-native:native/interface/Loopback=100
     attributes:
       - name: name
