@@ -56,6 +56,7 @@ test_prerequisites:
         value: unicast
     lists:
       - name: vrf
+        key: name
         items:
           - attributes:
               - name: name

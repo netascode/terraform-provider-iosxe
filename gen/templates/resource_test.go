@@ -62,13 +62,14 @@ resource "iosxe_restconf" "PreReq{{$index}}" {
   {{- range .Lists}}
     {
       name = "{{.Name}}"
+	  key = "{{.Key}}"
       items = [
         {{- range .Items}}
           {
             attributes = {
-          {{- range .Attributes}}
-            {{.Name}} = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
-          {{- end}}
+			{{- range .Attributes}}
+				{{.Name}} = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
+			{{- end}}
             }
           },
         {{- end}}
