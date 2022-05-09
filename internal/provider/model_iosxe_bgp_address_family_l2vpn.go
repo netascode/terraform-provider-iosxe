@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -20,6 +21,17 @@ type BGPAddressFamilyL2VPN struct {
 
 func (data BGPAddressFamilyL2VPN) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=%s", data.Asn.Value, data.AfName.Value)
+}
+
+// if last path element has a key -> remove it
+func (data BGPAddressFamilyL2VPN) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data BGPAddressFamilyL2VPN) toBody() string {

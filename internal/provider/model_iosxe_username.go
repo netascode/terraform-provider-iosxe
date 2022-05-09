@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,6 +27,17 @@ type Username struct {
 
 func (data Username) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/username=%s", data.Name.Value)
+}
+
+// if last path element has a key -> remove it
+func (data Username) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data Username) toBody() string {

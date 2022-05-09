@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/netascode/go-restconf"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
@@ -120,19 +119,10 @@ func (r resourceVLAN) Create(ctx context.Context, req tfsdk.CreateResourceReques
 	// Create object
 	body := plan.toBody()
 
-	res, _ := r.provider.clients[plan.Device.Value].GetData(plan.getPath(), restconf.Query("depth", "1"))
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		_, err := r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
-		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PUT), got error: %s", err))
-			return
-		}
-	} else {
-		_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPath(), body)
-		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
-			return
-		}
+	_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
+		return
 	}
 
 	// Read object
@@ -196,19 +186,11 @@ func (r resourceVLAN) Update(ctx context.Context, req tfsdk.UpdateResourceReques
 
 	// Update object
 	body := plan.toBody()
-	res, _ := r.provider.clients[plan.Device.Value].GetData(plan.getPath(), restconf.Query("depth", "1"))
-	if res.StatusCode < 200 || res.StatusCode > 299 {
-		_, err := r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
-		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object (PUT), got error: %s", err))
-			return
-		}
-	} else {
-		_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPath(), body)
-		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object (PATCH), got error: %s", err))
-			return
-		}
+
+	_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
+		return
 	}
 
 	// Read object

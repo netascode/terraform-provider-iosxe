@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 
@@ -31,6 +32,17 @@ type StaticRouteNextHops struct {
 
 func (data StaticRoute) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/route/ip-route-interface-forwarding-list=%s,%s", data.Prefix.Value, data.Mask.Value)
+}
+
+// if last path element has a key -> remove it
+func (data StaticRoute) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data StaticRoute) toBody() string {

@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,6 +29,17 @@ type InterfaceVLAN struct {
 
 func (data InterfaceVLAN) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Vlan=%v", data.Name.Value)
+}
+
+// if last path element has a key -> remove it
+func (data InterfaceVLAN) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data InterfaceVLAN) toBody() string {

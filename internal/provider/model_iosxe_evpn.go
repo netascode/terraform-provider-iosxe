@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"regexp"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,6 +31,17 @@ type EVPN struct {
 
 func (data EVPN) getPath() string {
 	return "Cisco-IOS-XE-native:native/l2vpn/Cisco-IOS-XE-l2vpn:evpn_cont/evpn"
+}
+
+// if last path element has a key -> remove it
+func (data EVPN) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data EVPN) toBody() string {

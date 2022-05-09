@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 
@@ -36,6 +37,17 @@ type InterfaceNVEVnis struct {
 
 func (data InterfaceNVE) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/nve=%v", data.Name.Value)
+}
+
+// if last path element has a key -> remove it
+func (data InterfaceNVE) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data InterfaceNVE) toBody() string {

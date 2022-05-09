@@ -4,6 +4,7 @@
 package provider
 
 import (
+	"regexp"
 	{{- if hasId .Attributes }}
 	"fmt"
 	{{- end}}
@@ -57,6 +58,17 @@ func (data {{camelCase .Name}}) getPath() string {
 {{- else}}
 	return "{{.Path}}"
 {{- end}}
+}
+
+// if last path element has a key -> remove it
+func (data {{camelCase .Name}}) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data {{camelCase .Name}}) toBody() string {

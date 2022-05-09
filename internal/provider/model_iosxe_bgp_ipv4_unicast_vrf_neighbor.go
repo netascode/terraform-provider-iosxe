@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -29,6 +30,17 @@ type BGPIPv4UnicastVRFNeighbor struct {
 
 func (data BGPIPv4UnicastVRFNeighbor) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv4=unicast/vrf=%s/ipv4-unicast/neighbor=%s", data.Asn.Value, data.Vrf.Value, data.Ip.Value)
+}
+
+// if last path element has a key -> remove it
+func (data BGPIPv4UnicastVRFNeighbor) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data BGPIPv4UnicastVRFNeighbor) toBody() string {

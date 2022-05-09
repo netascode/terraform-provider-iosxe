@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 
@@ -29,6 +30,17 @@ type BGPAddressFamilyIPv6VRFVrfs struct {
 
 func (data BGPAddressFamilyIPv6VRF) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv6=%s", data.Asn.Value, data.AfName.Value)
+}
+
+// if last path element has a key -> remove it
+func (data BGPAddressFamilyIPv6VRF) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data BGPAddressFamilyIPv6VRF) toBody() string {

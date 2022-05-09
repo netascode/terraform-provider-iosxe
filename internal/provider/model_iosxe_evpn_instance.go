@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -35,6 +36,17 @@ type EVPNInstance struct {
 
 func (data EVPNInstance) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/l2vpn/Cisco-IOS-XE-l2vpn:evpn_cont/evpn-instance/evpn/instance/instance=%v", data.EvpnInstanceNum.Value)
+}
+
+// if last path element has a key -> remove it
+func (data EVPNInstance) getPathShort() string {
+	path := data.getPath()
+	re := regexp.MustCompile(`(.*)=[^\/]*$`)
+	matches := re.FindStringSubmatch(path)
+	if len(matches) <= 1 {
+		return path
+	}
+	return matches[1]
 }
 
 func (data EVPNInstance) toBody() string {
