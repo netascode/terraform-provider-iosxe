@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/netascode/go-restconf"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
@@ -67,6 +66,11 @@ func (t resourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 						Type:                types.StringType,
 						Required:            true,
 					},
+					"key": {
+						MarkdownDescription: "YANG list key attribute.",
+						Type:                types.StringType,
+						Required:            true,
+					},
 					"items": {
 						MarkdownDescription: "Items of YANG lists.",
 						Optional:            true,
@@ -107,31 +111,21 @@ func (r resourceRestconf) Create(ctx context.Context, req tfsdk.CreateResourceRe
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.getPath()))
 
 	if !plan.Attributes.Unknown {
 		body := plan.toBody(ctx)
-
-		res, _ := r.provider.clients[plan.Device.Value].GetData(plan.Path.Value, restconf.Query("depth", "1"))
-		if res.StatusCode < 200 || res.StatusCode > 299 {
-			_, err := r.provider.clients[plan.Device.Value].PutData(plan.Path.Value, body)
-			if err != nil {
-				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PUT), got error: %s", err))
-				return
-			}
-		} else {
-			_, err := r.provider.clients[plan.Device.Value].PatchData(plan.Path.Value, body)
-			if err != nil {
-				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
-				return
-			}
+		_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+		if err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
+			return
 		}
 	}
 
 	plan.Id = plan.Path
 	plan.Attributes.Unknown = false
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.getPath()))
 
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
@@ -147,66 +141,29 @@ func (r resourceRestconf) Read(ctx context.Context, req tfsdk.ReadResourceReques
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", state.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", state.getPath()))
 
-	res, err := r.provider.clients[state.Device.Value].GetData(state.Path.Value)
+	res, err := r.provider.clients[state.Device.Value].GetData(state.getPath())
 	if res.StatusCode == 404 {
 		state.Attributes.Elems = map[string]attr.Value{}
+		state.Lists = make([]RestconfList, 0)
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to read object, got error: %s", err))
 			return
 		}
 
-		var ea map[string]string
-		state.Attributes.ElementsAs(ctx, &ea, false)
-		existingAttr := make([]string, len(ea))
-		for k := range ea {
-			existingAttr = append(existingAttr, k)
-		}
-
-		attributes := make(map[string]attr.Value)
-
-		for attr, value := range res.Res.Get(helpers.LastElement(state.Path.Value)).Map() {
-			if helpers.Contains(existingAttr, attr) {
-				// handle empty maps
-				if value.IsObject() && len(value.Map()) == 0 {
-					attributes[attr] = types.String{Value: ""}
-				} else if value.Raw == "[null]" {
-					attributes[attr] = types.String{Value: ""}
-				} else {
-					attributes[attr] = types.String{Value: value.String()}
-				}
-			}
-		}
-		state.Attributes.Elems = attributes
-
-		for i := range state.Lists {
-			for ii := range state.Lists[i].Items {
-				var ca map[string]attr.Value
-				state.Lists[i].Items[ii].Attributes.ElementsAs(ctx, &ca, false)
-				for attr := range ca {
-					v := res.Res.Get(helpers.LastElement(state.Path.Value) + "." + state.Lists[i].Name.Value + "." + attr)
-					if v.IsObject() && len(v.Map()) == 0 {
-						ca[attr] = types.String{Value: ""}
-					} else if v.Raw == "[null]" {
-						ca[attr] = types.String{Value: ""}
-					} else {
-						ca[attr] = types.String{Value: v.String()}
-					}
-				}
-			}
-		}
+		state.fromBody(ctx, res.Res)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", state.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", state.getPath()))
 
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
 
 func (r resourceRestconf) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan Restconf
+	var plan, state Restconf
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -215,28 +172,57 @@ func (r resourceRestconf) Update(ctx context.Context, req tfsdk.UpdateResourceRe
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.Id.Value))
+	// Read state
+	diags = req.State.Get(ctx, &state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.getPath()))
 
 	if !plan.Attributes.Unknown {
 		body := plan.toBody(ctx)
+		_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+		if err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
+			return
+		}
+	}
 
-		res, _ := r.provider.clients[plan.Device.Value].GetData(plan.Path.Value, restconf.Query("depth", "1"))
-		if res.StatusCode < 200 || res.StatusCode > 299 {
-			_, err := r.provider.clients[plan.Device.Value].PutData(plan.Path.Value, body)
-			if err != nil {
-				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object (PUT), got error: %s", err))
-				return
+	for l := range state.Lists {
+		name := state.Lists[l].Name.Value
+		key := state.Lists[l].Key.Value
+		var planList RestconfList
+		for _, pl := range plan.Lists {
+			if pl.Name.Value == name {
+				planList = pl
 			}
-		} else {
-			_, err := r.provider.clients[plan.Device.Value].PatchData(plan.Path.Value, body)
-			if err != nil {
-				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object (PATCH), got error: %s", err))
-				return
+		}
+		// check if state item is also included in plan, if not delete item
+		for i := range state.Lists[l].Items {
+			var slia map[string]string
+			state.Lists[l].Items[i].Attributes.ElementsAs(ctx, &slia, false)
+			found := false
+			for pli := range planList.Items {
+				var plia map[string]string
+				state.Lists[l].Items[pli].Attributes.ElementsAs(ctx, &plia, false)
+				if plia[key] == slia[key] {
+					found = true
+					break
+				}
+			}
+			if !found {
+				_, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath() + "/" + name + "=" + slia[key])
+				if err != nil {
+					resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+					return
+				}
 			}
 		}
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Update finished successfully", plan.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Update finished successfully", plan.getPath()))
 
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
@@ -252,17 +238,17 @@ func (r resourceRestconf) Delete(ctx context.Context, req tfsdk.DeleteResourceRe
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.getPath()))
 
 	if state.Delete.Value {
-		_, err := r.provider.clients[state.Device.Value].DeleteData(state.Path.Value)
+		_, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath())
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 			return
 		}
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.getPath()))
 
 	resp.State.RemoveResource(ctx)
 }

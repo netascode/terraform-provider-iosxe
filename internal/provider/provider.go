@@ -239,6 +239,7 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 		)
 		return
 	}
+	c.Discovery()
 	clients[""] = &c
 
 	for _, device := range config.Devices {
@@ -250,6 +251,7 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 			)
 			return
 		}
+		c.Discovery()
 		clients[device.Name.Value] = &c
 	}
 
