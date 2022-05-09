@@ -115,7 +115,10 @@ func (r resourceRestconf) Create(ctx context.Context, req tfsdk.CreateResourceRe
 
 	if !plan.Attributes.Unknown {
 		body := plan.toBody(ctx)
-		_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+		res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+		if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
+			_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+		}
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 			return
@@ -183,7 +186,10 @@ func (r resourceRestconf) Update(ctx context.Context, req tfsdk.UpdateResourceRe
 
 	if !plan.Attributes.Unknown {
 		body := plan.toBody(ctx)
-		_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+		res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+		if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
+			_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+		}
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 			return
