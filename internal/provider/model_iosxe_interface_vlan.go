@@ -199,3 +199,8 @@ func (data *InterfaceVLAN) setUnknownValues() {
 		data.PimSparseMode.Null = true
 	}
 }
+
+func (data *InterfaceVLAN) getDeletedListItems(state InterfaceVLAN) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

@@ -259,3 +259,30 @@ func (data *InterfaceNVE) setUnknownValues() {
 		}
 	}
 }
+
+func (data *InterfaceNVE) getDeletedListItems(state InterfaceNVE) []string {
+	deletedListItems := make([]string, 0)
+	for _, i := range state.VniVrfs {
+		found := false
+		for _, j := range data.VniVrfs {
+			if i.VniRange.Value == j.VniRange.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/member-in-one-line/member/vni="+i.VniRange.Value)
+		}
+	}
+	for _, i := range state.Vnis {
+		found := false
+		for _, j := range data.Vnis {
+			if i.VniRange.Value == j.VniRange.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/member/vni="+i.VniRange.Value)
+		}
+	}
+	return deletedListItems
+}

@@ -86,3 +86,8 @@ func (data *System) setUnknownValues() {
 		data.Ipv6UnicastRouting.Null = true
 	}
 }
+
+func (data *System) getDeletedListItems(state System) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

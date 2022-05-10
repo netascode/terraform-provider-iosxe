@@ -116,3 +116,8 @@ func (data *Banner) setUnknownValues() {
 		data.MotdBanner.Null = true
 	}
 }
+
+func (data *Banner) getDeletedListItems(state Banner) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

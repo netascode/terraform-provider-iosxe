@@ -444,3 +444,41 @@ func (data *OSPF) setUnknownValues() {
 		}
 	}
 }
+
+func (data *OSPF) getDeletedListItems(state OSPF) []string {
+	deletedListItems := make([]string, 0)
+	for _, i := range state.Neighbor {
+		found := false
+		for _, j := range data.Neighbor {
+			if i.Ip.Value == j.Ip.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/neighbor="+i.Ip.Value)
+		}
+	}
+	for _, i := range state.Network {
+		found := false
+		for _, j := range data.Network {
+			if i.Ip.Value == j.Ip.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/network="+i.Ip.Value)
+		}
+	}
+	for _, i := range state.SummaryAddress {
+		found := false
+		for _, j := range data.SummaryAddress {
+			if i.Ip.Value == j.Ip.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/summary-address="+i.Ip.Value)
+		}
+	}
+	return deletedListItems
+}

@@ -138,3 +138,8 @@ func (data *BGPNeighbor) setUnknownValues() {
 		data.UpdateSourceLoopback.Null = true
 	}
 }
+
+func (data *BGPNeighbor) getDeletedListItems(state BGPNeighbor) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

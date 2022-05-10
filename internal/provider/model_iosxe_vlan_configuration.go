@@ -131,3 +131,8 @@ func (data *VLANConfiguration) setUnknownValues() {
 		data.EvpnInstanceVni.Null = true
 	}
 }
+
+func (data *VLANConfiguration) getDeletedListItems(state VLANConfiguration) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

@@ -167,3 +167,8 @@ func (data *InterfaceLoopback) setUnknownValues() {
 		data.PimSparseMode.Null = true
 	}
 }
+
+func (data *InterfaceLoopback) getDeletedListItems(state InterfaceLoopback) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

@@ -163,3 +163,19 @@ func (data *BGPAddressFamilyIPv6VRF) setUnknownValues() {
 		}
 	}
 }
+
+func (data *BGPAddressFamilyIPv6VRF) getDeletedListItems(state BGPAddressFamilyIPv6VRF) []string {
+	deletedListItems := make([]string, 0)
+	for _, i := range state.Vrfs {
+		found := false
+		for _, j := range data.Vrfs {
+			if i.Name.Value == j.Name.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/vrf="+i.Name.Value)
+		}
+	}
+	return deletedListItems
+}

@@ -261,3 +261,30 @@ func (data *VRF) setUnknownValues() {
 		}
 	}
 }
+
+func (data *VRF) getDeletedListItems(state VRF) []string {
+	deletedListItems := make([]string, 0)
+	for _, i := range state.RouteTargetImport {
+		found := false
+		for _, j := range data.RouteTargetImport {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/route-target/import="+i.Value.Value)
+		}
+	}
+	for _, i := range state.RouteTargetExport {
+		found := false
+		for _, j := range data.RouteTargetExport {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/route-target/export="+i.Value.Value)
+		}
+	}
+	return deletedListItems
+}

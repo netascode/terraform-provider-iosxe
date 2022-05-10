@@ -259,3 +259,29 @@ func (data *{{camelCase .Name}}) setUnknownValues() {
 	{{- end}}
 	{{- end}}
 }
+
+func (data *{{camelCase .Name}}) getDeletedListItems(state {{camelCase .Name}}) []string {
+	deletedListItems := make([]string, 0)
+	{{- range .Attributes}}
+	{{- if eq .Type "List"}}
+	{{- $goKey := ""}}
+	{{- range .Attributes}}
+	{{- if eq .Id true}}
+	{{- $goKey = (toGoName .TfName)}}
+	{{- end}}
+	{{- end}}
+	for _, i := range state.{{toGoName .TfName}} {
+		found := false
+		for _, j := range data.{{toGoName .TfName}} {
+			if i.{{$goKey}}.Value == j.{{$goKey}}.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/{{.YangName}}="+i.{{$goKey}}.Value)
+		}
+	}
+	{{- end}}
+	{{- end}}
+	return deletedListItems
+}

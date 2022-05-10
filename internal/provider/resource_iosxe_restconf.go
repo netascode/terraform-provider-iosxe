@@ -200,8 +200,8 @@ func (r resourceRestconf) Update(ctx context.Context, req tfsdk.UpdateResourceRe
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
 
 	for _, i := range deletedListItems {
-		_, err := r.provider.clients[state.Device.Value].DeleteData(i)
-		if err != nil {
+		res, err := r.provider.clients[state.Device.Value].DeleteData(i)
+		if err != nil && res.StatusCode != 404 {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 			return
 		}

@@ -323,3 +323,8 @@ func (data *EVPNInstance) setUnknownValues() {
 		data.VlanBasedReOriginateRouteType5.Null = true
 	}
 }
+
+func (data *EVPNInstance) getDeletedListItems(state EVPNInstance) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

@@ -163,3 +163,8 @@ func (data *Username) setUnknownValues() {
 		data.Secret.Null = true
 	}
 }
+
+func (data *Username) getDeletedListItems(state Username) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

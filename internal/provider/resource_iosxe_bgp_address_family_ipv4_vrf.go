@@ -195,6 +195,17 @@ func (r resourceBGPAddressFamilyIPv4VRF) Update(ctx context.Context, req tfsdk.U
 
 	plan.setUnknownValues()
 
+	deletedListItems := plan.getDeletedListItems(state)
+	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
+
+	for _, i := range deletedListItems {
+		res, err := r.provider.clients[state.Device.Value].DeleteData(i)
+		if err != nil && res.StatusCode != 404 {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
+		}
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Update finished successfully", plan.Id.Value))
 
 	diags = resp.State.Set(ctx, &plan)

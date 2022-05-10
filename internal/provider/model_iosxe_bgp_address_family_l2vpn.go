@@ -71,3 +71,8 @@ func (data *BGPAddressFamilyL2VPN) setUnknownValues() {
 		data.AfName.Null = true
 	}
 }
+
+func (data *BGPAddressFamilyL2VPN) getDeletedListItems(state BGPAddressFamilyL2VPN) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

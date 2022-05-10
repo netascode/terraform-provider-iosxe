@@ -201,3 +201,19 @@ func (data *StaticRoute) setUnknownValues() {
 		}
 	}
 }
+
+func (data *StaticRoute) getDeletedListItems(state StaticRoute) []string {
+	deletedListItems := make([]string, 0)
+	for _, i := range state.NextHops {
+		found := false
+		for _, j := range data.NextHops {
+			if i.NextHop.Value == j.NextHop.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, state.getPath()+"/fwd-list="+i.NextHop.Value)
+		}
+	}
+	return deletedListItems
+}

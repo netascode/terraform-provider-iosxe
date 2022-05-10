@@ -123,3 +123,8 @@ func (data *BGPL2VPNEVPNNeighbor) setUnknownValues() {
 		data.RouteReflectorClient.Null = true
 	}
 }
+
+func (data *BGPL2VPNEVPNNeighbor) getDeletedListItems(state BGPL2VPNEVPNNeighbor) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

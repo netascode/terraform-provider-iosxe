@@ -195,3 +195,8 @@ func (data *BGPIPv4UnicastVRFNeighbor) setUnknownValues() {
 		data.RouteReflectorClient.Null = true
 	}
 }
+
+func (data *BGPIPv4UnicastVRFNeighbor) getDeletedListItems(state BGPIPv4UnicastVRFNeighbor) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

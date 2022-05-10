@@ -115,3 +115,8 @@ func (data *BGP) setUnknownValues() {
 		data.RouterIdLoopback.Null = true
 	}
 }
+
+func (data *BGP) getDeletedListItems(state BGP) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

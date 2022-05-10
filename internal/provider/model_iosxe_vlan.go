@@ -189,3 +189,8 @@ func (data *VLAN) setUnknownValues() {
 		data.Shutdown.Null = true
 	}
 }
+
+func (data *VLAN) getDeletedListItems(state VLAN) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}

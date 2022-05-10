@@ -259,3 +259,8 @@ func (data *EVPN) setUnknownValues() {
 		data.RouteTargetAutoVni.Null = true
 	}
 }
+
+func (data *EVPN) getDeletedListItems(state EVPN) []string {
+	deletedListItems := make([]string, 0)
+	return deletedListItems
+}
