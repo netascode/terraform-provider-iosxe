@@ -196,35 +196,14 @@ func (r resourceRestconf) Update(ctx context.Context, req tfsdk.UpdateResourceRe
 		}
 	}
 
-	for l := range state.Lists {
-		name := state.Lists[l].Name.Value
-		key := state.Lists[l].Key.Value
-		var planList RestconfList
-		for _, pl := range plan.Lists {
-			if pl.Name.Value == name {
-				planList = pl
-			}
-		}
-		// check if state item is also included in plan, if not delete item
-		for i := range state.Lists[l].Items {
-			var slia map[string]string
-			state.Lists[l].Items[i].Attributes.ElementsAs(ctx, &slia, false)
-			found := false
-			for pli := range planList.Items {
-				var plia map[string]string
-				state.Lists[l].Items[pli].Attributes.ElementsAs(ctx, &plia, false)
-				if plia[key] == slia[key] {
-					found = true
-					break
-				}
-			}
-			if !found {
-				_, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath() + "/" + name + "=" + slia[key])
-				if err != nil {
-					resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
-					return
-				}
-			}
+	deletedListItems := plan.getDeletedListItems(ctx, state)
+	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
+
+	for _, i := range deletedListItems {
+		_, err := r.provider.clients[state.Device.Value].DeleteData(i)
+		if err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
 		}
 	}
 
@@ -247,8 +226,8 @@ func (r resourceRestconf) Delete(ctx context.Context, req tfsdk.DeleteResourceRe
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.getPath()))
 
 	if state.Delete.Value {
-		_, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath())
-		if err != nil {
+		res, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath())
+		if err != nil && res.StatusCode != 404 {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 			return
 		}

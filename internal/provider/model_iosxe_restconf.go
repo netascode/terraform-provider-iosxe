@@ -2,10 +2,9 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"regexp"
-	"sort"
 
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/go-restconf"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -54,78 +53,6 @@ func (data Restconf) getPathShort() string {
 	return matches[1]
 }
 
-func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
-	var ea map[string]string
-	data.Attributes.ElementsAs(ctx, &ea, false)
-	existingAttr := make([]string, len(ea))
-	for k := range ea {
-		existingAttr = append(existingAttr, k)
-	}
-
-	attributes := make(map[string]attr.Value)
-
-	for attr, value := range res.Get(helpers.LastElement(data.Path.Value)).Map() {
-		if helpers.Contains(existingAttr, attr) {
-			// handle empty maps
-			if value.IsObject() && len(value.Map()) == 0 {
-				attributes[attr] = types.String{Value: ""}
-			} else if value.Raw == "[null]" {
-				attributes[attr] = types.String{Value: ""}
-			} else {
-				attributes[attr] = types.String{Value: value.String()}
-			}
-		}
-	}
-	data.Attributes.Elems = attributes
-
-	lists := make([]RestconfList, 0)
-	for i := range data.Lists {
-		list := RestconfList{Name: data.Lists[i].Name, Key: data.Lists[i].Key}
-		if value := res.Get(helpers.LastElement(data.Path.Value) + "." + data.Lists[i].Name.Value); value.Exists() {
-			value.ForEach(func(k, v gjson.Result) bool {
-				ca := make(map[string]attr.Value)
-				for attr, value := range v.Map() {
-					if value.IsObject() && len(value.Map()) == 0 {
-						ca[attr] = types.String{Value: ""}
-					} else if value.Raw == "[null]" {
-						ca[attr] = types.String{Value: ""}
-					} else if !value.IsArray() && !value.IsObject() {
-						ca[attr] = types.String{Value: value.String()}
-					}
-				}
-				item := RestconfListItem{Attributes: types.Map{ElemType: types.StringType, Elems: ca}}
-				list.Items = append(list.Items, item)
-				return true
-			})
-		}
-		// sort slice by existing order in data
-		sort.SliceStable(list.Items, func(iii, jjj int) bool {
-			key := data.Lists[i].Key.Value
-			for ii := range data.Lists[i].Items {
-				var dataAttrs map[string]string
-				data.Lists[i].Items[ii].Attributes.ElementsAs(ctx, &dataAttrs, false)
-				var newAttrs map[string]string
-				list.Items[iii].Attributes.ElementsAs(ctx, &newAttrs, false)
-				if dataAttrs[key] == newAttrs[key] {
-					return true
-				}
-				list.Items[jjj].Attributes.ElementsAs(ctx, &newAttrs, false)
-				if dataAttrs[key] == newAttrs[key] {
-					return false
-				}
-			}
-			return false
-		})
-		lists = append(lists, list)
-	}
-
-	if len(lists) > 0 {
-		data.Lists = lists
-	} else {
-		data.Lists = nil
-	}
-}
-
 func (data Restconf) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.Path.Value) + `":{}}`
 
@@ -149,4 +76,74 @@ func (data Restconf) toBody(ctx context.Context) string {
 	}
 
 	return body
+}
+
+func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
+	for attr := range data.Attributes.Elems {
+		value := res.Get(helpers.LastElement(data.getPath()) + "." + attr)
+		if !value.Exists() ||
+			(value.IsObject() && len(value.Map()) == 0) ||
+			value.Raw == "[null]" {
+
+			data.Attributes.Elems[attr] = types.String{Value: ""}
+		} else {
+			data.Attributes.Elems[attr] = types.String{Value: value.String()}
+		}
+	}
+
+	for i := range data.Lists {
+		for ii := range data.Lists[i].Items {
+			for attr := range data.Lists[i].Items[ii].Attributes.Elems {
+				key := data.Lists[i].Key.Value
+				v, _ := data.Lists[i].Items[ii].Attributes.Elems[attr].ToTerraformValue(ctx)
+				var keyValue string
+				v.As(&keyValue)
+				jsonPath := fmt.Sprintf(`%s.%s.#(%s=="%s").%s`, helpers.LastElement(data.getPath()), data.Lists[i].Name.Value, key, keyValue, attr)
+				value := res.Get(jsonPath)
+				if !value.Exists() ||
+					(value.IsObject() && len(value.Map()) == 0) ||
+					value.Raw == "[null]" {
+
+					data.Lists[i].Items[ii].Attributes.Elems[attr] = types.String{Value: ""}
+				} else {
+					data.Lists[i].Items[ii].Attributes.Elems[attr] = types.String{Value: value.String()}
+				}
+			}
+		}
+	}
+}
+
+func (data *Restconf) getDeletedListItems(ctx context.Context, state Restconf) []string {
+	deletedListItems := make([]string, 0)
+	for l := range state.Lists {
+		name := state.Lists[l].Name.Value
+		key := state.Lists[l].Key.Value
+		var dataList RestconfList
+		for _, dl := range data.Lists {
+			if dl.Name.Value == name {
+				dataList = dl
+			}
+		}
+		// check if state item is also included in plan, if not delete item
+		for i := range state.Lists[l].Items {
+			var slia map[string]string
+			state.Lists[l].Items[i].Attributes.ElementsAs(ctx, &slia, false)
+			if slia[key] == "" {
+				continue
+			}
+			found := false
+			for dli := range dataList.Items {
+				var dlia map[string]string
+				dataList.Items[dli].Attributes.ElementsAs(ctx, &dlia, false)
+				if dlia[key] == slia[key] {
+					found = true
+					break
+				}
+			}
+			if !found {
+				deletedListItems = append(deletedListItems, state.getPath()+"/"+name+"="+slia[key])
+			}
+		}
+	}
+	return deletedListItems
 }
