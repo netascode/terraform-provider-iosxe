@@ -194,8 +194,8 @@ func (r resourceBGPAddressFamilyL2VPN) Delete(ctx context.Context, req tfsdk.Del
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.Value))
 
-	_, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath())
-	if err != nil {
+	res, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath())
+	if err != nil && res.StatusCode != 404 {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object, got error: %s", err))
 		return
 	}
