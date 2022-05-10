@@ -1,4 +1,4 @@
-## 0.1.3 (unreleased)
+## 0.1.3
 
 - Add unnumbered option to iosxe_interface_vlan resource
 - Add option to configure lists with iosxe_restconf
