@@ -21,10 +21,13 @@ import (
 )
 
 const (
-	definitionsPath  = "./gen/definitions/"
-	modelsPath       = "./gen/models/"
-	providerTemplate = "./gen/templates/provider.go"
-	providerLocation = "./internal/provider/provider.go"
+	definitionsPath   = "./gen/definitions/"
+	modelsPath        = "./gen/models/"
+	providerTemplate  = "./gen/templates/provider.go"
+	providerLocation  = "./internal/provider/provider.go"
+	changelogTemplate = "./gen/templates/changelog.md.tmpl"
+	changelogLocation = "./templates/guides/changelog.md.tmpl"
+	changelogOriginal = "./CHANGELOG.md"
 )
 
 type t struct {
@@ -475,4 +478,10 @@ func main() {
 
 	// render provider.go
 	renderTemplate(providerTemplate, providerLocation, configs)
+
+	changelog, err := ioutil.ReadFile(changelogOriginal)
+	if err != nil {
+		log.Fatalf("Error reading changelog: %v", err)
+	}
+	renderTemplate(changelogTemplate, changelogLocation, string(changelog))
 }
