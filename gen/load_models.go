@@ -42,6 +42,7 @@ var models = []string{
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-pppoe.yang",
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-bgp.yang",
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-ospfv3.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-ospf.yang",
 }
 
 const (
