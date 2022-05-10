@@ -121,7 +121,9 @@ func (d dataSourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadDataSour
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
-	if res.StatusCode != 404 {
+	if res.StatusCode == 404 {
+		state = InterfaceNVE{Device: config.Device}
+	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
@@ -129,8 +131,8 @@ func (d dataSourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadDataSour
 
 		state.fromBody(res.Res)
 	}
-	state.fromPlan(config)
-	state.Id.Value = config.getPath()
+
+	state.Id = types.String{Value: config.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

@@ -80,6 +80,49 @@ func (data VLAN) toBody() string {
 	return body
 }
 
+func (data *VLAN) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+		data.VlanId.Value = value.Int()
+	} else {
+		data.VlanId.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-span"); value.Exists() {
+		data.RemoteSpan.Value = true
+	} else {
+		data.RemoteSpan.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.primary"); value.Exists() {
+		data.PrivateVlanPrimary.Value = true
+	} else {
+		data.PrivateVlanPrimary.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.association"); value.Exists() {
+		data.PrivateVlanAssociation.Value = value.String()
+	} else {
+		data.PrivateVlanAssociation.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.community"); value.Exists() {
+		data.PrivateVlanCommunity.Value = true
+	} else {
+		data.PrivateVlanCommunity.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.isolated"); value.Exists() {
+		data.PrivateVlanIsolated.Value = true
+	} else {
+		data.PrivateVlanIsolated.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+		data.Name.Value = value.String()
+	} else {
+		data.Name.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+		data.Shutdown.Value = true
+	} else {
+		data.Shutdown.Value = false
+	}
+}
+
 func (data *VLAN) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-span"); value.Exists() {
 		data.RemoteSpan.Value = true
@@ -104,7 +147,45 @@ func (data *VLAN) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *VLAN) fromPlan(plan VLAN) {
-	data.Device = plan.Device
-	data.VlanId.Value = plan.VlanId.Value
+func (data *VLAN) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.VlanId.Unknown {
+		data.VlanId.Unknown = false
+		data.VlanId.Null = true
+	}
+	if data.RemoteSpan.Unknown {
+		data.RemoteSpan.Unknown = false
+		data.RemoteSpan.Null = true
+	}
+	if data.PrivateVlanPrimary.Unknown {
+		data.PrivateVlanPrimary.Unknown = false
+		data.PrivateVlanPrimary.Null = true
+	}
+	if data.PrivateVlanAssociation.Unknown {
+		data.PrivateVlanAssociation.Unknown = false
+		data.PrivateVlanAssociation.Null = true
+	}
+	if data.PrivateVlanCommunity.Unknown {
+		data.PrivateVlanCommunity.Unknown = false
+		data.PrivateVlanCommunity.Null = true
+	}
+	if data.PrivateVlanIsolated.Unknown {
+		data.PrivateVlanIsolated.Unknown = false
+		data.PrivateVlanIsolated.Null = true
+	}
+	if data.Name.Unknown {
+		data.Name.Unknown = false
+		data.Name.Null = true
+	}
+	if data.Shutdown.Unknown {
+		data.Shutdown.Unknown = false
+		data.Shutdown.Null = true
+	}
 }

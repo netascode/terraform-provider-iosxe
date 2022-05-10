@@ -66,6 +66,44 @@ func (data Username) toBody() string {
 	return body
 }
 
+func (data *Username) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+		data.Name.Value = value.String()
+	} else {
+		data.Name.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "privilege"); value.Exists() {
+		data.Privilege.Value = value.Int()
+	} else {
+		data.Privilege.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+		data.Description.Value = value.String()
+	} else {
+		data.Description.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.encryption"); value.Exists() {
+		data.PasswordEncryption.Value = value.String()
+	} else {
+		data.PasswordEncryption.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.password"); value.Exists() {
+		data.Password.Value = value.String()
+	} else {
+		data.Password.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.encryption"); value.Exists() {
+		data.SecretEncryption.Value = value.String()
+	} else {
+		data.SecretEncryption.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.secret"); value.Exists() {
+		data.Secret.Value = value.String()
+	} else {
+		data.Secret.Null = true
+	}
+}
+
 func (data *Username) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "privilege"); value.Exists() {
 		data.Privilege.Value = value.Int()
@@ -87,7 +125,41 @@ func (data *Username) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *Username) fromPlan(plan Username) {
-	data.Device = plan.Device
-	data.Name.Value = plan.Name.Value
+func (data *Username) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Name.Unknown {
+		data.Name.Unknown = false
+		data.Name.Null = true
+	}
+	if data.Privilege.Unknown {
+		data.Privilege.Unknown = false
+		data.Privilege.Null = true
+	}
+	if data.Description.Unknown {
+		data.Description.Unknown = false
+		data.Description.Null = true
+	}
+	if data.PasswordEncryption.Unknown {
+		data.PasswordEncryption.Unknown = false
+		data.PasswordEncryption.Null = true
+	}
+	if data.Password.Unknown {
+		data.Password.Unknown = false
+		data.Password.Null = true
+	}
+	if data.SecretEncryption.Unknown {
+		data.SecretEncryption.Unknown = false
+		data.SecretEncryption.Null = true
+	}
+	if data.Secret.Unknown {
+		data.Secret.Unknown = false
+		data.Secret.Null = true
+	}
 }

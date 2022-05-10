@@ -58,6 +58,34 @@ func (data VLANConfiguration) toBody() string {
 	return body
 }
 
+func (data *VLANConfiguration) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-id"); value.Exists() {
+		data.VlanId.Value = value.Int()
+	} else {
+		data.VlanId.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
+		data.Vni.Value = value.Int()
+	} else {
+		data.Vni.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.access-vfi"); value.Exists() {
+		data.AccessVfi.Value = value.String()
+	} else {
+		data.AccessVfi.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.evpn-instance"); value.Exists() {
+		data.EvpnInstance.Value = value.Int()
+	} else {
+		data.EvpnInstance.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.vni"); value.Exists() {
+		data.EvpnInstanceVni.Value = value.Int()
+	} else {
+		data.EvpnInstanceVni.Null = true
+	}
+}
+
 func (data *VLANConfiguration) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
 		data.Vni.Value = value.Int()
@@ -73,7 +101,33 @@ func (data *VLANConfiguration) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *VLANConfiguration) fromPlan(plan VLANConfiguration) {
-	data.Device = plan.Device
-	data.VlanId.Value = plan.VlanId.Value
+func (data *VLANConfiguration) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.VlanId.Unknown {
+		data.VlanId.Unknown = false
+		data.VlanId.Null = true
+	}
+	if data.Vni.Unknown {
+		data.Vni.Unknown = false
+		data.Vni.Null = true
+	}
+	if data.AccessVfi.Unknown {
+		data.AccessVfi.Unknown = false
+		data.AccessVfi.Null = true
+	}
+	if data.EvpnInstance.Unknown {
+		data.EvpnInstance.Unknown = false
+		data.EvpnInstance.Null = true
+	}
+	if data.EvpnInstanceVni.Unknown {
+		data.EvpnInstanceVni.Unknown = false
+		data.EvpnInstanceVni.Null = true
+	}
 }

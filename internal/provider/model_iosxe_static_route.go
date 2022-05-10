@@ -5,7 +5,6 @@ package provider
 import (
 	"fmt"
 	"regexp"
-	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -83,6 +82,52 @@ func (data StaticRoute) toBody() string {
 	return body
 }
 
+func (data *StaticRoute) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "prefix"); value.Exists() {
+		data.Prefix.Value = value.String()
+	} else {
+		data.Prefix.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mask"); value.Exists() {
+		data.Mask.Value = value.String()
+	} else {
+		data.Mask.Null = true
+	}
+	for i := range data.NextHops {
+		key := data.NextHops[i].NextHop.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "fwd"); value.Exists() {
+			data.NextHops[i].NextHop.Value = value.String()
+		} else {
+			data.NextHops[i].NextHop.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "metric"); value.Exists() {
+			data.NextHops[i].Metric.Value = value.Int()
+		} else {
+			data.NextHops[i].Metric.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "global"); value.Exists() {
+			data.NextHops[i].Global.Value = true
+		} else {
+			data.NextHops[i].Global.Value = false
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "name"); value.Exists() {
+			data.NextHops[i].Name.Value = value.String()
+		} else {
+			data.NextHops[i].Name.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "permanent"); value.Exists() {
+			data.NextHops[i].Permanent.Value = true
+		} else {
+			data.NextHops[i].Permanent.Value = false
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "tag"); value.Exists() {
+			data.NextHops[i].Tag.Value = value.Int()
+		} else {
+			data.NextHops[i].Tag.Null = true
+		}
+	}
+}
+
 func (data *StaticRoute) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list"); value.Exists() {
 		data.NextHops = make([]StaticRouteNextHops, 0)
@@ -112,19 +157,47 @@ func (data *StaticRoute) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *StaticRoute) fromPlan(plan StaticRoute) {
-	data.Device = plan.Device
-	data.Prefix.Value = plan.Prefix.Value
-	data.Mask.Value = plan.Mask.Value
-	sort.SliceStable(data.NextHops, func(i, j int) bool {
-		for ii := range plan.NextHops {
-			if plan.NextHops[ii].NextHop.Value == data.NextHops[i].NextHop.Value {
-				return true
-			}
-			if plan.NextHops[ii].NextHop.Value == data.NextHops[j].NextHop.Value {
-				return false
-			}
+func (data *StaticRoute) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Prefix.Unknown {
+		data.Prefix.Unknown = false
+		data.Prefix.Null = true
+	}
+	if data.Mask.Unknown {
+		data.Mask.Unknown = false
+		data.Mask.Null = true
+	}
+	for i := range data.NextHops {
+		if data.NextHops[i].NextHop.Unknown {
+			data.NextHops[i].NextHop.Unknown = false
+			data.NextHops[i].NextHop.Null = true
 		}
-		return false
-	})
+		if data.NextHops[i].Metric.Unknown {
+			data.NextHops[i].Metric.Unknown = false
+			data.NextHops[i].Metric.Null = true
+		}
+		if data.NextHops[i].Global.Unknown {
+			data.NextHops[i].Global.Unknown = false
+			data.NextHops[i].Global.Null = true
+		}
+		if data.NextHops[i].Name.Unknown {
+			data.NextHops[i].Name.Unknown = false
+			data.NextHops[i].Name.Null = true
+		}
+		if data.NextHops[i].Permanent.Unknown {
+			data.NextHops[i].Permanent.Unknown = false
+			data.NextHops[i].Permanent.Null = true
+		}
+		if data.NextHops[i].Tag.Unknown {
+			data.NextHops[i].Tag.Unknown = false
+			data.NextHops[i].Tag.Null = true
+		}
+	}
 }

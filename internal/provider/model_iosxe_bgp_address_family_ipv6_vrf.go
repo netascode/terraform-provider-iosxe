@@ -5,7 +5,6 @@ package provider
 import (
 	"fmt"
 	"regexp"
-	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -74,6 +73,37 @@ func (data BGPAddressFamilyIPv6VRF) toBody() string {
 	return body
 }
 
+func (data *BGPAddressFamilyIPv6VRF) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "af-name"); value.Exists() {
+		data.AfName.Value = value.String()
+	} else {
+		data.AfName.Null = true
+	}
+	for i := range data.Vrfs {
+		key := data.Vrfs[i].Name.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.#(name==\"" + key + "\")." + "name"); value.Exists() {
+			data.Vrfs[i].Name.Value = value.String()
+		} else {
+			data.Vrfs[i].Name.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.#(name==\"" + key + "\")." + "ipv6-unicast.advertise.l2vpn.evpn"); value.Exists() {
+			data.Vrfs[i].AdvertiseL2vpnEvpn.Value = true
+		} else {
+			data.Vrfs[i].AdvertiseL2vpnEvpn.Value = false
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.#(name==\"" + key + "\")." + "ipv6-unicast.redistribute-v6.connected"); value.Exists() {
+			data.Vrfs[i].RedistributeConnected.Value = true
+		} else {
+			data.Vrfs[i].RedistributeConnected.Value = false
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.#(name==\"" + key + "\")." + "ipv6-unicast.redistribute-v6.static"); value.Exists() {
+			data.Vrfs[i].RedistributeStatic.Value = true
+		} else {
+			data.Vrfs[i].RedistributeStatic.Value = false
+		}
+	}
+}
+
 func (data *BGPAddressFamilyIPv6VRF) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf"); value.Exists() {
 		data.Vrfs = make([]BGPAddressFamilyIPv6VRFVrfs, 0)
@@ -97,19 +127,39 @@ func (data *BGPAddressFamilyIPv6VRF) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPAddressFamilyIPv6VRF) fromPlan(plan BGPAddressFamilyIPv6VRF) {
-	data.Device = plan.Device
-	data.Asn.Value = plan.Asn.Value
-	data.AfName.Value = plan.AfName.Value
-	sort.SliceStable(data.Vrfs, func(i, j int) bool {
-		for ii := range plan.Vrfs {
-			if plan.Vrfs[ii].Name.Value == data.Vrfs[i].Name.Value {
-				return true
-			}
-			if plan.Vrfs[ii].Name.Value == data.Vrfs[j].Name.Value {
-				return false
-			}
+func (data *BGPAddressFamilyIPv6VRF) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Asn.Unknown {
+		data.Asn.Unknown = false
+		data.Asn.Null = true
+	}
+	if data.AfName.Unknown {
+		data.AfName.Unknown = false
+		data.AfName.Null = true
+	}
+	for i := range data.Vrfs {
+		if data.Vrfs[i].Name.Unknown {
+			data.Vrfs[i].Name.Unknown = false
+			data.Vrfs[i].Name.Null = true
 		}
-		return false
-	})
+		if data.Vrfs[i].AdvertiseL2vpnEvpn.Unknown {
+			data.Vrfs[i].AdvertiseL2vpnEvpn.Unknown = false
+			data.Vrfs[i].AdvertiseL2vpnEvpn.Null = true
+		}
+		if data.Vrfs[i].RedistributeConnected.Unknown {
+			data.Vrfs[i].RedistributeConnected.Unknown = false
+			data.Vrfs[i].RedistributeConnected.Null = true
+		}
+		if data.Vrfs[i].RedistributeStatic.Unknown {
+			data.Vrfs[i].RedistributeStatic.Unknown = false
+			data.Vrfs[i].RedistributeStatic.Null = true
+		}
+	}
 }

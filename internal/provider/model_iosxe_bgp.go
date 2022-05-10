@@ -54,6 +54,29 @@ func (data BGP) toBody() string {
 	return body
 }
 
+func (data *BGP) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+		data.Asn.Value = value.String()
+	} else {
+		data.Asn.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.default.ipv4-unicast"); value.Exists() {
+		data.DefaultIpv4Unicast.Value = value.Bool()
+	} else {
+		data.DefaultIpv4Unicast.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.log-neighbor-changes"); value.Exists() {
+		data.LogNeighborChanges.Value = value.Bool()
+	} else {
+		data.LogNeighborChanges.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.router-id.interface.Loopback"); value.Exists() {
+		data.RouterIdLoopback.Value = value.Int()
+	} else {
+		data.RouterIdLoopback.Null = true
+	}
+}
+
 func (data *BGP) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.default.ipv4-unicast"); value.Exists() {
 		data.DefaultIpv4Unicast.Value = value.Bool()
@@ -66,7 +89,29 @@ func (data *BGP) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGP) fromPlan(plan BGP) {
-	data.Device = plan.Device
-	data.Asn.Value = plan.Asn.Value
+func (data *BGP) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Asn.Unknown {
+		data.Asn.Unknown = false
+		data.Asn.Null = true
+	}
+	if data.DefaultIpv4Unicast.Unknown {
+		data.DefaultIpv4Unicast.Unknown = false
+		data.DefaultIpv4Unicast.Null = true
+	}
+	if data.LogNeighborChanges.Unknown {
+		data.LogNeighborChanges.Unknown = false
+		data.LogNeighborChanges.Null = true
+	}
+	if data.RouterIdLoopback.Unknown {
+		data.RouterIdLoopback.Unknown = false
+		data.RouterIdLoopback.Null = true
+	}
 }

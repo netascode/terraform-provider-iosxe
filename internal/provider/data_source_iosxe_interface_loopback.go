@@ -94,7 +94,9 @@ func (d dataSourceInterfaceLoopback) Read(ctx context.Context, req tfsdk.ReadDat
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
-	if res.StatusCode != 404 {
+	if res.StatusCode == 404 {
+		state = InterfaceLoopback{Device: config.Device}
+	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
@@ -102,8 +104,8 @@ func (d dataSourceInterfaceLoopback) Read(ctx context.Context, req tfsdk.ReadDat
 
 		state.fromBody(res.Res)
 	}
-	state.fromPlan(config)
-	state.Id.Value = config.getPath()
+
+	state.Id = types.String{Value: config.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

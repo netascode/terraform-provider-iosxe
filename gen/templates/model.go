@@ -12,10 +12,6 @@ import (
 	{{- if $strconv }}
 	"strconv"
 	{{- end}}
-	{{- $sort := false }}{{ range .Attributes}}{{ if (eq .Type "List") }}{{ $sort = true }}{{ end}}{{ end}}
-	{{- if $sort }}
-	"sort"
-	{{- end}}
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -118,6 +114,75 @@ func (data {{camelCase .Name}}) toBody() string {
 	return body
 }
 
+func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
+	{{- range .Attributes}}
+	{{- if and (ne .Reference true) (ne .WriteOnly true)}}
+	{{- if eq .Type "Int64"}}
+	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		data.{{toGoName .TfName}}.Value = value.Int()
+	} else {
+		data.{{toGoName .TfName}}.Null = true
+	}
+	{{- else if eq .Type "Bool"}}
+	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		{{- if .TypeYangBool}}
+		data.{{toGoName .TfName}}.Value = value.Bool()
+		{{- else}}
+		data.{{toGoName .TfName}}.Value = true
+		{{- end}}
+	} else {
+		data.{{toGoName .TfName}}.Value = false
+	}
+	{{- else if eq .Type "String"}}
+	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		data.{{toGoName .TfName}}.Value = value.String()
+	} else {
+		data.{{toGoName .TfName}}.Null = true
+	}
+	{{- else if eq .Type "List"}}
+	{{- $list := (toGoName .TfName)}}
+	{{- $listPath := (toJsonPath .YangName .XPath)}}
+	{{- $yangKey := ""}}
+	for i := range data.{{$list}}{
+		{{- range .Attributes}}
+		{{- if eq .Id true}}
+		{{- $yangKey = .YangName}}
+		key := data.{{$list}}[i].{{toGoName .TfName}}.Value
+		{{- end}}
+		{{- end}}
+		{{- range .Attributes}}
+		{{- if ne .WriteOnly true}}
+		{{- if eq .Type "Int64"}}
+		if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{$listPath}}.#({{$yangKey}}==\""+ key +"\")." + "{{toJsonPath .YangName .XPath}}"); value.Exists() {
+			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Int()
+		} else {
+			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
+		}
+		{{- else if eq .Type "Bool"}}
+		if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{$listPath}}.#({{$yangKey}}==\""+ key +"\")." + "{{toJsonPath .YangName .XPath}}"); value.Exists() {
+			{{- if .TypeYangBool}}
+			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Bool()
+			{{- else}}
+			data.{{$list}}[i].{{toGoName .TfName}}.Value = true
+			{{- end}}
+		} else {
+			data.{{$list}}[i].{{toGoName .TfName}}.Value = false
+		}
+		{{- else if eq .Type "String"}}
+		if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{$listPath}}.#({{$yangKey}}==\""+ key +"\")." + "{{toJsonPath .YangName .XPath}}"); value.Exists() {
+			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.String()
+		} else {
+			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
+		}
+		{{- end}}
+		{{- end}}
+		{{- end}}
+	}
+	{{- end}}
+	{{- end}}
+	{{- end}}
+}
+
 func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 	{{- range .Attributes}}
 	{{- if and (ne .Reference true) (ne .Id true) (ne .WriteOnly true)}}
@@ -166,25 +231,31 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 	{{- end}}
 }
 
-func (data *{{camelCase .Name}}) fromPlan(plan {{camelCase .Name}}) {
-	data.Device = plan.Device
+func (data *{{camelCase .Name}}) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
 	{{- range .Attributes}}
-	{{- if or (eq .Reference true) (eq .Id true) (eq .WriteOnly true)}}
-	data.{{toGoName .TfName}}.Value = plan.{{toGoName .TfName}}.Value
-	{{- end}}
-	{{- if or (eq .Type "List")}}
-	{{- $id := "" }}{{ range .Attributes}}{{ if .Id}}{{ $id = (toGoName .TfName) }}{{ end}}{{ end}}
-	sort.SliceStable(data.{{toGoName .TfName}}, func(i, j int) bool {
-		for ii := range plan.{{toGoName .TfName}} {
-			if plan.{{toGoName .TfName}}[ii].{{$id}}.Value == data.{{toGoName .TfName}}[i].{{$id}}.Value {
-				return true
-			}
-			if plan.{{toGoName .TfName}}[ii].{{$id}}.Value == data.{{toGoName .TfName}}[j].{{$id}}.Value {
-				return false
-			}
+	{{- if ne .Type "List"}}
+	if data.{{toGoName .TfName}}.Unknown {
+		data.{{toGoName .TfName}}.Unknown = false
+		data.{{toGoName .TfName}}.Null = true
+	}
+	{{- else}}
+	{{- $list := (toGoName .TfName)}}
+	for i := range data.{{$list}} {
+		{{- range .Attributes}}
+		if data.{{$list}}[i].{{toGoName .TfName}}.Unknown {
+			data.{{$list}}[i].{{toGoName .TfName}}.Unknown = false
+			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
 		}
-		return false
-	})
+		{{- end}}
+	}
 	{{- end}}
 	{{- end}}
 }

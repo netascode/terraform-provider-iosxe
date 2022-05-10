@@ -78,6 +78,49 @@ func (data BGPIPv4UnicastVRFNeighbor) toBody() string {
 	return body
 }
 
+func (data *BGPIPv4UnicastVRFNeighbor) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+		data.Ip.Value = value.String()
+	} else {
+		data.Ip.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-as"); value.Exists() {
+		data.RemoteAs.Value = value.String()
+	} else {
+		data.RemoteAs.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+		data.Description.Value = value.String()
+	} else {
+		data.Description.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+		data.Shutdown.Value = true
+	} else {
+		data.Shutdown.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "update-source.interface.Loopback"); value.Exists() {
+		data.UpdateSourceLoopback.Value = value.Int()
+	} else {
+		data.UpdateSourceLoopback.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "activate"); value.Exists() {
+		data.Activate.Value = true
+	} else {
+		data.Activate.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "send-community.send-community-where"); value.Exists() {
+		data.SendCommunity.Value = value.String()
+	} else {
+		data.SendCommunity.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-reflector-client"); value.Exists() {
+		data.RouteReflectorClient.Value = true
+	} else {
+		data.RouteReflectorClient.Value = false
+	}
+}
+
 func (data *BGPIPv4UnicastVRFNeighbor) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-as"); value.Exists() {
 		data.RemoteAs.Value = value.String()
@@ -102,9 +145,53 @@ func (data *BGPIPv4UnicastVRFNeighbor) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPIPv4UnicastVRFNeighbor) fromPlan(plan BGPIPv4UnicastVRFNeighbor) {
-	data.Device = plan.Device
-	data.Asn.Value = plan.Asn.Value
-	data.Vrf.Value = plan.Vrf.Value
-	data.Ip.Value = plan.Ip.Value
+func (data *BGPIPv4UnicastVRFNeighbor) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Asn.Unknown {
+		data.Asn.Unknown = false
+		data.Asn.Null = true
+	}
+	if data.Vrf.Unknown {
+		data.Vrf.Unknown = false
+		data.Vrf.Null = true
+	}
+	if data.Ip.Unknown {
+		data.Ip.Unknown = false
+		data.Ip.Null = true
+	}
+	if data.RemoteAs.Unknown {
+		data.RemoteAs.Unknown = false
+		data.RemoteAs.Null = true
+	}
+	if data.Description.Unknown {
+		data.Description.Unknown = false
+		data.Description.Null = true
+	}
+	if data.Shutdown.Unknown {
+		data.Shutdown.Unknown = false
+		data.Shutdown.Null = true
+	}
+	if data.UpdateSourceLoopback.Unknown {
+		data.UpdateSourceLoopback.Unknown = false
+		data.UpdateSourceLoopback.Null = true
+	}
+	if data.Activate.Unknown {
+		data.Activate.Unknown = false
+		data.Activate.Null = true
+	}
+	if data.SendCommunity.Unknown {
+		data.SendCommunity.Unknown = false
+		data.SendCommunity.Null = true
+	}
+	if data.RouteReflectorClient.Unknown {
+		data.RouteReflectorClient.Unknown = false
+		data.RouteReflectorClient.Null = true
+	}
 }

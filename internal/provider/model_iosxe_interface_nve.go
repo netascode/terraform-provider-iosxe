@@ -5,7 +5,6 @@ package provider
 import (
 	"fmt"
 	"regexp"
-	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -101,6 +100,65 @@ func (data InterfaceNVE) toBody() string {
 	return body
 }
 
+func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+		data.Name.Value = value.Int()
+	} else {
+		data.Name.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+		data.Description.Value = value.String()
+	} else {
+		data.Description.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+		data.Shutdown.Value = true
+	} else {
+		data.Shutdown.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "host-reachability.protocol.bgp"); value.Exists() {
+		data.HostReachabilityProtocolBgp.Value = true
+	} else {
+		data.HostReachabilityProtocolBgp.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "source-interface.Loopback"); value.Exists() {
+		data.SourceInterfaceLoopback.Value = value.Int()
+	} else {
+		data.SourceInterfaceLoopback.Null = true
+	}
+	for i := range data.VniVrfs {
+		key := data.VniVrfs[i].VniRange.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member-in-one-line.member.vni.#(vni-range==\"" + key + "\")." + "vni-range"); value.Exists() {
+			data.VniVrfs[i].VniRange.Value = value.String()
+		} else {
+			data.VniVrfs[i].VniRange.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member-in-one-line.member.vni.#(vni-range==\"" + key + "\")." + "vrf"); value.Exists() {
+			data.VniVrfs[i].Vrf.Value = value.String()
+		} else {
+			data.VniVrfs[i].Vrf.Null = true
+		}
+	}
+	for i := range data.Vnis {
+		key := data.Vnis[i].VniRange.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni.#(vni-range==\"" + key + "\")." + "vni-range"); value.Exists() {
+			data.Vnis[i].VniRange.Value = value.String()
+		} else {
+			data.Vnis[i].VniRange.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni.#(vni-range==\"" + key + "\")." + "mcast-group.multicast-group-min"); value.Exists() {
+			data.Vnis[i].Ipv4MulticastGroup.Value = value.String()
+		} else {
+			data.Vnis[i].Ipv4MulticastGroup.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni.#(vni-range==\"" + key + "\")." + "ir-cp-config.ingress-replication"); value.Exists() {
+			data.Vnis[i].IngressReplication.Value = true
+		} else {
+			data.Vnis[i].IngressReplication.Value = false
+		}
+	}
+}
+
 func (data *InterfaceNVE) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
@@ -147,29 +205,57 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceNVE) fromPlan(plan InterfaceNVE) {
-	data.Device = plan.Device
-	data.Name.Value = plan.Name.Value
-	sort.SliceStable(data.VniVrfs, func(i, j int) bool {
-		for ii := range plan.VniVrfs {
-			if plan.VniVrfs[ii].VniRange.Value == data.VniVrfs[i].VniRange.Value {
-				return true
-			}
-			if plan.VniVrfs[ii].VniRange.Value == data.VniVrfs[j].VniRange.Value {
-				return false
-			}
+func (data *InterfaceNVE) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Name.Unknown {
+		data.Name.Unknown = false
+		data.Name.Null = true
+	}
+	if data.Description.Unknown {
+		data.Description.Unknown = false
+		data.Description.Null = true
+	}
+	if data.Shutdown.Unknown {
+		data.Shutdown.Unknown = false
+		data.Shutdown.Null = true
+	}
+	if data.HostReachabilityProtocolBgp.Unknown {
+		data.HostReachabilityProtocolBgp.Unknown = false
+		data.HostReachabilityProtocolBgp.Null = true
+	}
+	if data.SourceInterfaceLoopback.Unknown {
+		data.SourceInterfaceLoopback.Unknown = false
+		data.SourceInterfaceLoopback.Null = true
+	}
+	for i := range data.VniVrfs {
+		if data.VniVrfs[i].VniRange.Unknown {
+			data.VniVrfs[i].VniRange.Unknown = false
+			data.VniVrfs[i].VniRange.Null = true
 		}
-		return false
-	})
-	sort.SliceStable(data.Vnis, func(i, j int) bool {
-		for ii := range plan.Vnis {
-			if plan.Vnis[ii].VniRange.Value == data.Vnis[i].VniRange.Value {
-				return true
-			}
-			if plan.Vnis[ii].VniRange.Value == data.Vnis[j].VniRange.Value {
-				return false
-			}
+		if data.VniVrfs[i].Vrf.Unknown {
+			data.VniVrfs[i].Vrf.Unknown = false
+			data.VniVrfs[i].Vrf.Null = true
 		}
-		return false
-	})
+	}
+	for i := range data.Vnis {
+		if data.Vnis[i].VniRange.Unknown {
+			data.Vnis[i].VniRange.Unknown = false
+			data.Vnis[i].VniRange.Null = true
+		}
+		if data.Vnis[i].Ipv4MulticastGroup.Unknown {
+			data.Vnis[i].Ipv4MulticastGroup.Unknown = false
+			data.Vnis[i].Ipv4MulticastGroup.Null = true
+		}
+		if data.Vnis[i].IngressReplication.Unknown {
+			data.Vnis[i].IngressReplication.Unknown = false
+			data.Vnis[i].IngressReplication.Null = true
+		}
+	}
 }

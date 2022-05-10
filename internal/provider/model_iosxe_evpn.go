@@ -99,6 +99,69 @@ func (data EVPN) toBody() string {
 	return body
 }
 
+func (data *EVPN) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.ingress"); value.Exists() {
+		data.ReplicationTypeIngress.Value = true
+	} else {
+		data.ReplicationTypeIngress.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.static"); value.Exists() {
+		data.ReplicationTypeStatic.Value = true
+	} else {
+		data.ReplicationTypeStatic.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.p2mp"); value.Exists() {
+		data.ReplicationTypeP2mp.Value = true
+	} else {
+		data.ReplicationTypeP2mp.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.mp2mp"); value.Exists() {
+		data.ReplicationTypeMp2mp.Value = true
+	} else {
+		data.ReplicationTypeMp2mp.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mac.duplication.limit"); value.Exists() {
+		data.MacDuplicationLimit.Value = value.Int()
+	} else {
+		data.MacDuplicationLimit.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mac.duplication.time"); value.Exists() {
+		data.MacDuplicationTime.Value = value.Int()
+	} else {
+		data.MacDuplicationTime.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.duplication.limit"); value.Exists() {
+		data.IpDuplicationLimit.Value = value.Int()
+	} else {
+		data.IpDuplicationLimit.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.duplication.time"); value.Exists() {
+		data.IpDuplicationTime.Value = value.Int()
+	} else {
+		data.IpDuplicationTime.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "router-id.interface.Loopback"); value.Exists() {
+		data.RouterIdLoopback.Value = value.Int()
+	} else {
+		data.RouterIdLoopback.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-gateway.advertise"); value.Exists() {
+		data.DefaultGatewayAdvertise.Value = true
+	} else {
+		data.DefaultGatewayAdvertise.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "logging.peer.state"); value.Exists() {
+		data.LoggingPeerState.Value = true
+	} else {
+		data.LoggingPeerState.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.auto.vni"); value.Exists() {
+		data.RouteTargetAutoVni.Value = true
+	} else {
+		data.RouteTargetAutoVni.Value = false
+	}
+}
+
 func (data *EVPN) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.ingress"); value.Exists() {
 		data.ReplicationTypeIngress.Value = true
@@ -138,6 +201,61 @@ func (data *EVPN) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *EVPN) fromPlan(plan EVPN) {
-	data.Device = plan.Device
+func (data *EVPN) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.ReplicationTypeIngress.Unknown {
+		data.ReplicationTypeIngress.Unknown = false
+		data.ReplicationTypeIngress.Null = true
+	}
+	if data.ReplicationTypeStatic.Unknown {
+		data.ReplicationTypeStatic.Unknown = false
+		data.ReplicationTypeStatic.Null = true
+	}
+	if data.ReplicationTypeP2mp.Unknown {
+		data.ReplicationTypeP2mp.Unknown = false
+		data.ReplicationTypeP2mp.Null = true
+	}
+	if data.ReplicationTypeMp2mp.Unknown {
+		data.ReplicationTypeMp2mp.Unknown = false
+		data.ReplicationTypeMp2mp.Null = true
+	}
+	if data.MacDuplicationLimit.Unknown {
+		data.MacDuplicationLimit.Unknown = false
+		data.MacDuplicationLimit.Null = true
+	}
+	if data.MacDuplicationTime.Unknown {
+		data.MacDuplicationTime.Unknown = false
+		data.MacDuplicationTime.Null = true
+	}
+	if data.IpDuplicationLimit.Unknown {
+		data.IpDuplicationLimit.Unknown = false
+		data.IpDuplicationLimit.Null = true
+	}
+	if data.IpDuplicationTime.Unknown {
+		data.IpDuplicationTime.Unknown = false
+		data.IpDuplicationTime.Null = true
+	}
+	if data.RouterIdLoopback.Unknown {
+		data.RouterIdLoopback.Unknown = false
+		data.RouterIdLoopback.Null = true
+	}
+	if data.DefaultGatewayAdvertise.Unknown {
+		data.DefaultGatewayAdvertise.Unknown = false
+		data.DefaultGatewayAdvertise.Null = true
+	}
+	if data.LoggingPeerState.Unknown {
+		data.LoggingPeerState.Unknown = false
+		data.LoggingPeerState.Null = true
+	}
+	if data.RouteTargetAutoVni.Unknown {
+		data.RouteTargetAutoVni.Unknown = false
+		data.RouteTargetAutoVni.Null = true
+	}
 }

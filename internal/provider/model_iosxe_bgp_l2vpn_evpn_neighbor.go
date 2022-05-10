@@ -58,6 +58,29 @@ func (data BGPL2VPNEVPNNeighbor) toBody() string {
 	return body
 }
 
+func (data *BGPL2VPNEVPNNeighbor) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+		data.Ip.Value = value.String()
+	} else {
+		data.Ip.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "activate"); value.Exists() {
+		data.Activate.Value = true
+	} else {
+		data.Activate.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "send-community.send-community-where"); value.Exists() {
+		data.SendCommunity.Value = value.String()
+	} else {
+		data.SendCommunity.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-reflector-client"); value.Exists() {
+		data.RouteReflectorClient.Value = true
+	} else {
+		data.RouteReflectorClient.Value = false
+	}
+}
+
 func (data *BGPL2VPNEVPNNeighbor) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "activate"); value.Exists() {
 		data.Activate.Value = true
@@ -70,8 +93,33 @@ func (data *BGPL2VPNEVPNNeighbor) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPL2VPNEVPNNeighbor) fromPlan(plan BGPL2VPNEVPNNeighbor) {
-	data.Device = plan.Device
-	data.Asn.Value = plan.Asn.Value
-	data.Ip.Value = plan.Ip.Value
+func (data *BGPL2VPNEVPNNeighbor) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Asn.Unknown {
+		data.Asn.Unknown = false
+		data.Asn.Null = true
+	}
+	if data.Ip.Unknown {
+		data.Ip.Unknown = false
+		data.Ip.Null = true
+	}
+	if data.Activate.Unknown {
+		data.Activate.Unknown = false
+		data.Activate.Null = true
+	}
+	if data.SendCommunity.Unknown {
+		data.SendCommunity.Unknown = false
+		data.SendCommunity.Null = true
+	}
+	if data.RouteReflectorClient.Unknown {
+		data.RouteReflectorClient.Unknown = false
+		data.RouteReflectorClient.Null = true
+	}
 }

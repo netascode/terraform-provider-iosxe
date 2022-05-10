@@ -70,6 +70,44 @@ func (data InterfaceLoopback) toBody() string {
 	return body
 }
 
+func (data *InterfaceLoopback) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+		data.Name.Value = value.Int()
+	} else {
+		data.Name.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+		data.Description.Value = value.String()
+	} else {
+		data.Description.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+		data.Shutdown.Value = true
+	} else {
+		data.Shutdown.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.forwarding"); value.Exists() {
+		data.VrfForwarding.Value = value.String()
+	} else {
+		data.VrfForwarding.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.address"); value.Exists() {
+		data.Ipv4Address.Value = value.String()
+	} else {
+		data.Ipv4Address.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.mask"); value.Exists() {
+		data.Ipv4AddressMask.Value = value.String()
+	} else {
+		data.Ipv4AddressMask.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
+		data.PimSparseMode.Value = true
+	} else {
+		data.PimSparseMode.Value = false
+	}
+}
+
 func (data *InterfaceLoopback) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
@@ -91,7 +129,41 @@ func (data *InterfaceLoopback) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceLoopback) fromPlan(plan InterfaceLoopback) {
-	data.Device = plan.Device
-	data.Name.Value = plan.Name.Value
+func (data *InterfaceLoopback) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Name.Unknown {
+		data.Name.Unknown = false
+		data.Name.Null = true
+	}
+	if data.Description.Unknown {
+		data.Description.Unknown = false
+		data.Description.Null = true
+	}
+	if data.Shutdown.Unknown {
+		data.Shutdown.Unknown = false
+		data.Shutdown.Null = true
+	}
+	if data.VrfForwarding.Unknown {
+		data.VrfForwarding.Unknown = false
+		data.VrfForwarding.Null = true
+	}
+	if data.Ipv4Address.Unknown {
+		data.Ipv4Address.Unknown = false
+		data.Ipv4Address.Null = true
+	}
+	if data.Ipv4AddressMask.Unknown {
+		data.Ipv4AddressMask.Unknown = false
+		data.Ipv4AddressMask.Null = true
+	}
+	if data.PimSparseMode.Unknown {
+		data.PimSparseMode.Unknown = false
+		data.PimSparseMode.Null = true
+	}
 }

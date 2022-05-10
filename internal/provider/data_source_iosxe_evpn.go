@@ -119,7 +119,9 @@ func (d dataSourceEVPN) Read(ctx context.Context, req tfsdk.ReadDataSourceReques
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
-	if res.StatusCode != 404 {
+	if res.StatusCode == 404 {
+		state = EVPN{Device: config.Device}
+	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
@@ -127,8 +129,8 @@ func (d dataSourceEVPN) Read(ctx context.Context, req tfsdk.ReadDataSourceReques
 
 		state.fromBody(res.Res)
 	}
-	state.fromPlan(config)
-	state.Id.Value = config.getPath()
+
+	state.Id = types.String{Value: config.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

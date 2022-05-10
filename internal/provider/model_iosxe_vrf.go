@@ -5,7 +5,6 @@ package provider
 import (
 	"fmt"
 	"regexp"
-	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -103,6 +102,65 @@ func (data VRF) toBody() string {
 	return body
 }
 
+func (data *VRF) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+		data.Name.Value = value.String()
+	} else {
+		data.Name.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+		data.Description.Value = value.String()
+	} else {
+		data.Description.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "rd"); value.Exists() {
+		data.Rd.Value = value.String()
+	} else {
+		data.Rd.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "address-family.ipv4"); value.Exists() {
+		data.AddressFamilyIpv4.Value = true
+	} else {
+		data.AddressFamilyIpv4.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "address-family.ipv6"); value.Exists() {
+		data.AddressFamilyIpv6.Value = true
+	} else {
+		data.AddressFamilyIpv6.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vpn.id"); value.Exists() {
+		data.VpnId.Value = value.String()
+	} else {
+		data.VpnId.Null = true
+	}
+	for i := range data.RouteTargetImport {
+		key := data.RouteTargetImport[i].Value.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.import.#(asn-ip==\"" + key + "\")." + "asn-ip"); value.Exists() {
+			data.RouteTargetImport[i].Value.Value = value.String()
+		} else {
+			data.RouteTargetImport[i].Value.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.import.#(asn-ip==\"" + key + "\")." + "stitching"); value.Exists() {
+			data.RouteTargetImport[i].Stitching.Value = true
+		} else {
+			data.RouteTargetImport[i].Stitching.Value = false
+		}
+	}
+	for i := range data.RouteTargetExport {
+		key := data.RouteTargetExport[i].Value.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.export.#(asn-ip==\"" + key + "\")." + "asn-ip"); value.Exists() {
+			data.RouteTargetExport[i].Value.Value = value.String()
+		} else {
+			data.RouteTargetExport[i].Value.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.export.#(asn-ip==\"" + key + "\")." + "stitching"); value.Exists() {
+			data.RouteTargetExport[i].Stitching.Value = true
+		} else {
+			data.RouteTargetExport[i].Stitching.Value = false
+		}
+	}
+}
+
 func (data *VRF) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
@@ -149,29 +207,57 @@ func (data *VRF) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *VRF) fromPlan(plan VRF) {
-	data.Device = plan.Device
-	data.Name.Value = plan.Name.Value
-	sort.SliceStable(data.RouteTargetImport, func(i, j int) bool {
-		for ii := range plan.RouteTargetImport {
-			if plan.RouteTargetImport[ii].Value.Value == data.RouteTargetImport[i].Value.Value {
-				return true
-			}
-			if plan.RouteTargetImport[ii].Value.Value == data.RouteTargetImport[j].Value.Value {
-				return false
-			}
+func (data *VRF) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Name.Unknown {
+		data.Name.Unknown = false
+		data.Name.Null = true
+	}
+	if data.Description.Unknown {
+		data.Description.Unknown = false
+		data.Description.Null = true
+	}
+	if data.Rd.Unknown {
+		data.Rd.Unknown = false
+		data.Rd.Null = true
+	}
+	if data.AddressFamilyIpv4.Unknown {
+		data.AddressFamilyIpv4.Unknown = false
+		data.AddressFamilyIpv4.Null = true
+	}
+	if data.AddressFamilyIpv6.Unknown {
+		data.AddressFamilyIpv6.Unknown = false
+		data.AddressFamilyIpv6.Null = true
+	}
+	if data.VpnId.Unknown {
+		data.VpnId.Unknown = false
+		data.VpnId.Null = true
+	}
+	for i := range data.RouteTargetImport {
+		if data.RouteTargetImport[i].Value.Unknown {
+			data.RouteTargetImport[i].Value.Unknown = false
+			data.RouteTargetImport[i].Value.Null = true
 		}
-		return false
-	})
-	sort.SliceStable(data.RouteTargetExport, func(i, j int) bool {
-		for ii := range plan.RouteTargetExport {
-			if plan.RouteTargetExport[ii].Value.Value == data.RouteTargetExport[i].Value.Value {
-				return true
-			}
-			if plan.RouteTargetExport[ii].Value.Value == data.RouteTargetExport[j].Value.Value {
-				return false
-			}
+		if data.RouteTargetImport[i].Stitching.Unknown {
+			data.RouteTargetImport[i].Stitching.Unknown = false
+			data.RouteTargetImport[i].Stitching.Null = true
 		}
-		return false
-	})
+	}
+	for i := range data.RouteTargetExport {
+		if data.RouteTargetExport[i].Value.Unknown {
+			data.RouteTargetExport[i].Value.Unknown = false
+			data.RouteTargetExport[i].Value.Null = true
+		}
+		if data.RouteTargetExport[i].Stitching.Unknown {
+			data.RouteTargetExport[i].Stitching.Unknown = false
+			data.RouteTargetExport[i].Stitching.Null = true
+		}
+	}
 }

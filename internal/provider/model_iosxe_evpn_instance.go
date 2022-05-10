@@ -118,6 +118,89 @@ func (data EVPNInstance) toBody() string {
 	return body
 }
 
+func (data *EVPNInstance) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "evpn-instance-num"); value.Exists() {
+		data.EvpnInstanceNum.Value = value.Int()
+	} else {
+		data.EvpnInstanceNum.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.ingress"); value.Exists() {
+		data.VlanBasedReplicationTypeIngress.Value = true
+	} else {
+		data.VlanBasedReplicationTypeIngress.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.static"); value.Exists() {
+		data.VlanBasedReplicationTypeStatic.Value = true
+	} else {
+		data.VlanBasedReplicationTypeStatic.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.p2mp"); value.Exists() {
+		data.VlanBasedReplicationTypeP2mp.Value = true
+	} else {
+		data.VlanBasedReplicationTypeP2mp.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.mp2mp"); value.Exists() {
+		data.VlanBasedReplicationTypeMp2mp.Value = true
+	} else {
+		data.VlanBasedReplicationTypeMp2mp.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.encapsulation"); value.Exists() {
+		data.VlanBasedEncapsulation.Value = value.String()
+	} else {
+		data.VlanBasedEncapsulation.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.auto-route-target_cont.auto-route-target"); value.Exists() {
+		data.VlanBasedAutoRouteTarget.Value = true
+	} else {
+		data.VlanBasedAutoRouteTarget.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.rd.rd-value"); value.Exists() {
+		data.VlanBasedRd.Value = value.String()
+	} else {
+		data.VlanBasedRd.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.rt-value"); value.Exists() {
+		data.VlanBasedRouteTarget.Value = value.String()
+	} else {
+		data.VlanBasedRouteTarget.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.both.rt-value"); value.Exists() {
+		data.VlanBasedRouteTargetBoth.Value = value.String()
+	} else {
+		data.VlanBasedRouteTargetBoth.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.import.rt-value"); value.Exists() {
+		data.VlanBasedRouteTargetImport.Value = value.String()
+	} else {
+		data.VlanBasedRouteTargetImport.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.export.rt-value"); value.Exists() {
+		data.VlanBasedRouteTargetExport.Value = value.String()
+	} else {
+		data.VlanBasedRouteTargetExport.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.ip.local-learning.disable"); value.Exists() {
+		data.VlanBasedIpLocalLearningDisable.Value = true
+	} else {
+		data.VlanBasedIpLocalLearningDisable.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.ip.local-learning.enable"); value.Exists() {
+		data.VlanBasedIpLocalLearningEnable.Value = true
+	} else {
+		data.VlanBasedIpLocalLearningEnable.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.default-gateway.advertise"); value.Exists() {
+		data.VlanBasedDefaultGatewayAdvertise.Value = value.String()
+	} else {
+		data.VlanBasedDefaultGatewayAdvertise.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.re-originate.route-type5"); value.Exists() {
+		data.VlanBasedReOriginateRouteType5.Value = true
+	} else {
+		data.VlanBasedReOriginateRouteType5.Value = false
+	}
+}
+
 func (data *EVPNInstance) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.ingress"); value.Exists() {
 		data.VlanBasedReplicationTypeIngress.Value = true
@@ -166,7 +249,77 @@ func (data *EVPNInstance) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *EVPNInstance) fromPlan(plan EVPNInstance) {
-	data.Device = plan.Device
-	data.EvpnInstanceNum.Value = plan.EvpnInstanceNum.Value
+func (data *EVPNInstance) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.EvpnInstanceNum.Unknown {
+		data.EvpnInstanceNum.Unknown = false
+		data.EvpnInstanceNum.Null = true
+	}
+	if data.VlanBasedReplicationTypeIngress.Unknown {
+		data.VlanBasedReplicationTypeIngress.Unknown = false
+		data.VlanBasedReplicationTypeIngress.Null = true
+	}
+	if data.VlanBasedReplicationTypeStatic.Unknown {
+		data.VlanBasedReplicationTypeStatic.Unknown = false
+		data.VlanBasedReplicationTypeStatic.Null = true
+	}
+	if data.VlanBasedReplicationTypeP2mp.Unknown {
+		data.VlanBasedReplicationTypeP2mp.Unknown = false
+		data.VlanBasedReplicationTypeP2mp.Null = true
+	}
+	if data.VlanBasedReplicationTypeMp2mp.Unknown {
+		data.VlanBasedReplicationTypeMp2mp.Unknown = false
+		data.VlanBasedReplicationTypeMp2mp.Null = true
+	}
+	if data.VlanBasedEncapsulation.Unknown {
+		data.VlanBasedEncapsulation.Unknown = false
+		data.VlanBasedEncapsulation.Null = true
+	}
+	if data.VlanBasedAutoRouteTarget.Unknown {
+		data.VlanBasedAutoRouteTarget.Unknown = false
+		data.VlanBasedAutoRouteTarget.Null = true
+	}
+	if data.VlanBasedRd.Unknown {
+		data.VlanBasedRd.Unknown = false
+		data.VlanBasedRd.Null = true
+	}
+	if data.VlanBasedRouteTarget.Unknown {
+		data.VlanBasedRouteTarget.Unknown = false
+		data.VlanBasedRouteTarget.Null = true
+	}
+	if data.VlanBasedRouteTargetBoth.Unknown {
+		data.VlanBasedRouteTargetBoth.Unknown = false
+		data.VlanBasedRouteTargetBoth.Null = true
+	}
+	if data.VlanBasedRouteTargetImport.Unknown {
+		data.VlanBasedRouteTargetImport.Unknown = false
+		data.VlanBasedRouteTargetImport.Null = true
+	}
+	if data.VlanBasedRouteTargetExport.Unknown {
+		data.VlanBasedRouteTargetExport.Unknown = false
+		data.VlanBasedRouteTargetExport.Null = true
+	}
+	if data.VlanBasedIpLocalLearningDisable.Unknown {
+		data.VlanBasedIpLocalLearningDisable.Unknown = false
+		data.VlanBasedIpLocalLearningDisable.Null = true
+	}
+	if data.VlanBasedIpLocalLearningEnable.Unknown {
+		data.VlanBasedIpLocalLearningEnable.Unknown = false
+		data.VlanBasedIpLocalLearningEnable.Null = true
+	}
+	if data.VlanBasedDefaultGatewayAdvertise.Unknown {
+		data.VlanBasedDefaultGatewayAdvertise.Unknown = false
+		data.VlanBasedDefaultGatewayAdvertise.Null = true
+	}
+	if data.VlanBasedReOriginateRouteType5.Unknown {
+		data.VlanBasedReOriginateRouteType5.Unknown = false
+		data.VlanBasedReOriginateRouteType5.Null = true
+	}
 }

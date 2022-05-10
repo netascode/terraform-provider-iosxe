@@ -52,6 +52,29 @@ func (data Banner) toBody() string {
 	return body
 }
 
+func (data *Banner) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "exec.banner"); value.Exists() {
+		data.ExecBanner.Value = value.String()
+	} else {
+		data.ExecBanner.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "login.banner"); value.Exists() {
+		data.LoginBanner.Value = value.String()
+	} else {
+		data.LoginBanner.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "prompt-timeout.banner"); value.Exists() {
+		data.PromptTimeoutBanner.Value = value.String()
+	} else {
+		data.PromptTimeoutBanner.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "motd.banner"); value.Exists() {
+		data.MotdBanner.Value = value.String()
+	} else {
+		data.MotdBanner.Null = true
+	}
+}
+
 func (data *Banner) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "exec.banner"); value.Exists() {
 		data.ExecBanner.Value = value.String()
@@ -67,6 +90,29 @@ func (data *Banner) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *Banner) fromPlan(plan Banner) {
-	data.Device = plan.Device
+func (data *Banner) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.ExecBanner.Unknown {
+		data.ExecBanner.Unknown = false
+		data.ExecBanner.Null = true
+	}
+	if data.LoginBanner.Unknown {
+		data.LoginBanner.Unknown = false
+		data.LoginBanner.Null = true
+	}
+	if data.PromptTimeoutBanner.Unknown {
+		data.PromptTimeoutBanner.Unknown = false
+		data.PromptTimeoutBanner.Null = true
+	}
+	if data.MotdBanner.Unknown {
+		data.MotdBanner.Unknown = false
+		data.MotdBanner.Null = true
+	}
 }

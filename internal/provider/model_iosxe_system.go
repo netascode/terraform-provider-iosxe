@@ -46,6 +46,19 @@ func (data System) toBody() string {
 	return body
 }
 
+func (data *System) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "hostname"); value.Exists() {
+		data.Hostname.Value = value.String()
+	} else {
+		data.Hostname.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ipv6.unicast-routing"); value.Exists() {
+		data.Ipv6UnicastRouting.Value = true
+	} else {
+		data.Ipv6UnicastRouting.Value = false
+	}
+}
+
 func (data *System) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "hostname"); value.Exists() {
 		data.Hostname.Value = value.String()
@@ -55,6 +68,21 @@ func (data *System) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *System) fromPlan(plan System) {
-	data.Device = plan.Device
+func (data *System) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Hostname.Unknown {
+		data.Hostname.Unknown = false
+		data.Hostname.Null = true
+	}
+	if data.Ipv6UnicastRouting.Unknown {
+		data.Ipv6UnicastRouting.Unknown = false
+		data.Ipv6UnicastRouting.Null = true
+	}
 }

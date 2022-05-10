@@ -5,7 +5,6 @@ package provider
 import (
 	"fmt"
 	"regexp"
-	"sort"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -153,6 +152,118 @@ func (data OSPF) toBody() string {
 	return body
 }
 
+func (data *OSPF) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+		data.ProcessId.Value = value.Int()
+	} else {
+		data.ProcessId.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bfd.all-interfaces"); value.Exists() {
+		data.BfdAllInterfaces.Value = true
+	} else {
+		data.BfdAllInterfaces.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-information.originate"); value.Exists() {
+		data.DefaultInformationOriginate.Value = true
+	} else {
+		data.DefaultInformationOriginate.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-information.originate.always"); value.Exists() {
+		data.DefaultInformationOriginateAlways.Value = true
+	} else {
+		data.DefaultInformationOriginateAlways.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-metric"); value.Exists() {
+		data.DefaultMetric.Value = value.Int()
+	} else {
+		data.DefaultMetric.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "distance.distance"); value.Exists() {
+		data.Distance.Value = value.Int()
+	} else {
+		data.Distance.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "domain-tag"); value.Exists() {
+		data.DomainTag.Value = value.Int()
+	} else {
+		data.DomainTag.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.autoconfig"); value.Exists() {
+		data.MplsLdpAutoconfig.Value = true
+	} else {
+		data.MplsLdpAutoconfig.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.sync"); value.Exists() {
+		data.MplsLdpSync.Value = true
+	} else {
+		data.MplsLdpSync.Value = false
+	}
+	for i := range data.Neighbor {
+		key := data.Neighbor[i].Ip.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor.#(ip==\"" + key + "\")." + "ip"); value.Exists() {
+			data.Neighbor[i].Ip.Value = value.String()
+		} else {
+			data.Neighbor[i].Ip.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor.#(ip==\"" + key + "\")." + "priority"); value.Exists() {
+			data.Neighbor[i].Priority.Value = value.Int()
+		} else {
+			data.Neighbor[i].Priority.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor.#(ip==\"" + key + "\")." + "cost"); value.Exists() {
+			data.Neighbor[i].Cost.Value = value.Int()
+		} else {
+			data.Neighbor[i].Cost.Null = true
+		}
+	}
+	for i := range data.Network {
+		key := data.Network[i].Ip.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.#(ip==\"" + key + "\")." + "ip"); value.Exists() {
+			data.Network[i].Ip.Value = value.String()
+		} else {
+			data.Network[i].Ip.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.#(ip==\"" + key + "\")." + "wildcard"); value.Exists() {
+			data.Network[i].Wildcard.Value = value.String()
+		} else {
+			data.Network[i].Wildcard.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.#(ip==\"" + key + "\")." + "area"); value.Exists() {
+			data.Network[i].Area.Value = value.String()
+		} else {
+			data.Network[i].Area.Null = true
+		}
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "priority"); value.Exists() {
+		data.Priority.Value = value.Int()
+	} else {
+		data.Priority.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "router-id"); value.Exists() {
+		data.RouterId.Value = value.String()
+	} else {
+		data.RouterId.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+		data.Shutdown.Value = value.Bool()
+	} else {
+		data.Shutdown.Value = false
+	}
+	for i := range data.SummaryAddress {
+		key := data.SummaryAddress[i].Ip.Value
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "summary-address.#(ip==\"" + key + "\")." + "ip"); value.Exists() {
+			data.SummaryAddress[i].Ip.Value = value.String()
+		} else {
+			data.SummaryAddress[i].Ip.Null = true
+		}
+		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "summary-address.#(ip==\"" + key + "\")." + "mask"); value.Exists() {
+			data.SummaryAddress[i].Mask.Value = value.String()
+		} else {
+			data.SummaryAddress[i].Mask.Null = true
+		}
+	}
+}
+
 func (data *OSPF) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bfd.all-interfaces"); value.Exists() {
 		data.BfdAllInterfaces.Value = true
@@ -237,40 +348,99 @@ func (data *OSPF) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *OSPF) fromPlan(plan OSPF) {
-	data.Device = plan.Device
-	data.ProcessId.Value = plan.ProcessId.Value
-	sort.SliceStable(data.Neighbor, func(i, j int) bool {
-		for ii := range plan.Neighbor {
-			if plan.Neighbor[ii].Ip.Value == data.Neighbor[i].Ip.Value {
-				return true
-			}
-			if plan.Neighbor[ii].Ip.Value == data.Neighbor[j].Ip.Value {
-				return false
-			}
+func (data *OSPF) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.ProcessId.Unknown {
+		data.ProcessId.Unknown = false
+		data.ProcessId.Null = true
+	}
+	if data.BfdAllInterfaces.Unknown {
+		data.BfdAllInterfaces.Unknown = false
+		data.BfdAllInterfaces.Null = true
+	}
+	if data.DefaultInformationOriginate.Unknown {
+		data.DefaultInformationOriginate.Unknown = false
+		data.DefaultInformationOriginate.Null = true
+	}
+	if data.DefaultInformationOriginateAlways.Unknown {
+		data.DefaultInformationOriginateAlways.Unknown = false
+		data.DefaultInformationOriginateAlways.Null = true
+	}
+	if data.DefaultMetric.Unknown {
+		data.DefaultMetric.Unknown = false
+		data.DefaultMetric.Null = true
+	}
+	if data.Distance.Unknown {
+		data.Distance.Unknown = false
+		data.Distance.Null = true
+	}
+	if data.DomainTag.Unknown {
+		data.DomainTag.Unknown = false
+		data.DomainTag.Null = true
+	}
+	if data.MplsLdpAutoconfig.Unknown {
+		data.MplsLdpAutoconfig.Unknown = false
+		data.MplsLdpAutoconfig.Null = true
+	}
+	if data.MplsLdpSync.Unknown {
+		data.MplsLdpSync.Unknown = false
+		data.MplsLdpSync.Null = true
+	}
+	for i := range data.Neighbor {
+		if data.Neighbor[i].Ip.Unknown {
+			data.Neighbor[i].Ip.Unknown = false
+			data.Neighbor[i].Ip.Null = true
 		}
-		return false
-	})
-	sort.SliceStable(data.Network, func(i, j int) bool {
-		for ii := range plan.Network {
-			if plan.Network[ii].Ip.Value == data.Network[i].Ip.Value {
-				return true
-			}
-			if plan.Network[ii].Ip.Value == data.Network[j].Ip.Value {
-				return false
-			}
+		if data.Neighbor[i].Priority.Unknown {
+			data.Neighbor[i].Priority.Unknown = false
+			data.Neighbor[i].Priority.Null = true
 		}
-		return false
-	})
-	sort.SliceStable(data.SummaryAddress, func(i, j int) bool {
-		for ii := range plan.SummaryAddress {
-			if plan.SummaryAddress[ii].Ip.Value == data.SummaryAddress[i].Ip.Value {
-				return true
-			}
-			if plan.SummaryAddress[ii].Ip.Value == data.SummaryAddress[j].Ip.Value {
-				return false
-			}
+		if data.Neighbor[i].Cost.Unknown {
+			data.Neighbor[i].Cost.Unknown = false
+			data.Neighbor[i].Cost.Null = true
 		}
-		return false
-	})
+	}
+	for i := range data.Network {
+		if data.Network[i].Ip.Unknown {
+			data.Network[i].Ip.Unknown = false
+			data.Network[i].Ip.Null = true
+		}
+		if data.Network[i].Wildcard.Unknown {
+			data.Network[i].Wildcard.Unknown = false
+			data.Network[i].Wildcard.Null = true
+		}
+		if data.Network[i].Area.Unknown {
+			data.Network[i].Area.Unknown = false
+			data.Network[i].Area.Null = true
+		}
+	}
+	if data.Priority.Unknown {
+		data.Priority.Unknown = false
+		data.Priority.Null = true
+	}
+	if data.RouterId.Unknown {
+		data.RouterId.Unknown = false
+		data.RouterId.Null = true
+	}
+	if data.Shutdown.Unknown {
+		data.Shutdown.Unknown = false
+		data.Shutdown.Null = true
+	}
+	for i := range data.SummaryAddress {
+		if data.SummaryAddress[i].Ip.Unknown {
+			data.SummaryAddress[i].Ip.Unknown = false
+			data.SummaryAddress[i].Ip.Null = true
+		}
+		if data.SummaryAddress[i].Mask.Unknown {
+			data.SummaryAddress[i].Mask.Unknown = false
+			data.SummaryAddress[i].Mask.Null = true
+		}
+	}
 }

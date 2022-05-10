@@ -108,7 +108,7 @@ type resourceInterfaceLoopback struct {
 }
 
 func (r resourceInterfaceLoopback) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan, state InterfaceLoopback
+	var plan InterfaceLoopback
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -131,25 +131,18 @@ func (r resourceInterfaceLoopback) Create(ctx context.Context, req tfsdk.CreateR
 		return
 	}
 
-	// Read object
-	res, err = r.provider.clients[plan.Device.Value].GetData(plan.getPath())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
-		return
-	}
+	plan.setUnknownValues()
 
-	state.fromBody(res.Res)
-	state.fromPlan(plan)
-	state.Id.Value = plan.getPath()
+	plan.Id = types.String{Value: plan.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.getPath()))
 
-	diags = resp.State.Set(ctx, &state)
+	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 }
 
 func (r resourceInterfaceLoopback) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state, newState InterfaceLoopback
+	var state InterfaceLoopback
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -161,20 +154,20 @@ func (r resourceInterfaceLoopback) Read(ctx context.Context, req tfsdk.ReadResou
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", state.Id.Value))
 
 	res, err := r.provider.clients[state.Device.Value].GetData(state.Id.Value)
-	if res.StatusCode != 404 {
+	if res.StatusCode == 404 {
+		state = InterfaceLoopback{Device: state.Device, Id: state.Id}
+	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
 		}
 
-		newState.fromBody(res.Res)
+		state.updateFromBody(res.Res)
 	}
-	newState.fromPlan(state)
-	newState.Id = state.Id
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", state.Id.Value))
 
-	diags = resp.State.Set(ctx, &newState)
+	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
 
@@ -188,11 +181,16 @@ func (r resourceInterfaceLoopback) Update(ctx context.Context, req tfsdk.UpdateR
 		return
 	}
 
+	// Read state
+	diags = req.State.Get(ctx, &state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.Id.Value))
 
-	// Update object
 	body := plan.toBody()
-
 	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
 	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
 		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
@@ -202,20 +200,11 @@ func (r resourceInterfaceLoopback) Update(ctx context.Context, req tfsdk.UpdateR
 		return
 	}
 
-	// Read object
-	res, err = r.provider.clients[plan.Device.Value].GetData(plan.getPath())
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
-		return
-	}
-
-	state.fromBody(res.Res)
-	state.fromPlan(plan)
-	state.Id.Value = plan.getPath()
+	plan.setUnknownValues()
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Update finished successfully", plan.Id.Value))
 
-	diags = resp.State.Set(ctx, &state)
+	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 }
 
@@ -231,7 +220,7 @@ func (r resourceInterfaceLoopback) Delete(ctx context.Context, req tfsdk.DeleteR
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.Value))
 
-	res, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath())
+	res, err := r.provider.clients[state.Device.Value].DeleteData(state.Id.Value)
 	if err != nil && res.StatusCode != 404 {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object, got error: %s", err))
 		return

@@ -61,6 +61,34 @@ func (data BGPNeighbor) toBody() string {
 	return body
 }
 
+func (data *BGPNeighbor) updateFromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+		data.Ip.Value = value.String()
+	} else {
+		data.Ip.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-as"); value.Exists() {
+		data.RemoteAs.Value = value.String()
+	} else {
+		data.RemoteAs.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+		data.Description.Value = value.String()
+	} else {
+		data.Description.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+		data.Shutdown.Value = true
+	} else {
+		data.Shutdown.Value = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "update-source.interface.Loopback"); value.Exists() {
+		data.UpdateSourceLoopback.Value = value.Int()
+	} else {
+		data.UpdateSourceLoopback.Null = true
+	}
+}
+
 func (data *BGPNeighbor) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-as"); value.Exists() {
 		data.RemoteAs.Value = value.String()
@@ -76,8 +104,37 @@ func (data *BGPNeighbor) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPNeighbor) fromPlan(plan BGPNeighbor) {
-	data.Device = plan.Device
-	data.Asn.Value = plan.Asn.Value
-	data.Ip.Value = plan.Ip.Value
+func (data *BGPNeighbor) setUnknownValues() {
+	if data.Device.Unknown {
+		data.Device.Unknown = false
+		data.Device.Null = true
+	}
+	if data.Id.Unknown {
+		data.Id.Unknown = false
+		data.Id.Null = true
+	}
+	if data.Asn.Unknown {
+		data.Asn.Unknown = false
+		data.Asn.Null = true
+	}
+	if data.Ip.Unknown {
+		data.Ip.Unknown = false
+		data.Ip.Null = true
+	}
+	if data.RemoteAs.Unknown {
+		data.RemoteAs.Unknown = false
+		data.RemoteAs.Null = true
+	}
+	if data.Description.Unknown {
+		data.Description.Unknown = false
+		data.Description.Null = true
+	}
+	if data.Shutdown.Unknown {
+		data.Shutdown.Unknown = false
+		data.Shutdown.Null = true
+	}
+	if data.UpdateSourceLoopback.Unknown {
+		data.UpdateSourceLoopback.Unknown = false
+		data.UpdateSourceLoopback.Null = true
+	}
 }
