@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"strconv"
 
@@ -205,6 +206,9 @@ func (data *StaticRoute) setUnknownValues() {
 func (data *StaticRoute) getDeletedListItems(state StaticRoute) []string {
 	deletedListItems := make([]string, 0)
 	for _, i := range state.NextHops {
+		if reflect.ValueOf(i.NextHop.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.NextHops {
 			if i.NextHop.Value == j.NextHop.Value {

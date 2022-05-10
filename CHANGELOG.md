@@ -1,3 +1,7 @@
+## 0.1.4 (unreleased)
+
+- Fix handling of null values in resource list items
+
 ## 0.1.3
 
 - Add unnumbered option to iosxe_interface_vlan resource

@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"strconv"
 
@@ -263,6 +264,9 @@ func (data *InterfaceNVE) setUnknownValues() {
 func (data *InterfaceNVE) getDeletedListItems(state InterfaceNVE) []string {
 	deletedListItems := make([]string, 0)
 	for _, i := range state.VniVrfs {
+		if reflect.ValueOf(i.VniRange.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.VniVrfs {
 			if i.VniRange.Value == j.VniRange.Value {
@@ -274,6 +278,9 @@ func (data *InterfaceNVE) getDeletedListItems(state InterfaceNVE) []string {
 		}
 	}
 	for _, i := range state.Vnis {
+		if reflect.ValueOf(i.VniRange.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.Vnis {
 			if i.VniRange.Value == j.VniRange.Value {

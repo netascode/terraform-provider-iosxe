@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"strconv"
 
@@ -461,6 +462,9 @@ func (data *OSPFVRF) setUnknownValues() {
 func (data *OSPFVRF) getDeletedListItems(state OSPFVRF) []string {
 	deletedListItems := make([]string, 0)
 	for _, i := range state.Neighbor {
+		if reflect.ValueOf(i.Ip.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.Neighbor {
 			if i.Ip.Value == j.Ip.Value {
@@ -472,6 +476,9 @@ func (data *OSPFVRF) getDeletedListItems(state OSPFVRF) []string {
 		}
 	}
 	for _, i := range state.Network {
+		if reflect.ValueOf(i.Ip.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.Network {
 			if i.Ip.Value == j.Ip.Value {
@@ -483,6 +490,9 @@ func (data *OSPFVRF) getDeletedListItems(state OSPFVRF) []string {
 		}
 	}
 	for _, i := range state.SummaryAddress {
+		if reflect.ValueOf(i.Ip.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.SummaryAddress {
 			if i.Ip.Value == j.Ip.Value {

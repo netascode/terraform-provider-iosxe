@@ -12,6 +12,10 @@ import (
 	{{- if $strconv }}
 	"strconv"
 	{{- end}}
+	{{- $reflect := false }}{{ range .Attributes}}{{ if eq .Type "List" }}{{ $reflect = true }}{{ end}}{{ end}}
+	{{- if $reflect }}
+	"reflect"
+	{{- end}}
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -271,6 +275,9 @@ func (data *{{camelCase .Name}}) getDeletedListItems(state {{camelCase .Name}}) 
 	{{- end}}
 	{{- end}}
 	for _, i := range state.{{toGoName .TfName}} {
+		if reflect.ValueOf(i.{{$goKey}}.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.{{toGoName .TfName}} {
 			if i.{{$goKey}}.Value == j.{{$goKey}}.Value {

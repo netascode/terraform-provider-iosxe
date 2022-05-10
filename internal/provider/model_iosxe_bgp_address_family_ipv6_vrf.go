@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"strconv"
 
@@ -167,6 +168,9 @@ func (data *BGPAddressFamilyIPv6VRF) setUnknownValues() {
 func (data *BGPAddressFamilyIPv6VRF) getDeletedListItems(state BGPAddressFamilyIPv6VRF) []string {
 	deletedListItems := make([]string, 0)
 	for _, i := range state.Vrfs {
+		if reflect.ValueOf(i.Name.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.Vrfs {
 			if i.Name.Value == j.Name.Value {

@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"strconv"
 
@@ -265,6 +266,9 @@ func (data *VRF) setUnknownValues() {
 func (data *VRF) getDeletedListItems(state VRF) []string {
 	deletedListItems := make([]string, 0)
 	for _, i := range state.RouteTargetImport {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.RouteTargetImport {
 			if i.Value.Value == j.Value.Value {
@@ -276,6 +280,9 @@ func (data *VRF) getDeletedListItems(state VRF) []string {
 		}
 	}
 	for _, i := range state.RouteTargetExport {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
 		found := false
 		for _, j := range data.RouteTargetExport {
 			if i.Value.Value == j.Value.Value {
