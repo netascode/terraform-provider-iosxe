@@ -152,14 +152,17 @@ func (r resourceInterfaceNVE) Create(ctx context.Context, req tfsdk.CreateResour
 	// Create object
 	body := plan.toBody()
 
-	_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
+		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
 
 	// Read object
-	res, err := r.provider.clients[plan.Device.Value].GetData(plan.getPath())
+	res, err = r.provider.clients[plan.Device.Value].GetData(plan.getPath())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 		return
@@ -220,14 +223,17 @@ func (r resourceInterfaceNVE) Update(ctx context.Context, req tfsdk.UpdateResour
 	// Update object
 	body := plan.toBody()
 
-	_, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
+		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
 
 	// Read object
-	res, err := r.provider.clients[plan.Device.Value].GetData(plan.getPath())
+	res, err = r.provider.clients[plan.Device.Value].GetData(plan.getPath())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 		return
