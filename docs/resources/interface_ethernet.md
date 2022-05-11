@@ -37,6 +37,7 @@ resource "iosxe_interface_ethernet" "example" {
 
 - `description` (String) Interface specific description
 - `device` (String) A device name from the provider configuration.
+- `encapsulation_dot1q_vlan_id` (Number) - Range: `1`-`4094`
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `media_type` (String) Media type

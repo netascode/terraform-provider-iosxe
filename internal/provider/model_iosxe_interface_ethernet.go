@@ -5,6 +5,7 @@ package provider
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -13,17 +14,18 @@ import (
 )
 
 type InterfaceEthernet struct {
-	Device          types.String `tfsdk:"device"`
-	Id              types.String `tfsdk:"id"`
-	Type            types.String `tfsdk:"type"`
-	Name            types.String `tfsdk:"name"`
-	MediaType       types.String `tfsdk:"media_type"`
-	Description     types.String `tfsdk:"description"`
-	Shutdown        types.Bool   `tfsdk:"shutdown"`
-	VrfForwarding   types.String `tfsdk:"vrf_forwarding"`
-	Ipv4Address     types.String `tfsdk:"ipv4_address"`
-	Ipv4AddressMask types.String `tfsdk:"ipv4_address_mask"`
-	Unnumbered      types.String `tfsdk:"unnumbered"`
+	Device                   types.String `tfsdk:"device"`
+	Id                       types.String `tfsdk:"id"`
+	Type                     types.String `tfsdk:"type"`
+	Name                     types.String `tfsdk:"name"`
+	MediaType                types.String `tfsdk:"media_type"`
+	Description              types.String `tfsdk:"description"`
+	Shutdown                 types.Bool   `tfsdk:"shutdown"`
+	VrfForwarding            types.String `tfsdk:"vrf_forwarding"`
+	Ipv4Address              types.String `tfsdk:"ipv4_address"`
+	Ipv4AddressMask          types.String `tfsdk:"ipv4_address_mask"`
+	Unnumbered               types.String `tfsdk:"unnumbered"`
+	EncapsulationDot1qVlanId types.Int64  `tfsdk:"encapsulation_dot1q_vlan_id"`
 }
 
 func (data InterfaceEthernet) getPath() string {
@@ -69,6 +71,9 @@ func (data InterfaceEthernet) toBody() string {
 	if !data.Unnumbered.Null && !data.Unnumbered.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.unnumbered", data.Unnumbered.Value)
 	}
+	if !data.EncapsulationDot1qVlanId.Null && !data.EncapsulationDot1qVlanId.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"encapsulation.dot1Q.vlan-id", strconv.FormatInt(data.EncapsulationDot1qVlanId.Value, 10))
+	}
 	return body
 }
 
@@ -113,6 +118,11 @@ func (data *InterfaceEthernet) updateFromBody(res gjson.Result) {
 	} else {
 		data.Unnumbered.Null = true
 	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "encapsulation.dot1Q.vlan-id"); value.Exists() {
+		data.EncapsulationDot1qVlanId.Value = value.Int()
+	} else {
+		data.EncapsulationDot1qVlanId.Null = true
+	}
 }
 
 func (data *InterfaceEthernet) fromBody(res gjson.Result) {
@@ -146,6 +156,10 @@ func (data *InterfaceEthernet) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.unnumbered"); value.Exists() {
 		data.Unnumbered.Value = value.String()
 		data.Unnumbered.Null = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "encapsulation.dot1Q.vlan-id"); value.Exists() {
+		data.EncapsulationDot1qVlanId.Value = value.Int()
+		data.EncapsulationDot1qVlanId.Null = false
 	}
 }
 
@@ -193,6 +207,10 @@ func (data *InterfaceEthernet) setUnknownValues() {
 	if data.Unnumbered.Unknown {
 		data.Unnumbered.Unknown = false
 		data.Unnumbered.Null = true
+	}
+	if data.EncapsulationDot1qVlanId.Unknown {
+		data.EncapsulationDot1qVlanId.Unknown = false
+		data.EncapsulationDot1qVlanId.Null = true
 	}
 }
 
