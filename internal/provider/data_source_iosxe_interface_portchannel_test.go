@@ -8,26 +8,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceIosxeInterfacePort_Channel(t *testing.T) {
+func TestAccDataSourceIosxeInterfacePortChannel(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeInterfacePort_ChannelPrerequisitesConfig + testAccDataSourceIosxeInterfacePort_ChannelConfig,
+				Config: testAccDataSourceIosxeInterfacePortChannelPrerequisitesConfig + testAccDataSourceIosxeInterfacePortChannelConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "description", "My Interface Description"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "vrf_forwarding", "VRF1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address", "192.0.2.1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address_mask", "255.255.255.0"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "description", "My Interface Description"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "shutdown", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "vrf_forwarding", "VRF1"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "ipv4_address", "192.0.2.1"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "ipv4_address_mask", "255.255.255.0"),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeInterfacePort_ChannelPrerequisitesConfig = `
+const testAccDataSourceIosxeInterfacePortChannelPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
@@ -47,9 +47,9 @@ resource "iosxe_restconf" "PreReq1" {
 
 `
 
-const testAccDataSourceIosxeInterfacePort_ChannelConfig = `
+const testAccDataSourceIosxeInterfacePortChannelConfig = `
 
-resource "iosxe_interface_port_channel" "test" {
+resource "iosxe_interface_portchannel" "test" {
   name = 100
   description = "My Interface Description"
   shutdown = false
@@ -59,8 +59,8 @@ resource "iosxe_interface_port_channel" "test" {
   depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 
-data "iosxe_interface_port_channel" "test" {
+data "iosxe_interface_portchannel" "test" {
   name = 100
-  depends_on = [iosxe_interface_port_channel.test]
+  depends_on = [iosxe_interface_portchannel.test]
 }
 `

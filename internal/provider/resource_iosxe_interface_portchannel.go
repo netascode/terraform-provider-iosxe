@@ -14,12 +14,12 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceInterfacePort_ChannelType struct{}
+type resourceInterfacePortChannelType struct{}
 
-func (t resourceInterfacePort_ChannelType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t resourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the Interface Port_Channel configuration.",
+		MarkdownDescription: "This resource can manage the Interface PortChannel configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -95,20 +95,20 @@ func (t resourceInterfacePort_ChannelType) GetSchema(ctx context.Context) (tfsdk
 	}, nil
 }
 
-func (t resourceInterfacePort_ChannelType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfacePortChannelType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return resourceInterfacePort_Channel{
+	return resourceInterfacePortChannel{
 		provider: provider,
 	}, diags
 }
 
-type resourceInterfacePort_Channel struct {
+type resourceInterfacePortChannel struct {
 	provider provider
 }
 
-func (r resourceInterfacePort_Channel) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan InterfacePort_Channel
+func (r resourceInterfacePortChannel) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+	var plan InterfacePortChannel
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -141,8 +141,8 @@ func (r resourceInterfacePort_Channel) Create(ctx context.Context, req tfsdk.Cre
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePort_Channel) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state InterfacePort_Channel
+func (r resourceInterfacePortChannel) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+	var state InterfacePortChannel
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -155,7 +155,7 @@ func (r resourceInterfacePort_Channel) Read(ctx context.Context, req tfsdk.ReadR
 
 	res, err := r.provider.clients[state.Device.Value].GetData(state.Id.Value)
 	if res.StatusCode == 404 {
-		state = InterfacePort_Channel{Device: state.Device, Id: state.Id}
+		state = InterfacePortChannel{Device: state.Device, Id: state.Id}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
@@ -171,8 +171,8 @@ func (r resourceInterfacePort_Channel) Read(ctx context.Context, req tfsdk.ReadR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePort_Channel) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan, state InterfacePort_Channel
+func (r resourceInterfacePortChannel) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+	var plan, state InterfacePortChannel
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -219,8 +219,8 @@ func (r resourceInterfacePort_Channel) Update(ctx context.Context, req tfsdk.Upd
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePort_Channel) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
-	var state InterfacePort_Channel
+func (r resourceInterfacePortChannel) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+	var state InterfacePortChannel
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -242,6 +242,6 @@ func (r resourceInterfacePort_Channel) Delete(ctx context.Context, req tfsdk.Del
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfacePort_Channel) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+func (r resourceInterfacePortChannel) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
 	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
 }

@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-type dataSourceInterfacePort_ChannelType struct{}
+type dataSourceInterfacePortChannelType struct{}
 
-func (t dataSourceInterfacePort_ChannelType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t dataSourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This data source can read the Interface Port_Channel configuration.",
+		MarkdownDescription: "This data source can read the Interface PortChannel configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -69,20 +69,20 @@ func (t dataSourceInterfacePort_ChannelType) GetSchema(ctx context.Context) (tfs
 	}, nil
 }
 
-func (t dataSourceInterfacePort_ChannelType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceInterfacePortChannelType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return dataSourceInterfacePort_Channel{
+	return dataSourceInterfacePortChannel{
 		provider: provider,
 	}, diags
 }
 
-type dataSourceInterfacePort_Channel struct {
+type dataSourceInterfacePortChannel struct {
 	provider provider
 }
 
-func (d dataSourceInterfacePort_Channel) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config InterfacePort_Channel
+func (d dataSourceInterfacePortChannel) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+	var config InterfacePortChannel
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -95,7 +95,7 @@ func (d dataSourceInterfacePort_Channel) Read(ctx context.Context, req tfsdk.Rea
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfacePort_Channel{Device: config.Device}
+		config = InterfacePortChannel{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

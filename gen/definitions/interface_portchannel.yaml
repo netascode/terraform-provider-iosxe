@@ -1,5 +1,5 @@
 ---
-name: Interface Port_Channel
+name: Interface PortChannel
 path: Cisco-IOS-XE-native:native/interface/Port-channel=%v
 doc_category: Interface
 attributes:

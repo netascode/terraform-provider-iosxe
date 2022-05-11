@@ -14,7 +14,7 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-type InterfacePort_Channel struct {
+type InterfacePortChannel struct {
 	Device          types.String `tfsdk:"device"`
 	Id              types.String `tfsdk:"id"`
 	Name            types.Int64  `tfsdk:"name"`
@@ -26,12 +26,12 @@ type InterfacePort_Channel struct {
 	Switchport      types.Bool   `tfsdk:"switchport"`
 }
 
-func (data InterfacePort_Channel) getPath() string {
+func (data InterfacePortChannel) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Port-channel=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
 }
 
 // if last path element has a key -> remove it
-func (data InterfacePort_Channel) getPathShort() string {
+func (data InterfacePortChannel) getPathShort() string {
 	path := data.getPath()
 	re := regexp.MustCompile(`(.*)=[^\/]*$`)
 	matches := re.FindStringSubmatch(path)
@@ -41,7 +41,7 @@ func (data InterfacePort_Channel) getPathShort() string {
 	return matches[1]
 }
 
-func (data InterfacePort_Channel) toBody() string {
+func (data InterfacePortChannel) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Name.Null && !data.Name.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.Value, 10))
@@ -69,7 +69,7 @@ func (data InterfacePort_Channel) toBody() string {
 	return body
 }
 
-func (data *InterfacePort_Channel) updateFromBody(res gjson.Result) {
+func (data *InterfacePortChannel) updateFromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
 		data.Name.Value = value.Int()
 	} else {
@@ -107,7 +107,7 @@ func (data *InterfacePort_Channel) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfacePort_Channel) fromBody(res gjson.Result) {
+func (data *InterfacePortChannel) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
 		data.Description.Null = false
@@ -140,7 +140,7 @@ func (data *InterfacePort_Channel) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfacePort_Channel) setUnknownValues() {
+func (data *InterfacePortChannel) setUnknownValues() {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -179,7 +179,7 @@ func (data *InterfacePort_Channel) setUnknownValues() {
 	}
 }
 
-func (data *InterfacePort_Channel) getDeletedListItems(state InterfacePort_Channel) []string {
+func (data *InterfacePortChannel) getDeletedListItems(state InterfacePortChannel) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
