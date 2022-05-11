@@ -8,6 +8,10 @@ import (
 	{{- if hasId .Attributes }}
 	"fmt"
 	{{- end}}
+	{{- $neturl := false }}{{ range .Attributes}}{{ if or (eq .Id true) (eq .Reference true) }}{{ $neturl = true }}{{ end}}{{ end}}
+	{{- if $neturl }}
+	"net/url"
+	{{- end}}
 	{{- $strconv := false }}{{ range .Attributes}}{{ if or (and (eq .Type "Int64") (ne .Reference true)) (eq .Type "List") }}{{ $strconv = true }}{{ end}}{{ end}}
 	{{- if $strconv }}
 	"strconv"
@@ -54,7 +58,7 @@ type {{$name}}{{toGoName .TfName}} struct {
 
 func (data {{camelCase .Name}}) getPath() string {
 {{- if hasId .Attributes}}
-	return fmt.Sprintf("{{.Path}}"{{range .Attributes}}{{if or (eq .Id true) (eq .Reference true)}}, data.{{toGoName .TfName}}.Value{{end}}{{end}})
+	return fmt.Sprintf("{{.Path}}"{{range .Attributes}}{{if or (eq .Id true) (eq .Reference true)}}, url.QueryEscape(fmt.Sprintf("%v", data.{{toGoName .TfName}}.Value)){{end}}{{end}})
 {{- else}}
 	return "{{.Path}}"
 {{- end}}

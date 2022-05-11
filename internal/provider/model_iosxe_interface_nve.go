@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -36,7 +37,7 @@ type InterfaceNVEVnis struct {
 }
 
 func (data InterfaceNVE) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/nve=%v", data.Name.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/nve=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
 }
 
 // if last path element has a key -> remove it

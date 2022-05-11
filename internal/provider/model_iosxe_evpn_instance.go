@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 	"strconv"
 
@@ -35,7 +36,7 @@ type EVPNInstance struct {
 }
 
 func (data EVPNInstance) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/l2vpn/Cisco-IOS-XE-l2vpn:evpn_cont/evpn-instance/evpn/instance/instance=%v", data.EvpnInstanceNum.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/l2vpn/Cisco-IOS-XE-l2vpn:evpn_cont/evpn-instance/evpn/instance/instance=%v", url.QueryEscape(fmt.Sprintf("%v", data.EvpnInstanceNum.Value)))
 }
 
 // if last path element has a key -> remove it

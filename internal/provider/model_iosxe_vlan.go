@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 	"strconv"
 
@@ -27,7 +28,7 @@ type VLAN struct {
 }
 
 func (data VLAN) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=%v", data.VlanId.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=%v", url.QueryEscape(fmt.Sprintf("%v", data.VlanId.Value)))
 }
 
 // if last path element has a key -> remove it

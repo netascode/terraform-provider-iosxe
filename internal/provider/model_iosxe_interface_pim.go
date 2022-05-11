@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 	"strconv"
 
@@ -29,7 +30,7 @@ type InterfacePIM struct {
 }
 
 func (data InterfacePIM) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v/ip/pim", data.Type.Value, data.Name.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v/ip/pim", url.QueryEscape(fmt.Sprintf("%v", data.Type.Value)), url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
 }
 
 // if last path element has a key -> remove it

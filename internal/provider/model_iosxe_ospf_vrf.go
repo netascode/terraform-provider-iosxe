@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -50,7 +51,7 @@ type OSPFVRFSummaryAddress struct {
 }
 
 func (data OSPFVRF) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id-vrf=%v,%s", data.ProcessId.Value, data.Vrf.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id-vrf=%v,%s", url.QueryEscape(fmt.Sprintf("%v", data.ProcessId.Value)), url.QueryEscape(fmt.Sprintf("%v", data.Vrf.Value)))
 }
 
 // if last path element has a key -> remove it

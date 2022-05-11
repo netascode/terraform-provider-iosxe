@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -36,7 +37,7 @@ type VRFRouteTargetExport struct {
 }
 
 func (data VRF) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/vrf/definition=%s", data.Name.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/vrf/definition=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
 }
 
 // if last path element has a key -> remove it

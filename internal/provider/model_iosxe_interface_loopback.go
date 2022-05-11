@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 	"strconv"
 
@@ -25,7 +26,7 @@ type InterfaceLoopback struct {
 }
 
 func (data InterfaceLoopback) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Loopback=%v", data.Name.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Loopback=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
 }
 
 // if last path element has a key -> remove it

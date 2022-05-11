@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -23,7 +24,7 @@ type BGPL2VPNEVPNNeighbor struct {
 }
 
 func (data BGPL2VPNEVPNNeighbor) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s", data.Asn.Value, data.Ip.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.Value)), url.QueryEscape(fmt.Sprintf("%v", data.Ip.Value)))
 }
 
 // if last path element has a key -> remove it

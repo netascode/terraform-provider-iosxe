@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 	"strconv"
 
@@ -25,7 +26,7 @@ type BGPNeighbor struct {
 }
 
 func (data BGPNeighbor) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/neighbor=%s", data.Asn.Value, data.Ip.Value)
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.Value)), url.QueryEscape(fmt.Sprintf("%v", data.Ip.Value)))
 }
 
 // if last path element has a key -> remove it
