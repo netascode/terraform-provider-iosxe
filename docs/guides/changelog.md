@@ -17,6 +17,7 @@ description: |-
 - Add iosxe_interface_ospf resource and data source
 - Add iosxe_interface_ospf_process resource and data source
 - Add iosxe_pim resource and data source
+- Add iosxe_pim_vrf resource and data source
 
 ## 0.1.4
 
