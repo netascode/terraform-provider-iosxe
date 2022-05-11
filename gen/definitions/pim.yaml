@@ -1,0 +1,65 @@
+---
+name: PIM
+path: Cisco-IOS-XE-native:native/ip/pim
+doc_category: Multicast
+attributes:
+  - yang_name: Cisco-IOS-XE-multicast:autorp-container/autorp
+    tf_name: autorp
+    example: false
+  - yang_name: Cisco-IOS-XE-multicast:autorp-container/listener
+    tf_name: autorp_listener
+    example: false
+  - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/interface-choice/Loopback/Loopback
+    xpath: Cisco-IOS-XE-multicast:bsr-candidate/Loopback
+    tf_name: bsr_candidate_loopback
+    example: 100
+  - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/mask
+    example: 30
+  - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/priority
+    example: 10
+  - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/accept-rp-candidate
+    example: 10
+  - yang_name: Cisco-IOS-XE-multicast:ssm/range
+    example: 10
+  - yang_name: Cisco-IOS-XE-multicast:ssm/default
+    example: true
+  - yang_name: Cisco-IOS-XE-multicast:rp-address-list
+    tf_name: rp_addresses
+    type: List
+    attributes:
+      - yang_name: access-list
+        example: 10
+        id: true
+      - yang_name: rp-address
+        example: 10.10.10.10
+      - yang_name: override
+        example: false
+      - yang_name: bidir
+        example: false
+  - yang_name: Cisco-IOS-XE-multicast:rp-candidate
+    tf_name: rp_candidates
+    type: List
+    attributes:
+      - yang_name: interface
+        example: Loopback100
+        id: true
+      - yang_name: group-list
+        example: 10
+      - yang_name: interval
+        example: 100
+      - yang_name: priority
+        example: 10
+      - yang_name: bidir
+        example: false
+test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/interface/Loopback=100
+    attributes:
+      - name: name
+        value: 100
+  - path: Cisco-IOS-XE-native:native/interface/Loopback=100/ip/address/primary
+    attributes:
+      - name: address
+        value: 200.200.200.200
+      - name: mask
+        value: 255.255.255.255
+    dependencies: [0]
