@@ -4,24 +4,24 @@ path: Cisco-IOS-XE-native:native/vrf/definition=%s
 doc_category: VRF
 attributes:
   - yang_name: name
-    example: VRF1
+    example: VRF22
   - yang_name: description
-    example: VRF1 description
+    example: VRF22 description
   - yang_name: rd
-    example: 1:1
+    example: 22:22
   - yang_name: address-family/ipv4
     example: true
   - yang_name: address-family/ipv6
     example: true
   - yang_name: vpn/id
-    example: 1:1
+    example: 22:22
   - yang_name: route-target/import
     type: List
     attributes:
       - yang_name: asn-ip
         tf_name: value
         description: Value
-        example: 1:1
+        example: 22:22
         id: true
       - yang_name: stitching
         example: false
@@ -31,7 +31,7 @@ attributes:
       - yang_name: asn-ip
         tf_name: value
         description: Value
-        example: 1:1
+        example: 22:22
         id: true
       - yang_name: stitching
         example: false

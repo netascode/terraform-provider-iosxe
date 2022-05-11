@@ -14,21 +14,21 @@ This resource can manage the VRF configuration.
 
 ```terraform
 resource "iosxe_vrf" "example" {
-  name                = "VRF1"
-  description         = "VRF1 description"
-  rd                  = "1:1"
+  name                = "VRF22"
+  description         = "VRF22 description"
+  rd                  = "22:22"
   address_family_ipv4 = true
   address_family_ipv6 = true
-  vpn_id              = "1:1"
+  vpn_id              = "22:22"
   route_target_import = [
     {
-      value     = "1:1"
+      value     = "22:22"
       stitching = false
     }
   ]
   route_target_export = [
     {
-      value     = "1:1"
+      value     = "22:22"
       stitching = false
     }
   ]
@@ -79,5 +79,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-terraform import iosxe_vrf.example "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+terraform import iosxe_vrf.example "Cisco-IOS-XE-native:native/vrf/definition=VRF22"
 ```

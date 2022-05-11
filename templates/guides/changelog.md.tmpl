@@ -7,6 +7,10 @@ description: |-
 
 # Changelog
 
+## 0.1.5 (unreleased)
+
+- Add iosxe_interface_ethernet resource and data source
+
 ## 0.1.4
 
 - Fix handling of null values in resource list items

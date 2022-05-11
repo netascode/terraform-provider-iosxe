@@ -16,22 +16,22 @@ func TestAccIosxeVRF(t *testing.T) {
 			{
 				Config: testAccIosxeVRFConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_vrf.test", "name", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_vrf.test", "description", "VRF1 description"),
-					resource.TestCheckResourceAttr("iosxe_vrf.test", "rd", "1:1"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "name", "VRF22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "description", "VRF22 description"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "rd", "22:22"),
 					resource.TestCheckResourceAttr("iosxe_vrf.test", "address_family_ipv4", "true"),
 					resource.TestCheckResourceAttr("iosxe_vrf.test", "address_family_ipv6", "true"),
-					resource.TestCheckResourceAttr("iosxe_vrf.test", "vpn_id", "1:1"),
-					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_import.0.value", "1:1"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "vpn_id", "22:22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_import.0.value", "22:22"),
 					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_import.0.stitching", "false"),
-					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_export.0.value", "1:1"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_export.0.value", "22:22"),
 					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_export.0.stitching", "false"),
 				),
 			},
 			{
 				ResourceName:  "iosxe_vrf.test",
 				ImportState:   true,
-				ImportStateId: "Cisco-IOS-XE-native:native/vrf/definition=VRF1",
+				ImportStateId: "Cisco-IOS-XE-native:native/vrf/definition=VRF22",
 			},
 		},
 	})
@@ -40,7 +40,7 @@ func TestAccIosxeVRF(t *testing.T) {
 func testAccIosxeVRFConfig_minimum() string {
 	return `
 	resource "iosxe_vrf" "test" {
-		name = "VRF1"
+		name = "VRF22"
 	}
 	`
 }
@@ -48,18 +48,18 @@ func testAccIosxeVRFConfig_minimum() string {
 func testAccIosxeVRFConfig_all() string {
 	return `
 	resource "iosxe_vrf" "test" {
-		name = "VRF1"
-		description = "VRF1 description"
-		rd = "1:1"
+		name = "VRF22"
+		description = "VRF22 description"
+		rd = "22:22"
 		address_family_ipv4 = true
 		address_family_ipv6 = true
-		vpn_id = "1:1"
+		vpn_id = "22:22"
 		route_target_import = [{
-		value = "1:1"
+		value = "22:22"
 		stitching = false
 		}]
 		route_target_export = [{
-		value = "1:1"
+		value = "22:22"
 		stitching = false
 		}]
 	}

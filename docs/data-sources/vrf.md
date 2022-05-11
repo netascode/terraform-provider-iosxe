@@ -14,7 +14,7 @@ This data source can read the VRF configuration.
 
 ```terraform
 data "iosxe_vrf" "example" {
-  name = "VRF1"
+  name = "VRF22"
 }
 ```
 
