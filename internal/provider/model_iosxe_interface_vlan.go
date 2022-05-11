@@ -24,7 +24,6 @@ type InterfaceVLAN struct {
 	Ipv4Address     types.String `tfsdk:"ipv4_address"`
 	Ipv4AddressMask types.String `tfsdk:"ipv4_address_mask"`
 	Unnumbered      types.String `tfsdk:"unnumbered"`
-	PimSparseMode   types.Bool   `tfsdk:"pim_sparse_mode"`
 }
 
 func (data InterfaceVLAN) getPath() string {
@@ -70,11 +69,6 @@ func (data InterfaceVLAN) toBody() string {
 	if !data.Unnumbered.Null && !data.Unnumbered.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.unnumbered", data.Unnumbered.Value)
 	}
-	if !data.PimSparseMode.Null && !data.PimSparseMode.Unknown {
-		if data.PimSparseMode.Value {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode", map[string]string{})
-		}
-	}
 	return body
 }
 
@@ -119,11 +113,6 @@ func (data *InterfaceVLAN) updateFromBody(res gjson.Result) {
 	} else {
 		data.Unnumbered.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
-		data.PimSparseMode.Value = true
-	} else {
-		data.PimSparseMode.Value = false
-	}
 }
 
 func (data *InterfaceVLAN) fromBody(res gjson.Result) {
@@ -160,13 +149,6 @@ func (data *InterfaceVLAN) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.unnumbered"); value.Exists() {
 		data.Unnumbered.Value = value.String()
 		data.Unnumbered.Null = false
-	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
-		data.PimSparseMode.Value = true
-		data.PimSparseMode.Null = false
-	} else {
-		data.PimSparseMode.Value = false
-		data.PimSparseMode.Null = false
 	}
 }
 
@@ -210,10 +192,6 @@ func (data *InterfaceVLAN) setUnknownValues() {
 	if data.Unnumbered.Unknown {
 		data.Unnumbered.Unknown = false
 		data.Unnumbered.Null = true
-	}
-	if data.PimSparseMode.Unknown {
-		data.PimSparseMode.Unknown = false
-		data.PimSparseMode.Null = true
 	}
 }
 

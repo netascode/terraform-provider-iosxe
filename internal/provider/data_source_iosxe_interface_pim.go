@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-type dataSourceInterfaceVLANType struct{}
+type dataSourceInterfacePIMType struct{}
 
-func (t dataSourceInterfaceVLANType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t dataSourceInterfacePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This data source can read the Interface VLAN configuration.",
+		MarkdownDescription: "This data source can read the Interface PIM configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -30,64 +30,74 @@ func (t dataSourceInterfaceVLANType) GetSchema(ctx context.Context) (tfsdk.Schem
 				Type:                types.StringType,
 				Computed:            true,
 			},
-			"name": {
-				MarkdownDescription: "",
-				Type:                types.Int64Type,
+			"type": {
+				MarkdownDescription: "Interface type",
+				Type:                types.StringType,
 				Required:            true,
 			},
-			"autostate": {
-				MarkdownDescription: "Enable auto-state determination for VLAN",
+			"name": {
+				MarkdownDescription: "",
+				Type:                types.StringType,
+				Required:            true,
+			},
+			"passive": {
+				MarkdownDescription: "Enable PIM passive interface operation",
 				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"description": {
-				MarkdownDescription: "Interface specific description",
-				Type:                types.StringType,
-				Computed:            true,
-			},
-			"shutdown": {
-				MarkdownDescription: "Shutdown the selected interface",
+			"dense_mode": {
+				MarkdownDescription: "Enable PIM dense-mode operation",
 				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vrf_forwarding": {
-				MarkdownDescription: "Configure forwarding table",
-				Type:                types.StringType,
+			"sparse_mode": {
+				MarkdownDescription: "Enable PIM sparse-mode operation",
+				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"ipv4_address": {
-				MarkdownDescription: "",
-				Type:                types.StringType,
+			"sparse_dense_mode": {
+				MarkdownDescription: "Enable PIM sparse-dense-mode operation",
+				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"ipv4_address_mask": {
-				MarkdownDescription: "",
-				Type:                types.StringType,
+			"bfd": {
+				MarkdownDescription: "Configure BFD",
+				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"unnumbered": {
-				MarkdownDescription: "Enable IP processing without an explicit address",
-				Type:                types.StringType,
+			"border": {
+				MarkdownDescription: "Border of PIM domain",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"bsr_border": {
+				MarkdownDescription: "Border of PIM domain",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"dr_priority": {
+				MarkdownDescription: "PIM router DR priority",
+				Type:                types.Int64Type,
 				Computed:            true,
 			},
 		},
 	}, nil
 }
 
-func (t dataSourceInterfaceVLANType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceInterfacePIMType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return dataSourceInterfaceVLAN{
+	return dataSourceInterfacePIM{
 		provider: provider,
 	}, diags
 }
 
-type dataSourceInterfaceVLAN struct {
+type dataSourceInterfacePIM struct {
 	provider provider
 }
 
-func (d dataSourceInterfaceVLAN) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config InterfaceVLAN
+func (d dataSourceInterfacePIM) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+	var config InterfacePIM
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -100,7 +110,7 @@ func (d dataSourceInterfaceVLAN) Read(ctx context.Context, req tfsdk.ReadDataSou
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceVLAN{Device: config.Device}
+		config = InterfacePIM{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

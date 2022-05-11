@@ -24,7 +24,6 @@ func TestAccDataSourceIosxeInterfaceVLAN(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_interface_vlan.test", "vrf_forwarding", "VRF1"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_vlan.test", "ipv4_address", "10.1.1.1"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_vlan.test", "ipv4_address_mask", "255.255.255.0"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_vlan.test", "pim_sparse_mode", "true"),
 				),
 			},
 		},
@@ -61,7 +60,6 @@ resource "iosxe_interface_vlan" "test" {
   vrf_forwarding = "VRF1"
   ipv4_address = "10.1.1.1"
   ipv4_address_mask = "255.255.255.0"
-  pim_sparse_mode = true
   depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 

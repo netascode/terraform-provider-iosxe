@@ -85,12 +85,6 @@ func (t resourceInterfaceLoopbackType) GetSchema(ctx context.Context) (tfsdk.Sch
 					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
 				},
 			},
-			"pim_sparse_mode": {
-				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM sparse-mode operation").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
 		},
 	}, nil
 }

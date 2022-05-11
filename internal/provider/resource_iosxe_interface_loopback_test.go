@@ -22,7 +22,6 @@ func TestAccIosxeInterfaceLoopback(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_interface_loopback.test", "vrf_forwarding", "VRF1"),
 					resource.TestCheckResourceAttr("iosxe_interface_loopback.test", "ipv4_address", "200.1.1.1"),
 					resource.TestCheckResourceAttr("iosxe_interface_loopback.test", "ipv4_address_mask", "255.255.255.255"),
-					resource.TestCheckResourceAttr("iosxe_interface_loopback.test", "pim_sparse_mode", "true"),
 				),
 			},
 			{
@@ -72,7 +71,6 @@ func testAccIosxeInterfaceLoopbackConfig_all() string {
 		vrf_forwarding = "VRF1"
 		ipv4_address = "200.1.1.1"
 		ipv4_address_mask = "255.255.255.255"
-		pim_sparse_mode = true
   		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`

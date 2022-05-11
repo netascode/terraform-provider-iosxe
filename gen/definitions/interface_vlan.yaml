@@ -29,10 +29,6 @@ attributes:
     tf_name: unnumbered
     exclude_test: true
     example: Loopback100
-  - yang_name: ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/sparse/sparse-mode
-    xpath: ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode
-    tf_name: pim_sparse_mode
-    example: true
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true

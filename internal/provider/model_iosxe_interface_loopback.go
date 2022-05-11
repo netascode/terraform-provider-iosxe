@@ -22,7 +22,6 @@ type InterfaceLoopback struct {
 	VrfForwarding   types.String `tfsdk:"vrf_forwarding"`
 	Ipv4Address     types.String `tfsdk:"ipv4_address"`
 	Ipv4AddressMask types.String `tfsdk:"ipv4_address_mask"`
-	PimSparseMode   types.Bool   `tfsdk:"pim_sparse_mode"`
 }
 
 func (data InterfaceLoopback) getPath() string {
@@ -62,11 +61,6 @@ func (data InterfaceLoopback) toBody() string {
 	if !data.Ipv4AddressMask.Null && !data.Ipv4AddressMask.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.mask", data.Ipv4AddressMask.Value)
 	}
-	if !data.PimSparseMode.Null && !data.PimSparseMode.Unknown {
-		if data.PimSparseMode.Value {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode", map[string]string{})
-		}
-	}
 	return body
 }
 
@@ -101,11 +95,6 @@ func (data *InterfaceLoopback) updateFromBody(res gjson.Result) {
 	} else {
 		data.Ipv4AddressMask.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
-		data.PimSparseMode.Value = true
-	} else {
-		data.PimSparseMode.Value = false
-	}
 }
 
 func (data *InterfaceLoopback) fromBody(res gjson.Result) {
@@ -131,13 +120,6 @@ func (data *InterfaceLoopback) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.mask"); value.Exists() {
 		data.Ipv4AddressMask.Value = value.String()
 		data.Ipv4AddressMask.Null = false
-	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
-		data.PimSparseMode.Value = true
-		data.PimSparseMode.Null = false
-	} else {
-		data.PimSparseMode.Value = false
-		data.PimSparseMode.Null = false
 	}
 }
 
@@ -173,10 +155,6 @@ func (data *InterfaceLoopback) setUnknownValues() {
 	if data.Ipv4AddressMask.Unknown {
 		data.Ipv4AddressMask.Unknown = false
 		data.Ipv4AddressMask.Null = true
-	}
-	if data.PimSparseMode.Unknown {
-		data.PimSparseMode.Unknown = false
-		data.PimSparseMode.Null = true
 	}
 }
 

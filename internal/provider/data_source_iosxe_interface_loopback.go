@@ -60,11 +60,6 @@ func (t dataSourceInterfaceLoopbackType) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.StringType,
 				Computed:            true,
 			},
-			"pim_sparse_mode": {
-				MarkdownDescription: "Enable PIM sparse-mode operation",
-				Type:                types.BoolType,
-				Computed:            true,
-			},
 		},
 	}, nil
 }

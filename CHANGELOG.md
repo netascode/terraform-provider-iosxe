@@ -1,6 +1,9 @@
 ## 0.1.5 (unreleased)
 
 - Add iosxe_interface_ethernet resource and data source
+- Add iosxe_interface_pim resource and data source
+- BREAKING CHANGE: Remove pim_sparse_mode attribute from iosxe_interface_loopback resource
+- BREAKING CHANGE: Remove pim_sparse_mode attribute from iosxe_interface_vlan resource
 
 ## 0.1.4
 

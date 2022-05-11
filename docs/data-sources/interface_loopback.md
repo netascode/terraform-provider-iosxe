@@ -35,7 +35,6 @@ data "iosxe_interface_loopback" "example" {
 - `id` (String) The path of the retrieved object.
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
-- `pim_sparse_mode` (Boolean) Enable PIM sparse-mode operation
 - `shutdown` (Boolean) Shutdown the selected interface
 - `vrf_forwarding` (String) Configure forwarding table
 

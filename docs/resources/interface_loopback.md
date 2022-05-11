@@ -20,7 +20,6 @@ resource "iosxe_interface_loopback" "example" {
   vrf_forwarding    = "VRF1"
   ipv4_address      = "200.1.1.1"
   ipv4_address_mask = "255.255.255.255"
-  pim_sparse_mode   = true
 }
 ```
 
@@ -37,7 +36,6 @@ resource "iosxe_interface_loopback" "example" {
 - `device` (String) A device name from the provider configuration.
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
-- `pim_sparse_mode` (Boolean) Enable PIM sparse-mode operation
 - `shutdown` (Boolean) Shutdown the selected interface
 - `vrf_forwarding` (String) Configure forwarding table
 

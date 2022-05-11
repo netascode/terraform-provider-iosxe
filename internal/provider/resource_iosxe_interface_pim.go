@@ -14,12 +14,12 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceInterfaceVLANType struct{}
+type resourceInterfacePIMType struct{}
 
-func (t resourceInterfaceVLANType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t resourceInterfacePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the Interface VLAN configuration.",
+		MarkdownDescription: "This resource can manage the Interface PIM configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -35,86 +35,97 @@ func (t resourceInterfaceVLANType) GetSchema(ctx context.Context) (tfsdk.Schema,
 					tfsdk.UseStateForUnknown(),
 				},
 			},
-			"name": {
-				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
-				Type:                types.Int64Type,
+			"type": {
+				MarkdownDescription: helpers.NewAttributeDescription("Interface type").AddStringEnumDescription("GigabitEthernet", "TwoGigabitEthernet", "FiveGigabitEthernet", "TenGigabitEthernet", "TwentyFiveGigE", "FortyGigabitEthernet", "HundredGigE", "TwoHundredGigE", "FourHundredGigE", "Loopback", "Vlan").String,
+				Type:                types.StringType,
 				Required:            true,
 				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4094),
+					helpers.StringEnumValidator("GigabitEthernet", "TwoGigabitEthernet", "FiveGigabitEthernet", "TenGigabitEthernet", "TwentyFiveGigE", "FortyGigabitEthernet", "HundredGigE", "TwoHundredGigE", "FourHundredGigE", "Loopback", "Vlan"),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					tfsdk.RequiresReplace(),
 				},
 			},
-			"autostate": {
-				MarkdownDescription: helpers.NewAttributeDescription("Enable auto-state determination for VLAN").String,
+			"name": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
+				Type:                types.StringType,
+				Required:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.StringPatternValidator(0, 0, `(0|[1-9][0-9]*)(/(0|[1-9][0-9]*))*(\.[0-9]*)?`),
+				},
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					tfsdk.RequiresReplace(),
+				},
+			},
+			"passive": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM passive interface operation").String,
 				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"description": {
-				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 200, `.*`),
-				},
-			},
-			"shutdown": {
-				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
+			"dense_mode": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM dense-mode operation").String,
 				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vrf_forwarding": {
-				MarkdownDescription: helpers.NewAttributeDescription("Configure forwarding table").String,
-				Type:                types.StringType,
+			"sparse_mode": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM sparse-mode operation").String,
+				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ipv4_address": {
-				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
+			"sparse_dense_mode": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM sparse-dense-mode operation").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"bfd": {
+				MarkdownDescription: helpers.NewAttributeDescription("Configure BFD").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"border": {
+				MarkdownDescription: helpers.NewAttributeDescription("Border of PIM domain").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"bsr_border": {
+				MarkdownDescription: helpers.NewAttributeDescription("Border of PIM domain").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"dr_priority": {
+				MarkdownDescription: helpers.NewAttributeDescription("PIM router DR priority").AddIntegerRangeDescription(0, 4294967295).String,
+				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
 				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+					helpers.IntegerRangeValidator(0, 4294967295),
 				},
-			},
-			"ipv4_address_mask": {
-				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-				},
-			},
-			"unnumbered": {
-				MarkdownDescription: helpers.NewAttributeDescription("Enable IP processing without an explicit address").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}, nil
 }
 
-func (t resourceInterfaceVLANType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfacePIMType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return resourceInterfaceVLAN{
+	return resourceInterfacePIM{
 		provider: provider,
 	}, diags
 }
 
-type resourceInterfaceVLAN struct {
+type resourceInterfacePIM struct {
 	provider provider
 }
 
-func (r resourceInterfaceVLAN) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan InterfaceVLAN
+func (r resourceInterfacePIM) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+	var plan InterfacePIM
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -147,8 +158,8 @@ func (r resourceInterfaceVLAN) Create(ctx context.Context, req tfsdk.CreateResou
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceVLAN) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state InterfaceVLAN
+func (r resourceInterfacePIM) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+	var state InterfacePIM
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -161,7 +172,7 @@ func (r resourceInterfaceVLAN) Read(ctx context.Context, req tfsdk.ReadResourceR
 
 	res, err := r.provider.clients[state.Device.Value].GetData(state.Id.Value)
 	if res.StatusCode == 404 {
-		state = InterfaceVLAN{Device: state.Device, Id: state.Id}
+		state = InterfacePIM{Device: state.Device, Id: state.Id}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
@@ -177,8 +188,8 @@ func (r resourceInterfaceVLAN) Read(ctx context.Context, req tfsdk.ReadResourceR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceVLAN) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan, state InterfaceVLAN
+func (r resourceInterfacePIM) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+	var plan, state InterfacePIM
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -225,8 +236,8 @@ func (r resourceInterfaceVLAN) Update(ctx context.Context, req tfsdk.UpdateResou
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceVLAN) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
-	var state InterfaceVLAN
+func (r resourceInterfacePIM) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+	var state InterfacePIM
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -237,17 +248,11 @@ func (r resourceInterfaceVLAN) Delete(ctx context.Context, req tfsdk.DeleteResou
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.Value))
 
-	res, err := r.provider.clients[state.Device.Value].DeleteData(state.Id.Value)
-	if err != nil && res.StatusCode != 404 {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object, got error: %s", err))
-		return
-	}
-
 	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.Id.Value))
 
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfaceVLAN) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+func (r resourceInterfacePIM) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
 	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
 }
