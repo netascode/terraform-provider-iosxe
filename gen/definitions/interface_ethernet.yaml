@@ -23,6 +23,9 @@ attributes:
     example: GigabitEthernet
   - yang_name: name
     example: 3
+  - yang_name: media-type
+    exclude_test: true
+    example: sfp
   - yang_name: description
     example: My Interface Description
   - yang_name: shutdown

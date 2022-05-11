@@ -40,6 +40,11 @@ func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.StringType,
 				Required:            true,
 			},
+			"media_type": {
+				MarkdownDescription: "Media type",
+				Type:                types.StringType,
+				Computed:            true,
+			},
 			"description": {
 				MarkdownDescription: "Interface specific description",
 				Type:                types.StringType,

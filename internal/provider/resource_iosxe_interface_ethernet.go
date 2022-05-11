@@ -57,6 +57,15 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 					tfsdk.RequiresReplace(),
 				},
 			},
+			"media_type": {
+				MarkdownDescription: helpers.NewAttributeDescription("Media type").AddStringEnumDescription("auto-select", "rj45", "sfp").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.StringEnumValidator("auto-select", "rj45", "sfp"),
+				},
+			},
 			"description": {
 				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
 				Type:                types.StringType,

@@ -39,6 +39,8 @@ resource "iosxe_interface_ethernet" "example" {
 - `device` (String) A device name from the provider configuration.
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
+- `media_type` (String) Media type
+  - Choices: `auto-select`, `rj45`, `sfp`
 - `shutdown` (Boolean) Shutdown the selected interface
 - `unnumbered` (String) Enable IP processing without an explicit address
 - `vrf_forwarding` (String) Configure forwarding table

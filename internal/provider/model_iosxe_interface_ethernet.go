@@ -17,6 +17,7 @@ type InterfaceEthernet struct {
 	Id              types.String `tfsdk:"id"`
 	Type            types.String `tfsdk:"type"`
 	Name            types.String `tfsdk:"name"`
+	MediaType       types.String `tfsdk:"media_type"`
 	Description     types.String `tfsdk:"description"`
 	Shutdown        types.Bool   `tfsdk:"shutdown"`
 	VrfForwarding   types.String `tfsdk:"vrf_forwarding"`
@@ -44,6 +45,9 @@ func (data InterfaceEthernet) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Name.Null && !data.Name.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Name.Value)
+	}
+	if !data.MediaType.Null && !data.MediaType.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"media-type", data.MediaType.Value)
 	}
 	if !data.Description.Null && !data.Description.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.Value)
@@ -73,6 +77,11 @@ func (data *InterfaceEthernet) updateFromBody(res gjson.Result) {
 		data.Name.Value = value.String()
 	} else {
 		data.Name.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "media-type"); value.Exists() {
+		data.MediaType.Value = value.String()
+	} else {
+		data.MediaType.Null = true
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
@@ -107,6 +116,10 @@ func (data *InterfaceEthernet) updateFromBody(res gjson.Result) {
 }
 
 func (data *InterfaceEthernet) fromBody(res gjson.Result) {
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "media-type"); value.Exists() {
+		data.MediaType.Value = value.String()
+		data.MediaType.Null = false
+	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
 		data.Description.Null = false
@@ -152,6 +165,10 @@ func (data *InterfaceEthernet) setUnknownValues() {
 	if data.Name.Unknown {
 		data.Name.Unknown = false
 		data.Name.Null = true
+	}
+	if data.MediaType.Unknown {
+		data.MediaType.Unknown = false
+		data.MediaType.Null = true
 	}
 	if data.Description.Unknown {
 		data.Description.Unknown = false
