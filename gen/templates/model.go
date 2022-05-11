@@ -5,7 +5,8 @@ package provider
 
 import (
 	"regexp"
-	{{- if hasId .Attributes }}
+	{{- $fmt := false }}{{ range .Attributes}}{{ if or (eq .Id true) (eq .Reference true) (eq .Type "List") }}{{ $fmt = true }}{{ end}}{{ end}}
+	{{- if $fmt }}
 	"fmt"
 	{{- end}}
 	{{- $neturl := false }}{{ range .Attributes}}{{ if or (eq .Id true) (eq .Reference true) }}{{ $neturl = true }}{{ end}}{{ end}}

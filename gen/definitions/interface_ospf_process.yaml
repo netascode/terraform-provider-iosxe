@@ -1,0 +1,41 @@
+---
+name: Interface OSPF Process
+path: Cisco-IOS-XE-native:native/interface/%s=%v/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v
+augment_path: Cisco-IOS-XE-native:native/interface/GigabitEthernet=%v/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v
+doc_category: OSPF
+attributes:
+  - yang_name: type
+    tf_name: type
+    description: Interface type
+    type: String
+    reference: true
+    enum_values:
+      - GigabitEthernet
+      - TwoGigabitEthernet
+      - FiveGigabitEthernet
+      - TenGigabitEthernet
+      - TwentyFiveGigE
+      - FortyGigabitEthernet
+      - HundredGigE
+      - TwoHundredGigE
+      - FourHundredGigE
+      - Loopback
+      - Vlan
+    example: GigabitEthernet
+  - yang_name: name
+    example: 2
+  - yang_name: id
+    tf_name: process_id
+    id: true
+    example: 1
+  - yang_name: area
+    type: List
+    attributes:
+      - yang_name: area-id
+        example: 1
+        id: true
+test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=1
+    attributes:
+      - name: id
+        value: 1
