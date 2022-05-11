@@ -73,6 +73,5 @@ jobs:
           IOSXE_USERNAME: ${{ secrets.IOSXE_USERNAME }}
           IOSXE_PASSWORD: ${{ secrets.IOSXE_PASSWORD }}
           IOSXE_URL: ${{ secrets.IOSXE_URL }}
-          IOSXE_RETRIES: ${{ secrets.IOSXE_RETRIES }}
         run: go test -v -cover -timeout 45m ./internal/provider/
         timeout-minutes: 45
