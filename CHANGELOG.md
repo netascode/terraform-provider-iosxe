@@ -5,6 +5,7 @@
 - BREAKING CHANGE: Remove pim_sparse_mode attribute from iosxe_interface_loopback resource
 - BREAKING CHANGE: Remove pim_sparse_mode attribute from iosxe_interface_vlan resource
 - Add iosxe_interface_switchport resource and data source
+- Add iosxe_interface_ospf resource and data source
 
 ## 0.1.4
 

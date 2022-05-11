@@ -161,13 +161,13 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 		{{- range .Attributes}}
 		{{- if ne .WriteOnly true}}
 		{{- if eq .Type "Int64"}}
-		if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{$listPath}}.#({{$yangKey}}==\""+ key +"\")." + "{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Int()
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
 		}
 		{{- else if eq .Type "Bool"}}
-		if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{$listPath}}.#({{$yangKey}}==\""+ key +"\")." + "{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			{{- if eq .TypeYangBool "boolean"}}
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Bool()
 			{{- else}}
@@ -177,7 +177,7 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = false
 		}
 		{{- else if eq .Type "String"}}
-		if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{$listPath}}.#({{$yangKey}}==\""+ key +"\")." + "{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.String()
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
@@ -296,7 +296,7 @@ func (data *{{camelCase .Name}}) getDeletedListItems(state {{camelCase .Name}}) 
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/{{.YangName}}="+i.{{$goKey}}.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/{{.YangName}}=%v", state.getPath(), i.{{$goKey}}.Value))
 		}
 	}
 	{{- end}}

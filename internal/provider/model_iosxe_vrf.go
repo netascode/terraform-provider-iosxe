@@ -137,12 +137,12 @@ func (data *VRF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.RouteTargetImport {
 		key := data.RouteTargetImport[i].Value.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.import.#(asn-ip==\"" + key + "\")." + "asn-ip"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.route-target.import.#(asn-ip==\"%v\").asn-ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.RouteTargetImport[i].Value.Value = value.String()
 		} else {
 			data.RouteTargetImport[i].Value.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.import.#(asn-ip==\"" + key + "\")." + "stitching"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.route-target.import.#(asn-ip==\"%v\").stitching", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.RouteTargetImport[i].Stitching.Value = true
 		} else {
 			data.RouteTargetImport[i].Stitching.Value = false
@@ -150,12 +150,12 @@ func (data *VRF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.RouteTargetExport {
 		key := data.RouteTargetExport[i].Value.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.export.#(asn-ip==\"" + key + "\")." + "asn-ip"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.route-target.export.#(asn-ip==\"%v\").asn-ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.RouteTargetExport[i].Value.Value = value.String()
 		} else {
 			data.RouteTargetExport[i].Value.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.export.#(asn-ip==\"" + key + "\")." + "stitching"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.route-target.export.#(asn-ip==\"%v\").stitching", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.RouteTargetExport[i].Stitching.Value = true
 		} else {
 			data.RouteTargetExport[i].Stitching.Value = false
@@ -292,7 +292,7 @@ func (data *VRF) getDeletedListItems(state VRF) []string {
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/route-target/import="+i.Value.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/route-target/import=%v", state.getPath(), i.Value.Value))
 		}
 	}
 	for _, i := range state.RouteTargetExport {
@@ -306,7 +306,7 @@ func (data *VRF) getDeletedListItems(state VRF) []string {
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/route-target/export="+i.Value.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/route-target/export=%v", state.getPath(), i.Value.Value))
 		}
 	}
 	return deletedListItems

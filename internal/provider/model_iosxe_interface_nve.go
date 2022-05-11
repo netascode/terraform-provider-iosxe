@@ -130,12 +130,12 @@ func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.VniVrfs {
 		key := data.VniVrfs[i].VniRange.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member-in-one-line.member.vni.#(vni-range==\"" + key + "\")." + "vni-range"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.member-in-one-line.member.vni.#(vni-range==\"%v\").vni-range", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.VniVrfs[i].VniRange.Value = value.String()
 		} else {
 			data.VniVrfs[i].VniRange.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member-in-one-line.member.vni.#(vni-range==\"" + key + "\")." + "vrf"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.member-in-one-line.member.vni.#(vni-range==\"%v\").vrf", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.VniVrfs[i].Vrf.Value = value.String()
 		} else {
 			data.VniVrfs[i].Vrf.Null = true
@@ -143,17 +143,17 @@ func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.Vnis {
 		key := data.Vnis[i].VniRange.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni.#(vni-range==\"" + key + "\")." + "vni-range"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.member.vni.#(vni-range==\"%v\").vni-range", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Vnis[i].VniRange.Value = value.String()
 		} else {
 			data.Vnis[i].VniRange.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni.#(vni-range==\"" + key + "\")." + "mcast-group.multicast-group-min"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.member.vni.#(vni-range==\"%v\").mcast-group.multicast-group-min", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Vnis[i].Ipv4MulticastGroup.Value = value.String()
 		} else {
 			data.Vnis[i].Ipv4MulticastGroup.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni.#(vni-range==\"" + key + "\")." + "ir-cp-config.ingress-replication"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.member.vni.#(vni-range==\"%v\").ir-cp-config.ingress-replication", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Vnis[i].IngressReplication.Value = true
 		} else {
 			data.Vnis[i].IngressReplication.Value = false
@@ -290,7 +290,7 @@ func (data *InterfaceNVE) getDeletedListItems(state InterfaceNVE) []string {
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/member-in-one-line/member/vni="+i.VniRange.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/member-in-one-line/member/vni=%v", state.getPath(), i.VniRange.Value))
 		}
 	}
 	for _, i := range state.Vnis {
@@ -304,7 +304,7 @@ func (data *InterfaceNVE) getDeletedListItems(state InterfaceNVE) []string {
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/member/vni="+i.VniRange.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/member/vni=%v", state.getPath(), i.VniRange.Value))
 		}
 	}
 	return deletedListItems

@@ -202,17 +202,17 @@ func (data *OSPF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.Neighbor {
 		key := data.Neighbor[i].Ip.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor.#(ip==\"" + key + "\")." + "ip"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.neighbor.#(ip==\"%v\").ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Neighbor[i].Ip.Value = value.String()
 		} else {
 			data.Neighbor[i].Ip.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor.#(ip==\"" + key + "\")." + "priority"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.neighbor.#(ip==\"%v\").priority", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Neighbor[i].Priority.Value = value.Int()
 		} else {
 			data.Neighbor[i].Priority.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor.#(ip==\"" + key + "\")." + "cost"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.neighbor.#(ip==\"%v\").cost", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Neighbor[i].Cost.Value = value.Int()
 		} else {
 			data.Neighbor[i].Cost.Null = true
@@ -220,17 +220,17 @@ func (data *OSPF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.Network {
 		key := data.Network[i].Ip.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.#(ip==\"" + key + "\")." + "ip"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.network.#(ip==\"%v\").ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Network[i].Ip.Value = value.String()
 		} else {
 			data.Network[i].Ip.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.#(ip==\"" + key + "\")." + "wildcard"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.network.#(ip==\"%v\").wildcard", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Network[i].Wildcard.Value = value.String()
 		} else {
 			data.Network[i].Wildcard.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.#(ip==\"" + key + "\")." + "area"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.network.#(ip==\"%v\").area", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Network[i].Area.Value = value.String()
 		} else {
 			data.Network[i].Area.Null = true
@@ -253,12 +253,12 @@ func (data *OSPF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.SummaryAddress {
 		key := data.SummaryAddress[i].Ip.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "summary-address.#(ip==\"" + key + "\")." + "ip"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.summary-address.#(ip==\"%v\").ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.SummaryAddress[i].Ip.Value = value.String()
 		} else {
 			data.SummaryAddress[i].Ip.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "summary-address.#(ip==\"" + key + "\")." + "mask"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.summary-address.#(ip==\"%v\").mask", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.SummaryAddress[i].Mask.Value = value.String()
 		} else {
 			data.SummaryAddress[i].Mask.Null = true
@@ -497,7 +497,7 @@ func (data *OSPF) getDeletedListItems(state OSPF) []string {
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/neighbor="+i.Ip.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/neighbor=%v", state.getPath(), i.Ip.Value))
 		}
 	}
 	for _, i := range state.Network {
@@ -511,7 +511,7 @@ func (data *OSPF) getDeletedListItems(state OSPF) []string {
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/network="+i.Ip.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/network=%v", state.getPath(), i.Ip.Value))
 		}
 	}
 	for _, i := range state.SummaryAddress {
@@ -525,7 +525,7 @@ func (data *OSPF) getDeletedListItems(state OSPF) []string {
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/summary-address="+i.Ip.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/summary-address=%v", state.getPath(), i.Ip.Value))
 		}
 	}
 	return deletedListItems

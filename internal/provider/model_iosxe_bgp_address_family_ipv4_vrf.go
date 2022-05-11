@@ -83,22 +83,22 @@ func (data *BGPAddressFamilyIPv4VRF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.Vrfs {
 		key := data.Vrfs[i].Name.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.#(name==\"" + key + "\")." + "name"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.vrf.#(name==\"%v\").name", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Vrfs[i].Name.Value = value.String()
 		} else {
 			data.Vrfs[i].Name.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.#(name==\"" + key + "\")." + "ipv4-unicast.advertise.l2vpn.evpn"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.vrf.#(name==\"%v\").ipv4-unicast.advertise.l2vpn.evpn", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Vrfs[i].AdvertiseL2vpnEvpn.Value = true
 		} else {
 			data.Vrfs[i].AdvertiseL2vpnEvpn.Value = false
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.#(name==\"" + key + "\")." + "ipv4-unicast.redistribute-vrf.connected"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.vrf.#(name==\"%v\").ipv4-unicast.redistribute-vrf.connected", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Vrfs[i].RedistributeConnected.Value = true
 		} else {
 			data.Vrfs[i].RedistributeConnected.Value = false
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.#(name==\"" + key + "\")." + "ipv4-unicast.redistribute-vrf.static"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.vrf.#(name==\"%v\").ipv4-unicast.redistribute-vrf.static", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.Vrfs[i].RedistributeStatic.Value = true
 		} else {
 			data.Vrfs[i].RedistributeStatic.Value = false
@@ -183,7 +183,7 @@ func (data *BGPAddressFamilyIPv4VRF) getDeletedListItems(state BGPAddressFamilyI
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/vrf="+i.Name.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/vrf=%v", state.getPath(), i.Name.Value))
 		}
 	}
 	return deletedListItems

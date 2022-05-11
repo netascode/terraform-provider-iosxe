@@ -97,32 +97,32 @@ func (data *StaticRoute) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.NextHops {
 		key := data.NextHops[i].NextHop.Value
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "fwd"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").fwd", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.NextHops[i].NextHop.Value = value.String()
 		} else {
 			data.NextHops[i].NextHop.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "metric"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").metric", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.NextHops[i].Metric.Value = value.Int()
 		} else {
 			data.NextHops[i].Metric.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "global"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").global", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.NextHops[i].Global.Value = true
 		} else {
 			data.NextHops[i].Global.Value = false
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "name"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").name", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.NextHops[i].Name.Value = value.String()
 		} else {
 			data.NextHops[i].Name.Null = true
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "permanent"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").permanent", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.NextHops[i].Permanent.Value = true
 		} else {
 			data.NextHops[i].Permanent.Value = false
 		}
-		if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list.#(fwd==\"" + key + "\")." + "tag"); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").tag", helpers.LastElement(data.getPath()), key)); value.Exists() {
 			data.NextHops[i].Tag.Value = value.Int()
 		} else {
 			data.NextHops[i].Tag.Null = true
@@ -223,7 +223,7 @@ func (data *StaticRoute) getDeletedListItems(state StaticRoute) []string {
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, state.getPath()+"/fwd-list="+i.NextHop.Value)
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/fwd-list=%v", state.getPath(), i.NextHop.Value))
 		}
 	}
 	return deletedListItems
