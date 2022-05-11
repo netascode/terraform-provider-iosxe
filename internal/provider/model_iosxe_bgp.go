@@ -80,12 +80,21 @@ func (data *BGP) updateFromBody(res gjson.Result) {
 func (data *BGP) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.default.ipv4-unicast"); value.Exists() {
 		data.DefaultIpv4Unicast.Value = value.Bool()
+		data.DefaultIpv4Unicast.Null = false
+	} else {
+		data.DefaultIpv4Unicast.Value = false
+		data.DefaultIpv4Unicast.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.log-neighbor-changes"); value.Exists() {
 		data.LogNeighborChanges.Value = value.Bool()
+		data.LogNeighborChanges.Null = false
+	} else {
+		data.LogNeighborChanges.Value = false
+		data.LogNeighborChanges.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.router-id.interface.Loopback"); value.Exists() {
 		data.RouterIdLoopback.Value = value.Int()
+		data.RouterIdLoopback.Null = false
 	}
 }
 

@@ -107,21 +107,27 @@ func (data *Username) updateFromBody(res gjson.Result) {
 func (data *Username) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "privilege"); value.Exists() {
 		data.Privilege.Value = value.Int()
+		data.Privilege.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
+		data.Description.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.encryption"); value.Exists() {
 		data.PasswordEncryption.Value = value.String()
+		data.PasswordEncryption.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.password"); value.Exists() {
 		data.Password.Value = value.String()
+		data.Password.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.encryption"); value.Exists() {
 		data.SecretEncryption.Value = value.String()
+		data.SecretEncryption.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.secret"); value.Exists() {
 		data.Secret.Value = value.String()
+		data.Secret.Null = false
 	}
 }
 

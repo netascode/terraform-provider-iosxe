@@ -37,7 +37,7 @@ func (t dataSource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk
 				{{- if ne .Type "List"}}
 				Type:                types.{{.Type}}Type,
 				{{- end}}
-				{{- if eq .Id true}}
+				{{- if or (eq .Id true) (eq .Reference true)}}
 				Required:            true,
 				{{- else}}
 				Computed:            true,
@@ -72,7 +72,7 @@ type dataSource{{camelCase .Name}} struct {
 }
 
 func (d dataSource{{camelCase .Name}}) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config, state {{camelCase .Name}}
+	var config {{camelCase .Name}}
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -85,20 +85,20 @@ func (d dataSource{{camelCase .Name}}) Read(ctx context.Context, req tfsdk.ReadD
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		state = {{camelCase .Name}}{Device: config.Device}
+		config = {{camelCase .Name}}{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
 		}
 
-		state.fromBody(res.Res)
+		config.fromBody(res.Res)
 	}
 
-	state.Id = types.String{Value: config.getPath()}
+	config.Id = types.String{Value: config.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 
-	diags = resp.State.Set(ctx, &state)
+	diags = resp.State.Set(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 }

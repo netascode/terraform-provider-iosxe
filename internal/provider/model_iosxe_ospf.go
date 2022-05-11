@@ -268,27 +268,50 @@ func (data *OSPF) updateFromBody(res gjson.Result) {
 func (data *OSPF) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bfd.all-interfaces"); value.Exists() {
 		data.BfdAllInterfaces.Value = true
+		data.BfdAllInterfaces.Null = false
+	} else {
+		data.BfdAllInterfaces.Value = false
+		data.BfdAllInterfaces.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-information.originate"); value.Exists() {
 		data.DefaultInformationOriginate.Value = true
+		data.DefaultInformationOriginate.Null = false
+	} else {
+		data.DefaultInformationOriginate.Value = false
+		data.DefaultInformationOriginate.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-information.originate.always"); value.Exists() {
 		data.DefaultInformationOriginateAlways.Value = true
+		data.DefaultInformationOriginateAlways.Null = false
+	} else {
+		data.DefaultInformationOriginateAlways.Value = false
+		data.DefaultInformationOriginateAlways.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-metric"); value.Exists() {
 		data.DefaultMetric.Value = value.Int()
+		data.DefaultMetric.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "distance.distance"); value.Exists() {
 		data.Distance.Value = value.Int()
+		data.Distance.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "domain-tag"); value.Exists() {
 		data.DomainTag.Value = value.Int()
+		data.DomainTag.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.autoconfig"); value.Exists() {
 		data.MplsLdpAutoconfig.Value = true
+		data.MplsLdpAutoconfig.Null = false
+	} else {
+		data.MplsLdpAutoconfig.Value = false
+		data.MplsLdpAutoconfig.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.sync"); value.Exists() {
 		data.MplsLdpSync.Value = true
+		data.MplsLdpSync.Null = false
+	} else {
+		data.MplsLdpSync.Value = false
+		data.MplsLdpSync.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor"); value.Exists() {
 		data.Neighbor = make([]OSPFNeighbor, 0)
@@ -296,12 +319,15 @@ func (data *OSPF) fromBody(res gjson.Result) {
 			item := OSPFNeighbor{}
 			if cValue := v.Get("ip"); cValue.Exists() {
 				item.Ip.Value = cValue.String()
+				item.Ip.Null = false
 			}
 			if cValue := v.Get("priority"); cValue.Exists() {
 				item.Priority.Value = cValue.Int()
+				item.Priority.Null = false
 			}
 			if cValue := v.Get("cost"); cValue.Exists() {
 				item.Cost.Value = cValue.Int()
+				item.Cost.Null = false
 			}
 			data.Neighbor = append(data.Neighbor, item)
 			return true
@@ -313,12 +339,15 @@ func (data *OSPF) fromBody(res gjson.Result) {
 			item := OSPFNetwork{}
 			if cValue := v.Get("ip"); cValue.Exists() {
 				item.Ip.Value = cValue.String()
+				item.Ip.Null = false
 			}
 			if cValue := v.Get("wildcard"); cValue.Exists() {
 				item.Wildcard.Value = cValue.String()
+				item.Wildcard.Null = false
 			}
 			if cValue := v.Get("area"); cValue.Exists() {
 				item.Area.Value = cValue.String()
+				item.Area.Null = false
 			}
 			data.Network = append(data.Network, item)
 			return true
@@ -326,12 +355,18 @@ func (data *OSPF) fromBody(res gjson.Result) {
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "priority"); value.Exists() {
 		data.Priority.Value = value.Int()
+		data.Priority.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "router-id"); value.Exists() {
 		data.RouterId.Value = value.String()
+		data.RouterId.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
 		data.Shutdown.Value = value.Bool()
+		data.Shutdown.Null = false
+	} else {
+		data.Shutdown.Value = false
+		data.Shutdown.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "summary-address"); value.Exists() {
 		data.SummaryAddress = make([]OSPFSummaryAddress, 0)
@@ -339,9 +374,11 @@ func (data *OSPF) fromBody(res gjson.Result) {
 			item := OSPFSummaryAddress{}
 			if cValue := v.Get("ip"); cValue.Exists() {
 				item.Ip.Value = cValue.String()
+				item.Ip.Null = false
 			}
 			if cValue := v.Get("mask"); cValue.Exists() {
 				item.Mask.Value = cValue.String()
+				item.Mask.Null = false
 			}
 			data.SummaryAddress = append(data.SummaryAddress, item)
 			return true

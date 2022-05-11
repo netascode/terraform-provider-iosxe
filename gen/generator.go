@@ -82,6 +82,7 @@ var templates = []t{
 type YamlConfig struct {
 	Name              string                `yaml:"name"`
 	Path              string                `yaml:"path"`
+	AugmentPath       string                `yaml:"augment_path"`
 	NoDelete          bool                  `yaml:"no_delete"`
 	ExcludeTest       bool                  `yaml:"exclude_test"`
 	NoAugmentConfig   bool                  `yaml:"no_augment_config"`
@@ -254,6 +255,9 @@ func resolvePath(e *yang.Entry, path string) *yang.Entry {
 			if strings.Contains(pathElement, ":") {
 				pathElement = pathElement[strings.Index(pathElement, ":")+1:]
 			}
+			if _, ok := e.Dir[pathElement]; !ok {
+				panic(fmt.Sprintf("Failed to resolve YANG path: %s, element: %s", path, pathElement))
+			}
 			e = e.Dir[pathElement]
 		}
 	}
@@ -353,15 +357,21 @@ func parseAttribute(e *yang.Entry, attr *YamlConfigAttribute) {
 }
 
 func augmentConfig(config *YamlConfig, modelPaths []string) {
+	path := ""
+	if config.AugmentPath != "" {
+		path = config.AugmentPath
+	} else {
+		path = config.Path
+	}
 
-	module := strings.Split(config.Path, ":")[0]
+	module := strings.Split(path, ":")[0]
 	e, errors := yang.GetModule(module, modelPaths...)
 	if len(errors) > 0 {
 		fmt.Printf("YANG parser error(s): %+v\n\n", errors)
 		return
 	}
 
-	p := config.Path[len(module)+1:]
+	p := path[len(module)+1:]
 	e = resolvePath(e, p)
 
 	addKeys(e, config)

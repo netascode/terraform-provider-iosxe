@@ -163,15 +163,25 @@ func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
 func (data *InterfaceNVE) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
+		data.Description.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
+		data.Shutdown.Null = false
+	} else {
+		data.Shutdown.Value = false
+		data.Shutdown.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "host-reachability.protocol.bgp"); value.Exists() {
 		data.HostReachabilityProtocolBgp.Value = true
+		data.HostReachabilityProtocolBgp.Null = false
+	} else {
+		data.HostReachabilityProtocolBgp.Value = false
+		data.HostReachabilityProtocolBgp.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "source-interface.Loopback"); value.Exists() {
 		data.SourceInterfaceLoopback.Value = value.Int()
+		data.SourceInterfaceLoopback.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member-in-one-line.member.vni"); value.Exists() {
 		data.VniVrfs = make([]InterfaceNVEVniVrfs, 0)
@@ -179,9 +189,11 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 			item := InterfaceNVEVniVrfs{}
 			if cValue := v.Get("vni-range"); cValue.Exists() {
 				item.VniRange.Value = cValue.String()
+				item.VniRange.Null = false
 			}
 			if cValue := v.Get("vrf"); cValue.Exists() {
 				item.Vrf.Value = cValue.String()
+				item.Vrf.Null = false
 			}
 			data.VniVrfs = append(data.VniVrfs, item)
 			return true
@@ -193,12 +205,15 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 			item := InterfaceNVEVnis{}
 			if cValue := v.Get("vni-range"); cValue.Exists() {
 				item.VniRange.Value = cValue.String()
+				item.VniRange.Null = false
 			}
 			if cValue := v.Get("mcast-group.multicast-group-min"); cValue.Exists() {
 				item.Ipv4MulticastGroup.Value = cValue.String()
+				item.Ipv4MulticastGroup.Null = false
 			}
 			if cValue := v.Get("ir-cp-config.ingress-replication"); cValue.Exists() {
 				item.IngressReplication.Value = true
+				item.IngressReplication.Null = false
 			}
 			data.Vnis = append(data.Vnis, item)
 			return true

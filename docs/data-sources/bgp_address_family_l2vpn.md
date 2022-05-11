@@ -25,6 +25,7 @@ data "iosxe_bgp_address_family_l2vpn" "example" {
 ### Required
 
 - `af_name` (String)
+- `asn` (String)
 
 ### Optional
 
@@ -32,7 +33,6 @@ data "iosxe_bgp_address_family_l2vpn" "example" {
 
 ### Read-Only
 
-- `asn` (String)
 - `id` (String) The path of the retrieved object.
 
 

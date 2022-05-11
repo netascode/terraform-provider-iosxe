@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-type dataSourceVRFType struct{}
+type dataSourceInterfaceEthernetType struct{}
 
-func (t dataSourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This data source can read the VRF configuration.",
+		MarkdownDescription: "This data source can read the Interface Ethernet configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -30,86 +30,64 @@ func (t dataSourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Di
 				Type:                types.StringType,
 				Computed:            true,
 			},
+			"type": {
+				MarkdownDescription: "Interface type",
+				Type:                types.StringType,
+				Required:            true,
+			},
 			"name": {
-				MarkdownDescription: "WORD;;VRF name",
+				MarkdownDescription: "",
 				Type:                types.StringType,
 				Required:            true,
 			},
 			"description": {
-				MarkdownDescription: "VRF specific description",
+				MarkdownDescription: "Interface specific description",
 				Type:                types.StringType,
 				Computed:            true,
 			},
-			"rd": {
-				MarkdownDescription: "Specify Route Distinguisher",
-				Type:                types.StringType,
-				Computed:            true,
-			},
-			"address_family_ipv4": {
-				MarkdownDescription: "Address family",
+			"shutdown": {
+				MarkdownDescription: "Shutdown the selected interface",
 				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"address_family_ipv6": {
-				MarkdownDescription: "Address family",
-				Type:                types.BoolType,
-				Computed:            true,
-			},
-			"vpn_id": {
-				MarkdownDescription: "Configure VPN ID in rfc2685 format",
+			"vrf_forwarding": {
+				MarkdownDescription: "Configure forwarding table",
 				Type:                types.StringType,
 				Computed:            true,
 			},
-			"route_target_import": {
-				MarkdownDescription: "Import Target-VPN community",
+			"ipv4_address": {
+				MarkdownDescription: "",
+				Type:                types.StringType,
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: "Value",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"stitching": {
-						MarkdownDescription: "VXLAN route target set",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-				}, tfsdk.ListNestedAttributesOptions{}),
 			},
-			"route_target_export": {
-				MarkdownDescription: "Export Target-VPN community",
+			"ipv4_address_mask": {
+				MarkdownDescription: "",
+				Type:                types.StringType,
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: "Value",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"stitching": {
-						MarkdownDescription: "VXLAN route target set",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"unnumbered": {
+				MarkdownDescription: "Enable IP processing without an explicit address",
+				Type:                types.StringType,
+				Computed:            true,
 			},
 		},
 	}, nil
 }
 
-func (t dataSourceVRFType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceInterfaceEthernetType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return dataSourceVRF{
+	return dataSourceInterfaceEthernet{
 		provider: provider,
 	}, diags
 }
 
-type dataSourceVRF struct {
+type dataSourceInterfaceEthernet struct {
 	provider provider
 }
 
-func (d dataSourceVRF) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config VRF
+func (d dataSourceInterfaceEthernet) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+	var config InterfaceEthernet
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -122,7 +100,7 @@ func (d dataSourceVRF) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = VRF{Device: config.Device}
+		config = InterfaceEthernet{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

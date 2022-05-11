@@ -5,7 +5,6 @@ package provider
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -13,26 +12,25 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-type InterfaceVLAN struct {
+type InterfaceEthernet struct {
 	Device          types.String `tfsdk:"device"`
 	Id              types.String `tfsdk:"id"`
-	Name            types.Int64  `tfsdk:"name"`
-	Autostate       types.Bool   `tfsdk:"autostate"`
+	Type            types.String `tfsdk:"type"`
+	Name            types.String `tfsdk:"name"`
 	Description     types.String `tfsdk:"description"`
 	Shutdown        types.Bool   `tfsdk:"shutdown"`
 	VrfForwarding   types.String `tfsdk:"vrf_forwarding"`
 	Ipv4Address     types.String `tfsdk:"ipv4_address"`
 	Ipv4AddressMask types.String `tfsdk:"ipv4_address_mask"`
 	Unnumbered      types.String `tfsdk:"unnumbered"`
-	PimSparseMode   types.Bool   `tfsdk:"pim_sparse_mode"`
 }
 
-func (data InterfaceVLAN) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Vlan=%v", data.Name.Value)
+func (data InterfaceEthernet) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v", data.Type.Value, data.Name.Value)
 }
 
 // if last path element has a key -> remove it
-func (data InterfaceVLAN) getPathShort() string {
+func (data InterfaceEthernet) getPathShort() string {
 	path := data.getPath()
 	re := regexp.MustCompile(`(.*)=[^\/]*$`)
 	matches := re.FindStringSubmatch(path)
@@ -42,13 +40,10 @@ func (data InterfaceVLAN) getPathShort() string {
 	return matches[1]
 }
 
-func (data InterfaceVLAN) toBody() string {
+func (data InterfaceEthernet) toBody() string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Name.Null && !data.Name.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.Value, 10))
-	}
-	if !data.Autostate.Null && !data.Autostate.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"autostate", data.Autostate.Value)
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Name.Value)
 	}
 	if !data.Description.Null && !data.Description.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.Value)
@@ -70,24 +65,14 @@ func (data InterfaceVLAN) toBody() string {
 	if !data.Unnumbered.Null && !data.Unnumbered.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.unnumbered", data.Unnumbered.Value)
 	}
-	if !data.PimSparseMode.Null && !data.PimSparseMode.Unknown {
-		if data.PimSparseMode.Value {
-			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode", map[string]string{})
-		}
-	}
 	return body
 }
 
-func (data *InterfaceVLAN) updateFromBody(res gjson.Result) {
+func (data *InterfaceEthernet) updateFromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
-		data.Name.Value = value.Int()
+		data.Name.Value = value.String()
 	} else {
 		data.Name.Null = true
-	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "autostate"); value.Exists() {
-		data.Autostate.Value = value.Bool()
-	} else {
-		data.Autostate.Value = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
@@ -119,21 +104,9 @@ func (data *InterfaceVLAN) updateFromBody(res gjson.Result) {
 	} else {
 		data.Unnumbered.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
-		data.PimSparseMode.Value = true
-	} else {
-		data.PimSparseMode.Value = false
-	}
 }
 
-func (data *InterfaceVLAN) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "autostate"); value.Exists() {
-		data.Autostate.Value = value.Bool()
-		data.Autostate.Null = false
-	} else {
-		data.Autostate.Value = false
-		data.Autostate.Null = false
-	}
+func (data *InterfaceEthernet) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
 		data.Description.Null = false
@@ -161,16 +134,9 @@ func (data *InterfaceVLAN) fromBody(res gjson.Result) {
 		data.Unnumbered.Value = value.String()
 		data.Unnumbered.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
-		data.PimSparseMode.Value = true
-		data.PimSparseMode.Null = false
-	} else {
-		data.PimSparseMode.Value = false
-		data.PimSparseMode.Null = false
-	}
 }
 
-func (data *InterfaceVLAN) setUnknownValues() {
+func (data *InterfaceEthernet) setUnknownValues() {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -179,13 +145,13 @@ func (data *InterfaceVLAN) setUnknownValues() {
 		data.Id.Unknown = false
 		data.Id.Null = true
 	}
+	if data.Type.Unknown {
+		data.Type.Unknown = false
+		data.Type.Null = true
+	}
 	if data.Name.Unknown {
 		data.Name.Unknown = false
 		data.Name.Null = true
-	}
-	if data.Autostate.Unknown {
-		data.Autostate.Unknown = false
-		data.Autostate.Null = true
 	}
 	if data.Description.Unknown {
 		data.Description.Unknown = false
@@ -211,13 +177,9 @@ func (data *InterfaceVLAN) setUnknownValues() {
 		data.Unnumbered.Unknown = false
 		data.Unnumbered.Null = true
 	}
-	if data.PimSparseMode.Unknown {
-		data.PimSparseMode.Unknown = false
-		data.PimSparseMode.Null = true
-	}
 }
 
-func (data *InterfaceVLAN) getDeletedListItems(state InterfaceVLAN) []string {
+func (data *InterfaceEthernet) getDeletedListItems(state InterfaceEthernet) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }

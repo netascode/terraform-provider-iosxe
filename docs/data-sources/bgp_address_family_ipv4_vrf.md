@@ -25,6 +25,7 @@ data "iosxe_bgp_address_family_ipv4_vrf" "example" {
 ### Required
 
 - `af_name` (String)
+- `asn` (String)
 
 ### Optional
 
@@ -32,7 +33,6 @@ data "iosxe_bgp_address_family_ipv4_vrf" "example" {
 
 ### Read-Only
 
-- `asn` (String)
 - `id` (String) The path of the retrieved object.
 - `vrfs` (Attributes List) (see [below for nested schema](#nestedatt--vrfs))
 

@@ -204,48 +204,87 @@ func (data *EVPNInstance) updateFromBody(res gjson.Result) {
 func (data *EVPNInstance) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.ingress"); value.Exists() {
 		data.VlanBasedReplicationTypeIngress.Value = true
+		data.VlanBasedReplicationTypeIngress.Null = false
+	} else {
+		data.VlanBasedReplicationTypeIngress.Value = false
+		data.VlanBasedReplicationTypeIngress.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.static"); value.Exists() {
 		data.VlanBasedReplicationTypeStatic.Value = true
+		data.VlanBasedReplicationTypeStatic.Null = false
+	} else {
+		data.VlanBasedReplicationTypeStatic.Value = false
+		data.VlanBasedReplicationTypeStatic.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.p2mp"); value.Exists() {
 		data.VlanBasedReplicationTypeP2mp.Value = true
+		data.VlanBasedReplicationTypeP2mp.Null = false
+	} else {
+		data.VlanBasedReplicationTypeP2mp.Value = false
+		data.VlanBasedReplicationTypeP2mp.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.replication-type.mp2mp"); value.Exists() {
 		data.VlanBasedReplicationTypeMp2mp.Value = true
+		data.VlanBasedReplicationTypeMp2mp.Null = false
+	} else {
+		data.VlanBasedReplicationTypeMp2mp.Value = false
+		data.VlanBasedReplicationTypeMp2mp.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.encapsulation"); value.Exists() {
 		data.VlanBasedEncapsulation.Value = value.String()
+		data.VlanBasedEncapsulation.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.auto-route-target_cont.auto-route-target"); value.Exists() {
 		data.VlanBasedAutoRouteTarget.Value = true
+		data.VlanBasedAutoRouteTarget.Null = false
+	} else {
+		data.VlanBasedAutoRouteTarget.Value = false
+		data.VlanBasedAutoRouteTarget.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.rd.rd-value"); value.Exists() {
 		data.VlanBasedRd.Value = value.String()
+		data.VlanBasedRd.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.rt-value"); value.Exists() {
 		data.VlanBasedRouteTarget.Value = value.String()
+		data.VlanBasedRouteTarget.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.both.rt-value"); value.Exists() {
 		data.VlanBasedRouteTargetBoth.Value = value.String()
+		data.VlanBasedRouteTargetBoth.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.import.rt-value"); value.Exists() {
 		data.VlanBasedRouteTargetImport.Value = value.String()
+		data.VlanBasedRouteTargetImport.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.route-target.export.rt-value"); value.Exists() {
 		data.VlanBasedRouteTargetExport.Value = value.String()
+		data.VlanBasedRouteTargetExport.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.ip.local-learning.disable"); value.Exists() {
 		data.VlanBasedIpLocalLearningDisable.Value = true
+		data.VlanBasedIpLocalLearningDisable.Null = false
+	} else {
+		data.VlanBasedIpLocalLearningDisable.Value = false
+		data.VlanBasedIpLocalLearningDisable.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.ip.local-learning.enable"); value.Exists() {
 		data.VlanBasedIpLocalLearningEnable.Value = true
+		data.VlanBasedIpLocalLearningEnable.Null = false
+	} else {
+		data.VlanBasedIpLocalLearningEnable.Value = false
+		data.VlanBasedIpLocalLearningEnable.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.default-gateway.advertise"); value.Exists() {
 		data.VlanBasedDefaultGatewayAdvertise.Value = value.String()
+		data.VlanBasedDefaultGatewayAdvertise.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-based.re-originate.route-type5"); value.Exists() {
 		data.VlanBasedReOriginateRouteType5.Value = true
+		data.VlanBasedReOriginateRouteType5.Null = false
+	} else {
+		data.VlanBasedReOriginateRouteType5.Value = false
+		data.VlanBasedReOriginateRouteType5.Null = false
 	}
 }
 

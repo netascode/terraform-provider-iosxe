@@ -40,6 +40,7 @@ test_prerequisites:
       - name: name
         value: VRF1
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family
+    no_delete: true
     attributes:
       - name: ipv4
         value: ''

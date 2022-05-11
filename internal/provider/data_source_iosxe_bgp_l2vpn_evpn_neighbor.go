@@ -33,7 +33,7 @@ func (t dataSourceBGPL2VPNEVPNNeighborType) GetSchema(ctx context.Context) (tfsd
 			"asn": {
 				MarkdownDescription: "",
 				Type:                types.StringType,
-				Computed:            true,
+				Required:            true,
 			},
 			"ip": {
 				MarkdownDescription: "",
@@ -72,7 +72,7 @@ type dataSourceBGPL2VPNEVPNNeighbor struct {
 }
 
 func (d dataSourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config, state BGPL2VPNEVPNNeighbor
+	var config BGPL2VPNEVPNNeighbor
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -85,20 +85,20 @@ func (d dataSourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req tfsdk.Read
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		state = BGPL2VPNEVPNNeighbor{Device: config.Device}
+		config = BGPL2VPNEVPNNeighbor{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
 		}
 
-		state.fromBody(res.Res)
+		config.fromBody(res.Res)
 	}
 
-	state.Id = types.String{Value: config.getPath()}
+	config.Id = types.String{Value: config.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 
-	diags = resp.State.Set(ctx, &state)
+	diags = resp.State.Set(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 }

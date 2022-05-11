@@ -62,9 +62,14 @@ func (data *System) updateFromBody(res gjson.Result) {
 func (data *System) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "hostname"); value.Exists() {
 		data.Hostname.Value = value.String()
+		data.Hostname.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ipv6.unicast-routing"); value.Exists() {
 		data.Ipv6UnicastRouting.Value = true
+		data.Ipv6UnicastRouting.Null = false
+	} else {
+		data.Ipv6UnicastRouting.Value = false
+		data.Ipv6UnicastRouting.Null = false
 	}
 }
 

@@ -33,12 +33,12 @@ func (t dataSourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) 
 			"asn": {
 				MarkdownDescription: "",
 				Type:                types.StringType,
-				Computed:            true,
+				Required:            true,
 			},
 			"vrf": {
 				MarkdownDescription: "",
 				Type:                types.StringType,
-				Computed:            true,
+				Required:            true,
 			},
 			"ip": {
 				MarkdownDescription: "",
@@ -97,7 +97,7 @@ type dataSourceBGPIPv4UnicastVRFNeighbor struct {
 }
 
 func (d dataSourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config, state BGPIPv4UnicastVRFNeighbor
+	var config BGPIPv4UnicastVRFNeighbor
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -110,20 +110,20 @@ func (d dataSourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		state = BGPIPv4UnicastVRFNeighbor{Device: config.Device}
+		config = BGPIPv4UnicastVRFNeighbor{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
 		}
 
-		state.fromBody(res.Res)
+		config.fromBody(res.Res)
 	}
 
-	state.Id = types.String{Value: config.getPath()}
+	config.Id = types.String{Value: config.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 
-	diags = resp.State.Set(ctx, &state)
+	diags = resp.State.Set(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 }

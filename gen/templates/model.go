@@ -193,6 +193,7 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 	{{- if eq .Type "Int64"}}
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		data.{{toGoName .TfName}}.Value = value.Int()
+		data.{{toGoName .TfName}}.Null = false
 	}
 	{{- else if eq .Type "Bool"}}
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
@@ -201,10 +202,15 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 		{{- else}}
 		data.{{toGoName .TfName}}.Value = true
 		{{- end}}
+		data.{{toGoName .TfName}}.Null = false
+	} else {
+		data.{{toGoName .TfName}}.Value = false
+		data.{{toGoName .TfName}}.Null = false
 	}
 	{{- else if eq .Type "String"}}
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		data.{{toGoName .TfName}}.Value = value.String()
+		data.{{toGoName .TfName}}.Null = false
 	}
 	{{- else if eq .Type "List"}}
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
@@ -223,6 +229,7 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 				{{- else if eq .Type "String"}}
 				item.{{toGoName .TfName}}.Value = cValue.String()
 				{{- end}}
+				item.{{toGoName .TfName}}.Null = false
 			}
 			{{- end}}
 			{{- end}}

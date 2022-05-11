@@ -89,15 +89,19 @@ func (data *VLANConfiguration) updateFromBody(res gjson.Result) {
 func (data *VLANConfiguration) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
 		data.Vni.Value = value.Int()
+		data.Vni.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.access-vfi"); value.Exists() {
 		data.AccessVfi.Value = value.String()
+		data.AccessVfi.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.evpn-instance"); value.Exists() {
 		data.EvpnInstance.Value = value.Int()
+		data.EvpnInstance.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.vni"); value.Exists() {
 		data.EvpnInstanceVni.Value = value.Int()
+		data.EvpnInstanceVni.Null = false
 	}
 }
 

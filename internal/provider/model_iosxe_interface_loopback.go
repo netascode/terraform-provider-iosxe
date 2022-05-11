@@ -111,21 +111,33 @@ func (data *InterfaceLoopback) updateFromBody(res gjson.Result) {
 func (data *InterfaceLoopback) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
+		data.Description.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
+		data.Shutdown.Null = false
+	} else {
+		data.Shutdown.Value = false
+		data.Shutdown.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.forwarding"); value.Exists() {
 		data.VrfForwarding.Value = value.String()
+		data.VrfForwarding.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.address"); value.Exists() {
 		data.Ipv4Address.Value = value.String()
+		data.Ipv4Address.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.mask"); value.Exists() {
 		data.Ipv4AddressMask.Value = value.String()
+		data.Ipv4AddressMask.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.pim.Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
 		data.PimSparseMode.Value = true
+		data.PimSparseMode.Null = false
+	} else {
+		data.PimSparseMode.Value = false
+		data.PimSparseMode.Null = false
 	}
 }
 

@@ -109,7 +109,7 @@ type dataSourceInterfaceNVE struct {
 }
 
 func (d dataSourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config, state InterfaceNVE
+	var config InterfaceNVE
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -122,20 +122,20 @@ func (d dataSourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadDataSour
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		state = InterfaceNVE{Device: config.Device}
+		config = InterfaceNVE{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
 		}
 
-		state.fromBody(res.Res)
+		config.fromBody(res.Res)
 	}
 
-	state.Id = types.String{Value: config.getPath()}
+	config.Id = types.String{Value: config.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 
-	diags = resp.State.Set(ctx, &state)
+	diags = resp.State.Set(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 }

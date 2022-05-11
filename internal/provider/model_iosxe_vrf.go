@@ -165,18 +165,29 @@ func (data *VRF) updateFromBody(res gjson.Result) {
 func (data *VRF) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
+		data.Description.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "rd"); value.Exists() {
 		data.Rd.Value = value.String()
+		data.Rd.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "address-family.ipv4"); value.Exists() {
 		data.AddressFamilyIpv4.Value = true
+		data.AddressFamilyIpv4.Null = false
+	} else {
+		data.AddressFamilyIpv4.Value = false
+		data.AddressFamilyIpv4.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "address-family.ipv6"); value.Exists() {
 		data.AddressFamilyIpv6.Value = true
+		data.AddressFamilyIpv6.Null = false
+	} else {
+		data.AddressFamilyIpv6.Value = false
+		data.AddressFamilyIpv6.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vpn.id"); value.Exists() {
 		data.VpnId.Value = value.String()
+		data.VpnId.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.import"); value.Exists() {
 		data.RouteTargetImport = make([]VRFRouteTargetImport, 0)
@@ -184,9 +195,11 @@ func (data *VRF) fromBody(res gjson.Result) {
 			item := VRFRouteTargetImport{}
 			if cValue := v.Get("asn-ip"); cValue.Exists() {
 				item.Value.Value = cValue.String()
+				item.Value.Null = false
 			}
 			if cValue := v.Get("stitching"); cValue.Exists() {
 				item.Stitching.Value = true
+				item.Stitching.Null = false
 			}
 			data.RouteTargetImport = append(data.RouteTargetImport, item)
 			return true
@@ -198,9 +211,11 @@ func (data *VRF) fromBody(res gjson.Result) {
 			item := VRFRouteTargetExport{}
 			if cValue := v.Get("asn-ip"); cValue.Exists() {
 				item.Value.Value = cValue.String()
+				item.Value.Null = false
 			}
 			if cValue := v.Get("stitching"); cValue.Exists() {
 				item.Stitching.Value = true
+				item.Stitching.Null = false
 			}
 			data.RouteTargetExport = append(data.RouteTargetExport, item)
 			return true

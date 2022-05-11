@@ -92,15 +92,22 @@ func (data *BGPNeighbor) updateFromBody(res gjson.Result) {
 func (data *BGPNeighbor) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-as"); value.Exists() {
 		data.RemoteAs.Value = value.String()
+		data.RemoteAs.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
+		data.Description.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
+		data.Shutdown.Null = false
+	} else {
+		data.Shutdown.Value = false
+		data.Shutdown.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "update-source.interface.Loopback"); value.Exists() {
 		data.UpdateSourceLoopback.Value = value.Int()
+		data.UpdateSourceLoopback.Null = false
 	}
 }
 

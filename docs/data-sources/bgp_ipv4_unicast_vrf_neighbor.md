@@ -25,7 +25,9 @@ data "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 
 ### Required
 
+- `asn` (String)
 - `ip` (String)
+- `vrf` (String)
 
 ### Optional
 
@@ -34,7 +36,6 @@ data "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 ### Read-Only
 
 - `activate` (Boolean) Enable the address family for this neighbor
-- `asn` (String)
 - `description` (String) Neighbor specific description
 - `id` (String) The path of the retrieved object.
 - `remote_as` (String) Specify a BGP peer-group remote-as
@@ -42,6 +43,5 @@ data "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 - `send_community` (String)
 - `shutdown` (Boolean) Administratively shut down this neighbor
 - `update_source_loopback` (Number) Loopback interface
-- `vrf` (String)
 
 

@@ -33,7 +33,7 @@ func (t dataSourceBGPAddressFamilyL2VPNType) GetSchema(ctx context.Context) (tfs
 			"asn": {
 				MarkdownDescription: "",
 				Type:                types.StringType,
-				Computed:            true,
+				Required:            true,
 			},
 			"af_name": {
 				MarkdownDescription: "",
@@ -57,7 +57,7 @@ type dataSourceBGPAddressFamilyL2VPN struct {
 }
 
 func (d dataSourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config, state BGPAddressFamilyL2VPN
+	var config BGPAddressFamilyL2VPN
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -70,20 +70,20 @@ func (d dataSourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req tfsdk.Rea
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		state = BGPAddressFamilyL2VPN{Device: config.Device}
+		config = BGPAddressFamilyL2VPN{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
 		}
 
-		state.fromBody(res.Res)
+		config.fromBody(res.Res)
 	}
 
-	state.Id = types.String{Value: config.getPath()}
+	config.Id = types.String{Value: config.getPath()}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 
-	diags = resp.State.Set(ctx, &state)
+	diags = resp.State.Set(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 }

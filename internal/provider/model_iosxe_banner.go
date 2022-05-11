@@ -78,15 +78,19 @@ func (data *Banner) updateFromBody(res gjson.Result) {
 func (data *Banner) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "exec.banner"); value.Exists() {
 		data.ExecBanner.Value = value.String()
+		data.ExecBanner.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "login.banner"); value.Exists() {
 		data.LoginBanner.Value = value.String()
+		data.LoginBanner.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "prompt-timeout.banner"); value.Exists() {
 		data.PromptTimeoutBanner.Value = value.String()
+		data.PromptTimeoutBanner.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "motd.banner"); value.Exists() {
 		data.MotdBanner.Value = value.String()
+		data.MotdBanner.Null = false
 	}
 }
 

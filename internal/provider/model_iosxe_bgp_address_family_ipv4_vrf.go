@@ -112,15 +112,19 @@ func (data *BGPAddressFamilyIPv4VRF) fromBody(res gjson.Result) {
 			item := BGPAddressFamilyIPv4VRFVrfs{}
 			if cValue := v.Get("name"); cValue.Exists() {
 				item.Name.Value = cValue.String()
+				item.Name.Null = false
 			}
 			if cValue := v.Get("ipv4-unicast.advertise.l2vpn.evpn"); cValue.Exists() {
 				item.AdvertiseL2vpnEvpn.Value = true
+				item.AdvertiseL2vpnEvpn.Null = false
 			}
 			if cValue := v.Get("ipv4-unicast.redistribute-vrf.connected"); cValue.Exists() {
 				item.RedistributeConnected.Value = true
+				item.RedistributeConnected.Null = false
 			}
 			if cValue := v.Get("ipv4-unicast.redistribute-vrf.static"); cValue.Exists() {
 				item.RedistributeStatic.Value = true
+				item.RedistributeStatic.Null = false
 			}
 			data.Vrfs = append(data.Vrfs, item)
 			return true

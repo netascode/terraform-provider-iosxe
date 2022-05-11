@@ -84,12 +84,21 @@ func (data *BGPL2VPNEVPNNeighbor) updateFromBody(res gjson.Result) {
 func (data *BGPL2VPNEVPNNeighbor) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "activate"); value.Exists() {
 		data.Activate.Value = true
+		data.Activate.Null = false
+	} else {
+		data.Activate.Value = false
+		data.Activate.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "send-community.send-community-where"); value.Exists() {
 		data.SendCommunity.Value = value.String()
+		data.SendCommunity.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-reflector-client"); value.Exists() {
 		data.RouteReflectorClient.Value = true
+		data.RouteReflectorClient.Null = false
+	} else {
+		data.RouteReflectorClient.Value = false
+		data.RouteReflectorClient.Null = false
 	}
 }
 

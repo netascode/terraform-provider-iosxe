@@ -1,14 +1,32 @@
 ---
-name: Interface Loopback
-path: Cisco-IOS-XE-native:native/interface/Loopback=%v
+name: Interface Ethernet
+path: Cisco-IOS-XE-native:native/interface/%s=%v
+augment_path: Cisco-IOS-XE-native:native/interface/GigabitEthernet=%v
+no_delete: true
 doc_category: Interface
 attributes:
+  - yang_name: type
+    tf_name: type
+    description: Interface type
+    type: String
+    reference: true
+    enum_values:
+      - GigabitEthernet
+      - TwoGigabitEthernet
+      - FiveGigabitEthernet
+      - TenGigabitEthernet
+      - TwentyFiveGigE
+      - FortyGigabitEthernet
+      - HundredGigE
+      - TwoHundredGigE
+      - FourHundredGigE
+    example: GigabitEthernet
   - yang_name: name
-    example: 100
+    example: 3
   - yang_name: description
     example: My Interface Description
   - yang_name: shutdown
-    example: false
+    example: true
   - yang_name: vrf-choice/vrf/vrf/forwarding
     xpath: vrf/forwarding
     tf_name: vrf_forwarding
@@ -16,15 +34,16 @@ attributes:
   - yang_name: ip/address-choice/address/address/address-choice/fixed-case/primary/address
     xpath: ip/address/primary/address
     tf_name: ipv4_address
-    example: 200.1.1.1
+    example: 15.1.1.1
   - yang_name: ip/address-choice/address/address/address-choice/fixed-case/primary/mask
     xpath: ip/address/primary/mask
     tf_name: ipv4_address_mask
-    example: 255.255.255.255
-  - yang_name: ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/sparse/sparse-mode
-    xpath: ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode
-    tf_name: pim_sparse_mode
-    example: true
+    example: 255.255.255.252
+  - yang_name: ip/address-choice/unnumbered/unnumbered
+    xpath: ip/unnumbered
+    tf_name: unnumbered
+    exclude_test: true
+    example: Loopback1
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true

@@ -24,6 +24,7 @@ data "iosxe_bgp_neighbor" "example" {
 
 ### Required
 
+- `asn` (String)
 - `ip` (String)
 
 ### Optional
@@ -32,7 +33,6 @@ data "iosxe_bgp_neighbor" "example" {
 
 ### Read-Only
 
-- `asn` (String)
 - `description` (String) Neighbor specific description
 - `id` (String) The path of the retrieved object.
 - `remote_as` (String) Specify a BGP peer-group remote-as

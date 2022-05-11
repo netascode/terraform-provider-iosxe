@@ -24,6 +24,7 @@ data "iosxe_bgp_l2vpn_evpn_neighbor" "example" {
 
 ### Required
 
+- `asn` (String)
 - `ip` (String)
 
 ### Optional
@@ -33,7 +34,6 @@ data "iosxe_bgp_l2vpn_evpn_neighbor" "example" {
 ### Read-Only
 
 - `activate` (Boolean) Enable the address family for this neighbor
-- `asn` (String)
 - `id` (String) The path of the retrieved object.
 - `route_reflector_client` (Boolean) Configure a neighbor as Route Reflector client
 - `send_community` (String)

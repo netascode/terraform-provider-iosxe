@@ -42,6 +42,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 resource "iosxe_restconf" "PreReq1" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
+  delete = false
   attributes = {
       ipv4 = ""
   }

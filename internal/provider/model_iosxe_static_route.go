@@ -136,21 +136,27 @@ func (data *StaticRoute) fromBody(res gjson.Result) {
 			item := StaticRouteNextHops{}
 			if cValue := v.Get("fwd"); cValue.Exists() {
 				item.NextHop.Value = cValue.String()
+				item.NextHop.Null = false
 			}
 			if cValue := v.Get("metric"); cValue.Exists() {
 				item.Metric.Value = cValue.Int()
+				item.Metric.Null = false
 			}
 			if cValue := v.Get("global"); cValue.Exists() {
 				item.Global.Value = true
+				item.Global.Null = false
 			}
 			if cValue := v.Get("name"); cValue.Exists() {
 				item.Name.Value = cValue.String()
+				item.Name.Null = false
 			}
 			if cValue := v.Get("permanent"); cValue.Exists() {
 				item.Permanent.Value = true
+				item.Permanent.Null = false
 			}
 			if cValue := v.Get("tag"); cValue.Exists() {
 				item.Tag.Value = cValue.Int()
+				item.Tag.Null = false
 			}
 			data.NextHops = append(data.NextHops, item)
 			return true

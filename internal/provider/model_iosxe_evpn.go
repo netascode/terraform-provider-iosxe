@@ -165,39 +165,72 @@ func (data *EVPN) updateFromBody(res gjson.Result) {
 func (data *EVPN) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.ingress"); value.Exists() {
 		data.ReplicationTypeIngress.Value = true
+		data.ReplicationTypeIngress.Null = false
+	} else {
+		data.ReplicationTypeIngress.Value = false
+		data.ReplicationTypeIngress.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.static"); value.Exists() {
 		data.ReplicationTypeStatic.Value = true
+		data.ReplicationTypeStatic.Null = false
+	} else {
+		data.ReplicationTypeStatic.Value = false
+		data.ReplicationTypeStatic.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.p2mp"); value.Exists() {
 		data.ReplicationTypeP2mp.Value = true
+		data.ReplicationTypeP2mp.Null = false
+	} else {
+		data.ReplicationTypeP2mp.Value = false
+		data.ReplicationTypeP2mp.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "replication-type.mp2mp"); value.Exists() {
 		data.ReplicationTypeMp2mp.Value = true
+		data.ReplicationTypeMp2mp.Null = false
+	} else {
+		data.ReplicationTypeMp2mp.Value = false
+		data.ReplicationTypeMp2mp.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mac.duplication.limit"); value.Exists() {
 		data.MacDuplicationLimit.Value = value.Int()
+		data.MacDuplicationLimit.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mac.duplication.time"); value.Exists() {
 		data.MacDuplicationTime.Value = value.Int()
+		data.MacDuplicationTime.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.duplication.limit"); value.Exists() {
 		data.IpDuplicationLimit.Value = value.Int()
+		data.IpDuplicationLimit.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.duplication.time"); value.Exists() {
 		data.IpDuplicationTime.Value = value.Int()
+		data.IpDuplicationTime.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "router-id.interface.Loopback"); value.Exists() {
 		data.RouterIdLoopback.Value = value.Int()
+		data.RouterIdLoopback.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-gateway.advertise"); value.Exists() {
 		data.DefaultGatewayAdvertise.Value = true
+		data.DefaultGatewayAdvertise.Null = false
+	} else {
+		data.DefaultGatewayAdvertise.Value = false
+		data.DefaultGatewayAdvertise.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "logging.peer.state"); value.Exists() {
 		data.LoggingPeerState.Value = true
+		data.LoggingPeerState.Null = false
+	} else {
+		data.LoggingPeerState.Value = false
+		data.LoggingPeerState.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.auto.vni"); value.Exists() {
 		data.RouteTargetAutoVni.Value = true
+		data.RouteTargetAutoVni.Null = false
+	} else {
+		data.RouteTargetAutoVni.Value = false
+		data.RouteTargetAutoVni.Null = false
 	}
 }
 
