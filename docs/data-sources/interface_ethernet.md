@@ -34,6 +34,7 @@ data "iosxe_interface_ethernet" "example" {
 ### Read-Only
 
 - `description` (String) Interface specific description
+- `encapsulation_dot1q_vlan_id` (Number)
 - `id` (String) The path of the retrieved object.
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)

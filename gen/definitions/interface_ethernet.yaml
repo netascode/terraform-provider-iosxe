@@ -47,6 +47,11 @@ attributes:
     tf_name: unnumbered
     exclude_test: true
     example: Loopback1
+  - yang_name: encapsulation/encap-choice/dot1Q/dot1Q/vlan-id
+    xpath: encapsulation/dot1Q/vlan-id
+    tf_name: encapsulation_dot1q_vlan_id
+    exclude_test: true
+    example: 666
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true

@@ -75,6 +75,11 @@ func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.StringType,
 				Computed:            true,
 			},
+			"encapsulation_dot1q_vlan_id": {
+				MarkdownDescription: "",
+				Type:                types.Int64Type,
+				Computed:            true,
+			},
 		},
 	}, nil
 }

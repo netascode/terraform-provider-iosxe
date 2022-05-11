@@ -111,6 +111,15 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 				Optional:            true,
 				Computed:            true,
 			},
+			"encapsulation_dot1q_vlan_id": {
+				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
+				Type:                types.Int64Type,
+				Optional:            true,
+				Computed:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.IntegerRangeValidator(1, 4094),
+				},
+			},
 		},
 	}, nil
 }
