@@ -94,12 +94,13 @@ type YamlConfig struct {
 }
 
 type YamlConfigAttribute struct {
-	YangName        string                `yaml:"yang_name"`
-	YangScope       string                `yaml:"yang_scope"`
-	TfName          string                `yaml:"tf_name"`
-	XPath           string                `yaml:"xpath"`
-	Type            string                `yaml:"type"`
-	TypeYangBool    bool                  `yaml:"type_yang_bool"`
+	YangName  string `yaml:"yang_name"`
+	YangScope string `yaml:"yang_scope"`
+	TfName    string `yaml:"tf_name"`
+	XPath     string `yaml:"xpath"`
+	Type      string `yaml:"type"`
+	// "empty", "presence" or "boolean"
+	TypeYangBool    string                `yaml:"type_yang_bool"`
 	Id              bool                  `yaml:"id"`
 	Reference       bool                  `yaml:"reference"`
 	Mandatory       bool                  `yaml:"mandatory"`
@@ -332,7 +333,9 @@ func parseAttribute(e *yang.Entry, attr *YamlConfigAttribute) {
 			}
 		} else if contains([]string{"boolean", "empty"}, leaf.Type.Kind.String()) {
 			if leaf.Type.Kind.String() == "boolean" {
-				attr.TypeYangBool = true
+				attr.TypeYangBool = "boolean"
+			} else if leaf.Type.Kind.String() == "empty" {
+				attr.TypeYangBool = "empty"
 			}
 			attr.Type = "Bool"
 		} else if contains([]string{"enumeration"}, leaf.Type.Kind.String()) {
@@ -341,6 +344,7 @@ func parseAttribute(e *yang.Entry, attr *YamlConfigAttribute) {
 		}
 	}
 	if _, ok := leaf.Extra["presence"]; ok {
+		attr.TypeYangBool = "presence"
 		attr.Type = "Bool"
 	}
 	if attr.TfName == "" {

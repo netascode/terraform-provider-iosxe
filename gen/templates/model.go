@@ -78,11 +78,11 @@ func (data {{camelCase .Name}}) toBody() string {
 	if !data.{{toGoName .TfName}}.Null && !data.{{toGoName .TfName}}.Unknown {
 		{{- if eq .Type "Int64"}}
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(data.{{toGoName .TfName}}.Value, 10))
-		{{- else if and (eq .Type "Bool") (eq .TypeYangBool false)}}
+		{{- else if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 		if data.{{toGoName .TfName}}.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
 		}
-		{{- else if and (eq .Type "Bool") (eq .TypeYangBool true)}}
+		{{- else if and (eq .Type "Bool") (eq .TypeYangBool "boolean")}}
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", data.{{toGoName .TfName}}.Value)
 		{{- else if eq .Type "String"}}
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", data.{{toGoName .TfName}}.Value)
@@ -100,11 +100,11 @@ func (data {{camelCase .Name}}) toBody() string {
 			if !item.{{toGoName .TfName}}.Null && !item.{{toGoName .TfName}}.Unknown {
 				{{- if eq .Type "Int64"}}
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(item.{{toGoName .TfName}}.Value, 10))
-				{{- else if and (eq .Type "Bool") (eq .TypeYangBool false)}}
+				{{- else if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 				if item.{{toGoName .TfName}}.Value {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
 				}
-				{{- else if and (eq .Type "Bool") (eq .TypeYangBool true)}}
+				{{- else if and (eq .Type "Bool") (eq .TypeYangBool "boolean")}}
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", (data.{{toGoName .TfName}}.Value)
 				{{- else if eq .Type "String"}}
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", item.{{toGoName .TfName}}.Value)
@@ -129,7 +129,7 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 	}
 	{{- else if eq .Type "Bool"}}
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
-		{{- if .TypeYangBool}}
+		{{- if eq .TypeYangBool "boolean"}}
 		data.{{toGoName .TfName}}.Value = value.Bool()
 		{{- else}}
 		data.{{toGoName .TfName}}.Value = true
@@ -164,7 +164,7 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 		}
 		{{- else if eq .Type "Bool"}}
 		if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{$listPath}}.#({{$yangKey}}==\""+ key +"\")." + "{{toJsonPath .YangName .XPath}}"); value.Exists() {
-			{{- if .TypeYangBool}}
+			{{- if eq .TypeYangBool "boolean"}}
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Bool()
 			{{- else}}
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = true
@@ -197,7 +197,7 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 	}
 	{{- else if eq .Type "Bool"}}
 	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
-		{{- if .TypeYangBool}}
+		{{- if eq .TypeYangBool "boolean"}}
 		data.{{toGoName .TfName}}.Value = value.Bool()
 		{{- else}}
 		data.{{toGoName .TfName}}.Value = true
@@ -222,9 +222,9 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 			if cValue := v.Get("{{toJsonPath .YangName .XPath}}"); cValue.Exists() {
 				{{- if eq .Type "Int64"}}
 				item.{{toGoName .TfName}}.Value = cValue.Int()
-				{{- else if and (eq .Type "Bool") (eq .TypeYangBool true)}}
+				{{- else if and (eq .Type "Bool") (eq .TypeYangBool "boolean")}}
 				item.{{toGoName .TfName}}.Value = value.Bool()
-				{{- else if and (eq .Type "Bool") (eq .TypeYangBool false)}}
+				{{- else if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 				item.{{toGoName .TfName}}.Value = true
 				{{- else if eq .Type "String"}}
 				item.{{toGoName .TfName}}.Value = cValue.String()
