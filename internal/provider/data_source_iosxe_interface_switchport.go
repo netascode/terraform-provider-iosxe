@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-type dataSourceInterfaceEthernetType struct{}
+type dataSourceInterfaceSwitchportType struct{}
 
-func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t dataSourceInterfaceSwitchportType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This data source can read the Interface Ethernet configuration.",
+		MarkdownDescription: "This data source can read the Interface Switchport configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -40,69 +40,84 @@ func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.StringType,
 				Required:            true,
 			},
-			"media_type": {
-				MarkdownDescription: "Media type",
+			"mode_access": {
+				MarkdownDescription: "Set trunking mode to ACCESS unconditionally",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"mode_dot1q_tunnel": {
+				MarkdownDescription: "set trunking mode to TUNNEL unconditionally",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"mode_private_vlan_trunk": {
+				MarkdownDescription: "Set the mode to private-vlan trunk",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"mode_private_vlan_host": {
+				MarkdownDescription: "Set the mode to private-vlan host",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"mode_private_vlan_promiscuous": {
+				MarkdownDescription: "Set the mode to private-vlan promiscuous",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"mode_trunk": {
+				MarkdownDescription: "Set trunking mode to TRUNK unconditionally",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"nonegotiate": {
+				MarkdownDescription: "Device will not engage in negotiation protocol on this interface",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"access_vlan": {
+				MarkdownDescription: "",
 				Type:                types.StringType,
 				Computed:            true,
 			},
-			"switchport": {
+			"trunk_allowed_vlans": {
+				MarkdownDescription: "",
+				Type:                types.StringType,
+				Computed:            true,
+			},
+			"trunk_native_vlan_tag": {
 				MarkdownDescription: "",
 				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"description": {
-				MarkdownDescription: "Interface specific description",
-				Type:                types.StringType,
-				Computed:            true,
-			},
-			"shutdown": {
-				MarkdownDescription: "Shutdown the selected interface",
-				Type:                types.BoolType,
-				Computed:            true,
-			},
-			"vrf_forwarding": {
-				MarkdownDescription: "Configure forwarding table",
-				Type:                types.StringType,
-				Computed:            true,
-			},
-			"ipv4_address": {
-				MarkdownDescription: "",
-				Type:                types.StringType,
-				Computed:            true,
-			},
-			"ipv4_address_mask": {
-				MarkdownDescription: "",
-				Type:                types.StringType,
-				Computed:            true,
-			},
-			"unnumbered": {
-				MarkdownDescription: "Enable IP processing without an explicit address",
-				Type:                types.StringType,
-				Computed:            true,
-			},
-			"encapsulation_dot1q_vlan_id": {
+			"trunk_native_vlan": {
 				MarkdownDescription: "",
 				Type:                types.Int64Type,
+				Computed:            true,
+			},
+			"host": {
+				MarkdownDescription: "Set port host",
+				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
 	}, nil
 }
 
-func (t dataSourceInterfaceEthernetType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceInterfaceSwitchportType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return dataSourceInterfaceEthernet{
+	return dataSourceInterfaceSwitchport{
 		provider: provider,
 	}, diags
 }
 
-type dataSourceInterfaceEthernet struct {
+type dataSourceInterfaceSwitchport struct {
 	provider provider
 }
 
-func (d dataSourceInterfaceEthernet) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
-	var config InterfaceEthernet
+func (d dataSourceInterfaceSwitchport) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+	var config InterfaceSwitchport
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -115,7 +130,7 @@ func (d dataSourceInterfaceEthernet) Read(ctx context.Context, req tfsdk.ReadDat
 
 	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceEthernet{Device: config.Device}
+		config = InterfaceSwitchport{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

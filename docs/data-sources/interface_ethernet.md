@@ -40,6 +40,7 @@ data "iosxe_interface_ethernet" "example" {
 - `ipv4_address_mask` (String)
 - `media_type` (String) Media type
 - `shutdown` (Boolean) Shutdown the selected interface
+- `switchport` (Boolean)
 - `unnumbered` (String) Enable IP processing without an explicit address
 - `vrf_forwarding` (String) Configure forwarding table
 

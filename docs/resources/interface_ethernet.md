@@ -43,6 +43,7 @@ resource "iosxe_interface_ethernet" "example" {
 - `media_type` (String) Media type
   - Choices: `auto-select`, `rj45`, `sfp`
 - `shutdown` (Boolean) Shutdown the selected interface
+- `switchport` (Boolean)
 - `unnumbered` (String) Enable IP processing without an explicit address
 - `vrf_forwarding` (String) Configure forwarding table
 

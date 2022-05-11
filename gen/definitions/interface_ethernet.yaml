@@ -26,6 +26,10 @@ attributes:
   - yang_name: media-type
     exclude_test: true
     example: sfp
+  - yang_name: switchport-conf/switchport
+    tf_name: switchport
+    exclude_test: true
+    example: false
   - yang_name: description
     example: My Interface Description
   - yang_name: shutdown

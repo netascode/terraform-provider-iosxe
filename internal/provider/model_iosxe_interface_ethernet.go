@@ -20,6 +20,7 @@ type InterfaceEthernet struct {
 	Type                     types.String `tfsdk:"type"`
 	Name                     types.String `tfsdk:"name"`
 	MediaType                types.String `tfsdk:"media_type"`
+	Switchport               types.Bool   `tfsdk:"switchport"`
 	Description              types.String `tfsdk:"description"`
 	Shutdown                 types.Bool   `tfsdk:"shutdown"`
 	VrfForwarding            types.String `tfsdk:"vrf_forwarding"`
@@ -51,6 +52,9 @@ func (data InterfaceEthernet) toBody() string {
 	}
 	if !data.MediaType.Null && !data.MediaType.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"media-type", data.MediaType.Value)
+	}
+	if !data.Switchport.Null && !data.Switchport.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport-conf.switchport", data.Switchport.Value)
 	}
 	if !data.Description.Null && !data.Description.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.Value)
@@ -88,6 +92,11 @@ func (data *InterfaceEthernet) updateFromBody(res gjson.Result) {
 		data.MediaType.Value = value.String()
 	} else {
 		data.MediaType.Null = true
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "switchport-conf.switchport"); value.Exists() {
+		data.Switchport.Value = value.Bool()
+	} else {
+		data.Switchport.Value = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
@@ -130,6 +139,13 @@ func (data *InterfaceEthernet) fromBody(res gjson.Result) {
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "media-type"); value.Exists() {
 		data.MediaType.Value = value.String()
 		data.MediaType.Null = false
+	}
+	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "switchport-conf.switchport"); value.Exists() {
+		data.Switchport.Value = value.Bool()
+		data.Switchport.Null = false
+	} else {
+		data.Switchport.Value = false
+		data.Switchport.Null = false
 	}
 	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
 		data.Description.Value = value.String()
@@ -184,6 +200,10 @@ func (data *InterfaceEthernet) setUnknownValues() {
 	if data.MediaType.Unknown {
 		data.MediaType.Unknown = false
 		data.MediaType.Null = true
+	}
+	if data.Switchport.Unknown {
+		data.Switchport.Unknown = false
+		data.Switchport.Null = true
 	}
 	if data.Description.Unknown {
 		data.Description.Unknown = false

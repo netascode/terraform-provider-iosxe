@@ -14,12 +14,12 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceInterfaceEthernetType struct{}
+type resourceInterfaceSwitchportType struct{}
 
-func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t resourceInterfaceSwitchportType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the Interface Ethernet configuration.",
+		MarkdownDescription: "This resource can manage the Interface Switchport configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -57,67 +57,67 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 					tfsdk.RequiresReplace(),
 				},
 			},
-			"media_type": {
-				MarkdownDescription: helpers.NewAttributeDescription("Media type").AddStringEnumDescription("auto-select", "rj45", "sfp").String,
+			"mode_access": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set trunking mode to ACCESS unconditionally").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"mode_dot1q_tunnel": {
+				MarkdownDescription: helpers.NewAttributeDescription("set trunking mode to TUNNEL unconditionally").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"mode_private_vlan_trunk": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set the mode to private-vlan trunk").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"mode_private_vlan_host": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set the mode to private-vlan host").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"mode_private_vlan_promiscuous": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set the mode to private-vlan promiscuous").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"mode_trunk": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set trunking mode to TRUNK unconditionally").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"nonegotiate": {
+				MarkdownDescription: helpers.NewAttributeDescription("Device will not engage in negotiation protocol on this interface").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"access_vlan": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("auto-select", "rj45", "sfp"),
-				},
 			},
-			"switchport": {
+			"trunk_allowed_vlans": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"trunk_native_vlan_tag": {
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"description": {
-				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 200, `.*`),
-				},
-			},
-			"shutdown": {
-				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"vrf_forwarding": {
-				MarkdownDescription: helpers.NewAttributeDescription("Configure forwarding table").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"ipv4_address": {
-				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-				},
-			},
-			"ipv4_address_mask": {
-				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-				},
-			},
-			"unnumbered": {
-				MarkdownDescription: helpers.NewAttributeDescription("Enable IP processing without an explicit address").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"encapsulation_dot1q_vlan_id": {
+			"trunk_native_vlan": {
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
 				Type:                types.Int64Type,
 				Optional:            true,
@@ -126,24 +126,30 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 					helpers.IntegerRangeValidator(1, 4094),
 				},
 			},
+			"host": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set port host").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
 		},
 	}, nil
 }
 
-func (t resourceInterfaceEthernetType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfaceSwitchportType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return resourceInterfaceEthernet{
+	return resourceInterfaceSwitchport{
 		provider: provider,
 	}, diags
 }
 
-type resourceInterfaceEthernet struct {
+type resourceInterfaceSwitchport struct {
 	provider provider
 }
 
-func (r resourceInterfaceEthernet) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan InterfaceEthernet
+func (r resourceInterfaceSwitchport) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+	var plan InterfaceSwitchport
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -176,8 +182,8 @@ func (r resourceInterfaceEthernet) Create(ctx context.Context, req tfsdk.CreateR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceEthernet) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state InterfaceEthernet
+func (r resourceInterfaceSwitchport) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+	var state InterfaceSwitchport
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -190,7 +196,7 @@ func (r resourceInterfaceEthernet) Read(ctx context.Context, req tfsdk.ReadResou
 
 	res, err := r.provider.clients[state.Device.Value].GetData(state.Id.Value)
 	if res.StatusCode == 404 {
-		state = InterfaceEthernet{Device: state.Device, Id: state.Id}
+		state = InterfaceSwitchport{Device: state.Device, Id: state.Id}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
@@ -206,8 +212,8 @@ func (r resourceInterfaceEthernet) Read(ctx context.Context, req tfsdk.ReadResou
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceEthernet) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan, state InterfaceEthernet
+func (r resourceInterfaceSwitchport) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+	var plan, state InterfaceSwitchport
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -254,8 +260,8 @@ func (r resourceInterfaceEthernet) Update(ctx context.Context, req tfsdk.UpdateR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceEthernet) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
-	var state InterfaceEthernet
+func (r resourceInterfaceSwitchport) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+	var state InterfaceSwitchport
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -266,11 +272,17 @@ func (r resourceInterfaceEthernet) Delete(ctx context.Context, req tfsdk.DeleteR
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.Value))
 
+	res, err := r.provider.clients[state.Device.Value].DeleteData(state.Id.Value)
+	if err != nil && res.StatusCode != 404 {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object, got error: %s", err))
+		return
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.Id.Value))
 
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfaceEthernet) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+func (r resourceInterfaceSwitchport) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
 	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
 }
