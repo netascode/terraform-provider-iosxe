@@ -124,16 +124,20 @@ func (data {{camelCase .Name}}) toBody() string {
 }
 
 func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
 	{{- range .Attributes}}
 	{{- if and (ne .Reference true) (ne .WriteOnly true)}}
 	{{- if eq .Type "Int64"}}
-	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		data.{{toGoName .TfName}}.Value = value.Int()
 	} else {
 		data.{{toGoName .TfName}}.Null = true
 	}
 	{{- else if eq .Type "Bool"}}
-	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		{{- if eq .TypeYangBool "boolean"}}
 		data.{{toGoName .TfName}}.Value = value.Bool()
 		{{- else}}
@@ -143,7 +147,7 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 		data.{{toGoName .TfName}}.Value = false
 	}
 	{{- else if eq .Type "String"}}
-	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		data.{{toGoName .TfName}}.Value = value.String()
 	} else {
 		data.{{toGoName .TfName}}.Null = true
@@ -162,13 +166,13 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 		{{- range .Attributes}}
 		{{- if ne .WriteOnly true}}
 		{{- if eq .Type "Int64"}}
-		if value := res.Get(fmt.Sprintf("%v.{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Int()
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
 		}
 		{{- else if eq .Type "Bool"}}
-		if value := res.Get(fmt.Sprintf("%v.{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
 			{{- if eq .TypeYangBool "boolean"}}
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Bool()
 			{{- else}}
@@ -178,7 +182,7 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = false
 		}
 		{{- else if eq .Type "String"}}
-		if value := res.Get(fmt.Sprintf("%v.{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.String()
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
@@ -193,15 +197,19 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 }
 
 func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
 	{{- range .Attributes}}
 	{{- if and (ne .Reference true) (ne .Id true) (ne .WriteOnly true)}}
 	{{- if eq .Type "Int64"}}
-	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		data.{{toGoName .TfName}}.Value = value.Int()
 		data.{{toGoName .TfName}}.Null = false
 	}
 	{{- else if eq .Type "Bool"}}
-	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		{{- if eq .TypeYangBool "boolean"}}
 		data.{{toGoName .TfName}}.Value = value.Bool()
 		{{- else}}
@@ -213,12 +221,12 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 		data.{{toGoName .TfName}}.Null = false
 	}
 	{{- else if eq .Type "String"}}
-	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		data.{{toGoName .TfName}}.Value = value.String()
 		data.{{toGoName .TfName}}.Null = false
 	}
 	{{- else if eq .Type "List"}}
-	if value := res.Get(helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		data.{{toGoName .TfName}} = make([]{{$name}}{{toGoName .TfName}}, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := {{$name}}{{toGoName .TfName}}{}

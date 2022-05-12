@@ -85,44 +85,48 @@ func (data StaticRoute) toBody() string {
 }
 
 func (data *StaticRoute) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "prefix"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "prefix"); value.Exists() {
 		data.Prefix.Value = value.String()
 	} else {
 		data.Prefix.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mask"); value.Exists() {
+	if value := res.Get(prefix + "mask"); value.Exists() {
 		data.Mask.Value = value.String()
 	} else {
 		data.Mask.Null = true
 	}
 	for i := range data.NextHops {
 		key := data.NextHops[i].NextHop.Value
-		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").fwd", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").fwd", prefix, key)); value.Exists() {
 			data.NextHops[i].NextHop.Value = value.String()
 		} else {
 			data.NextHops[i].NextHop.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").metric", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").metric", prefix, key)); value.Exists() {
 			data.NextHops[i].Metric.Value = value.Int()
 		} else {
 			data.NextHops[i].Metric.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").global", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").global", prefix, key)); value.Exists() {
 			data.NextHops[i].Global.Value = true
 		} else {
 			data.NextHops[i].Global.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").name", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").name", prefix, key)); value.Exists() {
 			data.NextHops[i].Name.Value = value.String()
 		} else {
 			data.NextHops[i].Name.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").permanent", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").permanent", prefix, key)); value.Exists() {
 			data.NextHops[i].Permanent.Value = true
 		} else {
 			data.NextHops[i].Permanent.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%v.fwd-list.#(fwd==\"%v\").tag", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").tag", prefix, key)); value.Exists() {
 			data.NextHops[i].Tag.Value = value.Int()
 		} else {
 			data.NextHops[i].Tag.Null = true
@@ -131,7 +135,11 @@ func (data *StaticRoute) updateFromBody(res gjson.Result) {
 }
 
 func (data *StaticRoute) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "fwd-list"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "fwd-list"); value.Exists() {
 		data.NextHops = make([]StaticRouteNextHops, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := StaticRouteNextHops{}

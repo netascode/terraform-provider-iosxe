@@ -44,7 +44,11 @@ func (data BGPAddressFamilyL2VPN) toBody() string {
 }
 
 func (data *BGPAddressFamilyL2VPN) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "af-name"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "af-name"); value.Exists() {
 		data.AfName.Value = value.String()
 	} else {
 		data.AfName.Null = true
@@ -52,6 +56,10 @@ func (data *BGPAddressFamilyL2VPN) updateFromBody(res gjson.Result) {
 }
 
 func (data *BGPAddressFamilyL2VPN) fromBody(res gjson.Result) {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
 }
 
 func (data *BGPAddressFamilyL2VPN) setUnknownValues() {

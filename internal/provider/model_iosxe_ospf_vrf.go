@@ -159,69 +159,73 @@ func (data OSPFVRF) toBody() string {
 }
 
 func (data *OSPFVRF) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "id"); value.Exists() {
 		data.ProcessId.Value = value.Int()
 	} else {
 		data.ProcessId.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf"); value.Exists() {
+	if value := res.Get(prefix + "vrf"); value.Exists() {
 		data.Vrf.Value = value.String()
 	} else {
 		data.Vrf.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bfd.all-interfaces"); value.Exists() {
+	if value := res.Get(prefix + "bfd.all-interfaces"); value.Exists() {
 		data.BfdAllInterfaces.Value = true
 	} else {
 		data.BfdAllInterfaces.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-information.originate"); value.Exists() {
+	if value := res.Get(prefix + "default-information.originate"); value.Exists() {
 		data.DefaultInformationOriginate.Value = true
 	} else {
 		data.DefaultInformationOriginate.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-information.originate.always"); value.Exists() {
+	if value := res.Get(prefix + "default-information.originate.always"); value.Exists() {
 		data.DefaultInformationOriginateAlways.Value = true
 	} else {
 		data.DefaultInformationOriginateAlways.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-metric"); value.Exists() {
+	if value := res.Get(prefix + "default-metric"); value.Exists() {
 		data.DefaultMetric.Value = value.Int()
 	} else {
 		data.DefaultMetric.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "distance.distance"); value.Exists() {
+	if value := res.Get(prefix + "distance.distance"); value.Exists() {
 		data.Distance.Value = value.Int()
 	} else {
 		data.Distance.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "domain-tag"); value.Exists() {
+	if value := res.Get(prefix + "domain-tag"); value.Exists() {
 		data.DomainTag.Value = value.Int()
 	} else {
 		data.DomainTag.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.autoconfig"); value.Exists() {
+	if value := res.Get(prefix + "mpls.ldp.autoconfig"); value.Exists() {
 		data.MplsLdpAutoconfig.Value = true
 	} else {
 		data.MplsLdpAutoconfig.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.sync"); value.Exists() {
+	if value := res.Get(prefix + "mpls.ldp.sync"); value.Exists() {
 		data.MplsLdpSync.Value = true
 	} else {
 		data.MplsLdpSync.Value = false
 	}
 	for i := range data.Neighbor {
 		key := data.Neighbor[i].Ip.Value
-		if value := res.Get(fmt.Sprintf("%v.neighbor.#(ip==\"%v\").ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vneighbor.#(ip==\"%v\").ip", prefix, key)); value.Exists() {
 			data.Neighbor[i].Ip.Value = value.String()
 		} else {
 			data.Neighbor[i].Ip.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.neighbor.#(ip==\"%v\").priority", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vneighbor.#(ip==\"%v\").priority", prefix, key)); value.Exists() {
 			data.Neighbor[i].Priority.Value = value.Int()
 		} else {
 			data.Neighbor[i].Priority.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.neighbor.#(ip==\"%v\").cost", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vneighbor.#(ip==\"%v\").cost", prefix, key)); value.Exists() {
 			data.Neighbor[i].Cost.Value = value.Int()
 		} else {
 			data.Neighbor[i].Cost.Null = true
@@ -229,45 +233,45 @@ func (data *OSPFVRF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.Network {
 		key := data.Network[i].Ip.Value
-		if value := res.Get(fmt.Sprintf("%v.network.#(ip==\"%v\").ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vnetwork.#(ip==\"%v\").ip", prefix, key)); value.Exists() {
 			data.Network[i].Ip.Value = value.String()
 		} else {
 			data.Network[i].Ip.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.network.#(ip==\"%v\").wildcard", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vnetwork.#(ip==\"%v\").wildcard", prefix, key)); value.Exists() {
 			data.Network[i].Wildcard.Value = value.String()
 		} else {
 			data.Network[i].Wildcard.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.network.#(ip==\"%v\").area", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vnetwork.#(ip==\"%v\").area", prefix, key)); value.Exists() {
 			data.Network[i].Area.Value = value.String()
 		} else {
 			data.Network[i].Area.Null = true
 		}
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "priority"); value.Exists() {
+	if value := res.Get(prefix + "priority"); value.Exists() {
 		data.Priority.Value = value.Int()
 	} else {
 		data.Priority.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "router-id"); value.Exists() {
+	if value := res.Get(prefix + "router-id"); value.Exists() {
 		data.RouterId.Value = value.String()
 	} else {
 		data.RouterId.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = value.Bool()
 	} else {
 		data.Shutdown.Value = false
 	}
 	for i := range data.SummaryAddress {
 		key := data.SummaryAddress[i].Ip.Value
-		if value := res.Get(fmt.Sprintf("%v.summary-address.#(ip==\"%v\").ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vsummary-address.#(ip==\"%v\").ip", prefix, key)); value.Exists() {
 			data.SummaryAddress[i].Ip.Value = value.String()
 		} else {
 			data.SummaryAddress[i].Ip.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.summary-address.#(ip==\"%v\").mask", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vsummary-address.#(ip==\"%v\").mask", prefix, key)); value.Exists() {
 			data.SummaryAddress[i].Mask.Value = value.String()
 		} else {
 			data.SummaryAddress[i].Mask.Null = true
@@ -276,54 +280,58 @@ func (data *OSPFVRF) updateFromBody(res gjson.Result) {
 }
 
 func (data *OSPFVRF) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bfd.all-interfaces"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "bfd.all-interfaces"); value.Exists() {
 		data.BfdAllInterfaces.Value = true
 		data.BfdAllInterfaces.Null = false
 	} else {
 		data.BfdAllInterfaces.Value = false
 		data.BfdAllInterfaces.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-information.originate"); value.Exists() {
+	if value := res.Get(prefix + "default-information.originate"); value.Exists() {
 		data.DefaultInformationOriginate.Value = true
 		data.DefaultInformationOriginate.Null = false
 	} else {
 		data.DefaultInformationOriginate.Value = false
 		data.DefaultInformationOriginate.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-information.originate.always"); value.Exists() {
+	if value := res.Get(prefix + "default-information.originate.always"); value.Exists() {
 		data.DefaultInformationOriginateAlways.Value = true
 		data.DefaultInformationOriginateAlways.Null = false
 	} else {
 		data.DefaultInformationOriginateAlways.Value = false
 		data.DefaultInformationOriginateAlways.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "default-metric"); value.Exists() {
+	if value := res.Get(prefix + "default-metric"); value.Exists() {
 		data.DefaultMetric.Value = value.Int()
 		data.DefaultMetric.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "distance.distance"); value.Exists() {
+	if value := res.Get(prefix + "distance.distance"); value.Exists() {
 		data.Distance.Value = value.Int()
 		data.Distance.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "domain-tag"); value.Exists() {
+	if value := res.Get(prefix + "domain-tag"); value.Exists() {
 		data.DomainTag.Value = value.Int()
 		data.DomainTag.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.autoconfig"); value.Exists() {
+	if value := res.Get(prefix + "mpls.ldp.autoconfig"); value.Exists() {
 		data.MplsLdpAutoconfig.Value = true
 		data.MplsLdpAutoconfig.Null = false
 	} else {
 		data.MplsLdpAutoconfig.Value = false
 		data.MplsLdpAutoconfig.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mpls.ldp.sync"); value.Exists() {
+	if value := res.Get(prefix + "mpls.ldp.sync"); value.Exists() {
 		data.MplsLdpSync.Value = true
 		data.MplsLdpSync.Null = false
 	} else {
 		data.MplsLdpSync.Value = false
 		data.MplsLdpSync.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "neighbor"); value.Exists() {
+	if value := res.Get(prefix + "neighbor"); value.Exists() {
 		data.Neighbor = make([]OSPFVRFNeighbor, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := OSPFVRFNeighbor{}
@@ -343,7 +351,7 @@ func (data *OSPFVRF) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network"); value.Exists() {
+	if value := res.Get(prefix + "network"); value.Exists() {
 		data.Network = make([]OSPFVRFNetwork, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := OSPFVRFNetwork{}
@@ -363,22 +371,22 @@ func (data *OSPFVRF) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "priority"); value.Exists() {
+	if value := res.Get(prefix + "priority"); value.Exists() {
 		data.Priority.Value = value.Int()
 		data.Priority.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "router-id"); value.Exists() {
+	if value := res.Get(prefix + "router-id"); value.Exists() {
 		data.RouterId.Value = value.String()
 		data.RouterId.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = value.Bool()
 		data.Shutdown.Null = false
 	} else {
 		data.Shutdown.Value = false
 		data.Shutdown.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "summary-address"); value.Exists() {
+	if value := res.Get(prefix + "summary-address"); value.Exists() {
 		data.SummaryAddress = make([]OSPFVRFSummaryAddress, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := OSPFVRFSummaryAddress{}

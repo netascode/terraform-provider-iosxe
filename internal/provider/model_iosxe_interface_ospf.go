@@ -86,47 +86,51 @@ func (data InterfaceOSPF) toBody() string {
 }
 
 func (data *InterfaceOSPF) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "cost"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "cost"); value.Exists() {
 		data.Cost.Value = value.Int()
 	} else {
 		data.Cost.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "dead-interval"); value.Exists() {
+	if value := res.Get(prefix + "dead-interval"); value.Exists() {
 		data.DeadInterval.Value = value.Int()
 	} else {
 		data.DeadInterval.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "hello-interval"); value.Exists() {
+	if value := res.Get(prefix + "hello-interval"); value.Exists() {
 		data.HelloInterval.Value = value.Int()
 	} else {
 		data.HelloInterval.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mtu-ignore"); value.Exists() {
+	if value := res.Get(prefix + "mtu-ignore"); value.Exists() {
 		data.MtuIgnore.Value = value.Bool()
 	} else {
 		data.MtuIgnore.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.broadcast"); value.Exists() {
+	if value := res.Get(prefix + "network.broadcast"); value.Exists() {
 		data.NetworkTypeBroadcast.Value = true
 	} else {
 		data.NetworkTypeBroadcast.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.non-broadcast"); value.Exists() {
+	if value := res.Get(prefix + "network.non-broadcast"); value.Exists() {
 		data.NetworkTypeNonBroadcast.Value = true
 	} else {
 		data.NetworkTypeNonBroadcast.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.point-to-multipoint"); value.Exists() {
+	if value := res.Get(prefix + "network.point-to-multipoint"); value.Exists() {
 		data.NetworkTypePointToMultipoint.Value = true
 	} else {
 		data.NetworkTypePointToMultipoint.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.point-to-point"); value.Exists() {
+	if value := res.Get(prefix + "network.point-to-point"); value.Exists() {
 		data.NetworkTypePointToPoint.Value = true
 	} else {
 		data.NetworkTypePointToPoint.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "priority"); value.Exists() {
+	if value := res.Get(prefix + "priority"); value.Exists() {
 		data.Priority.Value = value.Int()
 	} else {
 		data.Priority.Null = true
@@ -134,54 +138,58 @@ func (data *InterfaceOSPF) updateFromBody(res gjson.Result) {
 }
 
 func (data *InterfaceOSPF) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "cost"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "cost"); value.Exists() {
 		data.Cost.Value = value.Int()
 		data.Cost.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "dead-interval"); value.Exists() {
+	if value := res.Get(prefix + "dead-interval"); value.Exists() {
 		data.DeadInterval.Value = value.Int()
 		data.DeadInterval.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "hello-interval"); value.Exists() {
+	if value := res.Get(prefix + "hello-interval"); value.Exists() {
 		data.HelloInterval.Value = value.Int()
 		data.HelloInterval.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "mtu-ignore"); value.Exists() {
+	if value := res.Get(prefix + "mtu-ignore"); value.Exists() {
 		data.MtuIgnore.Value = value.Bool()
 		data.MtuIgnore.Null = false
 	} else {
 		data.MtuIgnore.Value = false
 		data.MtuIgnore.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.broadcast"); value.Exists() {
+	if value := res.Get(prefix + "network.broadcast"); value.Exists() {
 		data.NetworkTypeBroadcast.Value = true
 		data.NetworkTypeBroadcast.Null = false
 	} else {
 		data.NetworkTypeBroadcast.Value = false
 		data.NetworkTypeBroadcast.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.non-broadcast"); value.Exists() {
+	if value := res.Get(prefix + "network.non-broadcast"); value.Exists() {
 		data.NetworkTypeNonBroadcast.Value = true
 		data.NetworkTypeNonBroadcast.Null = false
 	} else {
 		data.NetworkTypeNonBroadcast.Value = false
 		data.NetworkTypeNonBroadcast.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.point-to-multipoint"); value.Exists() {
+	if value := res.Get(prefix + "network.point-to-multipoint"); value.Exists() {
 		data.NetworkTypePointToMultipoint.Value = true
 		data.NetworkTypePointToMultipoint.Null = false
 	} else {
 		data.NetworkTypePointToMultipoint.Value = false
 		data.NetworkTypePointToMultipoint.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "network.point-to-point"); value.Exists() {
+	if value := res.Get(prefix + "network.point-to-point"); value.Exists() {
 		data.NetworkTypePointToPoint.Value = true
 		data.NetworkTypePointToPoint.Null = false
 	} else {
 		data.NetworkTypePointToPoint.Value = false
 		data.NetworkTypePointToPoint.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "priority"); value.Exists() {
+	if value := res.Get(prefix + "priority"); value.Exists() {
 		data.Priority.Value = value.Int()
 		data.Priority.Null = false
 	}

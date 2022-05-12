@@ -82,42 +82,46 @@ func (data VLAN) toBody() string {
 }
 
 func (data *VLAN) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "id"); value.Exists() {
 		data.VlanId.Value = value.Int()
 	} else {
 		data.VlanId.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-span"); value.Exists() {
+	if value := res.Get(prefix + "remote-span"); value.Exists() {
 		data.RemoteSpan.Value = true
 	} else {
 		data.RemoteSpan.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.primary"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.primary"); value.Exists() {
 		data.PrivateVlanPrimary.Value = true
 	} else {
 		data.PrivateVlanPrimary.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.association"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.association"); value.Exists() {
 		data.PrivateVlanAssociation.Value = value.String()
 	} else {
 		data.PrivateVlanAssociation.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.community"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.community"); value.Exists() {
 		data.PrivateVlanCommunity.Value = true
 	} else {
 		data.PrivateVlanCommunity.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.isolated"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.isolated"); value.Exists() {
 		data.PrivateVlanIsolated.Value = true
 	} else {
 		data.PrivateVlanIsolated.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() {
 		data.Name.Value = value.String()
 	} else {
 		data.Name.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
 	} else {
 		data.Shutdown.Value = false
@@ -125,43 +129,47 @@ func (data *VLAN) updateFromBody(res gjson.Result) {
 }
 
 func (data *VLAN) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-span"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "remote-span"); value.Exists() {
 		data.RemoteSpan.Value = true
 		data.RemoteSpan.Null = false
 	} else {
 		data.RemoteSpan.Value = false
 		data.RemoteSpan.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.primary"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.primary"); value.Exists() {
 		data.PrivateVlanPrimary.Value = true
 		data.PrivateVlanPrimary.Null = false
 	} else {
 		data.PrivateVlanPrimary.Value = false
 		data.PrivateVlanPrimary.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.association"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.association"); value.Exists() {
 		data.PrivateVlanAssociation.Value = value.String()
 		data.PrivateVlanAssociation.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.community"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.community"); value.Exists() {
 		data.PrivateVlanCommunity.Value = true
 		data.PrivateVlanCommunity.Null = false
 	} else {
 		data.PrivateVlanCommunity.Value = false
 		data.PrivateVlanCommunity.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "private-vlan.isolated"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.isolated"); value.Exists() {
 		data.PrivateVlanIsolated.Value = true
 		data.PrivateVlanIsolated.Null = false
 	} else {
 		data.PrivateVlanIsolated.Value = false
 		data.PrivateVlanIsolated.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() {
 		data.Name.Value = value.String()
 		data.Name.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
 		data.Shutdown.Null = false
 	} else {

@@ -60,27 +60,31 @@ func (data VLANConfiguration) toBody() string {
 }
 
 func (data *VLANConfiguration) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vlan-id"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "vlan-id"); value.Exists() {
 		data.VlanId.Value = value.Int()
 	} else {
 		data.VlanId.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
+	if value := res.Get(prefix + "member.vni"); value.Exists() {
 		data.Vni.Value = value.Int()
 	} else {
 		data.Vni.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.access-vfi"); value.Exists() {
+	if value := res.Get(prefix + "member.access-vfi"); value.Exists() {
 		data.AccessVfi.Value = value.String()
 	} else {
 		data.AccessVfi.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.evpn-instance"); value.Exists() {
+	if value := res.Get(prefix + "member.evpn-instance.evpn-instance"); value.Exists() {
 		data.EvpnInstance.Value = value.Int()
 	} else {
 		data.EvpnInstance.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.vni"); value.Exists() {
+	if value := res.Get(prefix + "member.evpn-instance.vni"); value.Exists() {
 		data.EvpnInstanceVni.Value = value.Int()
 	} else {
 		data.EvpnInstanceVni.Null = true
@@ -88,19 +92,23 @@ func (data *VLANConfiguration) updateFromBody(res gjson.Result) {
 }
 
 func (data *VLANConfiguration) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "member.vni"); value.Exists() {
 		data.Vni.Value = value.Int()
 		data.Vni.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.access-vfi"); value.Exists() {
+	if value := res.Get(prefix + "member.access-vfi"); value.Exists() {
 		data.AccessVfi.Value = value.String()
 		data.AccessVfi.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.evpn-instance"); value.Exists() {
+	if value := res.Get(prefix + "member.evpn-instance.evpn-instance"); value.Exists() {
 		data.EvpnInstance.Value = value.Int()
 		data.EvpnInstance.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.evpn-instance.vni"); value.Exists() {
+	if value := res.Get(prefix + "member.evpn-instance.vni"); value.Exists() {
 		data.EvpnInstanceVni.Value = value.Int()
 		data.EvpnInstanceVni.Null = false
 	}

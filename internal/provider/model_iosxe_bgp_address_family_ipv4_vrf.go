@@ -76,29 +76,33 @@ func (data BGPAddressFamilyIPv4VRF) toBody() string {
 }
 
 func (data *BGPAddressFamilyIPv4VRF) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "af-name"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "af-name"); value.Exists() {
 		data.AfName.Value = value.String()
 	} else {
 		data.AfName.Null = true
 	}
 	for i := range data.Vrfs {
 		key := data.Vrfs[i].Name.Value
-		if value := res.Get(fmt.Sprintf("%v.vrf.#(name==\"%v\").name", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vvrf.#(name==\"%v\").name", prefix, key)); value.Exists() {
 			data.Vrfs[i].Name.Value = value.String()
 		} else {
 			data.Vrfs[i].Name.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.vrf.#(name==\"%v\").ipv4-unicast.advertise.l2vpn.evpn", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vvrf.#(name==\"%v\").ipv4-unicast.advertise.l2vpn.evpn", prefix, key)); value.Exists() {
 			data.Vrfs[i].AdvertiseL2vpnEvpn.Value = true
 		} else {
 			data.Vrfs[i].AdvertiseL2vpnEvpn.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%v.vrf.#(name==\"%v\").ipv4-unicast.redistribute-vrf.connected", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vvrf.#(name==\"%v\").ipv4-unicast.redistribute-vrf.connected", prefix, key)); value.Exists() {
 			data.Vrfs[i].RedistributeConnected.Value = true
 		} else {
 			data.Vrfs[i].RedistributeConnected.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%v.vrf.#(name==\"%v\").ipv4-unicast.redistribute-vrf.static", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vvrf.#(name==\"%v\").ipv4-unicast.redistribute-vrf.static", prefix, key)); value.Exists() {
 			data.Vrfs[i].RedistributeStatic.Value = true
 		} else {
 			data.Vrfs[i].RedistributeStatic.Value = false
@@ -107,7 +111,11 @@ func (data *BGPAddressFamilyIPv4VRF) updateFromBody(res gjson.Result) {
 }
 
 func (data *BGPAddressFamilyIPv4VRF) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "vrf"); value.Exists() {
 		data.Vrfs = make([]BGPAddressFamilyIPv4VRFVrfs, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := BGPAddressFamilyIPv4VRFVrfs{}

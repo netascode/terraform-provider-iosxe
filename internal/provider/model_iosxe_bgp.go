@@ -56,22 +56,26 @@ func (data BGP) toBody() string {
 }
 
 func (data *BGP) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "id"); value.Exists() {
 		data.Asn.Value = value.String()
 	} else {
 		data.Asn.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.default.ipv4-unicast"); value.Exists() {
+	if value := res.Get(prefix + "bgp.default.ipv4-unicast"); value.Exists() {
 		data.DefaultIpv4Unicast.Value = value.Bool()
 	} else {
 		data.DefaultIpv4Unicast.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.log-neighbor-changes"); value.Exists() {
+	if value := res.Get(prefix + "bgp.log-neighbor-changes"); value.Exists() {
 		data.LogNeighborChanges.Value = value.Bool()
 	} else {
 		data.LogNeighborChanges.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.router-id.interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "bgp.router-id.interface.Loopback"); value.Exists() {
 		data.RouterIdLoopback.Value = value.Int()
 	} else {
 		data.RouterIdLoopback.Null = true
@@ -79,21 +83,25 @@ func (data *BGP) updateFromBody(res gjson.Result) {
 }
 
 func (data *BGP) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.default.ipv4-unicast"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "bgp.default.ipv4-unicast"); value.Exists() {
 		data.DefaultIpv4Unicast.Value = value.Bool()
 		data.DefaultIpv4Unicast.Null = false
 	} else {
 		data.DefaultIpv4Unicast.Value = false
 		data.DefaultIpv4Unicast.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.log-neighbor-changes"); value.Exists() {
+	if value := res.Get(prefix + "bgp.log-neighbor-changes"); value.Exists() {
 		data.LogNeighborChanges.Value = value.Bool()
 		data.LogNeighborChanges.Null = false
 	} else {
 		data.LogNeighborChanges.Value = false
 		data.LogNeighborChanges.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bgp.router-id.interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "bgp.router-id.interface.Loopback"); value.Exists() {
 		data.RouterIdLoopback.Value = value.Int()
 		data.RouterIdLoopback.Null = false
 	}

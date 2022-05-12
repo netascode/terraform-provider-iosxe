@@ -47,12 +47,16 @@ func (data System) toBody() string {
 }
 
 func (data *System) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "hostname"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "hostname"); value.Exists() {
 		data.Hostname.Value = value.String()
 	} else {
 		data.Hostname.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ipv6.unicast-routing"); value.Exists() {
+	if value := res.Get(prefix + "ipv6.unicast-routing"); value.Exists() {
 		data.Ipv6UnicastRouting.Value = true
 	} else {
 		data.Ipv6UnicastRouting.Value = false
@@ -60,11 +64,15 @@ func (data *System) updateFromBody(res gjson.Result) {
 }
 
 func (data *System) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "hostname"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "hostname"); value.Exists() {
 		data.Hostname.Value = value.String()
 		data.Hostname.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ipv6.unicast-routing"); value.Exists() {
+	if value := res.Get(prefix + "ipv6.unicast-routing"); value.Exists() {
 		data.Ipv6UnicastRouting.Value = true
 		data.Ipv6UnicastRouting.Null = false
 	} else {

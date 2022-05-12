@@ -103,39 +103,43 @@ func (data InterfaceNVE) toBody() string {
 }
 
 func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "name"); value.Exists() {
 		data.Name.Value = value.Int()
 	} else {
 		data.Name.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 	} else {
 		data.Description.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
 	} else {
 		data.Shutdown.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "host-reachability.protocol.bgp"); value.Exists() {
+	if value := res.Get(prefix + "host-reachability.protocol.bgp"); value.Exists() {
 		data.HostReachabilityProtocolBgp.Value = true
 	} else {
 		data.HostReachabilityProtocolBgp.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "source-interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "source-interface.Loopback"); value.Exists() {
 		data.SourceInterfaceLoopback.Value = value.Int()
 	} else {
 		data.SourceInterfaceLoopback.Null = true
 	}
 	for i := range data.VniVrfs {
 		key := data.VniVrfs[i].VniRange.Value
-		if value := res.Get(fmt.Sprintf("%v.member-in-one-line.member.vni.#(vni-range==\"%v\").vni-range", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vmember-in-one-line.member.vni.#(vni-range==\"%v\").vni-range", prefix, key)); value.Exists() {
 			data.VniVrfs[i].VniRange.Value = value.String()
 		} else {
 			data.VniVrfs[i].VniRange.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.member-in-one-line.member.vni.#(vni-range==\"%v\").vrf", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vmember-in-one-line.member.vni.#(vni-range==\"%v\").vrf", prefix, key)); value.Exists() {
 			data.VniVrfs[i].Vrf.Value = value.String()
 		} else {
 			data.VniVrfs[i].Vrf.Null = true
@@ -143,17 +147,17 @@ func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.Vnis {
 		key := data.Vnis[i].VniRange.Value
-		if value := res.Get(fmt.Sprintf("%v.member.vni.#(vni-range==\"%v\").vni-range", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vmember.vni.#(vni-range==\"%v\").vni-range", prefix, key)); value.Exists() {
 			data.Vnis[i].VniRange.Value = value.String()
 		} else {
 			data.Vnis[i].VniRange.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.member.vni.#(vni-range==\"%v\").mcast-group.multicast-group-min", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vmember.vni.#(vni-range==\"%v\").mcast-group.multicast-group-min", prefix, key)); value.Exists() {
 			data.Vnis[i].Ipv4MulticastGroup.Value = value.String()
 		} else {
 			data.Vnis[i].Ipv4MulticastGroup.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.member.vni.#(vni-range==\"%v\").ir-cp-config.ingress-replication", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vmember.vni.#(vni-range==\"%v\").ir-cp-config.ingress-replication", prefix, key)); value.Exists() {
 			data.Vnis[i].IngressReplication.Value = true
 		} else {
 			data.Vnis[i].IngressReplication.Value = false
@@ -162,29 +166,33 @@ func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
 }
 
 func (data *InterfaceNVE) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 		data.Description.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
 		data.Shutdown.Null = false
 	} else {
 		data.Shutdown.Value = false
 		data.Shutdown.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "host-reachability.protocol.bgp"); value.Exists() {
+	if value := res.Get(prefix + "host-reachability.protocol.bgp"); value.Exists() {
 		data.HostReachabilityProtocolBgp.Value = true
 		data.HostReachabilityProtocolBgp.Null = false
 	} else {
 		data.HostReachabilityProtocolBgp.Value = false
 		data.HostReachabilityProtocolBgp.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "source-interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "source-interface.Loopback"); value.Exists() {
 		data.SourceInterfaceLoopback.Value = value.Int()
 		data.SourceInterfaceLoopback.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member-in-one-line.member.vni"); value.Exists() {
+	if value := res.Get(prefix + "member-in-one-line.member.vni"); value.Exists() {
 		data.VniVrfs = make([]InterfaceNVEVniVrfs, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfaceNVEVniVrfs{}
@@ -200,7 +208,7 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "member.vni"); value.Exists() {
+	if value := res.Get(prefix + "member.vni"); value.Exists() {
 		data.Vnis = make([]InterfaceNVEVnis, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfaceNVEVnis{}

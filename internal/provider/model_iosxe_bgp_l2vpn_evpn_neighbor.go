@@ -60,22 +60,26 @@ func (data BGPL2VPNEVPNNeighbor) toBody() string {
 }
 
 func (data *BGPL2VPNEVPNNeighbor) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "id"); value.Exists() {
 		data.Ip.Value = value.String()
 	} else {
 		data.Ip.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "activate"); value.Exists() {
+	if value := res.Get(prefix + "activate"); value.Exists() {
 		data.Activate.Value = true
 	} else {
 		data.Activate.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "send-community.send-community-where"); value.Exists() {
+	if value := res.Get(prefix + "send-community.send-community-where"); value.Exists() {
 		data.SendCommunity.Value = value.String()
 	} else {
 		data.SendCommunity.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-reflector-client"); value.Exists() {
+	if value := res.Get(prefix + "route-reflector-client"); value.Exists() {
 		data.RouteReflectorClient.Value = true
 	} else {
 		data.RouteReflectorClient.Value = false
@@ -83,18 +87,22 @@ func (data *BGPL2VPNEVPNNeighbor) updateFromBody(res gjson.Result) {
 }
 
 func (data *BGPL2VPNEVPNNeighbor) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "activate"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "activate"); value.Exists() {
 		data.Activate.Value = true
 		data.Activate.Null = false
 	} else {
 		data.Activate.Value = false
 		data.Activate.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "send-community.send-community-where"); value.Exists() {
+	if value := res.Get(prefix + "send-community.send-community-where"); value.Exists() {
 		data.SendCommunity.Value = value.String()
 		data.SendCommunity.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-reflector-client"); value.Exists() {
+	if value := res.Get(prefix + "route-reflector-client"); value.Exists() {
 		data.RouteReflectorClient.Value = true
 		data.RouteReflectorClient.Null = false
 	} else {

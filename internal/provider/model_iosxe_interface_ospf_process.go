@@ -59,14 +59,18 @@ func (data InterfaceOSPFProcess) toBody() string {
 }
 
 func (data *InterfaceOSPFProcess) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "id"); value.Exists() {
 		data.ProcessId.Value = value.Int()
 	} else {
 		data.ProcessId.Null = true
 	}
 	for i := range data.Area {
 		key := data.Area[i].AreaId.Value
-		if value := res.Get(fmt.Sprintf("%v.area.#(area-id==\"%v\").area-id", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%varea.#(area-id==\"%v\").area-id", prefix, key)); value.Exists() {
 			data.Area[i].AreaId.Value = value.String()
 		} else {
 			data.Area[i].AreaId.Null = true
@@ -75,7 +79,11 @@ func (data *InterfaceOSPFProcess) updateFromBody(res gjson.Result) {
 }
 
 func (data *InterfaceOSPFProcess) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "area"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "area"); value.Exists() {
 		data.Area = make([]InterfaceOSPFProcessArea, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfaceOSPFProcessArea{}

@@ -134,64 +134,68 @@ func (data PIM) toBody() string {
 }
 
 func (data *PIM) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:autorp-container.autorp"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:autorp-container.autorp"); value.Exists() {
 		data.Autorp.Value = value.Bool()
 	} else {
 		data.Autorp.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:autorp-container.listener"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:autorp-container.listener"); value.Exists() {
 		data.AutorpListener.Value = true
 	} else {
 		data.AutorpListener.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:bsr-candidate.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.Loopback"); value.Exists() {
 		data.BsrCandidateLoopback.Value = value.Int()
 	} else {
 		data.BsrCandidateLoopback.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:bsr-candidate.mask"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.mask"); value.Exists() {
 		data.BsrCandidateMask.Value = value.Int()
 	} else {
 		data.BsrCandidateMask.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:bsr-candidate.priority"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.priority"); value.Exists() {
 		data.BsrCandidatePriority.Value = value.Int()
 	} else {
 		data.BsrCandidatePriority.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:bsr-candidate.accept-rp-candidate"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.accept-rp-candidate"); value.Exists() {
 		data.BsrCandidateAcceptRpCandidate.Value = value.String()
 	} else {
 		data.BsrCandidateAcceptRpCandidate.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:ssm.range"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:ssm.range"); value.Exists() {
 		data.SsmRange.Value = value.String()
 	} else {
 		data.SsmRange.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:ssm.default"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:ssm.default"); value.Exists() {
 		data.SsmDefault.Value = true
 	} else {
 		data.SsmDefault.Value = false
 	}
 	for i := range data.RpAddresses {
 		key := data.RpAddresses[i].AccessList.Value
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").access-list", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").access-list", prefix, key)); value.Exists() {
 			data.RpAddresses[i].AccessList.Value = value.String()
 		} else {
 			data.RpAddresses[i].AccessList.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").rp-address", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").rp-address", prefix, key)); value.Exists() {
 			data.RpAddresses[i].RpAddress.Value = value.String()
 		} else {
 			data.RpAddresses[i].RpAddress.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").override", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").override", prefix, key)); value.Exists() {
 			data.RpAddresses[i].Override.Value = true
 		} else {
 			data.RpAddresses[i].Override.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").bidir", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").bidir", prefix, key)); value.Exists() {
 			data.RpAddresses[i].Bidir.Value = true
 		} else {
 			data.RpAddresses[i].Bidir.Value = false
@@ -199,27 +203,27 @@ func (data *PIM) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.RpCandidates {
 		key := data.RpCandidates[i].Interface.Value
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").interface", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").interface", prefix, key)); value.Exists() {
 			data.RpCandidates[i].Interface.Value = value.String()
 		} else {
 			data.RpCandidates[i].Interface.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").group-list", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").group-list", prefix, key)); value.Exists() {
 			data.RpCandidates[i].GroupList.Value = value.String()
 		} else {
 			data.RpCandidates[i].GroupList.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").interval", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").interval", prefix, key)); value.Exists() {
 			data.RpCandidates[i].Interval.Value = value.Int()
 		} else {
 			data.RpCandidates[i].Interval.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").priority", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").priority", prefix, key)); value.Exists() {
 			data.RpCandidates[i].Priority.Value = value.Int()
 		} else {
 			data.RpCandidates[i].Priority.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.Cisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").bidir", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").bidir", prefix, key)); value.Exists() {
 			data.RpCandidates[i].Bidir.Value = true
 		} else {
 			data.RpCandidates[i].Bidir.Value = false
@@ -228,48 +232,52 @@ func (data *PIM) updateFromBody(res gjson.Result) {
 }
 
 func (data *PIM) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:autorp-container.autorp"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:autorp-container.autorp"); value.Exists() {
 		data.Autorp.Value = value.Bool()
 		data.Autorp.Null = false
 	} else {
 		data.Autorp.Value = false
 		data.Autorp.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:autorp-container.listener"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:autorp-container.listener"); value.Exists() {
 		data.AutorpListener.Value = true
 		data.AutorpListener.Null = false
 	} else {
 		data.AutorpListener.Value = false
 		data.AutorpListener.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:bsr-candidate.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.Loopback"); value.Exists() {
 		data.BsrCandidateLoopback.Value = value.Int()
 		data.BsrCandidateLoopback.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:bsr-candidate.mask"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.mask"); value.Exists() {
 		data.BsrCandidateMask.Value = value.Int()
 		data.BsrCandidateMask.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:bsr-candidate.priority"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.priority"); value.Exists() {
 		data.BsrCandidatePriority.Value = value.Int()
 		data.BsrCandidatePriority.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:bsr-candidate.accept-rp-candidate"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.accept-rp-candidate"); value.Exists() {
 		data.BsrCandidateAcceptRpCandidate.Value = value.String()
 		data.BsrCandidateAcceptRpCandidate.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:ssm.range"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:ssm.range"); value.Exists() {
 		data.SsmRange.Value = value.String()
 		data.SsmRange.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:ssm.default"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:ssm.default"); value.Exists() {
 		data.SsmDefault.Value = true
 		data.SsmDefault.Null = false
 	} else {
 		data.SsmDefault.Value = false
 		data.SsmDefault.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:rp-address-list"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-list"); value.Exists() {
 		data.RpAddresses = make([]PIMRpAddresses, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := PIMRpAddresses{}
@@ -293,7 +301,7 @@ func (data *PIM) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "Cisco-IOS-XE-multicast:rp-candidate"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-candidate"); value.Exists() {
 		data.RpCandidates = make([]PIMRpCandidates, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := PIMRpCandidates{}

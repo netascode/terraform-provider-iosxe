@@ -139,69 +139,73 @@ func (data PIMVRF) toBody() string {
 }
 
 func (data *PIMVRF) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "id"); value.Exists() {
 		data.Vrf.Value = value.String()
 	} else {
 		data.Vrf.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "autorp-container.autorp"); value.Exists() {
+	if value := res.Get(prefix + "autorp-container.autorp"); value.Exists() {
 		data.Autorp.Value = value.Bool()
 	} else {
 		data.Autorp.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "autorp-container.listener"); value.Exists() {
+	if value := res.Get(prefix + "autorp-container.listener"); value.Exists() {
 		data.AutorpListener.Value = true
 	} else {
 		data.AutorpListener.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bsr-candidate.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "bsr-candidate.Loopback"); value.Exists() {
 		data.BsrCandidateLoopback.Value = value.Int()
 	} else {
 		data.BsrCandidateLoopback.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bsr-candidate.mask"); value.Exists() {
+	if value := res.Get(prefix + "bsr-candidate.mask"); value.Exists() {
 		data.BsrCandidateMask.Value = value.Int()
 	} else {
 		data.BsrCandidateMask.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bsr-candidate.priority"); value.Exists() {
+	if value := res.Get(prefix + "bsr-candidate.priority"); value.Exists() {
 		data.BsrCandidatePriority.Value = value.Int()
 	} else {
 		data.BsrCandidatePriority.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bsr-candidate.accept-rp-candidate"); value.Exists() {
+	if value := res.Get(prefix + "bsr-candidate.accept-rp-candidate"); value.Exists() {
 		data.BsrCandidateAcceptRpCandidate.Value = value.String()
 	} else {
 		data.BsrCandidateAcceptRpCandidate.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ssm.range"); value.Exists() {
+	if value := res.Get(prefix + "ssm.range"); value.Exists() {
 		data.SsmRange.Value = value.String()
 	} else {
 		data.SsmRange.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ssm.default"); value.Exists() {
+	if value := res.Get(prefix + "ssm.default"); value.Exists() {
 		data.SsmDefault.Value = true
 	} else {
 		data.SsmDefault.Value = false
 	}
 	for i := range data.RpAddresses {
 		key := data.RpAddresses[i].AccessList.Value
-		if value := res.Get(fmt.Sprintf("%v.rp-address-list.#(access-list==\"%v\").access-list", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-address-list.#(access-list==\"%v\").access-list", prefix, key)); value.Exists() {
 			data.RpAddresses[i].AccessList.Value = value.String()
 		} else {
 			data.RpAddresses[i].AccessList.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.rp-address-list.#(access-list==\"%v\").rp-address", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-address-list.#(access-list==\"%v\").rp-address", prefix, key)); value.Exists() {
 			data.RpAddresses[i].RpAddress.Value = value.String()
 		} else {
 			data.RpAddresses[i].RpAddress.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.rp-address-list.#(access-list==\"%v\").override", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-address-list.#(access-list==\"%v\").override", prefix, key)); value.Exists() {
 			data.RpAddresses[i].Override.Value = true
 		} else {
 			data.RpAddresses[i].Override.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%v.rp-address-list.#(access-list==\"%v\").bidir", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-address-list.#(access-list==\"%v\").bidir", prefix, key)); value.Exists() {
 			data.RpAddresses[i].Bidir.Value = true
 		} else {
 			data.RpAddresses[i].Bidir.Value = false
@@ -209,27 +213,27 @@ func (data *PIMVRF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.RpCandidates {
 		key := data.RpCandidates[i].Interface.Value
-		if value := res.Get(fmt.Sprintf("%v.rp-candidate.#(interface==\"%v\").interface", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-candidate.#(interface==\"%v\").interface", prefix, key)); value.Exists() {
 			data.RpCandidates[i].Interface.Value = value.String()
 		} else {
 			data.RpCandidates[i].Interface.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.rp-candidate.#(interface==\"%v\").group-list", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-candidate.#(interface==\"%v\").group-list", prefix, key)); value.Exists() {
 			data.RpCandidates[i].GroupList.Value = value.String()
 		} else {
 			data.RpCandidates[i].GroupList.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.rp-candidate.#(interface==\"%v\").interval", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-candidate.#(interface==\"%v\").interval", prefix, key)); value.Exists() {
 			data.RpCandidates[i].Interval.Value = value.Int()
 		} else {
 			data.RpCandidates[i].Interval.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.rp-candidate.#(interface==\"%v\").priority", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-candidate.#(interface==\"%v\").priority", prefix, key)); value.Exists() {
 			data.RpCandidates[i].Priority.Value = value.Int()
 		} else {
 			data.RpCandidates[i].Priority.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.rp-candidate.#(interface==\"%v\").bidir", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vrp-candidate.#(interface==\"%v\").bidir", prefix, key)); value.Exists() {
 			data.RpCandidates[i].Bidir.Value = true
 		} else {
 			data.RpCandidates[i].Bidir.Value = false
@@ -238,48 +242,52 @@ func (data *PIMVRF) updateFromBody(res gjson.Result) {
 }
 
 func (data *PIMVRF) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "autorp-container.autorp"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "autorp-container.autorp"); value.Exists() {
 		data.Autorp.Value = value.Bool()
 		data.Autorp.Null = false
 	} else {
 		data.Autorp.Value = false
 		data.Autorp.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "autorp-container.listener"); value.Exists() {
+	if value := res.Get(prefix + "autorp-container.listener"); value.Exists() {
 		data.AutorpListener.Value = true
 		data.AutorpListener.Null = false
 	} else {
 		data.AutorpListener.Value = false
 		data.AutorpListener.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bsr-candidate.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "bsr-candidate.Loopback"); value.Exists() {
 		data.BsrCandidateLoopback.Value = value.Int()
 		data.BsrCandidateLoopback.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bsr-candidate.mask"); value.Exists() {
+	if value := res.Get(prefix + "bsr-candidate.mask"); value.Exists() {
 		data.BsrCandidateMask.Value = value.Int()
 		data.BsrCandidateMask.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bsr-candidate.priority"); value.Exists() {
+	if value := res.Get(prefix + "bsr-candidate.priority"); value.Exists() {
 		data.BsrCandidatePriority.Value = value.Int()
 		data.BsrCandidatePriority.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "bsr-candidate.accept-rp-candidate"); value.Exists() {
+	if value := res.Get(prefix + "bsr-candidate.accept-rp-candidate"); value.Exists() {
 		data.BsrCandidateAcceptRpCandidate.Value = value.String()
 		data.BsrCandidateAcceptRpCandidate.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ssm.range"); value.Exists() {
+	if value := res.Get(prefix + "ssm.range"); value.Exists() {
 		data.SsmRange.Value = value.String()
 		data.SsmRange.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ssm.default"); value.Exists() {
+	if value := res.Get(prefix + "ssm.default"); value.Exists() {
 		data.SsmDefault.Value = true
 		data.SsmDefault.Null = false
 	} else {
 		data.SsmDefault.Value = false
 		data.SsmDefault.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "rp-address-list"); value.Exists() {
+	if value := res.Get(prefix + "rp-address-list"); value.Exists() {
 		data.RpAddresses = make([]PIMVRFRpAddresses, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := PIMVRFRpAddresses{}
@@ -303,7 +311,7 @@ func (data *PIMVRF) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "rp-candidate"); value.Exists() {
+	if value := res.Get(prefix + "rp-candidate"); value.Exists() {
 		data.RpCandidates = make([]PIMVRFRpCandidates, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := PIMVRFRpCandidates{}

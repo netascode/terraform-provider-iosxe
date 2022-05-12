@@ -105,44 +105,48 @@ func (data VRF) toBody() string {
 }
 
 func (data *VRF) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "name"); value.Exists() {
 		data.Name.Value = value.String()
 	} else {
 		data.Name.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 	} else {
 		data.Description.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "rd"); value.Exists() {
+	if value := res.Get(prefix + "rd"); value.Exists() {
 		data.Rd.Value = value.String()
 	} else {
 		data.Rd.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "address-family.ipv4"); value.Exists() {
+	if value := res.Get(prefix + "address-family.ipv4"); value.Exists() {
 		data.AddressFamilyIpv4.Value = true
 	} else {
 		data.AddressFamilyIpv4.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "address-family.ipv6"); value.Exists() {
+	if value := res.Get(prefix + "address-family.ipv6"); value.Exists() {
 		data.AddressFamilyIpv6.Value = true
 	} else {
 		data.AddressFamilyIpv6.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vpn.id"); value.Exists() {
+	if value := res.Get(prefix + "vpn.id"); value.Exists() {
 		data.VpnId.Value = value.String()
 	} else {
 		data.VpnId.Null = true
 	}
 	for i := range data.RouteTargetImport {
 		key := data.RouteTargetImport[i].Value.Value
-		if value := res.Get(fmt.Sprintf("%v.route-target.import.#(asn-ip==\"%v\").asn-ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vroute-target.import.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
 			data.RouteTargetImport[i].Value.Value = value.String()
 		} else {
 			data.RouteTargetImport[i].Value.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.route-target.import.#(asn-ip==\"%v\").stitching", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vroute-target.import.#(asn-ip==\"%v\").stitching", prefix, key)); value.Exists() {
 			data.RouteTargetImport[i].Stitching.Value = true
 		} else {
 			data.RouteTargetImport[i].Stitching.Value = false
@@ -150,12 +154,12 @@ func (data *VRF) updateFromBody(res gjson.Result) {
 	}
 	for i := range data.RouteTargetExport {
 		key := data.RouteTargetExport[i].Value.Value
-		if value := res.Get(fmt.Sprintf("%v.route-target.export.#(asn-ip==\"%v\").asn-ip", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vroute-target.export.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
 			data.RouteTargetExport[i].Value.Value = value.String()
 		} else {
 			data.RouteTargetExport[i].Value.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%v.route-target.export.#(asn-ip==\"%v\").stitching", helpers.LastElement(data.getPath()), key)); value.Exists() {
+		if value := res.Get(fmt.Sprintf("%vroute-target.export.#(asn-ip==\"%v\").stitching", prefix, key)); value.Exists() {
 			data.RouteTargetExport[i].Stitching.Value = true
 		} else {
 			data.RouteTargetExport[i].Stitching.Value = false
@@ -164,33 +168,37 @@ func (data *VRF) updateFromBody(res gjson.Result) {
 }
 
 func (data *VRF) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 		data.Description.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "rd"); value.Exists() {
+	if value := res.Get(prefix + "rd"); value.Exists() {
 		data.Rd.Value = value.String()
 		data.Rd.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "address-family.ipv4"); value.Exists() {
+	if value := res.Get(prefix + "address-family.ipv4"); value.Exists() {
 		data.AddressFamilyIpv4.Value = true
 		data.AddressFamilyIpv4.Null = false
 	} else {
 		data.AddressFamilyIpv4.Value = false
 		data.AddressFamilyIpv4.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "address-family.ipv6"); value.Exists() {
+	if value := res.Get(prefix + "address-family.ipv6"); value.Exists() {
 		data.AddressFamilyIpv6.Value = true
 		data.AddressFamilyIpv6.Null = false
 	} else {
 		data.AddressFamilyIpv6.Value = false
 		data.AddressFamilyIpv6.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vpn.id"); value.Exists() {
+	if value := res.Get(prefix + "vpn.id"); value.Exists() {
 		data.VpnId.Value = value.String()
 		data.VpnId.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.import"); value.Exists() {
+	if value := res.Get(prefix + "route-target.import"); value.Exists() {
 		data.RouteTargetImport = make([]VRFRouteTargetImport, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := VRFRouteTargetImport{}
@@ -206,7 +214,7 @@ func (data *VRF) fromBody(res gjson.Result) {
 			return true
 		})
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "route-target.export"); value.Exists() {
+	if value := res.Get(prefix + "route-target.export"); value.Exists() {
 		data.RouteTargetExport = make([]VRFRouteTargetExport, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := VRFRouteTargetExport{}

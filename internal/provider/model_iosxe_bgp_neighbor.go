@@ -63,27 +63,31 @@ func (data BGPNeighbor) toBody() string {
 }
 
 func (data *BGPNeighbor) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "id"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "id"); value.Exists() {
 		data.Ip.Value = value.String()
 	} else {
 		data.Ip.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-as"); value.Exists() {
+	if value := res.Get(prefix + "remote-as"); value.Exists() {
 		data.RemoteAs.Value = value.String()
 	} else {
 		data.RemoteAs.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 	} else {
 		data.Description.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
 	} else {
 		data.Shutdown.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "update-source.interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
 		data.UpdateSourceLoopback.Value = value.Int()
 	} else {
 		data.UpdateSourceLoopback.Null = true
@@ -91,22 +95,26 @@ func (data *BGPNeighbor) updateFromBody(res gjson.Result) {
 }
 
 func (data *BGPNeighbor) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "remote-as"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "remote-as"); value.Exists() {
 		data.RemoteAs.Value = value.String()
 		data.RemoteAs.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 		data.Description.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
 		data.Shutdown.Null = false
 	} else {
 		data.Shutdown.Value = false
 		data.Shutdown.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "update-source.interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
 		data.UpdateSourceLoopback.Value = value.Int()
 		data.UpdateSourceLoopback.Null = false
 	}

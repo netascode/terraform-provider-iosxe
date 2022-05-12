@@ -68,37 +68,41 @@ func (data Username) toBody() string {
 }
 
 func (data *Username) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "name"); value.Exists() {
 		data.Name.Value = value.String()
 	} else {
 		data.Name.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "privilege"); value.Exists() {
+	if value := res.Get(prefix + "privilege"); value.Exists() {
 		data.Privilege.Value = value.Int()
 	} else {
 		data.Privilege.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 	} else {
 		data.Description.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.encryption"); value.Exists() {
+	if value := res.Get(prefix + "password.encryption"); value.Exists() {
 		data.PasswordEncryption.Value = value.String()
 	} else {
 		data.PasswordEncryption.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.password"); value.Exists() {
+	if value := res.Get(prefix + "password.password"); value.Exists() {
 		data.Password.Value = value.String()
 	} else {
 		data.Password.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.encryption"); value.Exists() {
+	if value := res.Get(prefix + "secret.encryption"); value.Exists() {
 		data.SecretEncryption.Value = value.String()
 	} else {
 		data.SecretEncryption.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.secret"); value.Exists() {
+	if value := res.Get(prefix + "secret.secret"); value.Exists() {
 		data.Secret.Value = value.String()
 	} else {
 		data.Secret.Null = true
@@ -106,27 +110,31 @@ func (data *Username) updateFromBody(res gjson.Result) {
 }
 
 func (data *Username) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "privilege"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "privilege"); value.Exists() {
 		data.Privilege.Value = value.Int()
 		data.Privilege.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 		data.Description.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.encryption"); value.Exists() {
+	if value := res.Get(prefix + "password.encryption"); value.Exists() {
 		data.PasswordEncryption.Value = value.String()
 		data.PasswordEncryption.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "password.password"); value.Exists() {
+	if value := res.Get(prefix + "password.password"); value.Exists() {
 		data.Password.Value = value.String()
 		data.Password.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.encryption"); value.Exists() {
+	if value := res.Get(prefix + "secret.encryption"); value.Exists() {
 		data.SecretEncryption.Value = value.String()
 		data.SecretEncryption.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "secret.secret"); value.Exists() {
+	if value := res.Get(prefix + "secret.secret"); value.Exists() {
 		data.Secret.Value = value.String()
 		data.Secret.Null = false
 	}

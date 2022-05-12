@@ -53,22 +53,26 @@ func (data Banner) toBody() string {
 }
 
 func (data *Banner) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "exec.banner"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "exec.banner"); value.Exists() {
 		data.ExecBanner.Value = value.String()
 	} else {
 		data.ExecBanner.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "login.banner"); value.Exists() {
+	if value := res.Get(prefix + "login.banner"); value.Exists() {
 		data.LoginBanner.Value = value.String()
 	} else {
 		data.LoginBanner.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "prompt-timeout.banner"); value.Exists() {
+	if value := res.Get(prefix + "prompt-timeout.banner"); value.Exists() {
 		data.PromptTimeoutBanner.Value = value.String()
 	} else {
 		data.PromptTimeoutBanner.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "motd.banner"); value.Exists() {
+	if value := res.Get(prefix + "motd.banner"); value.Exists() {
 		data.MotdBanner.Value = value.String()
 	} else {
 		data.MotdBanner.Null = true
@@ -76,19 +80,23 @@ func (data *Banner) updateFromBody(res gjson.Result) {
 }
 
 func (data *Banner) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "exec.banner"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "exec.banner"); value.Exists() {
 		data.ExecBanner.Value = value.String()
 		data.ExecBanner.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "login.banner"); value.Exists() {
+	if value := res.Get(prefix + "login.banner"); value.Exists() {
 		data.LoginBanner.Value = value.String()
 		data.LoginBanner.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "prompt-timeout.banner"); value.Exists() {
+	if value := res.Get(prefix + "prompt-timeout.banner"); value.Exists() {
 		data.PromptTimeoutBanner.Value = value.String()
 		data.PromptTimeoutBanner.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "motd.banner"); value.Exists() {
+	if value := res.Get(prefix + "motd.banner"); value.Exists() {
 		data.MotdBanner.Value = value.String()
 		data.MotdBanner.Null = false
 	}
