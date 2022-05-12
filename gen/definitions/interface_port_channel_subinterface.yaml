@@ -1,0 +1,47 @@
+---
+name: Interface Port Channel Subinterface
+path: Cisco-IOS-XE-native:native/interface/Port-channel-subinterface/Port-channel=%v
+doc_category: Interface
+attributes:
+  - yang_name: name
+    example: "10.666"
+  - yang_name: description
+    example: My Interface Description
+  - yang_name: shutdown
+    example: false
+  - yang_name: vrf-choice/vrf/vrf/forwarding
+    xpath: vrf/forwarding
+    tf_name: vrf_forwarding
+    example: VRF1
+  - yang_name: ip/address-choice/address/address/address-choice/fixed-case/primary/address
+    xpath: ip/address/primary/address
+    tf_name: ipv4_address
+    example: 192.0.2.2
+  - yang_name: ip/address-choice/address/address/address-choice/fixed-case/primary/mask
+    xpath: ip/address/primary/mask
+    tf_name: ipv4_address_mask
+    example: 255.255.255.0
+  - yang_name: encapsulation/encap-choice/dot1Q/dot1Q/vlan-id
+    xpath: encapsulation/dot1Q/vlan-id
+    tf_name: encapsulation_dot1q_vlan_id
+    exclude_test: true
+    example: 666
+
+test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
+    no_delete: true
+    attributes:
+      - name: name
+        value: VRF1
+  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family
+    no_delete: true
+    attributes:
+      - name: ipv4
+        value: ''
+    dependencies: [0]
+  - path: Cisco-IOS-XE-native:native/interface/Port-channel=10
+    attributes:
+      - name: name
+        value: 10
+      - name: switchport
+        value: false
