@@ -85,6 +85,16 @@ func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.Int64Type,
 				Computed:            true,
 			},
+			"channel_group_number": {
+				MarkdownDescription: "",
+				Type:                types.Int64Type,
+				Computed:            true,
+			},
+			"channel_group_mode": {
+				MarkdownDescription: "Etherchannel Mode of the interface",
+				Type:                types.StringType,
+				Computed:            true,
+			},
 		},
 	}, nil
 }

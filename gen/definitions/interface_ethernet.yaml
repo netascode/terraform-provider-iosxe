@@ -56,6 +56,12 @@ attributes:
     tf_name: encapsulation_dot1q_vlan_id
     exclude_test: true
     example: 666
+  - yang_name: Cisco-IOS-XE-ethernet:channel-group/number
+    exclude_test: true
+    example: 10
+  - yang_name: Cisco-IOS-XE-ethernet:channel-group/mode
+    exclude_test: true
+    example: active
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true

@@ -28,6 +28,8 @@ type InterfaceEthernet struct {
 	Ipv4AddressMask          types.String `tfsdk:"ipv4_address_mask"`
 	Unnumbered               types.String `tfsdk:"unnumbered"`
 	EncapsulationDot1qVlanId types.Int64  `tfsdk:"encapsulation_dot1q_vlan_id"`
+	ChannelGroupNumber       types.Int64  `tfsdk:"channel_group_number"`
+	ChannelGroupMode         types.String `tfsdk:"channel_group_mode"`
 }
 
 func (data InterfaceEthernet) getPath() string {
@@ -78,6 +80,12 @@ func (data InterfaceEthernet) toBody() string {
 	}
 	if !data.EncapsulationDot1qVlanId.Null && !data.EncapsulationDot1qVlanId.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"encapsulation.dot1Q.vlan-id", strconv.FormatInt(data.EncapsulationDot1qVlanId.Value, 10))
+	}
+	if !data.ChannelGroupNumber.Null && !data.ChannelGroupNumber.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-ethernet:channel-group.number", strconv.FormatInt(data.ChannelGroupNumber.Value, 10))
+	}
+	if !data.ChannelGroupMode.Null && !data.ChannelGroupMode.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-ethernet:channel-group.mode", data.ChannelGroupMode.Value)
 	}
 	return body
 }
@@ -137,6 +145,16 @@ func (data *InterfaceEthernet) updateFromBody(res gjson.Result) {
 	} else {
 		data.EncapsulationDot1qVlanId.Null = true
 	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-ethernet:channel-group.number"); value.Exists() {
+		data.ChannelGroupNumber.Value = value.Int()
+	} else {
+		data.ChannelGroupNumber.Null = true
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-ethernet:channel-group.mode"); value.Exists() {
+		data.ChannelGroupMode.Value = value.String()
+	} else {
+		data.ChannelGroupMode.Null = true
+	}
 }
 
 func (data *InterfaceEthernet) fromBody(res gjson.Result) {
@@ -185,6 +203,14 @@ func (data *InterfaceEthernet) fromBody(res gjson.Result) {
 	if value := res.Get(prefix + "encapsulation.dot1Q.vlan-id"); value.Exists() {
 		data.EncapsulationDot1qVlanId.Value = value.Int()
 		data.EncapsulationDot1qVlanId.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-ethernet:channel-group.number"); value.Exists() {
+		data.ChannelGroupNumber.Value = value.Int()
+		data.ChannelGroupNumber.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-ethernet:channel-group.mode"); value.Exists() {
+		data.ChannelGroupMode.Value = value.String()
+		data.ChannelGroupMode.Null = false
 	}
 }
 
@@ -240,6 +266,14 @@ func (data *InterfaceEthernet) setUnknownValues() {
 	if data.EncapsulationDot1qVlanId.Unknown {
 		data.EncapsulationDot1qVlanId.Unknown = false
 		data.EncapsulationDot1qVlanId.Null = true
+	}
+	if data.ChannelGroupNumber.Unknown {
+		data.ChannelGroupNumber.Unknown = false
+		data.ChannelGroupNumber.Null = true
+	}
+	if data.ChannelGroupMode.Unknown {
+		data.ChannelGroupMode.Unknown = false
+		data.ChannelGroupMode.Null = true
 	}
 }
 

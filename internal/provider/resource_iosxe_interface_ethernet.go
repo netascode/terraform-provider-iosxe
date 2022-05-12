@@ -126,6 +126,24 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 					helpers.IntegerRangeValidator(1, 4094),
 				},
 			},
+			"channel_group_number": {
+				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 512).String,
+				Type:                types.Int64Type,
+				Optional:            true,
+				Computed:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.IntegerRangeValidator(1, 512),
+				},
+			},
+			"channel_group_mode": {
+				MarkdownDescription: helpers.NewAttributeDescription("Etherchannel Mode of the interface").AddStringEnumDescription("active", "auto", "desirable", "on", "passive").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.StringEnumValidator("active", "auto", "desirable", "on", "passive"),
+				},
+			},
 		},
 	}, nil
 }

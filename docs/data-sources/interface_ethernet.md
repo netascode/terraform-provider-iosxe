@@ -33,6 +33,8 @@ data "iosxe_interface_ethernet" "example" {
 
 ### Read-Only
 
+- `channel_group_mode` (String) Etherchannel Mode of the interface
+- `channel_group_number` (Number)
 - `description` (String) Interface specific description
 - `encapsulation_dot1q_vlan_id` (Number)
 - `id` (String) The path of the retrieved object.

@@ -35,6 +35,9 @@ resource "iosxe_interface_ethernet" "example" {
 
 ### Optional
 
+- `channel_group_mode` (String) Etherchannel Mode of the interface
+  - Choices: `active`, `auto`, `desirable`, `on`, `passive`
+- `channel_group_number` (Number) - Range: `1`-`512`
 - `description` (String) Interface specific description
 - `device` (String) A device name from the provider configuration.
 - `encapsulation_dot1q_vlan_id` (Number) - Range: `1`-`4094`
