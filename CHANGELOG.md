@@ -4,6 +4,7 @@
 - Add DHCP helper options to iosxe_interface_vlan resource
 - Add DHCP helper options to iosxe_interface_port_channel resource
 - Add DHCP helper options to iosxe_interface_port_channel_subinterface resource
+- Add iosxe_dhcp resource and data source
 
 ## 0.1.5
 
