@@ -4,7 +4,7 @@ path: Cisco-IOS-XE-native:native/interface/Port-channel-subinterface/Port-channe
 doc_category: Interface
 attributes:
   - yang_name: name
-    example: "10.666"
+    example: '10.666'
   - yang_name: description
     example: My Interface Description
   - yang_name: shutdown
@@ -24,7 +24,6 @@ attributes:
   - yang_name: encapsulation/encap-choice/dot1Q/dot1Q/vlan-id
     xpath: encapsulation/dot1Q/vlan-id
     tf_name: encapsulation_dot1q_vlan_id
-    exclude_test: true
     example: 666
 
 test_prerequisites:
@@ -43,5 +42,3 @@ test_prerequisites:
     attributes:
       - name: name
         value: 10
-      - name: switchport
-        value: false
