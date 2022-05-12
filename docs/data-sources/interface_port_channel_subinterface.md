@@ -33,10 +33,20 @@ data "iosxe_interface_port_channel_subinterface" "example" {
 
 - `description` (String) Interface specific description
 - `encapsulation_dot1q_vlan_id` (Number)
+- `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
 - `id` (String) The path of the retrieved object.
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface
 - `vrf_forwarding` (String) Configure forwarding table
+
+<a id="nestedatt--helper_addresses"></a>
+### Nested Schema for `helper_addresses`
+
+Read-Only:
+
+- `address` (String)
+- `global` (Boolean) Helper-address is global
+- `vrf` (String) VRF name for helper-address (if different from interface VRF)
 
 

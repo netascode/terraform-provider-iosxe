@@ -5,6 +5,7 @@ package provider
 import (
 	"fmt"
 	"net/url"
+	"reflect"
 	"regexp"
 	"strconv"
 
@@ -15,21 +16,28 @@ import (
 )
 
 type InterfaceEthernet struct {
-	Device                   types.String `tfsdk:"device"`
-	Id                       types.String `tfsdk:"id"`
-	Type                     types.String `tfsdk:"type"`
-	Name                     types.String `tfsdk:"name"`
-	MediaType                types.String `tfsdk:"media_type"`
-	Switchport               types.Bool   `tfsdk:"switchport"`
-	Description              types.String `tfsdk:"description"`
-	Shutdown                 types.Bool   `tfsdk:"shutdown"`
-	VrfForwarding            types.String `tfsdk:"vrf_forwarding"`
-	Ipv4Address              types.String `tfsdk:"ipv4_address"`
-	Ipv4AddressMask          types.String `tfsdk:"ipv4_address_mask"`
-	Unnumbered               types.String `tfsdk:"unnumbered"`
-	EncapsulationDot1qVlanId types.Int64  `tfsdk:"encapsulation_dot1q_vlan_id"`
-	ChannelGroupNumber       types.Int64  `tfsdk:"channel_group_number"`
-	ChannelGroupMode         types.String `tfsdk:"channel_group_mode"`
+	Device                     types.String                       `tfsdk:"device"`
+	Id                         types.String                       `tfsdk:"id"`
+	Type                       types.String                       `tfsdk:"type"`
+	Name                       types.String                       `tfsdk:"name"`
+	MediaType                  types.String                       `tfsdk:"media_type"`
+	Switchport                 types.Bool                         `tfsdk:"switchport"`
+	Description                types.String                       `tfsdk:"description"`
+	Shutdown                   types.Bool                         `tfsdk:"shutdown"`
+	VrfForwarding              types.String                       `tfsdk:"vrf_forwarding"`
+	Ipv4Address                types.String                       `tfsdk:"ipv4_address"`
+	Ipv4AddressMask            types.String                       `tfsdk:"ipv4_address_mask"`
+	Unnumbered                 types.String                       `tfsdk:"unnumbered"`
+	EncapsulationDot1qVlanId   types.Int64                        `tfsdk:"encapsulation_dot1q_vlan_id"`
+	ChannelGroupNumber         types.Int64                        `tfsdk:"channel_group_number"`
+	ChannelGroupMode           types.String                       `tfsdk:"channel_group_mode"`
+	IpDhcpRelaySourceInterface types.String                       `tfsdk:"ip_dhcp_relay_source_interface"`
+	HelperAddresses            []InterfaceEthernetHelperAddresses `tfsdk:"helper_addresses"`
+}
+type InterfaceEthernetHelperAddresses struct {
+	Address types.String `tfsdk:"address"`
+	Global  types.Bool   `tfsdk:"global"`
+	Vrf     types.String `tfsdk:"vrf"`
 }
 
 func (data InterfaceEthernet) getPath() string {
@@ -86,6 +94,25 @@ func (data InterfaceEthernet) toBody() string {
 	}
 	if !data.ChannelGroupMode.Null && !data.ChannelGroupMode.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-ethernet:channel-group.mode", data.ChannelGroupMode.Value)
+	}
+	if !data.IpDhcpRelaySourceInterface.Null && !data.IpDhcpRelaySourceInterface.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface", data.IpDhcpRelaySourceInterface.Value)
+	}
+	if len(data.HelperAddresses) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address", []interface{}{})
+		for index, item := range data.HelperAddresses {
+			if !item.Address.Null && !item.Address.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"address", item.Address.Value)
+			}
+			if !item.Global.Null && !item.Global.Unknown {
+				if item.Global.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"global", map[string]string{})
+				}
+			}
+			if !item.Vrf.Null && !item.Vrf.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
+			}
+		}
 	}
 	return body
 }
@@ -155,6 +182,29 @@ func (data *InterfaceEthernet) updateFromBody(res gjson.Result) {
 	} else {
 		data.ChannelGroupMode.Null = true
 	}
+	if value := res.Get(prefix + "ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface"); value.Exists() {
+		data.IpDhcpRelaySourceInterface.Value = value.String()
+	} else {
+		data.IpDhcpRelaySourceInterface.Null = true
+	}
+	for i := range data.HelperAddresses {
+		key := data.HelperAddresses[i].Address.Value
+		if value := res.Get(fmt.Sprintf("%vip.helper-address.#(address==\"%v\").address", prefix, key)); value.Exists() {
+			data.HelperAddresses[i].Address.Value = value.String()
+		} else {
+			data.HelperAddresses[i].Address.Null = true
+		}
+		if value := res.Get(fmt.Sprintf("%vip.helper-address.#(address==\"%v\").global", prefix, key)); value.Exists() {
+			data.HelperAddresses[i].Global.Value = true
+		} else {
+			data.HelperAddresses[i].Global.Value = false
+		}
+		if value := res.Get(fmt.Sprintf("%vip.helper-address.#(address==\"%v\").vrf", prefix, key)); value.Exists() {
+			data.HelperAddresses[i].Vrf.Value = value.String()
+		} else {
+			data.HelperAddresses[i].Vrf.Null = true
+		}
+	}
 }
 
 func (data *InterfaceEthernet) fromBody(res gjson.Result) {
@@ -211,6 +261,30 @@ func (data *InterfaceEthernet) fromBody(res gjson.Result) {
 	if value := res.Get(prefix + "Cisco-IOS-XE-ethernet:channel-group.mode"); value.Exists() {
 		data.ChannelGroupMode.Value = value.String()
 		data.ChannelGroupMode.Null = false
+	}
+	if value := res.Get(prefix + "ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface"); value.Exists() {
+		data.IpDhcpRelaySourceInterface.Value = value.String()
+		data.IpDhcpRelaySourceInterface.Null = false
+	}
+	if value := res.Get(prefix + "ip.helper-address"); value.Exists() {
+		data.HelperAddresses = make([]InterfaceEthernetHelperAddresses, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := InterfaceEthernetHelperAddresses{}
+			if cValue := v.Get("address"); cValue.Exists() {
+				item.Address.Value = cValue.String()
+				item.Address.Null = false
+			}
+			if cValue := v.Get("global"); cValue.Exists() {
+				item.Global.Value = true
+				item.Global.Null = false
+			}
+			if cValue := v.Get("vrf"); cValue.Exists() {
+				item.Vrf.Value = cValue.String()
+				item.Vrf.Null = false
+			}
+			data.HelperAddresses = append(data.HelperAddresses, item)
+			return true
+		})
 	}
 }
 
@@ -275,9 +349,41 @@ func (data *InterfaceEthernet) setUnknownValues() {
 		data.ChannelGroupMode.Unknown = false
 		data.ChannelGroupMode.Null = true
 	}
+	if data.IpDhcpRelaySourceInterface.Unknown {
+		data.IpDhcpRelaySourceInterface.Unknown = false
+		data.IpDhcpRelaySourceInterface.Null = true
+	}
+	for i := range data.HelperAddresses {
+		if data.HelperAddresses[i].Address.Unknown {
+			data.HelperAddresses[i].Address.Unknown = false
+			data.HelperAddresses[i].Address.Null = true
+		}
+		if data.HelperAddresses[i].Global.Unknown {
+			data.HelperAddresses[i].Global.Unknown = false
+			data.HelperAddresses[i].Global.Null = true
+		}
+		if data.HelperAddresses[i].Vrf.Unknown {
+			data.HelperAddresses[i].Vrf.Unknown = false
+			data.HelperAddresses[i].Vrf.Null = true
+		}
+	}
 }
 
 func (data *InterfaceEthernet) getDeletedListItems(state InterfaceEthernet) []string {
 	deletedListItems := make([]string, 0)
+	for _, i := range state.HelperAddresses {
+		if reflect.ValueOf(i.Address.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.HelperAddresses {
+			if i.Address.Value == j.Address.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/helper-address=%v", state.getPath(), i.Address.Value))
+		}
+	}
 	return deletedListItems
 }

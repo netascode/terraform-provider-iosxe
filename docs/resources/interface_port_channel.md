@@ -14,12 +14,19 @@ This resource can manage the Interface Port Channel configuration.
 
 ```terraform
 resource "iosxe_interface_port_channel" "example" {
-  name              = 10
-  description       = "My Interface Description"
-  shutdown          = false
-  vrf_forwarding    = "VRF1"
-  ipv4_address      = "192.0.2.1"
-  ipv4_address_mask = "255.255.255.0"
+  name                           = 10
+  description                    = "My Interface Description"
+  shutdown                       = false
+  vrf_forwarding                 = "VRF1"
+  ipv4_address                   = "192.0.2.1"
+  ipv4_address_mask              = "255.255.255.0"
+  ip_dhcp_relay_source_interface = "Loopback100"
+  helper_addresses = [
+    {
+      address = "10.10.10.10"
+      global  = false
+    }
+  ]
 }
 ```
 
@@ -34,6 +41,8 @@ resource "iosxe_interface_port_channel" "example" {
 
 - `description` (String) Interface specific description
 - `device` (String) A device name from the provider configuration.
+- `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
+- `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface
@@ -43,6 +52,15 @@ resource "iosxe_interface_port_channel" "example" {
 ### Read-Only
 
 - `id` (String) The path of the object.
+
+<a id="nestedatt--helper_addresses"></a>
+### Nested Schema for `helper_addresses`
+
+Optional:
+
+- `address` (String)
+- `global` (Boolean) Helper-address is global
+- `vrf` (String) VRF name for helper-address (if different from interface VRF)
 
 ## Import
 

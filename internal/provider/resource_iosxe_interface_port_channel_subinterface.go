@@ -94,6 +94,33 @@ func (t resourceInterfacePortChannelSubinterfaceType) GetSchema(ctx context.Cont
 					helpers.IntegerRangeValidator(1, 4094),
 				},
 			},
+			"helper_addresses": {
+				MarkdownDescription: helpers.NewAttributeDescription("Specify a destination address for UDP broadcasts").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"address": {
+						MarkdownDescription: helpers.NewAttributeDescription("").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+						},
+					},
+					"global": {
+						MarkdownDescription: helpers.NewAttributeDescription("Helper-address is global").String,
+						Type:                types.BoolType,
+						Optional:            true,
+						Computed:            true,
+					},
+					"vrf": {
+						MarkdownDescription: helpers.NewAttributeDescription("VRF name for helper-address (if different from interface VRF)").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }

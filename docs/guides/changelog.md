@@ -7,6 +7,13 @@ description: |-
 
 # Changelog
 
+## 0.1.6 (unrelease)
+
+- Add DHCP helper options to iosxe_interface_ethernet resource
+- Add DHCP helper options to iosxe_interface_vlan resource
+- Add DHCP helper options to iosxe_interface_port_channel resource
+- Add DHCP helper options to iosxe_interface_port_channel_subinterface resource
+
 ## 0.1.5
 
 - Add iosxe_interface_ethernet resource and data source

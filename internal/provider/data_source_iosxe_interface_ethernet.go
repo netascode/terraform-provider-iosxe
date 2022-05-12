@@ -95,6 +95,32 @@ func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.StringType,
 				Computed:            true,
 			},
+			"ip_dhcp_relay_source_interface": {
+				MarkdownDescription: "Set source interface for relayed messages",
+				Type:                types.StringType,
+				Computed:            true,
+			},
+			"helper_addresses": {
+				MarkdownDescription: "Specify a destination address for UDP broadcasts",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"address": {
+						MarkdownDescription: "",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+					"global": {
+						MarkdownDescription: "Helper-address is global",
+						Type:                types.BoolType,
+						Computed:            true,
+					},
+					"vrf": {
+						MarkdownDescription: "VRF name for helper-address (if different from interface VRF)",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }

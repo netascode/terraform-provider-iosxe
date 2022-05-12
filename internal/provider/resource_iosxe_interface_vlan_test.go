@@ -25,6 +25,10 @@ func TestAccIosxeInterfaceVLAN(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "vrf_forwarding", "VRF1"),
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ipv4_address", "10.1.1.1"),
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ipv4_address_mask", "255.255.255.0"),
+					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_dhcp_relay_source_interface", "Loopback100"),
+					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.address", "10.10.10.10"),
+					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.global", "false"),
+					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.vrf", "VRF1"),
 				),
 			},
 			{
@@ -75,6 +79,12 @@ func testAccIosxeInterfaceVLANConfig_all() string {
 		vrf_forwarding = "VRF1"
 		ipv4_address = "10.1.1.1"
 		ipv4_address_mask = "255.255.255.0"
+		ip_dhcp_relay_source_interface = "Loopback100"
+		helper_addresses = [{
+		address = "10.10.10.10"
+		global = false
+		vrf = "VRF1"
+		}]
   		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`

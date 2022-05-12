@@ -14,13 +14,21 @@ This resource can manage the Interface Ethernet configuration.
 
 ```terraform
 resource "iosxe_interface_ethernet" "example" {
-  type              = "GigabitEthernet"
-  name              = "3"
-  description       = "My Interface Description"
-  shutdown          = true
-  vrf_forwarding    = "VRF1"
-  ipv4_address      = "15.1.1.1"
-  ipv4_address_mask = "255.255.255.252"
+  type                           = "GigabitEthernet"
+  name                           = "3"
+  description                    = "My Interface Description"
+  shutdown                       = true
+  vrf_forwarding                 = "VRF1"
+  ipv4_address                   = "15.1.1.1"
+  ipv4_address_mask              = "255.255.255.252"
+  ip_dhcp_relay_source_interface = "Loopback100"
+  helper_addresses = [
+    {
+      address = "10.10.10.10"
+      global  = false
+      vrf     = "VRF1"
+    }
+  ]
 }
 ```
 
@@ -41,6 +49,8 @@ resource "iosxe_interface_ethernet" "example" {
 - `description` (String) Interface specific description
 - `device` (String) A device name from the provider configuration.
 - `encapsulation_dot1q_vlan_id` (Number) - Range: `1`-`4094`
+- `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
+- `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `media_type` (String) Media type
@@ -53,6 +63,15 @@ resource "iosxe_interface_ethernet" "example" {
 ### Read-Only
 
 - `id` (String) The path of the object.
+
+<a id="nestedatt--helper_addresses"></a>
+### Nested Schema for `helper_addresses`
+
+Optional:
+
+- `address` (String)
+- `global` (Boolean) Helper-address is global
+- `vrf` (String) VRF name for helper-address (if different from interface VRF)
 
 ## Import
 

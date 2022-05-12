@@ -25,7 +25,22 @@ attributes:
     xpath: encapsulation/dot1Q/vlan-id
     tf_name: encapsulation_dot1q_vlan_id
     example: 666
-
+  - yang_name: ip/helper-address
+    tf_name: helper_addresses
+    type: List
+    attributes:
+      - yang_name: address
+        example: 10.10.10.10
+        id: true
+      - yang_name: helper-choice/global/global
+        xpath: global
+        tf_name: global
+        example: false
+      - yang_name: helper-choice/vrf/vrf
+        xpath: vrf
+        tf_name: vrf
+        exclude_test: true
+        example: VRF1
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true

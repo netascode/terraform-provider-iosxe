@@ -21,6 +21,12 @@ resource "iosxe_interface_port_channel_subinterface" "example" {
   ipv4_address                = "192.0.2.2"
   ipv4_address_mask           = "255.255.255.0"
   encapsulation_dot1q_vlan_id = 666
+  helper_addresses = [
+    {
+      address = "10.10.10.10"
+      global  = false
+    }
+  ]
 }
 ```
 
@@ -36,6 +42,7 @@ resource "iosxe_interface_port_channel_subinterface" "example" {
 - `description` (String) Interface specific description
 - `device` (String) A device name from the provider configuration.
 - `encapsulation_dot1q_vlan_id` (Number) - Range: `1`-`4094`
+- `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface
@@ -44,6 +51,15 @@ resource "iosxe_interface_port_channel_subinterface" "example" {
 ### Read-Only
 
 - `id` (String) The path of the object.
+
+<a id="nestedatt--helper_addresses"></a>
+### Nested Schema for `helper_addresses`
+
+Optional:
+
+- `address` (String)
+- `global` (Boolean) Helper-address is global
+- `vrf` (String) VRF name for helper-address (if different from interface VRF)
 
 ## Import
 

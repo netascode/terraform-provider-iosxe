@@ -23,6 +23,8 @@ func TestAccIosxeInterfacePortChannelSubinterface(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ipv4_address", "192.0.2.2"),
 					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ipv4_address_mask", "255.255.255.0"),
 					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "encapsulation_dot1q_vlan_id", "666"),
+					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "helper_addresses.0.address", "10.10.10.10"),
+					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "helper_addresses.0.global", "false"),
 				),
 			},
 			{
@@ -80,6 +82,10 @@ func testAccIosxeInterfacePortChannelSubinterfaceConfig_all() string {
 		ipv4_address = "192.0.2.2"
 		ipv4_address_mask = "255.255.255.0"
 		encapsulation_dot1q_vlan_id = 666
+		helper_addresses = [{
+		address = "10.10.10.10"
+		global = false
+		}]
   		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 	}
 	`

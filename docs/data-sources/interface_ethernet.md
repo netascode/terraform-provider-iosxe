@@ -37,7 +37,9 @@ data "iosxe_interface_ethernet" "example" {
 - `channel_group_number` (Number)
 - `description` (String) Interface specific description
 - `encapsulation_dot1q_vlan_id` (Number)
+- `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
 - `id` (String) The path of the retrieved object.
+- `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `media_type` (String) Media type
@@ -45,5 +47,14 @@ data "iosxe_interface_ethernet" "example" {
 - `switchport` (Boolean)
 - `unnumbered` (String) Enable IP processing without an explicit address
 - `vrf_forwarding` (String) Configure forwarding table
+
+<a id="nestedatt--helper_addresses"></a>
+### Nested Schema for `helper_addresses`
+
+Read-Only:
+
+- `address` (String)
+- `global` (Boolean) Helper-address is global
+- `vrf` (String) VRF name for helper-address (if different from interface VRF)
 
 

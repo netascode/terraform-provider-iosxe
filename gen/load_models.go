@@ -47,6 +47,7 @@ var models = []string{
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/ietf-yang-types.yang",
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-igmp.yang",
 	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-arp.yang",
+	"https://raw.githubusercontent.com/YangModels/yang/main/vendor/cisco/xe/1771/Cisco-IOS-XE-dhcp.yang",
 }
 
 const (

@@ -14,13 +14,21 @@ This resource can manage the Interface VLAN configuration.
 
 ```terraform
 resource "iosxe_interface_vlan" "example" {
-  name              = 10
-  autostate         = false
-  description       = "My Interface Description"
-  shutdown          = false
-  vrf_forwarding    = "VRF1"
-  ipv4_address      = "10.1.1.1"
-  ipv4_address_mask = "255.255.255.0"
+  name                           = 10
+  autostate                      = false
+  description                    = "My Interface Description"
+  shutdown                       = false
+  vrf_forwarding                 = "VRF1"
+  ipv4_address                   = "10.1.1.1"
+  ipv4_address_mask              = "255.255.255.0"
+  ip_dhcp_relay_source_interface = "Loopback100"
+  helper_addresses = [
+    {
+      address = "10.10.10.10"
+      global  = false
+      vrf     = "VRF1"
+    }
+  ]
 }
 ```
 
@@ -36,6 +44,8 @@ resource "iosxe_interface_vlan" "example" {
 - `autostate` (Boolean) Enable auto-state determination for VLAN
 - `description` (String) Interface specific description
 - `device` (String) A device name from the provider configuration.
+- `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
+- `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface
@@ -45,6 +55,15 @@ resource "iosxe_interface_vlan" "example" {
 ### Read-Only
 
 - `id` (String) The path of the object.
+
+<a id="nestedatt--helper_addresses"></a>
+### Nested Schema for `helper_addresses`
+
+Optional:
+
+- `address` (String)
+- `global` (Boolean) Helper-address is global
+- `vrf` (String) VRF name for helper-address (if different from interface VRF)
 
 ## Import
 

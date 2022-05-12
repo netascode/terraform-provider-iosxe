@@ -22,6 +22,10 @@ func TestAccIosxeInterfaceEthernet(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "vrf_forwarding", "VRF1"),
 					resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "ipv4_address", "15.1.1.1"),
 					resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "ipv4_address_mask", "255.255.255.252"),
+					resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "ip_dhcp_relay_source_interface", "Loopback100"),
+					resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "helper_addresses.0.address", "10.10.10.10"),
+					resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "helper_addresses.0.global", "false"),
+					resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "helper_addresses.0.vrf", "VRF1"),
 				),
 			},
 			{
@@ -73,6 +77,12 @@ func testAccIosxeInterfaceEthernetConfig_all() string {
 		vrf_forwarding = "VRF1"
 		ipv4_address = "15.1.1.1"
 		ipv4_address_mask = "255.255.255.252"
+		ip_dhcp_relay_source_interface = "Loopback100"
+		helper_addresses = [{
+		address = "10.10.10.10"
+		global = false
+		vrf = "VRF1"
+		}]
   		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`

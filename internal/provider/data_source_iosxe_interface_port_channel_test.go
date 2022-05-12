@@ -21,6 +21,9 @@ func TestAccDataSourceIosxeInterfacePortChannel(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "vrf_forwarding", "VRF1"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address", "192.0.2.1"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address_mask", "255.255.255.0"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_dhcp_relay_source_interface", "Loopback100"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "helper_addresses.0.address", "10.10.10.10"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "helper_addresses.0.global", "false"),
 				),
 			},
 		},
@@ -56,6 +59,11 @@ resource "iosxe_interface_port_channel" "test" {
   vrf_forwarding = "VRF1"
   ipv4_address = "192.0.2.1"
   ipv4_address_mask = "255.255.255.0"
+  ip_dhcp_relay_source_interface = "Loopback100"
+  helper_addresses = [{
+    address = "10.10.10.10"
+    global = false
+  }]
   depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 
