@@ -16,18 +16,18 @@ func TestAccIosxeInterfacePortChannel(t *testing.T) {
 			{
 				Config: testAccIosxeInterfacePortChannelPrerequisitesConfig + testAccIosxeInterfacePortChannelConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_interface_portchannel.test", "name", "100"),
-					resource.TestCheckResourceAttr("iosxe_interface_portchannel.test", "description", "My Interface Description"),
-					resource.TestCheckResourceAttr("iosxe_interface_portchannel.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_portchannel.test", "vrf_forwarding", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_interface_portchannel.test", "ipv4_address", "192.0.2.1"),
-					resource.TestCheckResourceAttr("iosxe_interface_portchannel.test", "ipv4_address_mask", "255.255.255.0"),
+					resource.TestCheckResourceAttr("iosxe_interface_port_channel.test", "name", "10"),
+					resource.TestCheckResourceAttr("iosxe_interface_port_channel.test", "description", "My Interface Description"),
+					resource.TestCheckResourceAttr("iosxe_interface_port_channel.test", "shutdown", "false"),
+					resource.TestCheckResourceAttr("iosxe_interface_port_channel.test", "vrf_forwarding", "VRF1"),
+					resource.TestCheckResourceAttr("iosxe_interface_port_channel.test", "ipv4_address", "192.0.2.1"),
+					resource.TestCheckResourceAttr("iosxe_interface_port_channel.test", "ipv4_address_mask", "255.255.255.0"),
 				),
 			},
 			{
-				ResourceName:  "iosxe_interface_portchannel.test",
+				ResourceName:  "iosxe_interface_port_channel.test",
 				ImportState:   true,
-				ImportStateId: "Cisco-IOS-XE-native:native/interface/Port-channel=100",
+				ImportStateId: "Cisco-IOS-XE-native:native/interface/Port-channel=10",
 			},
 		},
 	})
@@ -55,8 +55,8 @@ resource "iosxe_restconf" "PreReq1" {
 
 func testAccIosxeInterfacePortChannelConfig_minimum() string {
 	return `
-	resource "iosxe_interface_portchannel" "test" {
-		name = 100
+	resource "iosxe_interface_port_channel" "test" {
+		name = 10
   		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
@@ -64,8 +64,8 @@ func testAccIosxeInterfacePortChannelConfig_minimum() string {
 
 func testAccIosxeInterfacePortChannelConfig_all() string {
 	return `
-	resource "iosxe_interface_portchannel" "test" {
-		name = 100
+	resource "iosxe_interface_port_channel" "test" {
+		name = 10
 		description = "My Interface Description"
 		shutdown = false
 		vrf_forwarding = "VRF1"

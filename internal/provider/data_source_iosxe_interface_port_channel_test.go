@@ -16,11 +16,11 @@ func TestAccDataSourceIosxeInterfacePortChannel(t *testing.T) {
 			{
 				Config: testAccDataSourceIosxeInterfacePortChannelPrerequisitesConfig + testAccDataSourceIosxeInterfacePortChannelConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "description", "My Interface Description"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "vrf_forwarding", "VRF1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "ipv4_address", "192.0.2.1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_portchannel.test", "ipv4_address_mask", "255.255.255.0"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "description", "My Interface Description"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "shutdown", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "vrf_forwarding", "VRF1"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address", "192.0.2.1"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address_mask", "255.255.255.0"),
 				),
 			},
 		},
@@ -49,8 +49,8 @@ resource "iosxe_restconf" "PreReq1" {
 
 const testAccDataSourceIosxeInterfacePortChannelConfig = `
 
-resource "iosxe_interface_portchannel" "test" {
-  name = 100
+resource "iosxe_interface_port_channel" "test" {
+  name = 10
   description = "My Interface Description"
   shutdown = false
   vrf_forwarding = "VRF1"
@@ -59,8 +59,8 @@ resource "iosxe_interface_portchannel" "test" {
   depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 
-data "iosxe_interface_portchannel" "test" {
-  name = 100
-  depends_on = [iosxe_interface_portchannel.test]
+data "iosxe_interface_port_channel" "test" {
+  name = 10
+  depends_on = [iosxe_interface_port_channel.test]
 }
 `

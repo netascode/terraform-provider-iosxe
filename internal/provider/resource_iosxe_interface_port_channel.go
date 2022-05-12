@@ -19,7 +19,7 @@ type resourceInterfacePortChannelType struct{}
 func (t resourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the Interface PortChannel configuration.",
+		MarkdownDescription: "This resource can manage the Interface Port Channel configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {

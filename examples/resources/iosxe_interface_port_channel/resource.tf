@@ -1,5 +1,5 @@
 resource "iosxe_interface_port_channel" "example" {
-  name              = 100
+  name              = 10
   description       = "My Interface Description"
   shutdown          = false
   vrf_forwarding    = "VRF1"

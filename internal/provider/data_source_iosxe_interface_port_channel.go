@@ -17,7 +17,7 @@ type dataSourceInterfacePortChannelType struct{}
 func (t dataSourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This data source can read the Interface PortChannel configuration.",
+		MarkdownDescription: "This data source can read the Interface Port Channel configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {

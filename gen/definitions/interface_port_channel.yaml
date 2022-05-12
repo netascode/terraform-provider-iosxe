@@ -1,10 +1,10 @@
 ---
-name: Interface PortChannel
+name: Interface Port Channel
 path: Cisco-IOS-XE-native:native/interface/Port-channel=%v
 doc_category: Interface
 attributes:
   - yang_name: name
-    example: 100
+    example: 10
   - yang_name: description
     example: My Interface Description
   - yang_name: shutdown

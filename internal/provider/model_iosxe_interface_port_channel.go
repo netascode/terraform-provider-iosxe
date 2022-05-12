@@ -70,37 +70,41 @@ func (data InterfacePortChannel) toBody() string {
 }
 
 func (data *InterfacePortChannel) updateFromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "name"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "name"); value.Exists() {
 		data.Name.Value = value.Int()
 	} else {
 		data.Name.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 	} else {
 		data.Description.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
 	} else {
 		data.Shutdown.Value = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.forwarding"); value.Exists() {
+	if value := res.Get(prefix + "vrf.forwarding"); value.Exists() {
 		data.VrfForwarding.Value = value.String()
 	} else {
 		data.VrfForwarding.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.address"); value.Exists() {
+	if value := res.Get(prefix + "ip.address.primary.address"); value.Exists() {
 		data.Ipv4Address.Value = value.String()
 	} else {
 		data.Ipv4Address.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.mask"); value.Exists() {
+	if value := res.Get(prefix + "ip.address.primary.mask"); value.Exists() {
 		data.Ipv4AddressMask.Value = value.String()
 	} else {
 		data.Ipv4AddressMask.Null = true
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "switchport-conf.switchport"); value.Exists() {
+	if value := res.Get(prefix + "switchport-conf.switchport"); value.Exists() {
 		data.Switchport.Value = value.Bool()
 	} else {
 		data.Switchport.Value = false
@@ -108,30 +112,34 @@ func (data *InterfacePortChannel) updateFromBody(res gjson.Result) {
 }
 
 func (data *InterfacePortChannel) fromBody(res gjson.Result) {
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "description"); value.Exists() {
+	prefix := helpers.LastElement(data.getPath()) + "."
+	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
+		prefix += "0."
+	}
+	if value := res.Get(prefix + "description"); value.Exists() {
 		data.Description.Value = value.String()
 		data.Description.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "shutdown"); value.Exists() {
+	if value := res.Get(prefix + "shutdown"); value.Exists() {
 		data.Shutdown.Value = true
 		data.Shutdown.Null = false
 	} else {
 		data.Shutdown.Value = false
 		data.Shutdown.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "vrf.forwarding"); value.Exists() {
+	if value := res.Get(prefix + "vrf.forwarding"); value.Exists() {
 		data.VrfForwarding.Value = value.String()
 		data.VrfForwarding.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.address"); value.Exists() {
+	if value := res.Get(prefix + "ip.address.primary.address"); value.Exists() {
 		data.Ipv4Address.Value = value.String()
 		data.Ipv4Address.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "ip.address.primary.mask"); value.Exists() {
+	if value := res.Get(prefix + "ip.address.primary.mask"); value.Exists() {
 		data.Ipv4AddressMask.Value = value.String()
 		data.Ipv4AddressMask.Null = false
 	}
-	if value := res.Get(helpers.LastElement(data.getPath()) + "." + "switchport-conf.switchport"); value.Exists() {
+	if value := res.Get(prefix + "switchport-conf.switchport"); value.Exists() {
 		data.Switchport.Value = value.Bool()
 		data.Switchport.Null = false
 	} else {
