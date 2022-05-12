@@ -7,7 +7,7 @@ description: |-
 
 # Changelog
 
-## 0.1.5 (unreleased)
+## 0.1.5
 
 - Add iosxe_interface_ethernet resource and data source
 - Add iosxe_interface_pim resource and data source
