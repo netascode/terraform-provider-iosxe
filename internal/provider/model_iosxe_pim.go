@@ -446,3 +446,14 @@ func (data *PIM) getDeletedListItems(state PIM) []string {
 	}
 	return deletedListItems
 }
+
+func (data *PIM) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.AutorpListener.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:autorp-container/listener", data.getPath()))
+	}
+	if !data.SsmDefault.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:ssm/default", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

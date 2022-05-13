@@ -183,3 +183,8 @@ func (data *Username) getDeletedListItems(state Username) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *Username) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

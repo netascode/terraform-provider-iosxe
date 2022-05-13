@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 
@@ -304,4 +305,30 @@ func (data *EVPN) setUnknownValues() {
 func (data *EVPN) getDeletedListItems(state EVPN) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
+}
+
+func (data *EVPN) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.ReplicationTypeIngress.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/ingress/ingress", data.getPath()))
+	}
+	if !data.ReplicationTypeStatic.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/static/static", data.getPath()))
+	}
+	if !data.ReplicationTypeP2mp.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/p2mp/p2mp", data.getPath()))
+	}
+	if !data.ReplicationTypeMp2mp.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/mp2mp/mp2mp", data.getPath()))
+	}
+	if !data.DefaultGatewayAdvertise.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/default-gateway/advertise", data.getPath()))
+	}
+	if !data.LoggingPeerState.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/logging/peer/state", data.getPath()))
+	}
+	if !data.RouteTargetAutoVni.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-target/auto/vni", data.getPath()))
+	}
+	return emptyLeafsDelete
 }

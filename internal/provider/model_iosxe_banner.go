@@ -133,3 +133,8 @@ func (data *Banner) getDeletedListItems(state Banner) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *Banner) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

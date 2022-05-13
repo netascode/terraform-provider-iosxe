@@ -124,6 +124,17 @@ func (r resourceBGPAddressFamilyIPv4VRF) Create(ctx context.Context, req tfsdk.C
 		return
 	}
 
+	emptyLeafsDelete := plan.getEmptyLeafsDelete()
+	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
+
+	for _, i := range emptyLeafsDelete {
+		res, err := r.provider.clients[plan.Device.Value].DeleteData(i)
+		if err != nil && res.StatusCode != 404 {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
+		}
+	}
+
 	plan.setUnknownValues()
 
 	plan.Id = types.String{Value: plan.getPath()}
@@ -206,6 +217,17 @@ func (r resourceBGPAddressFamilyIPv4VRF) Update(ctx context.Context, req tfsdk.U
 		}
 	}
 
+	emptyLeafsDelete := plan.getEmptyLeafsDelete()
+	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
+
+	for _, i := range emptyLeafsDelete {
+		res, err := r.provider.clients[plan.Device.Value].DeleteData(i)
+		if err != nil && res.StatusCode != 404 {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
+		}
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Update finished successfully", plan.Id.Value))
 
 	diags = resp.State.Set(ctx, &plan)
@@ -225,8 +247,8 @@ func (r resourceBGPAddressFamilyIPv4VRF) Delete(ctx context.Context, req tfsdk.D
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.Value))
 
 	res, err := r.provider.clients[state.Device.Value].DeleteData(state.Id.Value)
-	if err != nil && res.StatusCode != 404 {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object, got error: %s", err))
+	if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 		return
 	}
 

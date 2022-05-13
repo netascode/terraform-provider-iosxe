@@ -138,3 +138,8 @@ func (data *BGP) getDeletedListItems(state BGP) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *BGP) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

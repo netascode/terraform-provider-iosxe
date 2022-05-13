@@ -317,3 +317,14 @@ func (data *InterfaceNVE) getDeletedListItems(state InterfaceNVE) []string {
 	}
 	return deletedListItems
 }
+
+func (data *InterfaceNVE) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Shutdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.HostReachabilityProtocolBgp.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/host-reachability/protocol/bgp", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

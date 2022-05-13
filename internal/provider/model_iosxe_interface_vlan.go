@@ -314,3 +314,11 @@ func (data *InterfaceVLAN) getDeletedListItems(state InterfaceVLAN) []string {
 	}
 	return deletedListItems
 }
+
+func (data *InterfaceVLAN) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Shutdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

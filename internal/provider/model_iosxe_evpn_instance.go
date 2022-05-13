@@ -376,3 +376,32 @@ func (data *EVPNInstance) getDeletedListItems(state EVPNInstance) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *EVPNInstance) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.VlanBasedReplicationTypeIngress.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/replication-type/replication-type-choice/ingress-case/ingress", data.getPath()))
+	}
+	if !data.VlanBasedReplicationTypeStatic.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/replication-type/replication-type-choice/static-case/static", data.getPath()))
+	}
+	if !data.VlanBasedReplicationTypeP2mp.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/replication-type/replication-type-choice/static-p2mp/p2mp", data.getPath()))
+	}
+	if !data.VlanBasedReplicationTypeMp2mp.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/replication-type/replication-type-choice/static-mp2mp/mp2mp", data.getPath()))
+	}
+	if !data.VlanBasedAutoRouteTarget.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/auto-route-target_cont/auto-route-target", data.getPath()))
+	}
+	if !data.VlanBasedIpLocalLearningDisable.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/ip/local-learning/local-learning-choice/disable-case/disable", data.getPath()))
+	}
+	if !data.VlanBasedIpLocalLearningEnable.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/ip/local-learning/local-learning-choice/enable-case/enable", data.getPath()))
+	}
+	if !data.VlanBasedReOriginateRouteType5.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/re-originate/route-type5", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

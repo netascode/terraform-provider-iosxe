@@ -242,3 +242,20 @@ func (data *DHCP) getDeletedListItems(state DHCP) []string {
 	}
 	return deletedListItems
 }
+
+func (data *DHCP) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.RelayInformationTrustAll.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/trust-all", data.getPath()))
+	}
+	if !data.RelayInformationOptionDefault.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/option/option-default", data.getPath()))
+	}
+	if !data.RelayInformationOptionVpn.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/option/vpn", data.getPath()))
+	}
+	if !data.Snooping.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:snooping", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

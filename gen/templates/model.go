@@ -5,7 +5,7 @@ package provider
 
 import (
 	"regexp"
-	{{- $fmt := false }}{{ range .Attributes}}{{ if or (eq .Id true) (eq .Reference true) (eq .Type "List") }}{{ $fmt = true }}{{ end}}{{ end}}
+	{{- $fmt := false }}{{ range .Attributes}}{{ if or (eq .Id true) (eq .Reference true) (eq .Type "List") (and (eq .Type "Bool") (eq .TypeYangBool "empty")) }}{{ $fmt = true }}{{ end}}{{ end}}
 	{{- if $fmt }}
 	"fmt"
 	{{- end}}
@@ -311,4 +311,40 @@ func (data *{{camelCase .Name}}) getDeletedListItems(state {{camelCase .Name}}) 
 	{{- end}}
 	{{- end}}
 	return deletedListItems
+}
+
+func (data *{{camelCase .Name}}) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	{{- range .Attributes}}
+	{{- if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}
+	if !data.{{toGoName .TfName}}.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{.YangName}}", data.getPath()))
+	}
+	{{- end}}
+	{{- if eq .Type "List"}}
+	{{- $goKey := ""}}
+	{{- $hasEmpty := false}}
+	{{- range .Attributes}}
+	{{- if eq .Id true}}
+	{{- $goKey = (toGoName .TfName)}}
+	{{- if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}
+	{{- $hasEmpty = true}}
+	{{- end}}
+	{{- end}}
+	{{- end}}
+	{{- if $hasEmpty}}
+	{{- $yangName := .YangName}}
+	for _, i := range data.{{toGoName .TfName}} {
+		{{- range .Attributes}}
+		{{- if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}
+		if !i.{{toGoName .TfName}}.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{$yangName}}=%v/{{.YangName}}", data.getPath(), i.{{$goKey}}.Value))
+		}
+		{{- end}}
+		{{- end}}
+	}
+	{{- end}}
+	{{- end}}
+	{{- end}}
+	return emptyLeafsDelete
 }

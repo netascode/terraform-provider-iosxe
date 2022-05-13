@@ -159,3 +159,11 @@ func (data *BGPNeighbor) getDeletedListItems(state BGPNeighbor) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *BGPNeighbor) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Shutdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

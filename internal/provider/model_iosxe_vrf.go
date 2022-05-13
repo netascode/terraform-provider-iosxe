@@ -319,3 +319,8 @@ func (data *VRF) getDeletedListItems(state VRF) []string {
 	}
 	return deletedListItems
 }
+
+func (data *VRF) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

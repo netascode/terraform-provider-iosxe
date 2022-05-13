@@ -325,3 +325,20 @@ func (data *InterfaceSwitchport) getDeletedListItems(state InterfaceSwitchport) 
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *InterfaceSwitchport) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.ModePrivateVlanHost.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/host", data.getPath()))
+	}
+	if !data.ModePrivateVlanPromiscuous.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/promiscuous", data.getPath()))
+	}
+	if !data.Nonegotiate.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:nonegotiate", data.getPath()))
+	}
+	if !data.Host.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/host", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

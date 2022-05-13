@@ -146,3 +146,14 @@ func (data *BGPL2VPNEVPNNeighbor) getDeletedListItems(state BGPL2VPNEVPNNeighbor
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *BGPL2VPNEVPNNeighbor) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Activate.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/activate", data.getPath()))
+	}
+	if !data.RouteReflectorClient.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

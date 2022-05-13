@@ -538,3 +538,11 @@ func (data *OSPF) getDeletedListItems(state OSPF) []string {
 	}
 	return deletedListItems
 }
+
+func (data *OSPF) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.DefaultInformationOriginateAlways.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/default-information/originate/always", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

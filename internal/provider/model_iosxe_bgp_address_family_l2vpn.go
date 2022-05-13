@@ -85,3 +85,8 @@ func (data *BGPAddressFamilyL2VPN) getDeletedListItems(state BGPAddressFamilyL2V
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *BGPAddressFamilyL2VPN) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

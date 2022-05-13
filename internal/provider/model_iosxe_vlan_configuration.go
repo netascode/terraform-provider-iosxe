@@ -149,3 +149,8 @@ func (data *VLANConfiguration) getDeletedListItems(state VLANConfiguration) []st
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *VLANConfiguration) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

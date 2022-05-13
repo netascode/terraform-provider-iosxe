@@ -144,3 +144,8 @@ func (data *InterfaceOSPFProcess) getDeletedListItems(state InterfaceOSPFProcess
 	}
 	return deletedListItems
 }
+
+func (data *InterfaceOSPFProcess) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

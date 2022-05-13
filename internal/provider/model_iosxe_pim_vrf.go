@@ -460,3 +460,14 @@ func (data *PIMVRF) getDeletedListItems(state PIMVRF) []string {
 	}
 	return deletedListItems
 }
+
+func (data *PIMVRF) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.AutorpListener.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/autorp-container/listener", data.getPath()))
+	}
+	if !data.SsmDefault.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ssm/default", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

@@ -249,3 +249,23 @@ func (data *InterfacePIM) getDeletedListItems(state InterfacePIM) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *InterfacePIM) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Passive.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/passive-mode/passive", data.getPath()))
+	}
+	if !data.SparseDenseMode.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/sparse-dense/sparse-dense-mode", data.getPath()))
+	}
+	if !data.Bfd.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:bfd", data.getPath()))
+	}
+	if !data.Border.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:border", data.getPath()))
+	}
+	if !data.BsrBorder.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:bsr-border", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

@@ -225,3 +225,23 @@ func (data *VLAN) getDeletedListItems(state VLAN) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *VLAN) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.RemoteSpan.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/remote-span", data.getPath()))
+	}
+	if !data.PrivateVlanPrimary.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/private-vlan/primary", data.getPath()))
+	}
+	if !data.PrivateVlanCommunity.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/private-vlan/community", data.getPath()))
+	}
+	if !data.PrivateVlanIsolated.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/private-vlan/isolated", data.getPath()))
+	}
+	if !data.Shutdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

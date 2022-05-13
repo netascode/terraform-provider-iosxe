@@ -162,6 +162,17 @@ func (r resourceEVPN) Create(ctx context.Context, req tfsdk.CreateResourceReques
 		return
 	}
 
+	emptyLeafsDelete := plan.getEmptyLeafsDelete()
+	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
+
+	for _, i := range emptyLeafsDelete {
+		res, err := r.provider.clients[plan.Device.Value].DeleteData(i)
+		if err != nil && res.StatusCode != 404 {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
+		}
+	}
+
 	plan.setUnknownValues()
 
 	plan.Id = types.String{Value: plan.getPath()}
@@ -244,6 +255,17 @@ func (r resourceEVPN) Update(ctx context.Context, req tfsdk.UpdateResourceReques
 		}
 	}
 
+	emptyLeafsDelete := plan.getEmptyLeafsDelete()
+	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
+
+	for _, i := range emptyLeafsDelete {
+		res, err := r.provider.clients[plan.Device.Value].DeleteData(i)
+		if err != nil && res.StatusCode != 404 {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
+		}
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Update finished successfully", plan.Id.Value))
 
 	diags = resp.State.Set(ctx, &plan)
@@ -263,8 +285,8 @@ func (r resourceEVPN) Delete(ctx context.Context, req tfsdk.DeleteResourceReques
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.Value))
 
 	res, err := r.provider.clients[state.Device.Value].DeleteData(state.Id.Value)
-	if err != nil && res.StatusCode != 404 {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object, got error: %s", err))
+	if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 		return
 	}
 

@@ -196,3 +196,8 @@ func (data *BGPAddressFamilyIPv4VRF) getDeletedListItems(state BGPAddressFamilyI
 	}
 	return deletedListItems
 }
+
+func (data *BGPAddressFamilyIPv4VRF) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

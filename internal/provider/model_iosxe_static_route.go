@@ -236,3 +236,8 @@ func (data *StaticRoute) getDeletedListItems(state StaticRoute) []string {
 	}
 	return deletedListItems
 }
+
+func (data *StaticRoute) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	return emptyLeafsDelete
+}

@@ -171,3 +171,11 @@ func (data *InterfaceLoopback) getDeletedListItems(state InterfaceLoopback) []st
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *InterfaceLoopback) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Shutdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

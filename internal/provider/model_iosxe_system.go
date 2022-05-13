@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -103,4 +104,12 @@ func (data *System) setUnknownValues() {
 func (data *System) getDeletedListItems(state System) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
+}
+
+func (data *System) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Ipv6UnicastRouting.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ipv6/unicast-routing", data.getPath()))
+	}
+	return emptyLeafsDelete
 }

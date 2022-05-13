@@ -254,3 +254,17 @@ func (data *InterfaceOSPF) getDeletedListItems(state InterfaceOSPF) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *InterfaceOSPF) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.NetworkTypeBroadcast.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/network/network-type-choice/broadcast/broadcast", data.getPath()))
+	}
+	if !data.NetworkTypeNonBroadcast.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/network/network-type-choice/non-broadcast/non-broadcast", data.getPath()))
+	}
+	if !data.NetworkTypePointToPoint.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/network/network-type-choice/point-to-point/point-to-point", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

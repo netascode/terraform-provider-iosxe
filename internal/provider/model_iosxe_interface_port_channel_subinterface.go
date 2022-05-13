@@ -277,3 +277,11 @@ func (data *InterfacePortChannelSubinterface) getDeletedListItems(state Interfac
 	}
 	return deletedListItems
 }
+
+func (data *InterfacePortChannelSubinterface) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Shutdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

@@ -387,3 +387,11 @@ func (data *InterfaceEthernet) getDeletedListItems(state InterfaceEthernet) []st
 	}
 	return deletedListItems
 }
+
+func (data *InterfaceEthernet) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Shutdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	return emptyLeafsDelete
+}

@@ -225,3 +225,17 @@ func (data *BGPIPv4UnicastVRFNeighbor) getDeletedListItems(state BGPIPv4UnicastV
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
+
+func (data *BGPIPv4UnicastVRFNeighbor) getEmptyLeafsDelete() []string {
+	emptyLeafsDelete := make([]string, 0)
+	if !data.Shutdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.Activate.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/activate", data.getPath()))
+	}
+	if !data.RouteReflectorClient.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
+	}
+	return emptyLeafsDelete
+}
