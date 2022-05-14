@@ -111,7 +111,7 @@ func testAccIosxeBGPIPv4UnicastVRFNeighborConfig_all() string {
 		remote_as = "65000"
 		description = "BGP Neighbor Description"
 		shutdown = false
-		update_source_loopback = 100
+		update_source_loopback = "100"
 		activate = true
 		send_community = "both"
 		route_reflector_client = false

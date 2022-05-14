@@ -51,7 +51,7 @@ resource "iosxe_bgp_neighbor" "test" {
   remote_as = "65000"
   description = "BGP Neighbor Description"
   shutdown = false
-  update_source_loopback = 100
+  update_source_loopback = "100"
   depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 

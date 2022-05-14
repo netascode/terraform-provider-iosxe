@@ -75,7 +75,7 @@ test_prerequisites:
     attributes:
       - name: forwarding
         value: VRF1
-    dependencies: [2]
+    dependencies: [1, 2]
   - path: Cisco-IOS-XE-native:native/interface/Loopback=100/ip/address/primary
     attributes:
       - name: address

@@ -75,7 +75,7 @@ resource "iosxe_restconf" "PreReq3" {
   attributes = {
       forwarding = "VRF1"
   }
-  depends_on = [iosxe_restconf.PreReq2, ]
+  depends_on = [iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 }
 
 resource "iosxe_restconf" "PreReq4" {

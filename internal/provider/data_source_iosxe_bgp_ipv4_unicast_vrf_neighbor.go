@@ -62,7 +62,7 @@ func (t dataSourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) 
 			},
 			"update_source_loopback": {
 				MarkdownDescription: "Loopback interface",
-				Type:                types.Int64Type,
+				Type:                types.StringType,
 				Computed:            true,
 			},
 			"activate": {

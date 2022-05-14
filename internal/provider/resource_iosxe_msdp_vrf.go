@@ -14,12 +14,12 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceBGPIPv4UnicastVRFNeighborType struct{}
+type resourceMSDPVRFType struct{}
 
-func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (t resourceMSDPVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "This resource can manage the BGP IPv4 Unicast VRF Neighbor configuration.",
+		MarkdownDescription: "This resource can manage the MSDP VRF configuration.",
 
 		Attributes: map[string]tfsdk.Attribute{
 			"device": {
@@ -35,14 +35,6 @@ func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (t
 					tfsdk.UseStateForUnknown(),
 				},
 			},
-			"asn": {
-				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
-				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
-				},
-			},
 			"vrf": {
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Type:                types.StringType,
@@ -51,77 +43,86 @@ func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (t
 					tfsdk.RequiresReplace(),
 				},
 			},
-			"ip": {
-				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
-				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
-				},
-			},
-			"remote_as": {
-				MarkdownDescription: helpers.NewAttributeDescription("Specify a BGP peer-group remote-as").String,
+			"originator_id": {
+				MarkdownDescription: helpers.NewAttributeDescription("Configure MSDP Originator ID").String,
 				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"description": {
-				MarkdownDescription: helpers.NewAttributeDescription("Neighbor specific description").String,
-				Type:                types.StringType,
+			"peers": {
+				MarkdownDescription: helpers.NewAttributeDescription("Configure an MSDP peer").String,
 				Optional:            true,
-				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"addr": {
+						MarkdownDescription: helpers.NewAttributeDescription("").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+					},
+					"remote_as": {
+						MarkdownDescription: helpers.NewAttributeDescription("Configured AS number").AddIntegerRangeDescription(1, 65535).String,
+						Type:                types.Int64Type,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.IntegerRangeValidator(1, 65535),
+						},
+					},
+					"connect_source_loopback": {
+						MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
+						Type:                types.Int64Type,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.IntegerRangeValidator(0, 2147483647),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
 			},
-			"shutdown": {
-				MarkdownDescription: helpers.NewAttributeDescription("Administratively shut down this neighbor").String,
-				Type:                types.BoolType,
+			"passwords": {
+				MarkdownDescription: helpers.NewAttributeDescription("MSDP peer on which the password is to be set").String,
 				Optional:            true,
-				Computed:            true,
-			},
-			"update_source_loopback": {
-				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"activate": {
-				MarkdownDescription: helpers.NewAttributeDescription("Enable the address family for this neighbor").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"send_community": {
-				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("both", "extended", "standard").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("both", "extended", "standard"),
-				},
-			},
-			"route_reflector_client": {
-				MarkdownDescription: helpers.NewAttributeDescription("Configure a neighbor as Route Reflector client").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"addr": {
+						MarkdownDescription: helpers.NewAttributeDescription("").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+					},
+					"encryption": {
+						MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 7).String,
+						Type:                types.Int64Type,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.IntegerRangeValidator(0, 7),
+						},
+					},
+					"password": {
+						MarkdownDescription: helpers.NewAttributeDescription("").String,
+						Type:                types.StringType,
+						Required:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
 			},
 		},
 	}, nil
 }
 
-func (t resourceBGPIPv4UnicastVRFNeighborType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceMSDPVRFType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
-	return resourceBGPIPv4UnicastVRFNeighbor{
+	return resourceMSDPVRF{
 		provider: provider,
 	}, diags
 }
 
-type resourceBGPIPv4UnicastVRFNeighbor struct {
+type resourceMSDPVRF struct {
 	provider provider
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
-	var plan BGPIPv4UnicastVRFNeighbor
+func (r resourceMSDPVRF) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+	var plan MSDPVRF
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -165,8 +166,8 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Create(ctx context.Context, req tfsdk
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
-	var state BGPIPv4UnicastVRFNeighbor
+func (r resourceMSDPVRF) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+	var state MSDPVRF
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -179,7 +180,7 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk.R
 
 	res, err := r.provider.clients[state.Device.Value].GetData(state.Id.Value)
 	if res.StatusCode == 404 {
-		state = BGPIPv4UnicastVRFNeighbor{Device: state.Device, Id: state.Id}
+		state = MSDPVRF{Device: state.Device, Id: state.Id}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
@@ -195,8 +196,8 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk.R
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
-	var plan, state BGPIPv4UnicastVRFNeighbor
+func (r resourceMSDPVRF) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+	var plan, state MSDPVRF
 
 	// Read plan
 	diags := req.Plan.Get(ctx, &plan)
@@ -254,8 +255,8 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Update(ctx context.Context, req tfsdk
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
-	var state BGPIPv4UnicastVRFNeighbor
+func (r resourceMSDPVRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+	var state MSDPVRF
 
 	// Read state
 	diags := req.State.Get(ctx, &state)
@@ -277,6 +278,6 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Delete(ctx context.Context, req tfsdk
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
+func (r resourceMSDPVRF) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
 	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
 }

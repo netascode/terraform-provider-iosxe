@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -23,7 +22,7 @@ type BGPIPv4UnicastVRFNeighbor struct {
 	RemoteAs             types.String `tfsdk:"remote_as"`
 	Description          types.String `tfsdk:"description"`
 	Shutdown             types.Bool   `tfsdk:"shutdown"`
-	UpdateSourceLoopback types.Int64  `tfsdk:"update_source_loopback"`
+	UpdateSourceLoopback types.String `tfsdk:"update_source_loopback"`
 	Activate             types.Bool   `tfsdk:"activate"`
 	SendCommunity        types.String `tfsdk:"send_community"`
 	RouteReflectorClient types.Bool   `tfsdk:"route_reflector_client"`
@@ -61,7 +60,7 @@ func (data BGPIPv4UnicastVRFNeighbor) toBody() string {
 		}
 	}
 	if !data.UpdateSourceLoopback.Null && !data.UpdateSourceLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"update-source.interface.Loopback", strconv.FormatInt(data.UpdateSourceLoopback.Value, 10))
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"update-source.interface.Loopback", data.UpdateSourceLoopback.Value)
 	}
 	if !data.Activate.Null && !data.Activate.Unknown {
 		if data.Activate.Value {
@@ -105,7 +104,7 @@ func (data *BGPIPv4UnicastVRFNeighbor) updateFromBody(res gjson.Result) {
 		data.Shutdown.Value = false
 	}
 	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
-		data.UpdateSourceLoopback.Value = value.Int()
+		data.UpdateSourceLoopback.Value = value.String()
 	} else {
 		data.UpdateSourceLoopback.Null = true
 	}
@@ -147,7 +146,7 @@ func (data *BGPIPv4UnicastVRFNeighbor) fromBody(res gjson.Result) {
 		data.Shutdown.Null = false
 	}
 	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
-		data.UpdateSourceLoopback.Value = value.Int()
+		data.UpdateSourceLoopback.Value = value.String()
 		data.UpdateSourceLoopback.Null = false
 	}
 	if value := res.Get(prefix + "activate"); value.Exists() {

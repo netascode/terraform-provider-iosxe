@@ -20,7 +20,7 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
   remote_as              = "65000"
   description            = "BGP Neighbor Description"
   shutdown               = false
-  update_source_loopback = 100
+  update_source_loopback = "100"
   activate               = true
   send_community         = "both"
   route_reflector_client = false
@@ -45,7 +45,7 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 - `route_reflector_client` (Boolean) Configure a neighbor as Route Reflector client
 - `send_community` (String) - Choices: `both`, `extended`, `standard`
 - `shutdown` (Boolean) Administratively shut down this neighbor
-- `update_source_loopback` (Number) Loopback interface
+- `update_source_loopback` (String) Loopback interface
 
 ### Read-Only
 

@@ -37,6 +37,6 @@ data "iosxe_bgp_neighbor" "example" {
 - `id` (String) The path of the retrieved object.
 - `remote_as` (String) Specify a BGP peer-group remote-as
 - `shutdown` (Boolean) Administratively shut down this neighbor
-- `update_source_loopback` (Number) Loopback interface
+- `update_source_loopback` (String) Loopback interface
 
 

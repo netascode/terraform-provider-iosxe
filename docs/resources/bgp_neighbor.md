@@ -19,7 +19,7 @@ resource "iosxe_bgp_neighbor" "example" {
   remote_as              = "65000"
   description            = "BGP Neighbor Description"
   shutdown               = false
-  update_source_loopback = 100
+  update_source_loopback = "100"
 }
 ```
 
@@ -37,7 +37,7 @@ resource "iosxe_bgp_neighbor" "example" {
 - `device` (String) A device name from the provider configuration.
 - `remote_as` (String) Specify a BGP peer-group remote-as
 - `shutdown` (Boolean) Administratively shut down this neighbor
-- `update_source_loopback` (Number) Loopback interface
+- `update_source_loopback` (String) Loopback interface
 
 ### Read-Only
 

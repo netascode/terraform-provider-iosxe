@@ -42,6 +42,6 @@ data "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 - `route_reflector_client` (Boolean) Configure a neighbor as Route Reflector client
 - `send_community` (String)
 - `shutdown` (Boolean) Administratively shut down this neighbor
-- `update_source_loopback` (Number) Loopback interface
+- `update_source_loopback` (String) Loopback interface
 
 

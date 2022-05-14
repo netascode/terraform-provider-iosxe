@@ -5,7 +5,7 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
   remote_as              = "65000"
   description            = "BGP Neighbor Description"
   shutdown               = false
-  update_source_loopback = 100
+  update_source_loopback = "100"
   activate               = true
   send_community         = "both"
   route_reflector_client = false

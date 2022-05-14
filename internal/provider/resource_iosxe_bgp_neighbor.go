@@ -71,7 +71,7 @@ func (t resourceBGPNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, d
 			},
 			"update_source_loopback": {
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").String,
-				Type:                types.Int64Type,
+				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
