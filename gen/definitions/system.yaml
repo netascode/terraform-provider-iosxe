@@ -6,5 +6,8 @@ doc_category: System
 attributes:
   - yang_name: hostname
     example: ROUTER-1
+  - yang_name: ip/routing-conf/routing
+    tf_name: ip_routing
+    example: true
   - yang_name: ipv6/unicast-routing
     example: true

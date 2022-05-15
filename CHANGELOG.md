@@ -7,6 +7,7 @@
 - Add iosxe_dhcp resource and data source
 - Add iosxe_msdp resource and data source
 - Add iosxe_msdp_vrf resource and data source
+- Add ip_routing attribute to iosxe_system resource
 
 ## 0.1.5
 

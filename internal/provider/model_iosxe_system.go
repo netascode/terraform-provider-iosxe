@@ -16,6 +16,7 @@ type System struct {
 	Device             types.String `tfsdk:"device"`
 	Id                 types.String `tfsdk:"id"`
 	Hostname           types.String `tfsdk:"hostname"`
+	IpRouting          types.Bool   `tfsdk:"ip_routing"`
 	Ipv6UnicastRouting types.Bool   `tfsdk:"ipv6_unicast_routing"`
 }
 
@@ -39,6 +40,9 @@ func (data System) toBody() string {
 	if !data.Hostname.Null && !data.Hostname.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"hostname", data.Hostname.Value)
 	}
+	if !data.IpRouting.Null && !data.IpRouting.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.routing-conf.routing", data.IpRouting.Value)
+	}
 	if !data.Ipv6UnicastRouting.Null && !data.Ipv6UnicastRouting.Unknown {
 		if data.Ipv6UnicastRouting.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ipv6.unicast-routing", map[string]string{})
@@ -57,6 +61,11 @@ func (data *System) updateFromBody(res gjson.Result) {
 	} else {
 		data.Hostname.Null = true
 	}
+	if value := res.Get(prefix + "ip.routing-conf.routing"); value.Exists() {
+		data.IpRouting.Value = value.Bool()
+	} else {
+		data.IpRouting.Value = false
+	}
 	if value := res.Get(prefix + "ipv6.unicast-routing"); value.Exists() {
 		data.Ipv6UnicastRouting.Value = true
 	} else {
@@ -72,6 +81,13 @@ func (data *System) fromBody(res gjson.Result) {
 	if value := res.Get(prefix + "hostname"); value.Exists() {
 		data.Hostname.Value = value.String()
 		data.Hostname.Null = false
+	}
+	if value := res.Get(prefix + "ip.routing-conf.routing"); value.Exists() {
+		data.IpRouting.Value = value.Bool()
+		data.IpRouting.Null = false
+	} else {
+		data.IpRouting.Value = false
+		data.IpRouting.Null = false
 	}
 	if value := res.Get(prefix + "ipv6.unicast-routing"); value.Exists() {
 		data.Ipv6UnicastRouting.Value = true
@@ -94,6 +110,10 @@ func (data *System) setUnknownValues() {
 	if data.Hostname.Unknown {
 		data.Hostname.Unknown = false
 		data.Hostname.Null = true
+	}
+	if data.IpRouting.Unknown {
+		data.IpRouting.Unknown = false
+		data.IpRouting.Null = true
 	}
 	if data.Ipv6UnicastRouting.Unknown {
 		data.Ipv6UnicastRouting.Unknown = false

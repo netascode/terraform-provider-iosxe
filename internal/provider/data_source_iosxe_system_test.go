@@ -17,6 +17,7 @@ func TestAccDataSourceIosxeSystem(t *testing.T) {
 				Config: testAccDataSourceIosxeSystemConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.iosxe_system.test", "hostname", "ROUTER-1"),
+					resource.TestCheckResourceAttr("data.iosxe_system.test", "ip_routing", "true"),
 					resource.TestCheckResourceAttr("data.iosxe_system.test", "ipv6_unicast_routing", "true"),
 				),
 			},
@@ -28,6 +29,7 @@ const testAccDataSourceIosxeSystemConfig = `
 
 resource "iosxe_system" "test" {
   hostname = "ROUTER-1"
+  ip_routing = true
   ipv6_unicast_routing = true
 }
 

@@ -15,6 +15,7 @@ This resource can manage the System configuration.
 ```terraform
 resource "iosxe_system" "example" {
   hostname             = "ROUTER-1"
+  ip_routing           = true
   ipv6_unicast_routing = true
 }
 ```
@@ -26,6 +27,7 @@ resource "iosxe_system" "example" {
 
 - `device` (String) A device name from the provider configuration.
 - `hostname` (String) Set system's network name
+- `ip_routing` (Boolean) Enable or disable IP routing
 - `ipv6_unicast_routing` (Boolean) Enable unicast routing
 
 ### Read-Only

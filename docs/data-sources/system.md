@@ -28,6 +28,7 @@ data "iosxe_system" "example" {
 
 - `hostname` (String) Set system's network name
 - `id` (String) The path of the retrieved object.
+- `ip_routing` (Boolean) Enable or disable IP routing
 - `ipv6_unicast_routing` (Boolean) Enable unicast routing
 
 
