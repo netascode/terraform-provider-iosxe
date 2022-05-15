@@ -1,4 +1,4 @@
-## 0.1.6 (unrelease)
+## 0.1.6 (unreleased)
 
 - Add DHCP helper options to iosxe_interface_ethernet resource
 - Add DHCP helper options to iosxe_interface_vlan resource
@@ -10,6 +10,7 @@
 - Add ip_routing attribute to iosxe_system resource
 - Add rp_address attributes to iosxe_pim and iosxe_pim_vrf resources
 - Add mtu attribute to iosxe_system resource
+- Add additional route target options to iosxe_vrf resource
 
 ## 0.1.5
 

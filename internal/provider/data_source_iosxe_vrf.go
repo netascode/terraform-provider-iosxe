@@ -92,6 +92,114 @@ func (t dataSourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Di
 					},
 				}, tfsdk.ListNestedAttributesOptions{}),
 			},
+			"ipv4_route_target_import": {
+				MarkdownDescription: "Import Target-VPN community",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: "Value",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv4_route_target_import_stitching": {
+				MarkdownDescription: "Import Target-VPN community",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: "Value",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+					"stitching": {
+						MarkdownDescription: "VXLAN route target set",
+						Type:                types.BoolType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv4_route_target_export": {
+				MarkdownDescription: "Export Target-VPN community",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: "Value",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv4_route_target_export_stitching": {
+				MarkdownDescription: "Export Target-VPN community",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: "Value",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+					"stitching": {
+						MarkdownDescription: "VXLAN route target set",
+						Type:                types.BoolType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv6_route_target_import": {
+				MarkdownDescription: "Import Target-VPN community",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: "Value",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv6_route_target_import_stitching": {
+				MarkdownDescription: "Import Target-VPN community",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: "Value",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+					"stitching": {
+						MarkdownDescription: "VXLAN route target set",
+						Type:                types.BoolType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv6_route_target_export": {
+				MarkdownDescription: "Export Target-VPN community",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: "Value",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv6_route_target_export_stitching": {
+				MarkdownDescription: "Export Target-VPN community",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: "Value",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+					"stitching": {
+						MarkdownDescription: "VXLAN route target set",
+						Type:                types.BoolType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }

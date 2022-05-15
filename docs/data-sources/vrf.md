@@ -35,10 +35,86 @@ data "iosxe_vrf" "example" {
 - `address_family_ipv6` (Boolean) Address family
 - `description` (String) VRF specific description
 - `id` (String) The path of the retrieved object.
+- `ipv4_route_target_export` (Attributes List) Export Target-VPN community (see [below for nested schema](#nestedatt--ipv4_route_target_export))
+- `ipv4_route_target_export_stitching` (Attributes List) Export Target-VPN community (see [below for nested schema](#nestedatt--ipv4_route_target_export_stitching))
+- `ipv4_route_target_import` (Attributes List) Import Target-VPN community (see [below for nested schema](#nestedatt--ipv4_route_target_import))
+- `ipv4_route_target_import_stitching` (Attributes List) Import Target-VPN community (see [below for nested schema](#nestedatt--ipv4_route_target_import_stitching))
+- `ipv6_route_target_export` (Attributes List) Export Target-VPN community (see [below for nested schema](#nestedatt--ipv6_route_target_export))
+- `ipv6_route_target_export_stitching` (Attributes List) Export Target-VPN community (see [below for nested schema](#nestedatt--ipv6_route_target_export_stitching))
+- `ipv6_route_target_import` (Attributes List) Import Target-VPN community (see [below for nested schema](#nestedatt--ipv6_route_target_import))
+- `ipv6_route_target_import_stitching` (Attributes List) Import Target-VPN community (see [below for nested schema](#nestedatt--ipv6_route_target_import_stitching))
 - `rd` (String) Specify Route Distinguisher
 - `route_target_export` (Attributes List) Export Target-VPN community (see [below for nested schema](#nestedatt--route_target_export))
 - `route_target_import` (Attributes List) Import Target-VPN community (see [below for nested schema](#nestedatt--route_target_import))
 - `vpn_id` (String) Configure VPN ID in rfc2685 format
+
+<a id="nestedatt--ipv4_route_target_export"></a>
+### Nested Schema for `ipv4_route_target_export`
+
+Read-Only:
+
+- `value` (String) Value
+
+
+<a id="nestedatt--ipv4_route_target_export_stitching"></a>
+### Nested Schema for `ipv4_route_target_export_stitching`
+
+Read-Only:
+
+- `stitching` (Boolean) VXLAN route target set
+- `value` (String) Value
+
+
+<a id="nestedatt--ipv4_route_target_import"></a>
+### Nested Schema for `ipv4_route_target_import`
+
+Read-Only:
+
+- `value` (String) Value
+
+
+<a id="nestedatt--ipv4_route_target_import_stitching"></a>
+### Nested Schema for `ipv4_route_target_import_stitching`
+
+Read-Only:
+
+- `stitching` (Boolean) VXLAN route target set
+- `value` (String) Value
+
+
+<a id="nestedatt--ipv6_route_target_export"></a>
+### Nested Schema for `ipv6_route_target_export`
+
+Read-Only:
+
+- `value` (String) Value
+
+
+<a id="nestedatt--ipv6_route_target_export_stitching"></a>
+### Nested Schema for `ipv6_route_target_export_stitching`
+
+Read-Only:
+
+- `stitching` (Boolean) VXLAN route target set
+- `value` (String) Value
+
+
+<a id="nestedatt--ipv6_route_target_import"></a>
+### Nested Schema for `ipv6_route_target_import`
+
+Read-Only:
+
+- `value` (String) Value
+
+
+<a id="nestedatt--ipv6_route_target_import_stitching"></a>
+### Nested Schema for `ipv6_route_target_import_stitching`
+
+Read-Only:
+
+- `stitching` (Boolean) VXLAN route target set
+- `value` (String) Value
+
 
 <a id="nestedatt--route_target_export"></a>
 ### Nested Schema for `route_target_export`

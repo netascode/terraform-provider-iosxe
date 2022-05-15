@@ -16,22 +16,58 @@ import (
 )
 
 type VRF struct {
-	Device            types.String           `tfsdk:"device"`
-	Id                types.String           `tfsdk:"id"`
-	Name              types.String           `tfsdk:"name"`
-	Description       types.String           `tfsdk:"description"`
-	Rd                types.String           `tfsdk:"rd"`
-	AddressFamilyIpv4 types.Bool             `tfsdk:"address_family_ipv4"`
-	AddressFamilyIpv6 types.Bool             `tfsdk:"address_family_ipv6"`
-	VpnId             types.String           `tfsdk:"vpn_id"`
-	RouteTargetImport []VRFRouteTargetImport `tfsdk:"route_target_import"`
-	RouteTargetExport []VRFRouteTargetExport `tfsdk:"route_target_export"`
+	Device                         types.String                        `tfsdk:"device"`
+	Id                             types.String                        `tfsdk:"id"`
+	Name                           types.String                        `tfsdk:"name"`
+	Description                    types.String                        `tfsdk:"description"`
+	Rd                             types.String                        `tfsdk:"rd"`
+	AddressFamilyIpv4              types.Bool                          `tfsdk:"address_family_ipv4"`
+	AddressFamilyIpv6              types.Bool                          `tfsdk:"address_family_ipv6"`
+	VpnId                          types.String                        `tfsdk:"vpn_id"`
+	RouteTargetImport              []VRFRouteTargetImport              `tfsdk:"route_target_import"`
+	RouteTargetExport              []VRFRouteTargetExport              `tfsdk:"route_target_export"`
+	Ipv4RouteTargetImport          []VRFIpv4RouteTargetImport          `tfsdk:"ipv4_route_target_import"`
+	Ipv4RouteTargetImportStitching []VRFIpv4RouteTargetImportStitching `tfsdk:"ipv4_route_target_import_stitching"`
+	Ipv4RouteTargetExport          []VRFIpv4RouteTargetExport          `tfsdk:"ipv4_route_target_export"`
+	Ipv4RouteTargetExportStitching []VRFIpv4RouteTargetExportStitching `tfsdk:"ipv4_route_target_export_stitching"`
+	Ipv6RouteTargetImport          []VRFIpv6RouteTargetImport          `tfsdk:"ipv6_route_target_import"`
+	Ipv6RouteTargetImportStitching []VRFIpv6RouteTargetImportStitching `tfsdk:"ipv6_route_target_import_stitching"`
+	Ipv6RouteTargetExport          []VRFIpv6RouteTargetExport          `tfsdk:"ipv6_route_target_export"`
+	Ipv6RouteTargetExportStitching []VRFIpv6RouteTargetExportStitching `tfsdk:"ipv6_route_target_export_stitching"`
 }
 type VRFRouteTargetImport struct {
 	Value     types.String `tfsdk:"value"`
 	Stitching types.Bool   `tfsdk:"stitching"`
 }
 type VRFRouteTargetExport struct {
+	Value     types.String `tfsdk:"value"`
+	Stitching types.Bool   `tfsdk:"stitching"`
+}
+type VRFIpv4RouteTargetImport struct {
+	Value types.String `tfsdk:"value"`
+}
+type VRFIpv4RouteTargetImportStitching struct {
+	Value     types.String `tfsdk:"value"`
+	Stitching types.Bool   `tfsdk:"stitching"`
+}
+type VRFIpv4RouteTargetExport struct {
+	Value types.String `tfsdk:"value"`
+}
+type VRFIpv4RouteTargetExportStitching struct {
+	Value     types.String `tfsdk:"value"`
+	Stitching types.Bool   `tfsdk:"stitching"`
+}
+type VRFIpv6RouteTargetImport struct {
+	Value types.String `tfsdk:"value"`
+}
+type VRFIpv6RouteTargetImportStitching struct {
+	Value     types.String `tfsdk:"value"`
+	Stitching types.Bool   `tfsdk:"stitching"`
+}
+type VRFIpv6RouteTargetExport struct {
+	Value types.String `tfsdk:"value"`
+}
+type VRFIpv6RouteTargetExportStitching struct {
 	Value     types.String `tfsdk:"value"`
 	Stitching types.Bool   `tfsdk:"stitching"`
 }
@@ -101,6 +137,90 @@ func (data VRF) toBody() string {
 			}
 		}
 	}
+	if len(data.Ipv4RouteTargetImport) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.import-route-target.without-stitching", []interface{}{})
+		for index, item := range data.Ipv4RouteTargetImport {
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.import-route-target.without-stitching"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
+			}
+		}
+	}
+	if len(data.Ipv4RouteTargetImportStitching) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.import-route-target.with-stitching", []interface{}{})
+		for index, item := range data.Ipv4RouteTargetImportStitching {
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.import-route-target.with-stitching"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
+			}
+			if !item.Stitching.Null && !item.Stitching.Unknown {
+				if item.Stitching.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.import-route-target.with-stitching"+"."+strconv.Itoa(index)+"."+"stitching", map[string]string{})
+				}
+			}
+		}
+	}
+	if len(data.Ipv4RouteTargetExport) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.export-route-target.without-stitching", []interface{}{})
+		for index, item := range data.Ipv4RouteTargetExport {
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.export-route-target.without-stitching"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
+			}
+		}
+	}
+	if len(data.Ipv4RouteTargetExportStitching) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.export-route-target.with-stitching", []interface{}{})
+		for index, item := range data.Ipv4RouteTargetExportStitching {
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.export-route-target.with-stitching"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
+			}
+			if !item.Stitching.Null && !item.Stitching.Unknown {
+				if item.Stitching.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv4.route-target.export-route-target.with-stitching"+"."+strconv.Itoa(index)+"."+"stitching", map[string]string{})
+				}
+			}
+		}
+	}
+	if len(data.Ipv6RouteTargetImport) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.import-route-target.without-stitching", []interface{}{})
+		for index, item := range data.Ipv6RouteTargetImport {
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.import-route-target.without-stitching"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
+			}
+		}
+	}
+	if len(data.Ipv6RouteTargetImportStitching) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.import-route-target.with-stitching", []interface{}{})
+		for index, item := range data.Ipv6RouteTargetImportStitching {
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.import-route-target.with-stitching"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
+			}
+			if !item.Stitching.Null && !item.Stitching.Unknown {
+				if item.Stitching.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.import-route-target.with-stitching"+"."+strconv.Itoa(index)+"."+"stitching", map[string]string{})
+				}
+			}
+		}
+	}
+	if len(data.Ipv6RouteTargetExport) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.export-route-target.without-stitching", []interface{}{})
+		for index, item := range data.Ipv6RouteTargetExport {
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.export-route-target.without-stitching"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
+			}
+		}
+	}
+	if len(data.Ipv6RouteTargetExportStitching) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.export-route-target.with-stitching", []interface{}{})
+		for index, item := range data.Ipv6RouteTargetExportStitching {
+			if !item.Value.Null && !item.Value.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.export-route-target.with-stitching"+"."+strconv.Itoa(index)+"."+"asn-ip", item.Value.Value)
+			}
+			if !item.Stitching.Null && !item.Stitching.Unknown {
+				if item.Stitching.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"address-family.ipv6.route-target.export-route-target.with-stitching"+"."+strconv.Itoa(index)+"."+"stitching", map[string]string{})
+				}
+			}
+		}
+	}
 	return body
 }
 
@@ -163,6 +283,90 @@ func (data *VRF) updateFromBody(res gjson.Result) {
 			data.RouteTargetExport[i].Stitching.Value = true
 		} else {
 			data.RouteTargetExport[i].Stitching.Value = false
+		}
+	}
+	for i := range data.Ipv4RouteTargetImport {
+		key := data.Ipv4RouteTargetImport[i].Value.Value
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv4.route-target.import-route-target.without-stitching.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
+			data.Ipv4RouteTargetImport[i].Value.Value = value.String()
+		} else {
+			data.Ipv4RouteTargetImport[i].Value.Null = true
+		}
+	}
+	for i := range data.Ipv4RouteTargetImportStitching {
+		key := data.Ipv4RouteTargetImportStitching[i].Value.Value
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv4.route-target.import-route-target.with-stitching.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
+			data.Ipv4RouteTargetImportStitching[i].Value.Value = value.String()
+		} else {
+			data.Ipv4RouteTargetImportStitching[i].Value.Null = true
+		}
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv4.route-target.import-route-target.with-stitching.#(asn-ip==\"%v\").stitching", prefix, key)); value.Exists() {
+			data.Ipv4RouteTargetImportStitching[i].Stitching.Value = true
+		} else {
+			data.Ipv4RouteTargetImportStitching[i].Stitching.Value = false
+		}
+	}
+	for i := range data.Ipv4RouteTargetExport {
+		key := data.Ipv4RouteTargetExport[i].Value.Value
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv4.route-target.export-route-target.without-stitching.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
+			data.Ipv4RouteTargetExport[i].Value.Value = value.String()
+		} else {
+			data.Ipv4RouteTargetExport[i].Value.Null = true
+		}
+	}
+	for i := range data.Ipv4RouteTargetExportStitching {
+		key := data.Ipv4RouteTargetExportStitching[i].Value.Value
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv4.route-target.export-route-target.with-stitching.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
+			data.Ipv4RouteTargetExportStitching[i].Value.Value = value.String()
+		} else {
+			data.Ipv4RouteTargetExportStitching[i].Value.Null = true
+		}
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv4.route-target.export-route-target.with-stitching.#(asn-ip==\"%v\").stitching", prefix, key)); value.Exists() {
+			data.Ipv4RouteTargetExportStitching[i].Stitching.Value = true
+		} else {
+			data.Ipv4RouteTargetExportStitching[i].Stitching.Value = false
+		}
+	}
+	for i := range data.Ipv6RouteTargetImport {
+		key := data.Ipv6RouteTargetImport[i].Value.Value
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv6.route-target.import-route-target.without-stitching.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
+			data.Ipv6RouteTargetImport[i].Value.Value = value.String()
+		} else {
+			data.Ipv6RouteTargetImport[i].Value.Null = true
+		}
+	}
+	for i := range data.Ipv6RouteTargetImportStitching {
+		key := data.Ipv6RouteTargetImportStitching[i].Value.Value
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv6.route-target.import-route-target.with-stitching.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
+			data.Ipv6RouteTargetImportStitching[i].Value.Value = value.String()
+		} else {
+			data.Ipv6RouteTargetImportStitching[i].Value.Null = true
+		}
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv6.route-target.import-route-target.with-stitching.#(asn-ip==\"%v\").stitching", prefix, key)); value.Exists() {
+			data.Ipv6RouteTargetImportStitching[i].Stitching.Value = true
+		} else {
+			data.Ipv6RouteTargetImportStitching[i].Stitching.Value = false
+		}
+	}
+	for i := range data.Ipv6RouteTargetExport {
+		key := data.Ipv6RouteTargetExport[i].Value.Value
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv6.route-target.export-route-target.without-stitching.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
+			data.Ipv6RouteTargetExport[i].Value.Value = value.String()
+		} else {
+			data.Ipv6RouteTargetExport[i].Value.Null = true
+		}
+	}
+	for i := range data.Ipv6RouteTargetExportStitching {
+		key := data.Ipv6RouteTargetExportStitching[i].Value.Value
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv6.route-target.export-route-target.with-stitching.#(asn-ip==\"%v\").asn-ip", prefix, key)); value.Exists() {
+			data.Ipv6RouteTargetExportStitching[i].Value.Value = value.String()
+		} else {
+			data.Ipv6RouteTargetExportStitching[i].Value.Null = true
+		}
+		if value := res.Get(fmt.Sprintf("%vaddress-family.ipv6.route-target.export-route-target.with-stitching.#(asn-ip==\"%v\").stitching", prefix, key)); value.Exists() {
+			data.Ipv6RouteTargetExportStitching[i].Stitching.Value = true
+		} else {
+			data.Ipv6RouteTargetExportStitching[i].Stitching.Value = false
 		}
 	}
 }
@@ -230,6 +434,118 @@ func (data *VRF) fromBody(res gjson.Result) {
 			return true
 		})
 	}
+	if value := res.Get(prefix + "address-family.ipv4.route-target.import-route-target.without-stitching"); value.Exists() {
+		data.Ipv4RouteTargetImport = make([]VRFIpv4RouteTargetImport, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := VRFIpv4RouteTargetImport{}
+			if cValue := v.Get("asn-ip"); cValue.Exists() {
+				item.Value.Value = cValue.String()
+				item.Value.Null = false
+			}
+			data.Ipv4RouteTargetImport = append(data.Ipv4RouteTargetImport, item)
+			return true
+		})
+	}
+	if value := res.Get(prefix + "address-family.ipv4.route-target.import-route-target.with-stitching"); value.Exists() {
+		data.Ipv4RouteTargetImportStitching = make([]VRFIpv4RouteTargetImportStitching, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := VRFIpv4RouteTargetImportStitching{}
+			if cValue := v.Get("asn-ip"); cValue.Exists() {
+				item.Value.Value = cValue.String()
+				item.Value.Null = false
+			}
+			if cValue := v.Get("stitching"); cValue.Exists() {
+				item.Stitching.Value = true
+				item.Stitching.Null = false
+			}
+			data.Ipv4RouteTargetImportStitching = append(data.Ipv4RouteTargetImportStitching, item)
+			return true
+		})
+	}
+	if value := res.Get(prefix + "address-family.ipv4.route-target.export-route-target.without-stitching"); value.Exists() {
+		data.Ipv4RouteTargetExport = make([]VRFIpv4RouteTargetExport, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := VRFIpv4RouteTargetExport{}
+			if cValue := v.Get("asn-ip"); cValue.Exists() {
+				item.Value.Value = cValue.String()
+				item.Value.Null = false
+			}
+			data.Ipv4RouteTargetExport = append(data.Ipv4RouteTargetExport, item)
+			return true
+		})
+	}
+	if value := res.Get(prefix + "address-family.ipv4.route-target.export-route-target.with-stitching"); value.Exists() {
+		data.Ipv4RouteTargetExportStitching = make([]VRFIpv4RouteTargetExportStitching, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := VRFIpv4RouteTargetExportStitching{}
+			if cValue := v.Get("asn-ip"); cValue.Exists() {
+				item.Value.Value = cValue.String()
+				item.Value.Null = false
+			}
+			if cValue := v.Get("stitching"); cValue.Exists() {
+				item.Stitching.Value = true
+				item.Stitching.Null = false
+			}
+			data.Ipv4RouteTargetExportStitching = append(data.Ipv4RouteTargetExportStitching, item)
+			return true
+		})
+	}
+	if value := res.Get(prefix + "address-family.ipv6.route-target.import-route-target.without-stitching"); value.Exists() {
+		data.Ipv6RouteTargetImport = make([]VRFIpv6RouteTargetImport, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := VRFIpv6RouteTargetImport{}
+			if cValue := v.Get("asn-ip"); cValue.Exists() {
+				item.Value.Value = cValue.String()
+				item.Value.Null = false
+			}
+			data.Ipv6RouteTargetImport = append(data.Ipv6RouteTargetImport, item)
+			return true
+		})
+	}
+	if value := res.Get(prefix + "address-family.ipv6.route-target.import-route-target.with-stitching"); value.Exists() {
+		data.Ipv6RouteTargetImportStitching = make([]VRFIpv6RouteTargetImportStitching, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := VRFIpv6RouteTargetImportStitching{}
+			if cValue := v.Get("asn-ip"); cValue.Exists() {
+				item.Value.Value = cValue.String()
+				item.Value.Null = false
+			}
+			if cValue := v.Get("stitching"); cValue.Exists() {
+				item.Stitching.Value = true
+				item.Stitching.Null = false
+			}
+			data.Ipv6RouteTargetImportStitching = append(data.Ipv6RouteTargetImportStitching, item)
+			return true
+		})
+	}
+	if value := res.Get(prefix + "address-family.ipv6.route-target.export-route-target.without-stitching"); value.Exists() {
+		data.Ipv6RouteTargetExport = make([]VRFIpv6RouteTargetExport, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := VRFIpv6RouteTargetExport{}
+			if cValue := v.Get("asn-ip"); cValue.Exists() {
+				item.Value.Value = cValue.String()
+				item.Value.Null = false
+			}
+			data.Ipv6RouteTargetExport = append(data.Ipv6RouteTargetExport, item)
+			return true
+		})
+	}
+	if value := res.Get(prefix + "address-family.ipv6.route-target.export-route-target.with-stitching"); value.Exists() {
+		data.Ipv6RouteTargetExportStitching = make([]VRFIpv6RouteTargetExportStitching, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := VRFIpv6RouteTargetExportStitching{}
+			if cValue := v.Get("asn-ip"); cValue.Exists() {
+				item.Value.Value = cValue.String()
+				item.Value.Null = false
+			}
+			if cValue := v.Get("stitching"); cValue.Exists() {
+				item.Stitching.Value = true
+				item.Stitching.Null = false
+			}
+			data.Ipv6RouteTargetExportStitching = append(data.Ipv6RouteTargetExportStitching, item)
+			return true
+		})
+	}
 }
 
 func (data *VRF) setUnknownValues() {
@@ -285,6 +601,70 @@ func (data *VRF) setUnknownValues() {
 			data.RouteTargetExport[i].Stitching.Null = true
 		}
 	}
+	for i := range data.Ipv4RouteTargetImport {
+		if data.Ipv4RouteTargetImport[i].Value.Unknown {
+			data.Ipv4RouteTargetImport[i].Value.Unknown = false
+			data.Ipv4RouteTargetImport[i].Value.Null = true
+		}
+	}
+	for i := range data.Ipv4RouteTargetImportStitching {
+		if data.Ipv4RouteTargetImportStitching[i].Value.Unknown {
+			data.Ipv4RouteTargetImportStitching[i].Value.Unknown = false
+			data.Ipv4RouteTargetImportStitching[i].Value.Null = true
+		}
+		if data.Ipv4RouteTargetImportStitching[i].Stitching.Unknown {
+			data.Ipv4RouteTargetImportStitching[i].Stitching.Unknown = false
+			data.Ipv4RouteTargetImportStitching[i].Stitching.Null = true
+		}
+	}
+	for i := range data.Ipv4RouteTargetExport {
+		if data.Ipv4RouteTargetExport[i].Value.Unknown {
+			data.Ipv4RouteTargetExport[i].Value.Unknown = false
+			data.Ipv4RouteTargetExport[i].Value.Null = true
+		}
+	}
+	for i := range data.Ipv4RouteTargetExportStitching {
+		if data.Ipv4RouteTargetExportStitching[i].Value.Unknown {
+			data.Ipv4RouteTargetExportStitching[i].Value.Unknown = false
+			data.Ipv4RouteTargetExportStitching[i].Value.Null = true
+		}
+		if data.Ipv4RouteTargetExportStitching[i].Stitching.Unknown {
+			data.Ipv4RouteTargetExportStitching[i].Stitching.Unknown = false
+			data.Ipv4RouteTargetExportStitching[i].Stitching.Null = true
+		}
+	}
+	for i := range data.Ipv6RouteTargetImport {
+		if data.Ipv6RouteTargetImport[i].Value.Unknown {
+			data.Ipv6RouteTargetImport[i].Value.Unknown = false
+			data.Ipv6RouteTargetImport[i].Value.Null = true
+		}
+	}
+	for i := range data.Ipv6RouteTargetImportStitching {
+		if data.Ipv6RouteTargetImportStitching[i].Value.Unknown {
+			data.Ipv6RouteTargetImportStitching[i].Value.Unknown = false
+			data.Ipv6RouteTargetImportStitching[i].Value.Null = true
+		}
+		if data.Ipv6RouteTargetImportStitching[i].Stitching.Unknown {
+			data.Ipv6RouteTargetImportStitching[i].Stitching.Unknown = false
+			data.Ipv6RouteTargetImportStitching[i].Stitching.Null = true
+		}
+	}
+	for i := range data.Ipv6RouteTargetExport {
+		if data.Ipv6RouteTargetExport[i].Value.Unknown {
+			data.Ipv6RouteTargetExport[i].Value.Unknown = false
+			data.Ipv6RouteTargetExport[i].Value.Null = true
+		}
+	}
+	for i := range data.Ipv6RouteTargetExportStitching {
+		if data.Ipv6RouteTargetExportStitching[i].Value.Unknown {
+			data.Ipv6RouteTargetExportStitching[i].Value.Unknown = false
+			data.Ipv6RouteTargetExportStitching[i].Value.Null = true
+		}
+		if data.Ipv6RouteTargetExportStitching[i].Stitching.Unknown {
+			data.Ipv6RouteTargetExportStitching[i].Stitching.Unknown = false
+			data.Ipv6RouteTargetExportStitching[i].Stitching.Null = true
+		}
+	}
 }
 
 func (data *VRF) getDeletedListItems(state VRF) []string {
@@ -315,6 +695,118 @@ func (data *VRF) getDeletedListItems(state VRF) []string {
 		}
 		if !found {
 			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/route-target/export=%v", state.getPath(), i.Value.Value))
+		}
+	}
+	for _, i := range state.Ipv4RouteTargetImport {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.Ipv4RouteTargetImport {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/address-family/ipv4/route-target/import-route-target/without-stitching=%v", state.getPath(), i.Value.Value))
+		}
+	}
+	for _, i := range state.Ipv4RouteTargetImportStitching {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.Ipv4RouteTargetImportStitching {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/address-family/ipv4/route-target/import-route-target/with-stitching=%v", state.getPath(), i.Value.Value))
+		}
+	}
+	for _, i := range state.Ipv4RouteTargetExport {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.Ipv4RouteTargetExport {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/address-family/ipv4/route-target/export-route-target/without-stitching=%v", state.getPath(), i.Value.Value))
+		}
+	}
+	for _, i := range state.Ipv4RouteTargetExportStitching {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.Ipv4RouteTargetExportStitching {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/address-family/ipv4/route-target/export-route-target/with-stitching=%v", state.getPath(), i.Value.Value))
+		}
+	}
+	for _, i := range state.Ipv6RouteTargetImport {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.Ipv6RouteTargetImport {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/address-family/ipv6/route-target/import-route-target/without-stitching=%v", state.getPath(), i.Value.Value))
+		}
+	}
+	for _, i := range state.Ipv6RouteTargetImportStitching {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.Ipv6RouteTargetImportStitching {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/address-family/ipv6/route-target/import-route-target/with-stitching=%v", state.getPath(), i.Value.Value))
+		}
+	}
+	for _, i := range state.Ipv6RouteTargetExport {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.Ipv6RouteTargetExport {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/address-family/ipv6/route-target/export-route-target/without-stitching=%v", state.getPath(), i.Value.Value))
+		}
+	}
+	for _, i := range state.Ipv6RouteTargetExportStitching {
+		if reflect.ValueOf(i.Value.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.Ipv6RouteTargetExportStitching {
+			if i.Value.Value == j.Value.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/address-family/ipv6/route-target/export-route-target/with-stitching=%v", state.getPath(), i.Value.Value))
 		}
 	}
 	return deletedListItems

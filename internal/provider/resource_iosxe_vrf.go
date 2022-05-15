@@ -121,6 +121,162 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 					},
 				}, tfsdk.ListNestedAttributesOptions{}),
 			},
+			"ipv4_route_target_import": {
+				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv4_route_target_import_stitching": {
+				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+						},
+					},
+					"stitching": {
+						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
+						Type:                types.BoolType,
+						Optional:            true,
+						Computed:            true,
+						PlanModifiers: tfsdk.AttributePlanModifiers{
+							helpers.BooleanDefaultModifier(true),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv4_route_target_export": {
+				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv4_route_target_export_stitching": {
+				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+						},
+					},
+					"stitching": {
+						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
+						Type:                types.BoolType,
+						Optional:            true,
+						Computed:            true,
+						PlanModifiers: tfsdk.AttributePlanModifiers{
+							helpers.BooleanDefaultModifier(true),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv6_route_target_import": {
+				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv6_route_target_import_stitching": {
+				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+						},
+					},
+					"stitching": {
+						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
+						Type:                types.BoolType,
+						Optional:            true,
+						Computed:            true,
+						PlanModifiers: tfsdk.AttributePlanModifiers{
+							helpers.BooleanDefaultModifier(true),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv6_route_target_export": {
+				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
+			"ipv6_route_target_export_stitching": {
+				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"value": {
+						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Validators: []tfsdk.AttributeValidator{
+							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+						},
+					},
+					"stitching": {
+						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
+						Type:                types.BoolType,
+						Optional:            true,
+						Computed:            true,
+						PlanModifiers: tfsdk.AttributePlanModifiers{
+							helpers.BooleanDefaultModifier(true),
+						},
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }

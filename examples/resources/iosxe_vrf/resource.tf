@@ -17,4 +17,44 @@ resource "iosxe_vrf" "example" {
       stitching = false
     }
   ]
+  ipv4_route_target_import = [
+    {
+      value = "22:22"
+    }
+  ]
+  ipv4_route_target_import_stitching = [
+    {
+      value = "22:22"
+    }
+  ]
+  ipv4_route_target_export = [
+    {
+      value = "22:22"
+    }
+  ]
+  ipv4_route_target_export_stitching = [
+    {
+      value = "22:22"
+    }
+  ]
+  ipv6_route_target_import = [
+    {
+      value = "22:22"
+    }
+  ]
+  ipv6_route_target_import_stitching = [
+    {
+      value = "22:22"
+    }
+  ]
+  ipv6_route_target_export = [
+    {
+      value = "22:22"
+    }
+  ]
+  ipv6_route_target_export_stitching = [
+    {
+      value = "22:22"
+    }
+  ]
 }

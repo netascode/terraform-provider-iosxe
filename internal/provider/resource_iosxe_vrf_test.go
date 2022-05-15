@@ -26,6 +26,14 @@ func TestAccIosxeVRF(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_import.0.stitching", "false"),
 					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_export.0.value", "22:22"),
 					resource.TestCheckResourceAttr("iosxe_vrf.test", "route_target_export.0.stitching", "false"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "ipv4_route_target_import.0.value", "22:22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "ipv4_route_target_import_stitching.0.value", "22:22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "ipv4_route_target_export.0.value", "22:22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "ipv4_route_target_export_stitching.0.value", "22:22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "ipv6_route_target_import.0.value", "22:22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "ipv6_route_target_import_stitching.0.value", "22:22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "ipv6_route_target_export.0.value", "22:22"),
+					resource.TestCheckResourceAttr("iosxe_vrf.test", "ipv6_route_target_export_stitching.0.value", "22:22"),
 				),
 			},
 			{
@@ -61,6 +69,30 @@ func testAccIosxeVRFConfig_all() string {
 		route_target_export = [{
 		value = "22:22"
 		stitching = false
+		}]
+		ipv4_route_target_import = [{
+		value = "22:22"
+		}]
+		ipv4_route_target_import_stitching = [{
+		value = "22:22"
+		}]
+		ipv4_route_target_export = [{
+		value = "22:22"
+		}]
+		ipv4_route_target_export_stitching = [{
+		value = "22:22"
+		}]
+		ipv6_route_target_import = [{
+		value = "22:22"
+		}]
+		ipv6_route_target_import_stitching = [{
+		value = "22:22"
+		}]
+		ipv6_route_target_export = [{
+		value = "22:22"
+		}]
+		ipv6_route_target_export_stitching = [{
+		value = "22:22"
 		}]
 	}
 	`
