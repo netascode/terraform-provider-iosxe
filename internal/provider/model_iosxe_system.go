@@ -5,6 +5,7 @@ package provider
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -18,6 +19,7 @@ type System struct {
 	Hostname           types.String `tfsdk:"hostname"`
 	IpRouting          types.Bool   `tfsdk:"ip_routing"`
 	Ipv6UnicastRouting types.Bool   `tfsdk:"ipv6_unicast_routing"`
+	Mtu                types.Int64  `tfsdk:"mtu"`
 }
 
 func (data System) getPath() string {
@@ -48,6 +50,9 @@ func (data System) toBody() string {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ipv6.unicast-routing", map[string]string{})
 		}
 	}
+	if !data.Mtu.Null && !data.Mtu.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"system.Cisco-IOS-XE-switch:mtu.size", strconv.FormatInt(data.Mtu.Value, 10))
+	}
 	return body
 }
 
@@ -70,6 +75,11 @@ func (data *System) updateFromBody(res gjson.Result) {
 		data.Ipv6UnicastRouting.Value = true
 	} else {
 		data.Ipv6UnicastRouting.Value = false
+	}
+	if value := res.Get(prefix + "system.Cisco-IOS-XE-switch:mtu.size"); value.Exists() {
+		data.Mtu.Value = value.Int()
+	} else {
+		data.Mtu.Null = true
 	}
 }
 
@@ -96,6 +106,10 @@ func (data *System) fromBody(res gjson.Result) {
 		data.Ipv6UnicastRouting.Value = false
 		data.Ipv6UnicastRouting.Null = false
 	}
+	if value := res.Get(prefix + "system.Cisco-IOS-XE-switch:mtu.size"); value.Exists() {
+		data.Mtu.Value = value.Int()
+		data.Mtu.Null = false
+	}
 }
 
 func (data *System) setUnknownValues() {
@@ -118,6 +132,10 @@ func (data *System) setUnknownValues() {
 	if data.Ipv6UnicastRouting.Unknown {
 		data.Ipv6UnicastRouting.Unknown = false
 		data.Ipv6UnicastRouting.Null = true
+	}
+	if data.Mtu.Unknown {
+		data.Mtu.Unknown = false
+		data.Mtu.Null = true
 	}
 }
 

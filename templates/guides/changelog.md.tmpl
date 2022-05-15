@@ -18,6 +18,7 @@ description: |-
 - Add iosxe_msdp_vrf resource and data source
 - Add ip_routing attribute to iosxe_system resource
 - Add rp_address attributes to iosxe_pim and iosxe_pim_vrf resources
+- Add mtu attribute to iosxe_system resource
 
 ## 0.1.5
 

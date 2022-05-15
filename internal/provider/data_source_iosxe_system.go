@@ -45,6 +45,11 @@ func (t dataSourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 				Type:                types.BoolType,
 				Computed:            true,
 			},
+			"mtu": {
+				MarkdownDescription: "",
+				Type:                types.Int64Type,
+				Computed:            true,
+			},
 		},
 	}, nil
 }

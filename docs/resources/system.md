@@ -29,6 +29,7 @@ resource "iosxe_system" "example" {
 - `hostname` (String) Set system's network name
 - `ip_routing` (Boolean) Enable or disable IP routing
 - `ipv6_unicast_routing` (Boolean) Enable unicast routing
+- `mtu` (Number) - Range: `1500`-`9198`
 
 ### Read-Only
 

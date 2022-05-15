@@ -56,6 +56,15 @@ func (t resourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 				Optional:            true,
 				Computed:            true,
 			},
+			"mtu": {
+				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1500, 9198).String,
+				Type:                types.Int64Type,
+				Optional:            true,
+				Computed:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.IntegerRangeValidator(1500, 9198),
+				},
+			},
 		},
 	}, nil
 }

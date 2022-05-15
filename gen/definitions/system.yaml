@@ -11,3 +11,7 @@ attributes:
     example: true
   - yang_name: ipv6/unicast-routing
     example: true
+  - yang_name: system/Cisco-IOS-XE-switch:mtu/size
+    tf_name: mtu
+    exclude_test: true
+    example: 9198
