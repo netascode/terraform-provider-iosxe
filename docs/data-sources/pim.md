@@ -33,6 +33,9 @@ data "iosxe_pim" "example" {
 - `bsr_candidate_mask` (Number) Hash Mask length for RP selection
 - `bsr_candidate_priority` (Number) Priority value for candidate bootstrap router
 - `id` (String) The path of the retrieved object.
+- `rp_address` (String) IP address of Rendezvous-point for group
+- `rp_address_bidir` (Boolean) Group range treated in bidirectional shared-tree mode
+- `rp_address_override` (Boolean) Overrides dynamically learnt RP mappings
 - `rp_addresses` (Attributes List) PIM RP-address (Rendezvous Point) (see [below for nested schema](#nestedatt--rp_addresses))
 - `rp_candidates` (Attributes List) To be a PIM version 2 RP candidate (see [below for nested schema](#nestedatt--rp_candidates))
 - `ssm_default` (Boolean) Use 232/8 group range for SSM

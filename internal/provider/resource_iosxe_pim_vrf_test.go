@@ -24,7 +24,10 @@ func TestAccIosxePIMVRF(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "bsr_candidate_priority", "10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "bsr_candidate_accept_rp_candidate", "10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "ssm_range", "10"),
-					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "ssm_default", "true"),
+					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "ssm_default", "false"),
+					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_address", "19.19.19.19"),
+					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_address_override", "false"),
+					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_address_bidir", "true"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_addresses.0.access_list", "10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_addresses.0.rp_address", "10.10.10.10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_addresses.0.override", "false"),
@@ -109,7 +112,10 @@ func testAccIosxePIMVRFConfig_all() string {
 		bsr_candidate_priority = 10
 		bsr_candidate_accept_rp_candidate = "10"
 		ssm_range = "10"
-		ssm_default = true
+		ssm_default = false
+		rp_address = "19.19.19.19"
+		rp_address_override = false
+		rp_address_bidir = true
 		rp_addresses = [{
 		access_list = "10"
 		rp_address = "10.10.10.10"

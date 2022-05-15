@@ -25,6 +25,9 @@ type PIM struct {
 	BsrCandidateAcceptRpCandidate types.String      `tfsdk:"bsr_candidate_accept_rp_candidate"`
 	SsmRange                      types.String      `tfsdk:"ssm_range"`
 	SsmDefault                    types.Bool        `tfsdk:"ssm_default"`
+	RpAddress                     types.String      `tfsdk:"rp_address"`
+	RpAddressOverride             types.Bool        `tfsdk:"rp_address_override"`
+	RpAddressBidir                types.Bool        `tfsdk:"rp_address_bidir"`
 	RpAddresses                   []PIMRpAddresses  `tfsdk:"rp_addresses"`
 	RpCandidates                  []PIMRpCandidates `tfsdk:"rp_candidates"`
 }
@@ -85,6 +88,19 @@ func (data PIM) toBody() string {
 	if !data.SsmDefault.Null && !data.SsmDefault.Unknown {
 		if data.SsmDefault.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-multicast:ssm.default", map[string]string{})
+		}
+	}
+	if !data.RpAddress.Null && !data.RpAddress.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-multicast:rp-address-conf.address", data.RpAddress.Value)
+	}
+	if !data.RpAddressOverride.Null && !data.RpAddressOverride.Unknown {
+		if data.RpAddressOverride.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-multicast:rp-address-conf.override", map[string]string{})
+		}
+	}
+	if !data.RpAddressBidir.Null && !data.RpAddressBidir.Unknown {
+		if data.RpAddressBidir.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-multicast:rp-address-conf.bidir", map[string]string{})
 		}
 	}
 	if len(data.RpAddresses) > 0 {
@@ -177,6 +193,21 @@ func (data *PIM) updateFromBody(res gjson.Result) {
 		data.SsmDefault.Value = true
 	} else {
 		data.SsmDefault.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.address"); value.Exists() {
+		data.RpAddress.Value = value.String()
+	} else {
+		data.RpAddress.Null = true
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.override"); value.Exists() {
+		data.RpAddressOverride.Value = true
+	} else {
+		data.RpAddressOverride.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.bidir"); value.Exists() {
+		data.RpAddressBidir.Value = true
+	} else {
+		data.RpAddressBidir.Value = false
 	}
 	for i := range data.RpAddresses {
 		key := data.RpAddresses[i].AccessList.Value
@@ -277,6 +308,24 @@ func (data *PIM) fromBody(res gjson.Result) {
 		data.SsmDefault.Value = false
 		data.SsmDefault.Null = false
 	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.address"); value.Exists() {
+		data.RpAddress.Value = value.String()
+		data.RpAddress.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.override"); value.Exists() {
+		data.RpAddressOverride.Value = true
+		data.RpAddressOverride.Null = false
+	} else {
+		data.RpAddressOverride.Value = false
+		data.RpAddressOverride.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.bidir"); value.Exists() {
+		data.RpAddressBidir.Value = true
+		data.RpAddressBidir.Null = false
+	} else {
+		data.RpAddressBidir.Value = false
+		data.RpAddressBidir.Null = false
+	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-list"); value.Exists() {
 		data.RpAddresses = make([]PIMRpAddresses, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -372,6 +421,18 @@ func (data *PIM) setUnknownValues() {
 		data.SsmDefault.Unknown = false
 		data.SsmDefault.Null = true
 	}
+	if data.RpAddress.Unknown {
+		data.RpAddress.Unknown = false
+		data.RpAddress.Null = true
+	}
+	if data.RpAddressOverride.Unknown {
+		data.RpAddressOverride.Unknown = false
+		data.RpAddressOverride.Null = true
+	}
+	if data.RpAddressBidir.Unknown {
+		data.RpAddressBidir.Unknown = false
+		data.RpAddressBidir.Null = true
+	}
 	for i := range data.RpAddresses {
 		if data.RpAddresses[i].AccessList.Unknown {
 			data.RpAddresses[i].AccessList.Unknown = false
@@ -454,6 +515,12 @@ func (data *PIM) getEmptyLeafsDelete() []string {
 	}
 	if !data.SsmDefault.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:ssm/default", data.getPath()))
+	}
+	if !data.RpAddressOverride.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-conf/override", data.getPath()))
+	}
+	if !data.RpAddressBidir.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-conf/bidir", data.getPath()))
 	}
 	return emptyLeafsDelete
 }

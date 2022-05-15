@@ -22,6 +22,15 @@ attributes:
   - yang_name: Cisco-IOS-XE-multicast:ssm/range
     example: 10
   - yang_name: Cisco-IOS-XE-multicast:ssm/default
+    example: false
+  - yang_name: Cisco-IOS-XE-multicast:rp-address-conf/address
+    tf_name: rp_address
+    example: 9.9.9.9
+  - yang_name: Cisco-IOS-XE-multicast:rp-address-conf/override
+    tf_name: rp_address_override
+    example: false
+  - yang_name: Cisco-IOS-XE-multicast:rp-address-conf/bidir
+    tf_name: rp_address_bidir
     example: true
   - yang_name: Cisco-IOS-XE-multicast:rp-address-list
     tf_name: rp_addresses

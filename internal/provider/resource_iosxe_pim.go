@@ -92,6 +92,27 @@ func (t resourcePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 				Optional:            true,
 				Computed:            true,
 			},
+			"rp_address": {
+				MarkdownDescription: helpers.NewAttributeDescription("IP address of Rendezvous-point for group").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				},
+			},
+			"rp_address_override": {
+				MarkdownDescription: helpers.NewAttributeDescription("Overrides dynamically learnt RP mappings").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"rp_address_bidir": {
+				MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
 			"rp_addresses": {
 				MarkdownDescription: helpers.NewAttributeDescription("PIM RP-address (Rendezvous Point)").String,
 				Optional:            true,

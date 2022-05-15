@@ -6,7 +6,10 @@ resource "iosxe_pim" "example" {
   bsr_candidate_priority            = 10
   bsr_candidate_accept_rp_candidate = "10"
   ssm_range                         = "10"
-  ssm_default                       = true
+  ssm_default                       = false
+  rp_address                        = "9.9.9.9"
+  rp_address_override               = false
+  rp_address_bidir                  = true
   rp_addresses = [
     {
       access_list = "10"

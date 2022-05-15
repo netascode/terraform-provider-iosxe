@@ -8,6 +8,7 @@
 - Add iosxe_msdp resource and data source
 - Add iosxe_msdp_vrf resource and data source
 - Add ip_routing attribute to iosxe_system resource
+- Add rp_address attributes to iosxe_pim and iosxe_pim_vrf resources
 
 ## 0.1.5
 

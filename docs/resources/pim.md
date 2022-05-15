@@ -21,7 +21,10 @@ resource "iosxe_pim" "example" {
   bsr_candidate_priority            = 10
   bsr_candidate_accept_rp_candidate = "10"
   ssm_range                         = "10"
-  ssm_default                       = true
+  ssm_default                       = false
+  rp_address                        = "9.9.9.9"
+  rp_address_override               = false
+  rp_address_bidir                  = true
   rp_addresses = [
     {
       access_list = "10"
@@ -57,6 +60,9 @@ resource "iosxe_pim" "example" {
 - `bsr_candidate_priority` (Number) Priority value for candidate bootstrap router
   - Range: `0`-`255`
 - `device` (String) A device name from the provider configuration.
+- `rp_address` (String) IP address of Rendezvous-point for group
+- `rp_address_bidir` (Boolean) Group range treated in bidirectional shared-tree mode
+- `rp_address_override` (Boolean) Overrides dynamically learnt RP mappings
 - `rp_addresses` (Attributes List) PIM RP-address (Rendezvous Point) (see [below for nested schema](#nestedatt--rp_addresses))
 - `rp_candidates` (Attributes List) To be a PIM version 2 RP candidate (see [below for nested schema](#nestedatt--rp_candidates))
 - `ssm_default` (Boolean) Use 232/8 group range for SSM

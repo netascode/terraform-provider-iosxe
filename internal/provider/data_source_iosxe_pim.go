@@ -70,6 +70,21 @@ func (t dataSourcePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Di
 				Type:                types.BoolType,
 				Computed:            true,
 			},
+			"rp_address": {
+				MarkdownDescription: "IP address of Rendezvous-point for group",
+				Type:                types.StringType,
+				Computed:            true,
+			},
+			"rp_address_override": {
+				MarkdownDescription: "Overrides dynamically learnt RP mappings",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"rp_address_bidir": {
+				MarkdownDescription: "Group range treated in bidirectional shared-tree mode",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
 			"rp_addresses": {
 				MarkdownDescription: "PIM RP-address (Rendezvous Point)",
 				Computed:            true,
