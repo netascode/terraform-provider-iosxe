@@ -1,4 +1,4 @@
-## 0.1.6 (unreleased)
+## 0.1.6
 
 - Add DHCP helper options to iosxe_interface_ethernet resource
 - Add DHCP helper options to iosxe_interface_vlan resource
