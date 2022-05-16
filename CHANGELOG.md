@@ -1,4 +1,4 @@
-## 0.1.7 (unreleased)
+## 0.1.7
 
 - Add multicast_routing_switch attribute to iosxe_system resource
 
