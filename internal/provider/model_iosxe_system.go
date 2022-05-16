@@ -22,6 +22,7 @@ type System struct {
 	Ipv6UnicastRouting          types.Bool                   `tfsdk:"ipv6_unicast_routing"`
 	Mtu                         types.Int64                  `tfsdk:"mtu"`
 	MulticastRouting            types.Bool                   `tfsdk:"multicast_routing"`
+	MulticastRoutingSwitch      types.Bool                   `tfsdk:"multicast_routing_switch"`
 	MulticastRoutingDistributed types.Bool                   `tfsdk:"multicast_routing_distributed"`
 	MulticastRoutingVrfs        []SystemMulticastRoutingVrfs `tfsdk:"multicast_routing_vrfs"`
 }
@@ -64,6 +65,11 @@ func (data System) toBody() string {
 	if !data.MulticastRouting.Null && !data.MulticastRouting.Unknown {
 		if data.MulticastRouting.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.Cisco-IOS-XE-multicast:multicast-routing", map[string]string{})
+		}
+	}
+	if !data.MulticastRoutingSwitch.Null && !data.MulticastRoutingSwitch.Unknown {
+		if data.MulticastRoutingSwitch.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.Cisco-IOS-XE-multicast:mcr-conf.multicast-routing", map[string]string{})
 		}
 	}
 	if !data.MulticastRoutingDistributed.Null && !data.MulticastRoutingDistributed.Unknown {
@@ -116,6 +122,11 @@ func (data *System) updateFromBody(res gjson.Result) {
 		data.MulticastRouting.Value = true
 	} else {
 		data.MulticastRouting.Value = false
+	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:mcr-conf.multicast-routing"); value.Exists() {
+		data.MulticastRoutingSwitch.Value = true
+	} else {
+		data.MulticastRoutingSwitch.Value = false
 	}
 	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing.distributed"); value.Exists() {
 		data.MulticastRoutingDistributed.Value = true
@@ -171,6 +182,13 @@ func (data *System) fromBody(res gjson.Result) {
 		data.MulticastRouting.Value = false
 		data.MulticastRouting.Null = false
 	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:mcr-conf.multicast-routing"); value.Exists() {
+		data.MulticastRoutingSwitch.Value = true
+		data.MulticastRoutingSwitch.Null = false
+	} else {
+		data.MulticastRoutingSwitch.Value = false
+		data.MulticastRoutingSwitch.Null = false
+	}
 	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing.distributed"); value.Exists() {
 		data.MulticastRoutingDistributed.Value = true
 		data.MulticastRoutingDistributed.Null = false
@@ -225,6 +243,10 @@ func (data *System) setUnknownValues() {
 		data.MulticastRouting.Unknown = false
 		data.MulticastRouting.Null = true
 	}
+	if data.MulticastRoutingSwitch.Unknown {
+		data.MulticastRoutingSwitch.Unknown = false
+		data.MulticastRoutingSwitch.Null = true
+	}
 	if data.MulticastRoutingDistributed.Unknown {
 		data.MulticastRoutingDistributed.Unknown = false
 		data.MulticastRoutingDistributed.Null = true
@@ -264,6 +286,9 @@ func (data *System) getEmptyLeafsDelete() []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Ipv6UnicastRouting.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ipv6/unicast-routing", data.getPath()))
+	}
+	if !data.MulticastRoutingSwitch.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:mcr-conf/multicast-routing", data.getPath()))
 	}
 	if !data.MulticastRoutingDistributed.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/distributed", data.getPath()))

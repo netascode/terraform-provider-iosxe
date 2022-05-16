@@ -1,3 +1,7 @@
+## 0.1.7 (unreleased)
+
+- Add multicast_routing_switch attribute to iosxe_system resource
+
 ## 0.1.6
 
 - Add DHCP helper options to iosxe_interface_ethernet resource

@@ -8,6 +8,7 @@ attributes:
     example: ROUTER-1
   - yang_name: ip/routing-conf/routing
     tf_name: ip_routing
+    exclude_test: true
     example: true
   - yang_name: ipv6/unicast-routing
     example: true
@@ -16,6 +17,11 @@ attributes:
     exclude_test: true
     example: 9198
   - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing
+    example: true
+  - yang_name: ip/Cisco-IOS-XE-multicast:mcr-conf/multicast-routing
+    tf_name: multicast_routing_switch
+    description: Enable IP multicast forwarding, some XE devices use this option instead of `multicast_routing`.
+    exclude_test: true
     example: true
   - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing/distributed
     example: true

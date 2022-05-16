@@ -17,7 +17,6 @@ func TestAccIosxeSystem(t *testing.T) {
 				Config: testAccIosxeSystemPrerequisitesConfig + testAccIosxeSystemConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("iosxe_system.test", "hostname", "ROUTER-1"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "ip_routing", "true"),
 					resource.TestCheckResourceAttr("iosxe_system.test", "ipv6_unicast_routing", "true"),
 					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing", "true"),
 					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_distributed", "true"),
@@ -66,7 +65,6 @@ func testAccIosxeSystemConfig_all() string {
 	return `
 	resource "iosxe_system" "test" {
 		hostname = "ROUTER-1"
-		ip_routing = true
 		ipv6_unicast_routing = true
 		multicast_routing = true
 		multicast_routing_distributed = true

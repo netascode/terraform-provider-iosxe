@@ -33,6 +33,7 @@ data "iosxe_system" "example" {
 - `mtu` (Number)
 - `multicast_routing` (Boolean) Enable IP multicast forwarding
 - `multicast_routing_distributed` (Boolean) Distributed multicast switching
+- `multicast_routing_switch` (Boolean) Enable IP multicast forwarding, some XE devices use this option instead of `multicast_routing`.
 - `multicast_routing_vrfs` (Attributes List) Select VPN Routing/Forwarding instance (see [below for nested schema](#nestedatt--multicast_routing_vrfs))
 
 <a id="nestedatt--multicast_routing_vrfs"></a>

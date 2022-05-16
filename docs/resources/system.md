@@ -15,7 +15,6 @@ This resource can manage the System configuration.
 ```terraform
 resource "iosxe_system" "example" {
   hostname                      = "ROUTER-1"
-  ip_routing                    = true
   ipv6_unicast_routing          = true
   multicast_routing             = true
   multicast_routing_distributed = true
@@ -40,6 +39,7 @@ resource "iosxe_system" "example" {
 - `mtu` (Number) - Range: `1500`-`9198`
 - `multicast_routing` (Boolean) Enable IP multicast forwarding
 - `multicast_routing_distributed` (Boolean) Distributed multicast switching
+- `multicast_routing_switch` (Boolean) Enable IP multicast forwarding, some XE devices use this option instead of `multicast_routing`.
 - `multicast_routing_vrfs` (Attributes List) Select VPN Routing/Forwarding instance (see [below for nested schema](#nestedatt--multicast_routing_vrfs))
 
 ### Read-Only

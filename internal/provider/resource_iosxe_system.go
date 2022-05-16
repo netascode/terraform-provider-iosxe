@@ -71,6 +71,12 @@ func (t resourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 				Optional:            true,
 				Computed:            true,
 			},
+			"multicast_routing_switch": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable IP multicast forwarding, some XE devices use this option instead of `multicast_routing`.").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
 			"multicast_routing_distributed": {
 				MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,
 				Type:                types.BoolType,
