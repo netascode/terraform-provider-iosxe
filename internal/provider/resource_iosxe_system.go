@@ -65,6 +65,36 @@ func (t resourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 					helpers.IntegerRangeValidator(1500, 9198),
 				},
 			},
+			"multicast_routing": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable IP multicast forwarding").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"multicast_routing_distributed": {
+				MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"multicast_routing_vrfs": {
+				MarkdownDescription: helpers.NewAttributeDescription("Select VPN Routing/Forwarding instance").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"vrf": {
+						MarkdownDescription: helpers.NewAttributeDescription("").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+					},
+					"distributed": {
+						MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,
+						Type:                types.BoolType,
+						Optional:            true,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }

@@ -14,11 +14,15 @@ func TestAccIosxeSystem(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccIosxeSystemConfig_all(),
+				Config: testAccIosxeSystemPrerequisitesConfig + testAccIosxeSystemConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("iosxe_system.test", "hostname", "ROUTER-1"),
 					resource.TestCheckResourceAttr("iosxe_system.test", "ip_routing", "true"),
 					resource.TestCheckResourceAttr("iosxe_system.test", "ipv6_unicast_routing", "true"),
+					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing", "true"),
+					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_distributed", "true"),
+					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.vrf", "VRF1"),
+					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.distributed", "true"),
 				),
 			},
 			{
@@ -30,9 +34,30 @@ func TestAccIosxeSystem(t *testing.T) {
 	})
 }
 
+const testAccIosxeSystemPrerequisitesConfig = `
+resource "iosxe_restconf" "PreReq0" {
+  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+  delete = false
+  attributes = {
+      name = "VRF1"
+  }
+}
+
+resource "iosxe_restconf" "PreReq1" {
+  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
+  delete = false
+  attributes = {
+      ipv4 = ""
+  }
+  depends_on = [iosxe_restconf.PreReq0, ]
+}
+
+`
+
 func testAccIosxeSystemConfig_minimum() string {
 	return `
 	resource "iosxe_system" "test" {
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }
@@ -43,6 +68,13 @@ func testAccIosxeSystemConfig_all() string {
 		hostname = "ROUTER-1"
 		ip_routing = true
 		ipv6_unicast_routing = true
+		multicast_routing = true
+		multicast_routing_distributed = true
+		multicast_routing_vrfs = [{
+		vrf = "VRF1"
+		distributed = true
+		}]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

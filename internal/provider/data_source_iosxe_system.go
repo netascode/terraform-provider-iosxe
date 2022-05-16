@@ -50,6 +50,32 @@ func (t dataSourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 				Type:                types.Int64Type,
 				Computed:            true,
 			},
+			"multicast_routing": {
+				MarkdownDescription: "Enable IP multicast forwarding",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"multicast_routing_distributed": {
+				MarkdownDescription: "Distributed multicast switching",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"multicast_routing_vrfs": {
+				MarkdownDescription: "Select VPN Routing/Forwarding instance",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"vrf": {
+						MarkdownDescription: "",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+					"distributed": {
+						MarkdownDescription: "Distributed multicast switching",
+						Type:                types.BoolType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }

@@ -31,5 +31,16 @@ data "iosxe_system" "example" {
 - `ip_routing` (Boolean) Enable or disable IP routing
 - `ipv6_unicast_routing` (Boolean) Enable unicast routing
 - `mtu` (Number)
+- `multicast_routing` (Boolean) Enable IP multicast forwarding
+- `multicast_routing_distributed` (Boolean) Distributed multicast switching
+- `multicast_routing_vrfs` (Attributes List) Select VPN Routing/Forwarding instance (see [below for nested schema](#nestedatt--multicast_routing_vrfs))
+
+<a id="nestedatt--multicast_routing_vrfs"></a>
+### Nested Schema for `multicast_routing_vrfs`
+
+Read-Only:
+
+- `distributed` (Boolean) Distributed multicast switching
+- `vrf` (String)
 
 

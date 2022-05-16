@@ -15,3 +15,29 @@ attributes:
     tf_name: mtu
     exclude_test: true
     example: 9198
+  - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing
+    example: true
+  - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing/distributed
+    example: true
+  - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing/vrf
+    tf_name: multicast_routing_vrfs
+    type: List
+    attributes:
+      - yang_name: name
+        tf_name: vrf
+        example: VRF1
+        id: true
+      - yang_name: distributed
+        example: true
+test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
+    no_delete: true
+    attributes:
+      - name: name
+        value: VRF1
+  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family
+    no_delete: true
+    attributes:
+      - name: ipv4
+        value: ''
+    dependencies: [0]

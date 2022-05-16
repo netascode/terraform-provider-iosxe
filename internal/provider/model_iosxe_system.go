@@ -4,6 +4,7 @@ package provider
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"strconv"
 
@@ -14,12 +15,19 @@ import (
 )
 
 type System struct {
-	Device             types.String `tfsdk:"device"`
-	Id                 types.String `tfsdk:"id"`
-	Hostname           types.String `tfsdk:"hostname"`
-	IpRouting          types.Bool   `tfsdk:"ip_routing"`
-	Ipv6UnicastRouting types.Bool   `tfsdk:"ipv6_unicast_routing"`
-	Mtu                types.Int64  `tfsdk:"mtu"`
+	Device                      types.String                 `tfsdk:"device"`
+	Id                          types.String                 `tfsdk:"id"`
+	Hostname                    types.String                 `tfsdk:"hostname"`
+	IpRouting                   types.Bool                   `tfsdk:"ip_routing"`
+	Ipv6UnicastRouting          types.Bool                   `tfsdk:"ipv6_unicast_routing"`
+	Mtu                         types.Int64                  `tfsdk:"mtu"`
+	MulticastRouting            types.Bool                   `tfsdk:"multicast_routing"`
+	MulticastRoutingDistributed types.Bool                   `tfsdk:"multicast_routing_distributed"`
+	MulticastRoutingVrfs        []SystemMulticastRoutingVrfs `tfsdk:"multicast_routing_vrfs"`
+}
+type SystemMulticastRoutingVrfs struct {
+	Vrf         types.String `tfsdk:"vrf"`
+	Distributed types.Bool   `tfsdk:"distributed"`
 }
 
 func (data System) getPath() string {
@@ -53,6 +61,29 @@ func (data System) toBody() string {
 	if !data.Mtu.Null && !data.Mtu.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"system.Cisco-IOS-XE-switch:mtu.size", strconv.FormatInt(data.Mtu.Value, 10))
 	}
+	if !data.MulticastRouting.Null && !data.MulticastRouting.Unknown {
+		if data.MulticastRouting.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.Cisco-IOS-XE-multicast:multicast-routing", map[string]string{})
+		}
+	}
+	if !data.MulticastRoutingDistributed.Null && !data.MulticastRoutingDistributed.Unknown {
+		if data.MulticastRoutingDistributed.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.Cisco-IOS-XE-multicast:multicast-routing.distributed", map[string]string{})
+		}
+	}
+	if len(data.MulticastRoutingVrfs) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.Cisco-IOS-XE-multicast:multicast-routing.vrf", []interface{}{})
+		for index, item := range data.MulticastRoutingVrfs {
+			if !item.Vrf.Null && !item.Vrf.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.Cisco-IOS-XE-multicast:multicast-routing.vrf"+"."+strconv.Itoa(index)+"."+"name", item.Vrf.Value)
+			}
+			if !item.Distributed.Null && !item.Distributed.Unknown {
+				if item.Distributed.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.Cisco-IOS-XE-multicast:multicast-routing.vrf"+"."+strconv.Itoa(index)+"."+"distributed", map[string]string{})
+				}
+			}
+		}
+	}
 	return body
 }
 
@@ -80,6 +111,29 @@ func (data *System) updateFromBody(res gjson.Result) {
 		data.Mtu.Value = value.Int()
 	} else {
 		data.Mtu.Null = true
+	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing"); value.Exists() {
+		data.MulticastRouting.Value = true
+	} else {
+		data.MulticastRouting.Value = false
+	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing.distributed"); value.Exists() {
+		data.MulticastRoutingDistributed.Value = true
+	} else {
+		data.MulticastRoutingDistributed.Value = false
+	}
+	for i := range data.MulticastRoutingVrfs {
+		key := data.MulticastRoutingVrfs[i].Vrf.Value
+		if value := res.Get(fmt.Sprintf("%vip.Cisco-IOS-XE-multicast:multicast-routing.vrf.#(name==\"%v\").name", prefix, key)); value.Exists() {
+			data.MulticastRoutingVrfs[i].Vrf.Value = value.String()
+		} else {
+			data.MulticastRoutingVrfs[i].Vrf.Null = true
+		}
+		if value := res.Get(fmt.Sprintf("%vip.Cisco-IOS-XE-multicast:multicast-routing.vrf.#(name==\"%v\").distributed", prefix, key)); value.Exists() {
+			data.MulticastRoutingVrfs[i].Distributed.Value = true
+		} else {
+			data.MulticastRoutingVrfs[i].Distributed.Value = false
+		}
 	}
 }
 
@@ -110,6 +164,36 @@ func (data *System) fromBody(res gjson.Result) {
 		data.Mtu.Value = value.Int()
 		data.Mtu.Null = false
 	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing"); value.Exists() {
+		data.MulticastRouting.Value = true
+		data.MulticastRouting.Null = false
+	} else {
+		data.MulticastRouting.Value = false
+		data.MulticastRouting.Null = false
+	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing.distributed"); value.Exists() {
+		data.MulticastRoutingDistributed.Value = true
+		data.MulticastRoutingDistributed.Null = false
+	} else {
+		data.MulticastRoutingDistributed.Value = false
+		data.MulticastRoutingDistributed.Null = false
+	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing.vrf"); value.Exists() {
+		data.MulticastRoutingVrfs = make([]SystemMulticastRoutingVrfs, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := SystemMulticastRoutingVrfs{}
+			if cValue := v.Get("name"); cValue.Exists() {
+				item.Vrf.Value = cValue.String()
+				item.Vrf.Null = false
+			}
+			if cValue := v.Get("distributed"); cValue.Exists() {
+				item.Distributed.Value = true
+				item.Distributed.Null = false
+			}
+			data.MulticastRoutingVrfs = append(data.MulticastRoutingVrfs, item)
+			return true
+		})
+	}
 }
 
 func (data *System) setUnknownValues() {
@@ -137,10 +221,42 @@ func (data *System) setUnknownValues() {
 		data.Mtu.Unknown = false
 		data.Mtu.Null = true
 	}
+	if data.MulticastRouting.Unknown {
+		data.MulticastRouting.Unknown = false
+		data.MulticastRouting.Null = true
+	}
+	if data.MulticastRoutingDistributed.Unknown {
+		data.MulticastRoutingDistributed.Unknown = false
+		data.MulticastRoutingDistributed.Null = true
+	}
+	for i := range data.MulticastRoutingVrfs {
+		if data.MulticastRoutingVrfs[i].Vrf.Unknown {
+			data.MulticastRoutingVrfs[i].Vrf.Unknown = false
+			data.MulticastRoutingVrfs[i].Vrf.Null = true
+		}
+		if data.MulticastRoutingVrfs[i].Distributed.Unknown {
+			data.MulticastRoutingVrfs[i].Distributed.Unknown = false
+			data.MulticastRoutingVrfs[i].Distributed.Null = true
+		}
+	}
 }
 
 func (data *System) getDeletedListItems(state System) []string {
 	deletedListItems := make([]string, 0)
+	for _, i := range state.MulticastRoutingVrfs {
+		if reflect.ValueOf(i.Vrf.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.MulticastRoutingVrfs {
+			if i.Vrf.Value == j.Vrf.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/vrf=%v", state.getPath(), i.Vrf.Value))
+		}
+	}
 	return deletedListItems
 }
 
@@ -148,6 +264,9 @@ func (data *System) getEmptyLeafsDelete() []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Ipv6UnicastRouting.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ipv6/unicast-routing", data.getPath()))
+	}
+	if !data.MulticastRoutingDistributed.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/distributed", data.getPath()))
 	}
 	return emptyLeafsDelete
 }

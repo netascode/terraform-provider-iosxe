@@ -20,6 +20,7 @@ description: |-
 - Add rp_address attributes to iosxe_pim and iosxe_pim_vrf resources
 - Add mtu attribute to iosxe_system resource
 - Add additional route target options to iosxe_vrf resource
+- Add multicast routing options to iosxe_system resource
 
 ## 0.1.5
 

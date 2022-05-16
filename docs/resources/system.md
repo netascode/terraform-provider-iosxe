@@ -14,9 +14,17 @@ This resource can manage the System configuration.
 
 ```terraform
 resource "iosxe_system" "example" {
-  hostname             = "ROUTER-1"
-  ip_routing           = true
-  ipv6_unicast_routing = true
+  hostname                      = "ROUTER-1"
+  ip_routing                    = true
+  ipv6_unicast_routing          = true
+  multicast_routing             = true
+  multicast_routing_distributed = true
+  multicast_routing_vrfs = [
+    {
+      vrf         = "VRF1"
+      distributed = true
+    }
+  ]
 }
 ```
 
@@ -30,10 +38,21 @@ resource "iosxe_system" "example" {
 - `ip_routing` (Boolean) Enable or disable IP routing
 - `ipv6_unicast_routing` (Boolean) Enable unicast routing
 - `mtu` (Number) - Range: `1500`-`9198`
+- `multicast_routing` (Boolean) Enable IP multicast forwarding
+- `multicast_routing_distributed` (Boolean) Distributed multicast switching
+- `multicast_routing_vrfs` (Attributes List) Select VPN Routing/Forwarding instance (see [below for nested schema](#nestedatt--multicast_routing_vrfs))
 
 ### Read-Only
 
 - `id` (String) The path of the object.
+
+<a id="nestedatt--multicast_routing_vrfs"></a>
+### Nested Schema for `multicast_routing_vrfs`
+
+Optional:
+
+- `distributed` (Boolean) Distributed multicast switching
+- `vrf` (String)
 
 ## Import
 
