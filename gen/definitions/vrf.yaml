@@ -8,6 +8,7 @@ attributes:
   - yang_name: description
     example: VRF22 description
   - yang_name: rd
+    requires_replace: true
     example: 22:22
   - yang_name: address-family/ipv4
     example: true

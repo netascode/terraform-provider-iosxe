@@ -116,6 +116,7 @@ type YamlConfigAttribute struct {
 	StringMinLength int64                 `yaml:"string_min_length"`
 	StringMaxLength int64                 `yaml:"string_max_length"`
 	DefaultValue    string                `yaml:"default_value"`
+	RequiresReplace bool                  `yaml:"requires_replace"`
 	Attributes      []YamlConfigAttribute `yaml:"attributes"`
 }
 

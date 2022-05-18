@@ -73,9 +73,9 @@ func (t resource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk.S
 					helpers.IntegerRangeValidator({{.MinInt}}, {{.MaxInt}}),
 				},
 				{{- end}}
-				{{- if or (len .DefaultValue) (eq .Id true) (eq .Reference true)}}
+				{{- if or (len .DefaultValue) (eq .Id true) (eq .Reference true) (eq .RequiresReplace true)}}
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					{{- if or (eq .Id true) (eq .Reference true)}}
+					{{- if or (eq .Id true) (eq .Reference true) (eq .RequiresReplace true)}}
 					tfsdk.RequiresReplace(),
 					{{- else if eq .Type "Int64"}}
 					helpers.IntegerDefaultModifier({{.DefaultValue}}),
