@@ -1,4 +1,4 @@
-## 0.1.8 (unreleased)
+## 0.1.8
 
 - Delete and recreate a VRF if route distinguisher changes
 - Allow provider config without url attribute in case devices attribute is being used
