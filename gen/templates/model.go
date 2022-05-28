@@ -236,7 +236,7 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 				{{- if eq .Type "Int64"}}
 				item.{{toGoName .TfName}}.Value = cValue.Int()
 				{{- else if and (eq .Type "Bool") (eq .TypeYangBool "boolean")}}
-				item.{{toGoName .TfName}}.Value = value.Bool()
+				item.{{toGoName .TfName}}.Value = cValue.Bool()
 				{{- else if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 				item.{{toGoName .TfName}}.Value = true
 				{{- else if eq .Type "String"}}
