@@ -148,8 +148,8 @@ github.com/hashicorp/terraform-plugin-docs v0.12.0 h1:EAvFVEoV/wj15t/VSeKVpnAd+B
 github.com/hashicorp/terraform-plugin-docs v0.12.0/go.mod h1:HVn60yjtl4XxLINPgNmPCwX8SQ4T99Ut9CTD/ac6i5w=
 github.com/hashicorp/terraform-plugin-framework v0.8.0 h1:2nxk+5qAKlGWOrpWZbAZNkO+AoC87l4+9d/rjtQd6Wo=
 github.com/hashicorp/terraform-plugin-framework v0.8.0/go.mod h1:jUhqrbeI48gAleP8LXzg9jtRH07EAcpwEGQlYmKNIVg=
-github.com/hashicorp/terraform-plugin-go v0.10.0 h1:FIQDt/AZDSOXnN+znBnLLZA9aFk4/GwL40rwMLnvuTk=
-github.com/hashicorp/terraform-plugin-go v0.10.0/go.mod h1:aphXBG8qtQH0yF1waMRlaw/3G+ZFlR/6Artnvt1QEDE=
+github.com/hashicorp/terraform-plugin-go v0.11.0 h1:YXsvSCx7GbQO5jIUQd77FesqmIBxgSvYAtAX1NqErTk=
+github.com/hashicorp/terraform-plugin-go v0.11.0/go.mod h1:aphXBG8qtQH0yF1waMRlaw/3G+ZFlR/6Artnvt1QEDE=
 github.com/hashicorp/terraform-plugin-log v0.4.1 h1:xpbmVhvuU3mgHzLetOmx9pkOL2rmgpu302XxddON6eo=
 github.com/hashicorp/terraform-plugin-log v0.4.1/go.mod h1:p4R1jWBXRTvL4odmEkFfDdhUjHf9zcs/BCoNHAc7IK4=
 github.com/hashicorp/terraform-plugin-sdk/v2 v2.18.0 h1:/cdI5di5XA+N80gXzXF4YcHq36DprBskubk6Z8i26ZQ=
