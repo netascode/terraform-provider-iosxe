@@ -1,4 +1,4 @@
-## 0.1.9 (unreleased)
+## 0.1.9
 
 - Add iosxe_template resource and data source
 - Add source_template option to iosxe_interface_ethernet resource
