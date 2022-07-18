@@ -28,6 +28,12 @@ resource "iosxe_interface_ethernet" "example" {
       vrf     = "VRF1"
     }
   ]
+  source_template = [
+    {
+      template_name = "TEMP1"
+      merge         = false
+    }
+  ]
 }
 ```
 
@@ -55,6 +61,7 @@ resource "iosxe_interface_ethernet" "example" {
 - `media_type` (String) Media type
   - Choices: `auto-select`, `rj45`, `sfp`
 - `shutdown` (Boolean) Shutdown the selected interface
+- `source_template` (Attributes List) (see [below for nested schema](#nestedatt--source_template))
 - `switchport` (Boolean)
 - `unnumbered` (String) Enable IP processing without an explicit address
 - `vrf_forwarding` (String) Configure forwarding table
@@ -71,6 +78,15 @@ Optional:
 - `address` (String)
 - `global` (Boolean) Helper-address is global
 - `vrf` (String) VRF name for helper-address (if different from interface VRF)
+
+
+<a id="nestedatt--source_template"></a>
+### Nested Schema for `source_template`
+
+Optional:
+
+- `merge` (Boolean) merge option of binding
+- `template_name` (String)
 
 ## Import
 

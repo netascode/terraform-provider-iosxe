@@ -121,6 +121,22 @@ func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.S
 					},
 				}, tfsdk.ListNestedAttributesOptions{}),
 			},
+			"source_template": {
+				MarkdownDescription: "",
+				Computed:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"template_name": {
+						MarkdownDescription: "",
+						Type:                types.StringType,
+						Computed:            true,
+					},
+					"merge": {
+						MarkdownDescription: "merge option of binding",
+						Type:                types.BoolType,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }

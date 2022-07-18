@@ -49,11 +49,14 @@ resource "iosxe_msdp" "example" {
 <a id="nestedatt--passwords"></a>
 ### Nested Schema for `passwords`
 
+Required:
+
+- `password` (String)
+
 Optional:
 
 - `addr` (String)
 - `encryption` (Number) - Range: `0`-`7`
-- `password` (String)
 
 
 <a id="nestedatt--peers"></a>

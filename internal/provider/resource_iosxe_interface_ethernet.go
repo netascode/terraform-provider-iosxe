@@ -177,6 +177,24 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 					},
 				}, tfsdk.ListNestedAttributesOptions{}),
 			},
+			"source_template": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
+				Optional:            true,
+				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
+					"template_name": {
+						MarkdownDescription: helpers.NewAttributeDescription("").String,
+						Type:                types.StringType,
+						Optional:            true,
+						Computed:            true,
+					},
+					"merge": {
+						MarkdownDescription: helpers.NewAttributeDescription("merge option of binding").String,
+						Type:                types.BoolType,
+						Optional:            true,
+						Computed:            true,
+					},
+				}, tfsdk.ListNestedAttributesOptions{}),
+			},
 		},
 	}, nil
 }

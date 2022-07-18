@@ -13,4 +13,10 @@ resource "iosxe_interface_ethernet" "example" {
       vrf     = "VRF1"
     }
   ]
+  source_template = [
+    {
+      template_name = "TEMP1"
+      merge         = false
+    }
+  ]
 }

@@ -80,6 +80,15 @@ attributes:
         xpath: vrf
         tf_name: vrf
         example: VRF1
+  - yang_name: source/template/template-name
+    tf_name: source_template
+    type: List
+    attributes:
+      - yang_name: template-name
+        example: TEMP1
+        id: true
+      - yang_name: merge
+        example: false
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true

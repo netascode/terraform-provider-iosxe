@@ -24,6 +24,8 @@ func TestAccDataSourceIosxeInterfaceEthernet(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.address", "10.10.10.10"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.global", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.vrf", "VRF1"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "source_template.0.template_name", "TEMP1"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "source_template.0.merge", "false"),
 				),
 			},
 		},
@@ -64,6 +66,10 @@ resource "iosxe_interface_ethernet" "test" {
     address = "10.10.10.10"
     global = false
     vrf = "VRF1"
+  }]
+  source_template = [{
+    template_name = "TEMP1"
+    merge = false
   }]
   depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }

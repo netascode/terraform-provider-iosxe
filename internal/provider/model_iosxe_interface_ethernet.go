@@ -33,11 +33,16 @@ type InterfaceEthernet struct {
 	ChannelGroupMode           types.String                       `tfsdk:"channel_group_mode"`
 	IpDhcpRelaySourceInterface types.String                       `tfsdk:"ip_dhcp_relay_source_interface"`
 	HelperAddresses            []InterfaceEthernetHelperAddresses `tfsdk:"helper_addresses"`
+	SourceTemplate             []InterfaceEthernetSourceTemplate  `tfsdk:"source_template"`
 }
 type InterfaceEthernetHelperAddresses struct {
 	Address types.String `tfsdk:"address"`
 	Global  types.Bool   `tfsdk:"global"`
 	Vrf     types.String `tfsdk:"vrf"`
+}
+type InterfaceEthernetSourceTemplate struct {
+	TemplateName types.String `tfsdk:"template_name"`
+	Merge        types.Bool   `tfsdk:"merge"`
 }
 
 func (data InterfaceEthernet) getPath() string {
@@ -111,6 +116,19 @@ func (data InterfaceEthernet) toBody() string {
 			}
 			if !item.Vrf.Null && !item.Vrf.Unknown {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
+			}
+		}
+	}
+	if len(data.SourceTemplate) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source.template.template-name", []interface{}{})
+		for index, item := range data.SourceTemplate {
+			if !item.TemplateName.Null && !item.TemplateName.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source.template.template-name"+"."+strconv.Itoa(index)+"."+"template-name", item.TemplateName.Value)
+			}
+			if !item.Merge.Null && !item.Merge.Unknown {
+				if item.Merge.Value {
+					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source.template.template-name"+"."+strconv.Itoa(index)+"."+"merge", map[string]string{})
+				}
 			}
 		}
 	}
@@ -205,6 +223,19 @@ func (data *InterfaceEthernet) updateFromBody(res gjson.Result) {
 			data.HelperAddresses[i].Vrf.Null = true
 		}
 	}
+	for i := range data.SourceTemplate {
+		key := data.SourceTemplate[i].TemplateName.Value
+		if value := res.Get(fmt.Sprintf("%vsource.template.template-name.#(template-name==\"%v\").template-name", prefix, key)); value.Exists() {
+			data.SourceTemplate[i].TemplateName.Value = value.String()
+		} else {
+			data.SourceTemplate[i].TemplateName.Null = true
+		}
+		if value := res.Get(fmt.Sprintf("%vsource.template.template-name.#(template-name==\"%v\").merge", prefix, key)); value.Exists() {
+			data.SourceTemplate[i].Merge.Value = true
+		} else {
+			data.SourceTemplate[i].Merge.Value = false
+		}
+	}
 }
 
 func (data *InterfaceEthernet) fromBody(res gjson.Result) {
@@ -283,6 +314,22 @@ func (data *InterfaceEthernet) fromBody(res gjson.Result) {
 				item.Vrf.Null = false
 			}
 			data.HelperAddresses = append(data.HelperAddresses, item)
+			return true
+		})
+	}
+	if value := res.Get(prefix + "source.template.template-name"); value.Exists() {
+		data.SourceTemplate = make([]InterfaceEthernetSourceTemplate, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := InterfaceEthernetSourceTemplate{}
+			if cValue := v.Get("template-name"); cValue.Exists() {
+				item.TemplateName.Value = cValue.String()
+				item.TemplateName.Null = false
+			}
+			if cValue := v.Get("merge"); cValue.Exists() {
+				item.Merge.Value = true
+				item.Merge.Null = false
+			}
+			data.SourceTemplate = append(data.SourceTemplate, item)
 			return true
 		})
 	}
@@ -367,6 +414,16 @@ func (data *InterfaceEthernet) setUnknownValues() {
 			data.HelperAddresses[i].Vrf.Null = true
 		}
 	}
+	for i := range data.SourceTemplate {
+		if data.SourceTemplate[i].TemplateName.Unknown {
+			data.SourceTemplate[i].TemplateName.Unknown = false
+			data.SourceTemplate[i].TemplateName.Null = true
+		}
+		if data.SourceTemplate[i].Merge.Unknown {
+			data.SourceTemplate[i].Merge.Unknown = false
+			data.SourceTemplate[i].Merge.Null = true
+		}
+	}
 }
 
 func (data *InterfaceEthernet) getDeletedListItems(state InterfaceEthernet) []string {
@@ -383,6 +440,20 @@ func (data *InterfaceEthernet) getDeletedListItems(state InterfaceEthernet) []st
 		}
 		if !found {
 			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/helper-address=%v", state.getPath(), i.Address.Value))
+		}
+	}
+	for _, i := range state.SourceTemplate {
+		if reflect.ValueOf(i.TemplateName.Value).IsZero() {
+			continue
+		}
+		found := false
+		for _, j := range data.SourceTemplate {
+			if i.TemplateName.Value == j.TemplateName.Value {
+				found = true
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/source/template/template-name=%v", state.getPath(), i.TemplateName.Value))
 		}
 	}
 	return deletedListItems
