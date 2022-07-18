@@ -7,6 +7,10 @@ description: |-
 
 # Changelog
 
+## 0.1.9 (unreleased)
+
+- Add iosxe_template resource and data source
+
 ## 0.1.8
 
 - Delete and recreate a VRF if route distinguisher changes

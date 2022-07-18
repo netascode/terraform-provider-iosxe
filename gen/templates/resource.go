@@ -72,6 +72,10 @@ func (t resource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk.S
 				Validators: []tfsdk.AttributeValidator{
 					helpers.IntegerRangeValidator({{.MinInt}}, {{.MaxInt}}),
 				},
+				{{- else if or (ne .MinFloat 0.0) (ne .MaxFloat 0.0)}}
+				Validators: []tfsdk.AttributeValidator{
+					helpers.FloatRangeValidator({{.MinFloat}}, {{.MaxFloat}}),
+				},
 				{{- end}}
 				{{- if or (len .DefaultValue) (eq .Id true) (eq .Reference true) (eq .RequiresReplace true)}}
 				PlanModifiers: tfsdk.AttributePlanModifiers{
@@ -96,6 +100,9 @@ func (t resource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk.S
 							{{- end -}}
 							{{- if or (ne .MinInt 0) (ne .MaxInt 0) -}}
 							.AddIntegerRangeDescription({{.MinInt}}, {{.MaxInt}})
+							{{- end -}}
+							{{- if or (ne .MinFloat 0.0) (ne .MaxFloat 0.0) -}}
+							.AddFloatRangeDescription({{.MinFloat}}, {{.MaxFloat}})
 							{{- end -}}
 							{{- if len .DefaultValue -}}
 							.AddDefaultValueDescription("{{.DefaultValue}}")

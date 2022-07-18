@@ -113,6 +113,8 @@ type YamlConfigAttribute struct {
 	EnumValues      []string              `yaml:"enum_values"`
 	MinInt          int64                 `yaml:"min_int"`
 	MaxInt          int64                 `yaml:"max_int"`
+	MinFloat        float64               `yaml:"min_float"`
+	MaxFloat        float64               `yaml:"max_float"`
 	StringPatterns  []string              `yaml:"string_patterns"`
 	StringMinLength int64                 `yaml:"string_min_length"`
 	StringMaxLength int64                 `yaml:"string_max_length"`
@@ -332,6 +334,12 @@ func parseAttribute(e *yang.Entry, attr *YamlConfigAttribute) {
 					max = math.MaxInt64
 				}
 				attr.MaxInt = int64(max)
+			}
+		} else if contains([]string{"decimal8", "decimal16", "decimal32", "decimal64"}, leaf.Type.Kind.String()) {
+			attr.Type = "Float64"
+			if leaf.Type.Range != nil {
+				attr.MinFloat = float64(leaf.Type.Range[0].Min.Value)
+				attr.MaxFloat = float64(leaf.Type.Range[0].Max.Value)
 			}
 		} else if contains([]string{"boolean", "empty"}, leaf.Type.Kind.String()) {
 			if leaf.Type.Kind.String() == "boolean" {

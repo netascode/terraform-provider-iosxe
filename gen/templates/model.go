@@ -83,6 +83,8 @@ func (data {{camelCase .Name}}) toBody() string {
 	if !data.{{toGoName .TfName}}.Null && !data.{{toGoName .TfName}}.Unknown {
 		{{- if eq .Type "Int64"}}
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(data.{{toGoName .TfName}}.Value, 10))
+		{{- else if eq .Type "Float64"}}
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatFloat(data.{{toGoName .TfName}}.Value, 'f', 1, 64))
 		{{- else if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 		if data.{{toGoName .TfName}}.Value {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
@@ -105,6 +107,8 @@ func (data {{camelCase .Name}}) toBody() string {
 			if !item.{{toGoName .TfName}}.Null && !item.{{toGoName .TfName}}.Unknown {
 				{{- if eq .Type "Int64"}}
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(item.{{toGoName .TfName}}.Value, 10))
+				{{- else if eq .Type "Float64"}}
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatFloat(item.{{toGoName .TfName}}.Value, 'f', 1, 64))
 				{{- else if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 				if item.{{toGoName .TfName}}.Value {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
@@ -133,6 +137,12 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 	{{- if eq .Type "Int64"}}
 	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		data.{{toGoName .TfName}}.Value = value.Int()
+	} else {
+		data.{{toGoName .TfName}}.Null = true
+	}
+	{{- else if eq .Type "Float64"}}
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		data.{{toGoName .TfName}}.Value = value.Float()
 	} else {
 		data.{{toGoName .TfName}}.Null = true
 	}
@@ -168,6 +178,12 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 		{{- if eq .Type "Int64"}}
 		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Int()
+		} else {
+			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
+		}
+		{{- else if eq .Type "Float64"}}
+		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
+			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Float()
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
 		}
@@ -208,6 +224,11 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 		data.{{toGoName .TfName}}.Value = value.Int()
 		data.{{toGoName .TfName}}.Null = false
 	}
+	{{- else if eq .Type "Float64"}}
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		data.{{toGoName .TfName}}.Value = value.Float()
+		data.{{toGoName .TfName}}.Null = false
+	}
 	{{- else if eq .Type "Bool"}}
 	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
 		{{- if eq .TypeYangBool "boolean"}}
@@ -235,6 +256,8 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 			if cValue := v.Get("{{toJsonPath .YangName .XPath}}"); cValue.Exists() {
 				{{- if eq .Type "Int64"}}
 				item.{{toGoName .TfName}}.Value = cValue.Int()
+				{{- else if eq .Type "Float64"}}
+				item.{{toGoName .TfName}}.Value = cValue.Float()
 				{{- else if and (eq .Type "Bool") (eq .TypeYangBool "boolean")}}
 				item.{{toGoName .TfName}}.Value = cValue.Bool()
 				{{- else if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
