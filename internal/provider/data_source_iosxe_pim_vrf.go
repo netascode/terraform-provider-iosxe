@@ -114,7 +114,7 @@ func (t dataSourcePIMVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 						Type:                types.BoolType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"rp_candidates": {
 				MarkdownDescription: "To be a PIM version 2 RP candidate",
@@ -145,7 +145,7 @@ func (t dataSourcePIMVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 						Type:                types.BoolType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

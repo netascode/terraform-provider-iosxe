@@ -51,7 +51,7 @@ func (t dataSource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk
 						Computed:            true,
 					},
 					{{- end}}
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 				{{- end}}
 			},
 			{{- end}}

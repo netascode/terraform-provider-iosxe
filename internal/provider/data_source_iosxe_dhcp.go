@@ -69,7 +69,7 @@ func (t dataSourceDHCPType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 						Type:                types.Int64Type,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

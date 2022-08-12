@@ -79,7 +79,7 @@ func (t dataSourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 						Type:                types.BoolType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

@@ -7,9 +7,9 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
@@ -101,7 +101,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 						Optional:            true,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"route_target_export": {
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
@@ -122,7 +122,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 						Optional:            true,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"ipv4_route_target_import": {
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
@@ -137,7 +137,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"ipv4_route_target_import_stitching": {
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
@@ -161,7 +161,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 							helpers.BooleanDefaultModifier(true),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"ipv4_route_target_export": {
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
@@ -176,7 +176,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"ipv4_route_target_export_stitching": {
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
@@ -200,7 +200,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 							helpers.BooleanDefaultModifier(true),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"ipv6_route_target_import": {
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
@@ -215,7 +215,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"ipv6_route_target_import_stitching": {
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
@@ -239,7 +239,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 							helpers.BooleanDefaultModifier(true),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"ipv6_route_target_export": {
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
@@ -254,7 +254,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"ipv6_route_target_export_stitching": {
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
@@ -278,7 +278,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 							helpers.BooleanDefaultModifier(true),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil
@@ -454,5 +454,5 @@ func (r resourceVRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest
 }
 
 func (r resourceVRF) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
+	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

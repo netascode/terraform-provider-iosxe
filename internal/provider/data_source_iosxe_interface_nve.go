@@ -69,7 +69,7 @@ func (t dataSourceInterfaceNVEType) GetSchema(ctx context.Context) (tfsdk.Schema
 						Type:                types.StringType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"vnis": {
 				MarkdownDescription: "Configure VNI information",
@@ -90,7 +90,7 @@ func (t dataSourceInterfaceNVEType) GetSchema(ctx context.Context) (tfsdk.Schema
 						Type:                types.BoolType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

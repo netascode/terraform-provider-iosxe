@@ -64,7 +64,7 @@ func (t dataSourceBGPAddressFamilyIPv6VRFType) GetSchema(ctx context.Context) (t
 						Type:                types.BoolType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

@@ -74,7 +74,7 @@ func (t dataSourceStaticRouteType) GetSchema(ctx context.Context) (tfsdk.Schema,
 						Type:                types.Int64Type,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

@@ -7,9 +7,9 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
@@ -142,7 +142,7 @@ func (t resourceOSPFVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.
 							helpers.IntegerRangeValidator(1, 65535),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"network": {
 				MarkdownDescription: helpers.NewAttributeDescription("Enable routing on an IP network").String,
@@ -172,7 +172,7 @@ func (t resourceOSPFVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.
 						Optional:            true,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"priority": {
 				MarkdownDescription: helpers.NewAttributeDescription("OSPF topology priority").AddIntegerRangeDescription(0, 127).String,
@@ -220,7 +220,7 @@ func (t resourceOSPFVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.
 							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
 						},
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil
@@ -396,5 +396,5 @@ func (r resourceOSPFVRF) Delete(ctx context.Context, req tfsdk.DeleteResourceReq
 }
 
 func (r resourceOSPFVRF) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
+	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

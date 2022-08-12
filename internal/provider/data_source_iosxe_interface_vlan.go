@@ -94,7 +94,7 @@ func (t dataSourceInterfaceVLANType) GetSchema(ctx context.Context) (tfsdk.Schem
 						Type:                types.StringType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

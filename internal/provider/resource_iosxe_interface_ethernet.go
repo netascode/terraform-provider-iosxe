@@ -7,9 +7,9 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
@@ -175,7 +175,7 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 						Optional:            true,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"source_template": {
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
@@ -193,7 +193,7 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 						Optional:            true,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil
@@ -369,5 +369,5 @@ func (r resourceInterfaceEthernet) Delete(ctx context.Context, req tfsdk.DeleteR
 }
 
 func (r resourceInterfaceEthernet) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
+	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

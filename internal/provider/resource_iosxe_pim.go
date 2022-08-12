@@ -7,9 +7,9 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
@@ -144,7 +144,7 @@ func (t resourcePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 						Optional:            true,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"rp_candidates": {
 				MarkdownDescription: helpers.NewAttributeDescription("To be a PIM version 2 RP candidate").String,
@@ -186,7 +186,7 @@ func (t resourcePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 						Optional:            true,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil
@@ -362,5 +362,5 @@ func (r resourcePIM) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest
 }
 
 func (r resourcePIM) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, tftypes.NewAttributePath().WithAttributeName("id"), req, resp)
+	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

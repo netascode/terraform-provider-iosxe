@@ -89,7 +89,7 @@ func (t dataSourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsd
 						Type:                types.StringType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

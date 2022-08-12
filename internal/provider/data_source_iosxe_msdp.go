@@ -54,7 +54,7 @@ func (t dataSourceMSDPType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 						Type:                types.Int64Type,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"passwords": {
 				MarkdownDescription: "MSDP peer on which the password is to be set",
@@ -75,7 +75,7 @@ func (t dataSourceMSDPType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 						Type:                types.StringType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

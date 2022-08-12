@@ -4,14 +4,14 @@ go 1.18
 
 require (
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
-	github.com/hashicorp/terraform-plugin-framework v0.8.0
-	github.com/hashicorp/terraform-plugin-go v0.10.0
-	github.com/hashicorp/terraform-plugin-log v0.5.0
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.18.0
+	github.com/hashicorp/terraform-plugin-framework v0.10.0
+	github.com/hashicorp/terraform-plugin-go v0.13.0
+	github.com/hashicorp/terraform-plugin-log v0.7.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.20.0
 	github.com/netascode/go-restconf v0.1.7
 	github.com/openconfig/goyang v1.1.0
-	github.com/tidwall/gjson v1.14.1
-	github.com/tidwall/sjson v1.2.4
+	github.com/tidwall/gjson v1.14.2
+	github.com/tidwall/sjson v1.2.5
 	gopkg.in/yaml.v3 v3.0.1
 )
 

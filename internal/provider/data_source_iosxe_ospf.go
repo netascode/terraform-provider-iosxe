@@ -94,7 +94,7 @@ func (t dataSourceOSPFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 						Type:                types.Int64Type,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"network": {
 				MarkdownDescription: "Enable routing on an IP network",
@@ -115,7 +115,7 @@ func (t dataSourceOSPFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 						Type:                types.StringType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"priority": {
 				MarkdownDescription: "OSPF topology priority",
@@ -146,7 +146,7 @@ func (t dataSourceOSPFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 						Type:                types.StringType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 		},
 	}, nil

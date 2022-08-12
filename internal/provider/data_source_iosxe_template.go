@@ -129,7 +129,7 @@ func (t dataSourceTemplateType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 						Type:                types.BoolType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"switchport_port_security_violation_protect": {
 				MarkdownDescription: "Security violation protect mode",
@@ -340,7 +340,7 @@ func (t dataSourceTemplateType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 						Type:                types.StringType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"subscriber_aging_inactivity_timer_value": {
 				MarkdownDescription: "Enter a value between 1 and 65535 in seconds",
@@ -376,7 +376,7 @@ func (t dataSourceTemplateType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 						Type:                types.StringType,
 						Computed:            true,
 					},
-				}, tfsdk.ListNestedAttributesOptions{}),
+				}),
 			},
 			"device_tracking_vlan_range": {
 				MarkdownDescription: "VLAN IDs of the VLANs for which this policy applies",
