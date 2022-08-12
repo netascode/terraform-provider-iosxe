@@ -7,6 +7,10 @@ description: |-
 
 # Changelog
 
+## 0.1.10 (unreleased)
+
+- Add iosxe_service resource and data source
+
 ## 0.1.9
 
 - Add iosxe_template resource and data source
