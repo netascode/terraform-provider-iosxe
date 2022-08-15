@@ -49,7 +49,7 @@ Required:
 Optional:
 
 - `items` (Attributes List) Items of YANG lists. (see [below for nested schema](#nestedatt--lists--items))
-- `key` (String) YANG list key attribute.
+- `key` (String) YANG list key attribute. In case of multiple keys, those should be separated by a comma (`,`).
 - `values` (List of String) YANG leaf-list values.
 
 <a id="nestedatt--lists--items"></a>

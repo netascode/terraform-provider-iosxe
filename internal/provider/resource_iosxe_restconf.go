@@ -67,7 +67,7 @@ func (t resourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 						Required:            true,
 					},
 					"key": {
-						MarkdownDescription: "YANG list key attribute.",
+						MarkdownDescription: "YANG list key attribute. In case of multiple keys, those should be separated by a comma (`,`).",
 						Type:                types.StringType,
 						Optional:            true,
 					},
