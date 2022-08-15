@@ -1,6 +1,12 @@
 package helpers
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/tidwall/gjson"
+)
 
 func Contains(s []string, str string) bool {
 	for _, v := range s {
@@ -27,4 +33,12 @@ func LastElement(path string) string {
 		}
 	}
 	return prefix + ":" + element
+}
+
+func GetValueSlice(result []gjson.Result) []attr.Value {
+	v := make([]attr.Value, len(result))
+	for r := range result {
+		v[r] = types.String{Value: result[r].String()}
+	}
+	return v
 }

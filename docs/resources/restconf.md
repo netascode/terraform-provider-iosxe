@@ -44,12 +44,13 @@ resource "iosxe_restconf" "example" {
 
 Required:
 
-- `key` (String) YANG list key attribute.
 - `name` (String) YANG list name.
 
 Optional:
 
 - `items` (Attributes List) Items of YANG lists. (see [below for nested schema](#nestedatt--lists--items))
+- `key` (String) YANG list key attribute.
+- `values` (List of String) YANG leaf-list values.
 
 <a id="nestedatt--lists--items"></a>
 ### Nested Schema for `lists.items`

@@ -69,7 +69,7 @@ func (t resourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 					"key": {
 						MarkdownDescription: "YANG list key attribute.",
 						Type:                types.StringType,
-						Required:            true,
+						Optional:            true,
 					},
 					"items": {
 						MarkdownDescription: "Items of YANG lists.",
@@ -82,6 +82,11 @@ func (t resourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 								Computed:            true,
 							},
 						}),
+					},
+					"values": {
+						MarkdownDescription: "YANG leaf-list values.",
+						Type:                types.ListType{ElemType: types.StringType},
+						Optional:            true,
 					},
 				}),
 			},
@@ -113,16 +118,14 @@ func (r resourceRestconf) Create(ctx context.Context, req tfsdk.CreateResourceRe
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.getPath()))
 
-	if !plan.Attributes.Unknown {
-		body := plan.toBody(ctx)
-		res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
-		if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
-			_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
-		}
-		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
-			return
-		}
+	body := plan.toBody(ctx)
+	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
+		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
+		return
 	}
 
 	plan.Id = plan.Path
@@ -184,16 +187,14 @@ func (r resourceRestconf) Update(ctx context.Context, req tfsdk.UpdateResourceRe
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.getPath()))
 
-	if !plan.Attributes.Unknown {
-		body := plan.toBody(ctx)
-		res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
-		if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
-			_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
-		}
-		if err != nil {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
-			return
-		}
+	body := plan.toBody(ctx)
+	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
+		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
+		return
 	}
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
