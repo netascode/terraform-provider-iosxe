@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -107,17 +106,42 @@ func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
 	}
 
 	for i := range data.Lists {
+		keys := strings.Split(data.Lists[i].Key.Value, ",")
 		namePath := strings.ReplaceAll(data.Lists[i].Name.Value, "/", ".")
 		if len(data.Lists[i].Items) > 0 {
 			for ii := range data.Lists[i].Items {
-				for attr := range data.Lists[i].Items[ii].Attributes.Elems {
-					key := data.Lists[i].Key.Value
+				var keyValues []string
+				for _, key := range keys {
 					v, _ := data.Lists[i].Items[ii].Attributes.Elems[key].ToTerraformValue(ctx)
 					var keyValue string
 					v.As(&keyValue)
+					keyValues = append(keyValues, keyValue)
+				}
+
+				// find item by key(s)
+				var r gjson.Result
+				res.Get(prefix + namePath).ForEach(
+					func(_, v gjson.Result) bool {
+						found := false
+						for ik := range keys {
+							if v.Get(keys[ik]).String() == keyValues[ik] {
+								found = true
+								continue
+							}
+							found = false
+							break
+						}
+						if found {
+							r = v
+							return false
+						}
+						return true
+					},
+				)
+
+				for attr := range data.Lists[i].Items[ii].Attributes.Elems {
 					attrPath := strings.ReplaceAll(attr, "/", ".")
-					jsonPath := fmt.Sprintf(`%s%s.#(%s=="%s").%s`, prefix, namePath, key, keyValue, attrPath)
-					value := res.Get(jsonPath)
+					value := r.Get(attrPath)
 					if !value.Exists() ||
 						(value.IsObject() && len(value.Map()) == 0) ||
 						value.Raw == "[null]" {
@@ -142,7 +166,7 @@ func (data *Restconf) getDeletedListItems(ctx context.Context, state Restconf) [
 	for l := range state.Lists {
 		name := state.Lists[l].Name.Value
 		namePath := strings.ReplaceAll(name, "/", ".")
-		key := state.Lists[l].Key.Value
+		keys := strings.Split(state.Lists[l].Key.Value, ",")
 		var dataList RestconfList
 		for _, dl := range data.Lists {
 			if dl.Name.Value == name {
@@ -154,20 +178,44 @@ func (data *Restconf) getDeletedListItems(ctx context.Context, state Restconf) [
 			for i := range state.Lists[l].Items {
 				var slia map[string]string
 				state.Lists[l].Items[i].Attributes.ElementsAs(ctx, &slia, false)
-				if slia[key] == "" {
+
+				// if state key values are empty move on to next item
+				emptyKey := false
+				for _, key := range keys {
+					if slia[key] == "" {
+						emptyKey = true
+						break
+					}
+				}
+				if emptyKey {
 					continue
 				}
+
+				// find data (plan) item with matching key values
 				found := false
 				for dli := range dataList.Items {
 					var dlia map[string]string
 					dataList.Items[dli].Attributes.ElementsAs(ctx, &dlia, false)
-					if dlia[key] == slia[key] {
-						found = true
+					for _, key := range keys {
+						if dlia[key] == slia[key] {
+							found = true
+							continue
+						}
+						found = false
+						break
+					}
+					if found {
 						break
 					}
 				}
+
+				// if no matching item in plan found -> delete
 				if !found {
-					deletedListItems = append(deletedListItems, state.getPath()+"/"+namePath+"="+slia[key])
+					keyValues := make([]string, len(keys))
+					for k, key := range keys {
+						keyValues[k] = slia[key]
+					}
+					deletedListItems = append(deletedListItems, state.getPath()+"/"+namePath+"="+strings.Join(keyValues, ","))
 				}
 			}
 		} else if len(state.Lists[l].Values.Elems) > 0 {
