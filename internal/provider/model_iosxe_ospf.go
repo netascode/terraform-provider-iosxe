@@ -3,11 +3,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -64,7 +66,7 @@ func (data OSPF) getPathShort() string {
 	return matches[1]
 }
 
-func (data OSPF) toBody() string {
+func (data OSPF) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.ProcessId.Null && !data.ProcessId.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.ProcessId.Value, 10))
@@ -154,7 +156,7 @@ func (data OSPF) toBody() string {
 	return body
 }
 
-func (data *OSPF) updateFromBody(res gjson.Result) {
+func (data *OSPF) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -205,36 +207,78 @@ func (data *OSPF) updateFromBody(res gjson.Result) {
 		data.MplsLdpSync.Value = false
 	}
 	for i := range data.Neighbor {
-		key := data.Neighbor[i].Ip.Value
-		if value := res.Get(fmt.Sprintf("%vneighbor.#(ip==\"%v\").ip", prefix, key)); value.Exists() {
+		keys := [...]string{"ip"}
+		keyValues := [...]string{data.Neighbor[i].Ip.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "neighbor").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("ip"); value.Exists() {
 			data.Neighbor[i].Ip.Value = value.String()
 		} else {
 			data.Neighbor[i].Ip.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vneighbor.#(ip==\"%v\").priority", prefix, key)); value.Exists() {
+		if value := r.Get("priority"); value.Exists() {
 			data.Neighbor[i].Priority.Value = value.Int()
 		} else {
 			data.Neighbor[i].Priority.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vneighbor.#(ip==\"%v\").cost", prefix, key)); value.Exists() {
+		if value := r.Get("cost"); value.Exists() {
 			data.Neighbor[i].Cost.Value = value.Int()
 		} else {
 			data.Neighbor[i].Cost.Null = true
 		}
 	}
 	for i := range data.Network {
-		key := data.Network[i].Ip.Value
-		if value := res.Get(fmt.Sprintf("%vnetwork.#(ip==\"%v\").ip", prefix, key)); value.Exists() {
+		keys := [...]string{"ip"}
+		keyValues := [...]string{data.Network[i].Ip.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "network").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("ip"); value.Exists() {
 			data.Network[i].Ip.Value = value.String()
 		} else {
 			data.Network[i].Ip.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vnetwork.#(ip==\"%v\").wildcard", prefix, key)); value.Exists() {
+		if value := r.Get("wildcard"); value.Exists() {
 			data.Network[i].Wildcard.Value = value.String()
 		} else {
 			data.Network[i].Wildcard.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vnetwork.#(ip==\"%v\").area", prefix, key)); value.Exists() {
+		if value := r.Get("area"); value.Exists() {
 			data.Network[i].Area.Value = value.String()
 		} else {
 			data.Network[i].Area.Null = true
@@ -256,13 +300,34 @@ func (data *OSPF) updateFromBody(res gjson.Result) {
 		data.Shutdown.Value = false
 	}
 	for i := range data.SummaryAddress {
-		key := data.SummaryAddress[i].Ip.Value
-		if value := res.Get(fmt.Sprintf("%vsummary-address.#(ip==\"%v\").ip", prefix, key)); value.Exists() {
+		keys := [...]string{"ip"}
+		keyValues := [...]string{data.SummaryAddress[i].Ip.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "summary-address").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("ip"); value.Exists() {
 			data.SummaryAddress[i].Ip.Value = value.String()
 		} else {
 			data.SummaryAddress[i].Ip.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vsummary-address.#(ip==\"%v\").mask", prefix, key)); value.Exists() {
+		if value := r.Get("mask"); value.Exists() {
 			data.SummaryAddress[i].Mask.Value = value.String()
 		} else {
 			data.SummaryAddress[i].Mask.Null = true
@@ -270,7 +335,7 @@ func (data *OSPF) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *OSPF) fromBody(res gjson.Result) {
+func (data *OSPF) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -395,7 +460,7 @@ func (data *OSPF) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *OSPF) setUnknownValues() {
+func (data *OSPF) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -492,57 +557,91 @@ func (data *OSPF) setUnknownValues() {
 	}
 }
 
-func (data *OSPF) getDeletedListItems(state OSPF) []string {
+func (data *OSPF) getDeletedListItems(ctx context.Context, state OSPF) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.Neighbor {
-		if reflect.ValueOf(i.Ip.Value).IsZero() {
+	for i := range state.Neighbor {
+		stateKeyValues := [...]string{state.Neighbor[i].Ip.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.Neighbor[i].Ip.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.Neighbor {
-			if i.Ip.Value == j.Ip.Value {
-				found = true
+		for j := range data.Neighbor {
+			found = true
+			if state.Neighbor[i].Ip.Value != data.Neighbor[j].Ip.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/neighbor=%v", state.getPath(), i.Ip.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/neighbor=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
-	for _, i := range state.Network {
-		if reflect.ValueOf(i.Ip.Value).IsZero() {
+	for i := range state.Network {
+		stateKeyValues := [...]string{state.Network[i].Ip.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.Network[i].Ip.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.Network {
-			if i.Ip.Value == j.Ip.Value {
-				found = true
+		for j := range data.Network {
+			found = true
+			if state.Network[i].Ip.Value != data.Network[j].Ip.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/network=%v", state.getPath(), i.Ip.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/network=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
-	for _, i := range state.SummaryAddress {
-		if reflect.ValueOf(i.Ip.Value).IsZero() {
+	for i := range state.SummaryAddress {
+		stateKeyValues := [...]string{state.SummaryAddress[i].Ip.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.SummaryAddress[i].Ip.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.SummaryAddress {
-			if i.Ip.Value == j.Ip.Value {
-				found = true
+		for j := range data.SummaryAddress {
+			found = true
+			if state.SummaryAddress[i].Ip.Value != data.SummaryAddress[j].Ip.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/summary-address=%v", state.getPath(), i.Ip.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/summary-address=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *OSPF) getEmptyLeafsDelete() []string {
+func (data *OSPF) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.DefaultInformationOriginateAlways.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/default-information/originate/always", data.getPath()))
 	}
+
 	return emptyLeafsDelete
 }

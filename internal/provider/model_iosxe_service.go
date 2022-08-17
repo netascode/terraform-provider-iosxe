@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 
@@ -53,7 +54,7 @@ func (data Service) getPathShort() string {
 	return matches[1]
 }
 
-func (data Service) toBody() string {
+func (data Service) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Pad.Null && !data.Pad.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"pad-conf.pad", data.Pad.Value)
@@ -159,7 +160,7 @@ func (data Service) toBody() string {
 	return body
 }
 
-func (data *Service) updateFromBody(res gjson.Result) {
+func (data *Service) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -271,7 +272,7 @@ func (data *Service) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *Service) fromBody(res gjson.Result) {
+func (data *Service) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -425,7 +426,7 @@ func (data *Service) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *Service) setUnknownValues() {
+func (data *Service) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -520,12 +521,12 @@ func (data *Service) setUnknownValues() {
 	}
 }
 
-func (data *Service) getDeletedListItems(state Service) []string {
+func (data *Service) getDeletedListItems(ctx context.Context, state Service) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *Service) getEmptyLeafsDelete() []string {
+func (data *Service) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.PasswordEncryption.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/password-encryption", data.getPath()))

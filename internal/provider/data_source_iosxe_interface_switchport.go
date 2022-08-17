@@ -137,7 +137,7 @@ func (d dataSourceInterfaceSwitchport) Read(ctx context.Context, req tfsdk.ReadD
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

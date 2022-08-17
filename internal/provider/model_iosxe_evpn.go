@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -45,7 +46,7 @@ func (data EVPN) getPathShort() string {
 	return matches[1]
 }
 
-func (data EVPN) toBody() string {
+func (data EVPN) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.ReplicationTypeIngress.Null && !data.ReplicationTypeIngress.Unknown {
 		if data.ReplicationTypeIngress.Value {
@@ -100,7 +101,7 @@ func (data EVPN) toBody() string {
 	return body
 }
 
-func (data *EVPN) updateFromBody(res gjson.Result) {
+func (data *EVPN) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -167,7 +168,7 @@ func (data *EVPN) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *EVPN) fromBody(res gjson.Result) {
+func (data *EVPN) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -243,7 +244,7 @@ func (data *EVPN) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *EVPN) setUnknownValues() {
+func (data *EVPN) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -302,12 +303,12 @@ func (data *EVPN) setUnknownValues() {
 	}
 }
 
-func (data *EVPN) getDeletedListItems(state EVPN) []string {
+func (data *EVPN) getDeletedListItems(ctx context.Context, state EVPN) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *EVPN) getEmptyLeafsDelete() []string {
+func (data *EVPN) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.ReplicationTypeIngress.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/ingress/ingress", data.getPath()))

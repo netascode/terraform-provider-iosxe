@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -50,7 +51,7 @@ func (data EVPNInstance) getPathShort() string {
 	return matches[1]
 }
 
-func (data EVPNInstance) toBody() string {
+func (data EVPNInstance) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.EvpnInstanceNum.Null && !data.EvpnInstanceNum.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"evpn-instance-num", strconv.FormatInt(data.EvpnInstanceNum.Value, 10))
@@ -119,7 +120,7 @@ func (data EVPNInstance) toBody() string {
 	return body
 }
 
-func (data *EVPNInstance) updateFromBody(res gjson.Result) {
+func (data *EVPNInstance) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -206,7 +207,7 @@ func (data *EVPNInstance) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *EVPNInstance) fromBody(res gjson.Result) {
+func (data *EVPNInstance) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -297,7 +298,7 @@ func (data *EVPNInstance) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *EVPNInstance) setUnknownValues() {
+func (data *EVPNInstance) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -372,12 +373,12 @@ func (data *EVPNInstance) setUnknownValues() {
 	}
 }
 
-func (data *EVPNInstance) getDeletedListItems(state EVPNInstance) []string {
+func (data *EVPNInstance) getDeletedListItems(ctx context.Context, state EVPNInstance) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *EVPNInstance) getEmptyLeafsDelete() []string {
+func (data *EVPNInstance) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.VlanBasedReplicationTypeIngress.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/evpn-service-type/vlan-based/vlan-based/replication-type/replication-type-choice/ingress-case/ingress", data.getPath()))

@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -45,7 +46,7 @@ func (data InterfaceOSPF) getPathShort() string {
 	return matches[1]
 }
 
-func (data InterfaceOSPF) toBody() string {
+func (data InterfaceOSPF) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Cost.Null && !data.Cost.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cost", strconv.FormatInt(data.Cost.Value, 10))
@@ -85,7 +86,7 @@ func (data InterfaceOSPF) toBody() string {
 	return body
 }
 
-func (data *InterfaceOSPF) updateFromBody(res gjson.Result) {
+func (data *InterfaceOSPF) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -137,7 +138,7 @@ func (data *InterfaceOSPF) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceOSPF) fromBody(res gjson.Result) {
+func (data *InterfaceOSPF) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -195,7 +196,7 @@ func (data *InterfaceOSPF) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceOSPF) setUnknownValues() {
+func (data *InterfaceOSPF) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -250,12 +251,12 @@ func (data *InterfaceOSPF) setUnknownValues() {
 	}
 }
 
-func (data *InterfaceOSPF) getDeletedListItems(state InterfaceOSPF) []string {
+func (data *InterfaceOSPF) getDeletedListItems(ctx context.Context, state InterfaceOSPF) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *InterfaceOSPF) getEmptyLeafsDelete() []string {
+func (data *InterfaceOSPF) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.NetworkTypeBroadcast.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/network/network-type-choice/broadcast/broadcast", data.getPath()))

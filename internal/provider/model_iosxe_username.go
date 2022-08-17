@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -41,7 +42,7 @@ func (data Username) getPathShort() string {
 	return matches[1]
 }
 
-func (data Username) toBody() string {
+func (data Username) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Name.Null && !data.Name.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Name.Value)
@@ -67,7 +68,7 @@ func (data Username) toBody() string {
 	return body
 }
 
-func (data *Username) updateFromBody(res gjson.Result) {
+func (data *Username) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -109,7 +110,7 @@ func (data *Username) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *Username) fromBody(res gjson.Result) {
+func (data *Username) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -140,7 +141,7 @@ func (data *Username) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *Username) setUnknownValues() {
+func (data *Username) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -179,12 +180,12 @@ func (data *Username) setUnknownValues() {
 	}
 }
 
-func (data *Username) getDeletedListItems(state Username) []string {
+func (data *Username) getDeletedListItems(ctx context.Context, state Username) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *Username) getEmptyLeafsDelete() []string {
+func (data *Username) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
 }

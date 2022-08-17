@@ -117,7 +117,7 @@ func (d dataSourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

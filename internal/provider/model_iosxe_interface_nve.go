@@ -3,11 +3,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -51,7 +53,7 @@ func (data InterfaceNVE) getPathShort() string {
 	return matches[1]
 }
 
-func (data InterfaceNVE) toBody() string {
+func (data InterfaceNVE) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Name.Null && !data.Name.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.Value, 10))
@@ -102,7 +104,7 @@ func (data InterfaceNVE) toBody() string {
 	return body
 }
 
-func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
+func (data *InterfaceNVE) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -133,31 +135,73 @@ func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
 		data.SourceInterfaceLoopback.Null = true
 	}
 	for i := range data.VniVrfs {
-		key := data.VniVrfs[i].VniRange.Value
-		if value := res.Get(fmt.Sprintf("%vmember-in-one-line.member.vni.#(vni-range==\"%v\").vni-range", prefix, key)); value.Exists() {
+		keys := [...]string{"vni-range"}
+		keyValues := [...]string{data.VniVrfs[i].VniRange.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "member-in-one-line.member.vni").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("vni-range"); value.Exists() {
 			data.VniVrfs[i].VniRange.Value = value.String()
 		} else {
 			data.VniVrfs[i].VniRange.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vmember-in-one-line.member.vni.#(vni-range==\"%v\").vrf", prefix, key)); value.Exists() {
+		if value := r.Get("vrf"); value.Exists() {
 			data.VniVrfs[i].Vrf.Value = value.String()
 		} else {
 			data.VniVrfs[i].Vrf.Null = true
 		}
 	}
 	for i := range data.Vnis {
-		key := data.Vnis[i].VniRange.Value
-		if value := res.Get(fmt.Sprintf("%vmember.vni.#(vni-range==\"%v\").vni-range", prefix, key)); value.Exists() {
+		keys := [...]string{"vni-range"}
+		keyValues := [...]string{data.Vnis[i].VniRange.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "member.vni").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("vni-range"); value.Exists() {
 			data.Vnis[i].VniRange.Value = value.String()
 		} else {
 			data.Vnis[i].VniRange.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vmember.vni.#(vni-range==\"%v\").mcast-group.multicast-group-min", prefix, key)); value.Exists() {
+		if value := r.Get("mcast-group.multicast-group-min"); value.Exists() {
 			data.Vnis[i].Ipv4MulticastGroup.Value = value.String()
 		} else {
 			data.Vnis[i].Ipv4MulticastGroup.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vmember.vni.#(vni-range==\"%v\").ir-cp-config.ingress-replication", prefix, key)); value.Exists() {
+		if value := r.Get("ir-cp-config.ingress-replication"); value.Exists() {
 			data.Vnis[i].IngressReplication.Value = true
 		} else {
 			data.Vnis[i].IngressReplication.Value = false
@@ -165,7 +209,7 @@ func (data *InterfaceNVE) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceNVE) fromBody(res gjson.Result) {
+func (data *InterfaceNVE) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -230,7 +274,7 @@ func (data *InterfaceNVE) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceNVE) setUnknownValues() {
+func (data *InterfaceNVE) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -285,46 +329,75 @@ func (data *InterfaceNVE) setUnknownValues() {
 	}
 }
 
-func (data *InterfaceNVE) getDeletedListItems(state InterfaceNVE) []string {
+func (data *InterfaceNVE) getDeletedListItems(ctx context.Context, state InterfaceNVE) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.VniVrfs {
-		if reflect.ValueOf(i.VniRange.Value).IsZero() {
+	for i := range state.VniVrfs {
+		stateKeyValues := [...]string{state.VniVrfs[i].VniRange.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.VniVrfs[i].VniRange.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.VniVrfs {
-			if i.VniRange.Value == j.VniRange.Value {
-				found = true
+		for j := range data.VniVrfs {
+			found = true
+			if state.VniVrfs[i].VniRange.Value != data.VniVrfs[j].VniRange.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/member-in-one-line/member/vni=%v", state.getPath(), i.VniRange.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/member-in-one-line/member/vni=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
-	for _, i := range state.Vnis {
-		if reflect.ValueOf(i.VniRange.Value).IsZero() {
+	for i := range state.Vnis {
+		stateKeyValues := [...]string{state.Vnis[i].VniRange.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.Vnis[i].VniRange.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.Vnis {
-			if i.VniRange.Value == j.VniRange.Value {
-				found = true
+		for j := range data.Vnis {
+			found = true
+			if state.Vnis[i].VniRange.Value != data.Vnis[j].VniRange.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/member/vni=%v", state.getPath(), i.VniRange.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/member/vni=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *InterfaceNVE) getEmptyLeafsDelete() []string {
+func (data *InterfaceNVE) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Shutdown.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	if !data.HostReachabilityProtocolBgp.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/host-reachability/protocol/bgp", data.getPath()))
+	}
+
+	for i := range data.Vnis {
+		keyValues := [...]string{data.Vnis[i].VniRange.Value}
+		if !data.Vnis[i].IngressReplication.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/member/vni=%v/ir-cp-config/ingress-replication", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
 	}
 	return emptyLeafsDelete
 }

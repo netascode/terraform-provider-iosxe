@@ -92,7 +92,7 @@ func (d dataSourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req tfsdk.Read
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

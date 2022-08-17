@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -44,7 +45,7 @@ func (data InterfacePIM) getPathShort() string {
 	return matches[1]
 }
 
-func (data InterfacePIM) toBody() string {
+func (data InterfacePIM) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Passive.Null && !data.Passive.Unknown {
 		if data.Passive.Value {
@@ -87,7 +88,7 @@ func (data InterfacePIM) toBody() string {
 	return body
 }
 
-func (data *InterfacePIM) updateFromBody(res gjson.Result) {
+func (data *InterfacePIM) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -134,7 +135,7 @@ func (data *InterfacePIM) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfacePIM) fromBody(res gjson.Result) {
+func (data *InterfacePIM) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -194,7 +195,7 @@ func (data *InterfacePIM) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfacePIM) setUnknownValues() {
+func (data *InterfacePIM) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -245,12 +246,12 @@ func (data *InterfacePIM) setUnknownValues() {
 	}
 }
 
-func (data *InterfacePIM) getDeletedListItems(state InterfacePIM) []string {
+func (data *InterfacePIM) getDeletedListItems(ctx context.Context, state InterfacePIM) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *InterfacePIM) getEmptyLeafsDelete() []string {
+func (data *InterfacePIM) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Passive.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/passive-mode/passive", data.getPath()))

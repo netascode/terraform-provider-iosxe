@@ -107,7 +107,7 @@ func (d dataSourceVLAN) Read(ctx context.Context, req tfsdk.ReadDataSourceReques
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

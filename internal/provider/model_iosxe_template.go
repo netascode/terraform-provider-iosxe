@@ -3,11 +3,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -116,7 +118,7 @@ func (data Template) getPathShort() string {
 	return matches[1]
 }
 
-func (data Template) toBody() string {
+func (data Template) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.TemplateName.Null && !data.TemplateName.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"template_name", data.TemplateName.Value)
@@ -418,7 +420,7 @@ func (data Template) toBody() string {
 	return body
 }
 
-func (data *Template) updateFromBody(res gjson.Result) {
+func (data *Template) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -504,18 +506,39 @@ func (data *Template) updateFromBody(res gjson.Result) {
 		data.SwitchportPortSecurityAgingTypeInactivity.Value = false
 	}
 	for i := range data.SwitchportPortSecurityMaximumRange {
-		key := data.SwitchportPortSecurityMaximumRange[i].Range.Value
-		if value := res.Get(fmt.Sprintf("%vswitchport.port-security.maximum.range.#(range==\"%v\").range", prefix, key)); value.Exists() {
+		keys := [...]string{"range"}
+		keyValues := [...]string{strconv.FormatInt(data.SwitchportPortSecurityMaximumRange[i].Range.Value, 10)}
+
+		var r gjson.Result
+		res.Get(prefix + "switchport.port-security.maximum.range").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("range"); value.Exists() {
 			data.SwitchportPortSecurityMaximumRange[i].Range.Value = value.Int()
 		} else {
 			data.SwitchportPortSecurityMaximumRange[i].Range.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vswitchport.port-security.maximum.range.#(range==\"%v\").vlan", prefix, key)); value.Exists() {
+		if value := r.Get("vlan"); value.Exists() {
 			data.SwitchportPortSecurityMaximumRange[i].Vlan.Value = true
 		} else {
 			data.SwitchportPortSecurityMaximumRange[i].Vlan.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%vswitchport.port-security.maximum.range.#(range==\"%v\").vlan.access", prefix, key)); value.Exists() {
+		if value := r.Get("vlan.access"); value.Exists() {
 			data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Value = true
 		} else {
 			data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Value = false
@@ -717,13 +740,34 @@ func (data *Template) updateFromBody(res gjson.Result) {
 		data.IpDhcpSnoopingTrust.Value = false
 	}
 	for i := range data.IpAccessGroup {
-		key := data.IpAccessGroup[i].Direction.Value
-		if value := res.Get(fmt.Sprintf("%vip.access-group.#(direction==\"%v\").direction", prefix, key)); value.Exists() {
+		keys := [...]string{"direction"}
+		keyValues := [...]string{data.IpAccessGroup[i].Direction.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "ip.access-group").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("direction"); value.Exists() {
 			data.IpAccessGroup[i].Direction.Value = value.String()
 		} else {
 			data.IpAccessGroup[i].Direction.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vip.access-group.#(direction==\"%v\").access-list", prefix, key)); value.Exists() {
+		if value := r.Get("access-list"); value.Exists() {
 			data.IpAccessGroup[i].AccessList.Value = value.String()
 		} else {
 			data.IpAccessGroup[i].AccessList.Null = true
@@ -750,13 +794,34 @@ func (data *Template) updateFromBody(res gjson.Result) {
 		data.DeviceTracking.Value = false
 	}
 	for i := range data.DeviceTrackingAttachPolicy {
-		key := data.DeviceTrackingAttachPolicy[i].PolicyName.Value
-		if value := res.Get(fmt.Sprintf("%vdevice-tracking.attach-policy.policy-name.#(policy-name==\"%v\").policy-name", prefix, key)); value.Exists() {
+		keys := [...]string{"policy-name"}
+		keyValues := [...]string{data.DeviceTrackingAttachPolicy[i].PolicyName.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "device-tracking.attach-policy.policy-name").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("policy-name"); value.Exists() {
 			data.DeviceTrackingAttachPolicy[i].PolicyName.Value = value.String()
 		} else {
 			data.DeviceTrackingAttachPolicy[i].PolicyName.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vdevice-tracking.attach-policy.policy-name.#(policy-name==\"%v\").vlan.vlan-range", prefix, key)); value.Exists() {
+		if value := r.Get("vlan.vlan-range"); value.Exists() {
 			data.DeviceTrackingAttachPolicy[i].VlanRange.Value = value.String()
 		} else {
 			data.DeviceTrackingAttachPolicy[i].VlanRange.Null = true
@@ -794,7 +859,7 @@ func (data *Template) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *Template) fromBody(res gjson.Result) {
+func (data *Template) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -1214,7 +1279,7 @@ func (data *Template) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *Template) setUnknownValues() {
+func (data *Template) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -1519,54 +1584,87 @@ func (data *Template) setUnknownValues() {
 	}
 }
 
-func (data *Template) getDeletedListItems(state Template) []string {
+func (data *Template) getDeletedListItems(ctx context.Context, state Template) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.SwitchportPortSecurityMaximumRange {
-		if reflect.ValueOf(i.Range.Value).IsZero() {
+	for i := range state.SwitchportPortSecurityMaximumRange {
+		stateKeyValues := [...]string{strconv.FormatInt(state.SwitchportPortSecurityMaximumRange[i].Range.Value, 10)}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.SwitchportPortSecurityMaximumRange[i].Range.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.SwitchportPortSecurityMaximumRange {
-			if i.Range.Value == j.Range.Value {
-				found = true
+		for j := range data.SwitchportPortSecurityMaximumRange {
+			found = true
+			if state.SwitchportPortSecurityMaximumRange[i].Range.Value != data.SwitchportPortSecurityMaximumRange[j].Range.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/switchport/port-security/maximum/range=%v", state.getPath(), i.Range.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/switchport/port-security/maximum/range=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
-	for _, i := range state.IpAccessGroup {
-		if reflect.ValueOf(i.Direction.Value).IsZero() {
+	for i := range state.IpAccessGroup {
+		stateKeyValues := [...]string{state.IpAccessGroup[i].Direction.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.IpAccessGroup[i].Direction.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.IpAccessGroup {
-			if i.Direction.Value == j.Direction.Value {
-				found = true
+		for j := range data.IpAccessGroup {
+			found = true
+			if state.IpAccessGroup[i].Direction.Value != data.IpAccessGroup[j].Direction.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/access-group=%v", state.getPath(), i.Direction.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/access-group=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
-	for _, i := range state.DeviceTrackingAttachPolicy {
-		if reflect.ValueOf(i.PolicyName.Value).IsZero() {
+	for i := range state.DeviceTrackingAttachPolicy {
+		stateKeyValues := [...]string{state.DeviceTrackingAttachPolicy[i].PolicyName.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.DeviceTrackingAttachPolicy[i].PolicyName.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.DeviceTrackingAttachPolicy {
-			if i.PolicyName.Value == j.PolicyName.Value {
-				found = true
+		for j := range data.DeviceTrackingAttachPolicy {
+			found = true
+			if state.DeviceTrackingAttachPolicy[i].PolicyName.Value != data.DeviceTrackingAttachPolicy[j].PolicyName.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/device-tracking/attach-policy/policy-name=%v", state.getPath(), i.PolicyName.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/device-tracking/attach-policy/policy-name=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *Template) getEmptyLeafsDelete() []string {
+func (data *Template) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.SwitchportModeTrunk.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/mode/trunk", data.getPath()))
@@ -1585,6 +1683,13 @@ func (data *Template) getEmptyLeafsDelete() []string {
 	}
 	if !data.SwitchportPortSecurityAgingTypeInactivity.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/aging/type/inactivity", data.getPath()))
+	}
+
+	for i := range data.SwitchportPortSecurityMaximumRange {
+		keyValues := [...]string{strconv.FormatInt(data.SwitchportPortSecurityMaximumRange[i].Range.Value, 10)}
+		if !data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/maximum/range=%v/vlan/access", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
 	}
 	if !data.SwitchportPortSecurityViolationProtect.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/violation/protect", data.getPath()))
@@ -1631,12 +1736,14 @@ func (data *Template) getEmptyLeafsDelete() []string {
 	if !data.IpDhcpSnoopingTrust.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/dhcp/snooping/trust", data.getPath()))
 	}
+
 	if !data.SubscriberAgingInactivityTimerProbe.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/timer-probe/inactivity-timer/inactivity-timer/probe", data.getPath()))
 	}
 	if !data.SubscriberAgingProbe.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/timer-probe/probe/probe", data.getPath()))
 	}
+
 	if !data.CtsManualPolicyStaticTrusted.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/cts/manual/policy/static/trusted", data.getPath()))
 	}

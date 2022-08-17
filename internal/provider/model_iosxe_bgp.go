@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -38,7 +39,7 @@ func (data BGP) getPathShort() string {
 	return matches[1]
 }
 
-func (data BGP) toBody() string {
+func (data BGP) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Asn.Null && !data.Asn.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Asn.Value)
@@ -55,7 +56,7 @@ func (data BGP) toBody() string {
 	return body
 }
 
-func (data *BGP) updateFromBody(res gjson.Result) {
+func (data *BGP) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -82,7 +83,7 @@ func (data *BGP) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGP) fromBody(res gjson.Result) {
+func (data *BGP) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -107,7 +108,7 @@ func (data *BGP) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGP) setUnknownValues() {
+func (data *BGP) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -134,12 +135,12 @@ func (data *BGP) setUnknownValues() {
 	}
 }
 
-func (data *BGP) getDeletedListItems(state BGP) []string {
+func (data *BGP) getDeletedListItems(ctx context.Context, state BGP) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *BGP) getEmptyLeafsDelete() []string {
+func (data *BGP) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
 }

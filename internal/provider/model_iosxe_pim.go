@@ -3,10 +3,12 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -60,7 +62,7 @@ func (data PIM) getPathShort() string {
 	return matches[1]
 }
 
-func (data PIM) toBody() string {
+func (data PIM) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Autorp.Null && !data.Autorp.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-multicast:autorp-container.autorp", data.Autorp.Value)
@@ -149,7 +151,7 @@ func (data PIM) toBody() string {
 	return body
 }
 
-func (data *PIM) updateFromBody(res gjson.Result) {
+func (data *PIM) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -210,51 +212,93 @@ func (data *PIM) updateFromBody(res gjson.Result) {
 		data.RpAddressBidir.Value = false
 	}
 	for i := range data.RpAddresses {
-		key := data.RpAddresses[i].AccessList.Value
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").access-list", prefix, key)); value.Exists() {
+		keys := [...]string{"access-list"}
+		keyValues := [...]string{data.RpAddresses[i].AccessList.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-list").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("access-list"); value.Exists() {
 			data.RpAddresses[i].AccessList.Value = value.String()
 		} else {
 			data.RpAddresses[i].AccessList.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").rp-address", prefix, key)); value.Exists() {
+		if value := r.Get("rp-address"); value.Exists() {
 			data.RpAddresses[i].RpAddress.Value = value.String()
 		} else {
 			data.RpAddresses[i].RpAddress.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").override", prefix, key)); value.Exists() {
+		if value := r.Get("override"); value.Exists() {
 			data.RpAddresses[i].Override.Value = true
 		} else {
 			data.RpAddresses[i].Override.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-address-list.#(access-list==\"%v\").bidir", prefix, key)); value.Exists() {
+		if value := r.Get("bidir"); value.Exists() {
 			data.RpAddresses[i].Bidir.Value = true
 		} else {
 			data.RpAddresses[i].Bidir.Value = false
 		}
 	}
 	for i := range data.RpCandidates {
-		key := data.RpCandidates[i].Interface.Value
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").interface", prefix, key)); value.Exists() {
+		keys := [...]string{"interface"}
+		keyValues := [...]string{data.RpCandidates[i].Interface.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "Cisco-IOS-XE-multicast:rp-candidate").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("interface"); value.Exists() {
 			data.RpCandidates[i].Interface.Value = value.String()
 		} else {
 			data.RpCandidates[i].Interface.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").group-list", prefix, key)); value.Exists() {
+		if value := r.Get("group-list"); value.Exists() {
 			data.RpCandidates[i].GroupList.Value = value.String()
 		} else {
 			data.RpCandidates[i].GroupList.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").interval", prefix, key)); value.Exists() {
+		if value := r.Get("interval"); value.Exists() {
 			data.RpCandidates[i].Interval.Value = value.Int()
 		} else {
 			data.RpCandidates[i].Interval.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").priority", prefix, key)); value.Exists() {
+		if value := r.Get("priority"); value.Exists() {
 			data.RpCandidates[i].Priority.Value = value.Int()
 		} else {
 			data.RpCandidates[i].Priority.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-multicast:rp-candidate.#(interface==\"%v\").bidir", prefix, key)); value.Exists() {
+		if value := r.Get("bidir"); value.Exists() {
 			data.RpCandidates[i].Bidir.Value = true
 		} else {
 			data.RpCandidates[i].Bidir.Value = false
@@ -262,7 +306,7 @@ func (data *PIM) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *PIM) fromBody(res gjson.Result) {
+func (data *PIM) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -380,7 +424,7 @@ func (data *PIM) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *PIM) setUnknownValues() {
+func (data *PIM) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -475,40 +519,62 @@ func (data *PIM) setUnknownValues() {
 	}
 }
 
-func (data *PIM) getDeletedListItems(state PIM) []string {
+func (data *PIM) getDeletedListItems(ctx context.Context, state PIM) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.RpAddresses {
-		if reflect.ValueOf(i.AccessList.Value).IsZero() {
+	for i := range state.RpAddresses {
+		stateKeyValues := [...]string{state.RpAddresses[i].AccessList.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.RpAddresses[i].AccessList.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.RpAddresses {
-			if i.AccessList.Value == j.AccessList.Value {
-				found = true
+		for j := range data.RpAddresses {
+			found = true
+			if state.RpAddresses[i].AccessList.Value != data.RpAddresses[j].AccessList.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-list=%v", state.getPath(), i.AccessList.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-list=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
-	for _, i := range state.RpCandidates {
-		if reflect.ValueOf(i.Interface.Value).IsZero() {
+	for i := range state.RpCandidates {
+		stateKeyValues := [...]string{state.RpCandidates[i].Interface.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.RpCandidates[i].Interface.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.RpCandidates {
-			if i.Interface.Value == j.Interface.Value {
-				found = true
+		for j := range data.RpCandidates {
+			found = true
+			if state.RpCandidates[i].Interface.Value != data.RpCandidates[j].Interface.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-candidate=%v", state.getPath(), i.Interface.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-candidate=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *PIM) getEmptyLeafsDelete() []string {
+func (data *PIM) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.AutorpListener.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:autorp-container/listener", data.getPath()))
@@ -521,6 +587,23 @@ func (data *PIM) getEmptyLeafsDelete() []string {
 	}
 	if !data.RpAddressBidir.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-conf/bidir", data.getPath()))
+	}
+
+	for i := range data.RpAddresses {
+		keyValues := [...]string{data.RpAddresses[i].AccessList.Value}
+		if !data.RpAddresses[i].Override.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-list=%v/override", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
+		if !data.RpAddresses[i].Bidir.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-list=%v/bidir", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
+	}
+
+	for i := range data.RpCandidates {
+		keyValues := [...]string{data.RpCandidates[i].Interface.Value}
+		if !data.RpCandidates[i].Bidir.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-candidate=%v/bidir", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
 	}
 	return emptyLeafsDelete
 }

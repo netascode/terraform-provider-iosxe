@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -39,7 +40,7 @@ func (data VLANConfiguration) getPathShort() string {
 	return matches[1]
 }
 
-func (data VLANConfiguration) toBody() string {
+func (data VLANConfiguration) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.VlanId.Null && !data.VlanId.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vlan-id", strconv.FormatInt(data.VlanId.Value, 10))
@@ -59,7 +60,7 @@ func (data VLANConfiguration) toBody() string {
 	return body
 }
 
-func (data *VLANConfiguration) updateFromBody(res gjson.Result) {
+func (data *VLANConfiguration) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -91,7 +92,7 @@ func (data *VLANConfiguration) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *VLANConfiguration) fromBody(res gjson.Result) {
+func (data *VLANConfiguration) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -114,7 +115,7 @@ func (data *VLANConfiguration) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *VLANConfiguration) setUnknownValues() {
+func (data *VLANConfiguration) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -145,12 +146,12 @@ func (data *VLANConfiguration) setUnknownValues() {
 	}
 }
 
-func (data *VLANConfiguration) getDeletedListItems(state VLANConfiguration) []string {
+func (data *VLANConfiguration) getDeletedListItems(ctx context.Context, state VLANConfiguration) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *VLANConfiguration) getEmptyLeafsDelete() []string {
+func (data *VLANConfiguration) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
 }

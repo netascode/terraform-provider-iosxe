@@ -172,7 +172,7 @@ func (d dataSourceService) Read(ctx context.Context, req tfsdk.ReadDataSourceReq
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

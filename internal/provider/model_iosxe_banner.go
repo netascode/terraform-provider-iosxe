@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -35,7 +36,7 @@ func (data Banner) getPathShort() string {
 	return matches[1]
 }
 
-func (data Banner) toBody() string {
+func (data Banner) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.ExecBanner.Null && !data.ExecBanner.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"exec.banner", data.ExecBanner.Value)
@@ -52,7 +53,7 @@ func (data Banner) toBody() string {
 	return body
 }
 
-func (data *Banner) updateFromBody(res gjson.Result) {
+func (data *Banner) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -79,7 +80,7 @@ func (data *Banner) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *Banner) fromBody(res gjson.Result) {
+func (data *Banner) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -102,7 +103,7 @@ func (data *Banner) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *Banner) setUnknownValues() {
+func (data *Banner) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -129,12 +130,12 @@ func (data *Banner) setUnknownValues() {
 	}
 }
 
-func (data *Banner) getDeletedListItems(state Banner) []string {
+func (data *Banner) getDeletedListItems(ctx context.Context, state Banner) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *Banner) getEmptyLeafsDelete() []string {
+func (data *Banner) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
 }

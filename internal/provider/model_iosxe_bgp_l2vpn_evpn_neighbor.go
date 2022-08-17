@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -38,7 +39,7 @@ func (data BGPL2VPNEVPNNeighbor) getPathShort() string {
 	return matches[1]
 }
 
-func (data BGPL2VPNEVPNNeighbor) toBody() string {
+func (data BGPL2VPNEVPNNeighbor) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Ip.Null && !data.Ip.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Ip.Value)
@@ -59,7 +60,7 @@ func (data BGPL2VPNEVPNNeighbor) toBody() string {
 	return body
 }
 
-func (data *BGPL2VPNEVPNNeighbor) updateFromBody(res gjson.Result) {
+func (data *BGPL2VPNEVPNNeighbor) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -86,7 +87,7 @@ func (data *BGPL2VPNEVPNNeighbor) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPL2VPNEVPNNeighbor) fromBody(res gjson.Result) {
+func (data *BGPL2VPNEVPNNeighbor) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -111,7 +112,7 @@ func (data *BGPL2VPNEVPNNeighbor) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPL2VPNEVPNNeighbor) setUnknownValues() {
+func (data *BGPL2VPNEVPNNeighbor) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -142,12 +143,12 @@ func (data *BGPL2VPNEVPNNeighbor) setUnknownValues() {
 	}
 }
 
-func (data *BGPL2VPNEVPNNeighbor) getDeletedListItems(state BGPL2VPNEVPNNeighbor) []string {
+func (data *BGPL2VPNEVPNNeighbor) getDeletedListItems(ctx context.Context, state BGPL2VPNEVPNNeighbor) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *BGPL2VPNEVPNNeighbor) getEmptyLeafsDelete() []string {
+func (data *BGPL2VPNEVPNNeighbor) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Activate.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/activate", data.getPath()))

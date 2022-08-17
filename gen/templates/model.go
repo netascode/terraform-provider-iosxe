@@ -4,6 +4,7 @@
 package provider
 
 import (
+	"context"
 	"regexp"
 	{{- $fmt := false }}{{ range .Attributes}}{{ if or (eq .Id true) (eq .Reference true) (eq .Type "List") (and (eq .Type "Bool") (eq .TypeYangBool "empty")) }}{{ $fmt = true }}{{ end}}{{ end}}
 	{{- if $fmt }}
@@ -20,6 +21,7 @@ import (
 	{{- $reflect := false }}{{ range .Attributes}}{{ if eq .Type "List" }}{{ $reflect = true }}{{ end}}{{ end}}
 	{{- if $reflect }}
 	"reflect"
+	"strings"
 	{{- end}}
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -76,7 +78,7 @@ func (data {{camelCase .Name}}) getPathShort() string {
 	return matches[1]
 }
 
-func (data {{camelCase .Name}}) toBody() string {
+func (data {{camelCase .Name}}) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	{{- range .Attributes}}
 	{{- if and (ne .Reference true) (ne .Type "List")}}
@@ -127,7 +129,7 @@ func (data {{camelCase .Name}}) toBody() string {
 	return body
 }
 
-func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
+func (data *{{camelCase .Name}}) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -166,29 +168,46 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 	{{- $list := (toGoName .TfName)}}
 	{{- $listPath := (toJsonPath .YangName .XPath)}}
 	{{- $yangKey := ""}}
-	for i := range data.{{$list}}{
-		{{- range .Attributes}}
-		{{- if eq .Id true}}
-		{{- $yangKey = .YangName}}
-		key := data.{{$list}}[i].{{toGoName .TfName}}.Value
-		{{- end}}
-		{{- end}}
+	for i := range data.{{$list}} {
+		keys := [...]string{ {{range .Attributes}}{{if eq .Id true}}"{{.YangName}}", {{end}}{{end}} }
+		keyValues := [...]string{ {{range .Attributes}}{{if eq .Id true}}{{if eq .Type "Int64"}}strconv.FormatInt(data.{{$list}}[i].{{toGoName .TfName}}.Value, 10), {{else if eq .Type "Bool"}}strconv.FormatBool(data.{{$list}}[i].{{toGoName .TfName}}.Value), {{else}}data.{{$list}}[i].{{toGoName .TfName}}.Value, {{end}}{{end}}{{end}} }
+
+		var r gjson.Result
+		res.Get(prefix+"{{$listPath}}").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+
 		{{- range .Attributes}}
 		{{- if ne .WriteOnly true}}
 		{{- if eq .Type "Int64"}}
-		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
+		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Int()
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
 		}
 		{{- else if eq .Type "Float64"}}
-		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
+		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Float()
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
 		}
 		{{- else if eq .Type "Bool"}}
-		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
+		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() {
 			{{- if eq .TypeYangBool "boolean"}}
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.Bool()
 			{{- else}}
@@ -198,7 +217,7 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = false
 		}
 		{{- else if eq .Type "String"}}
-		if value := res.Get(fmt.Sprintf("%v{{$listPath}}.#({{$yangKey}}==\"%v\").{{toJsonPath .YangName .XPath}}", prefix, key)); value.Exists() {
+		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() {
 			data.{{$list}}[i].{{toGoName .TfName}}.Value = value.String()
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}}.Null = true
@@ -209,10 +228,11 @@ func (data *{{camelCase .Name}}) updateFromBody(res gjson.Result) {
 	}
 	{{- end}}
 	{{- end}}
+
 	{{- end}}
 }
 
-func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
+func (data *{{camelCase .Name}}) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -278,7 +298,7 @@ func (data *{{camelCase .Name}}) fromBody(res gjson.Result) {
 	{{- end}}
 }
 
-func (data *{{camelCase .Name}}) setUnknownValues() {
+func (data *{{camelCase .Name}}) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -307,7 +327,7 @@ func (data *{{camelCase .Name}}) setUnknownValues() {
 	{{- end}}
 }
 
-func (data *{{camelCase .Name}}) getDeletedListItems(state {{camelCase .Name}}) []string {
+func (data *{{camelCase .Name}}) getDeletedListItems(ctx context.Context, state {{camelCase .Name}}) []string {
 	deletedListItems := make([]string, 0)
 	{{- range .Attributes}}
 	{{- if eq .Type "List"}}
@@ -317,18 +337,38 @@ func (data *{{camelCase .Name}}) getDeletedListItems(state {{camelCase .Name}}) 
 	{{- $goKey = (toGoName .TfName)}}
 	{{- end}}
 	{{- end}}
-	for _, i := range state.{{toGoName .TfName}} {
-		if reflect.ValueOf(i.{{$goKey}}.Value).IsZero() {
+	for i := range state.{{toGoName .TfName}} {
+		{{- $list := (toGoName .TfName)}}
+		stateKeyValues := [...]string{ {{range .Attributes}}{{if eq .Id true}}{{if eq .Type "Int64"}}strconv.FormatInt(state.{{$list}}[i].{{toGoName .TfName}}.Value, 10), {{else if eq .Type "Bool"}}strconv.FormatBool(state.{{$list}}[i].{{toGoName .TfName}}.Value), {{else}}state.{{$list}}[i].{{toGoName .TfName}}.Value, {{end}}{{end}}{{end}} }
+		
+		emptyKeys := true
+		{{- range .Attributes}}
+		{{- if eq .Id true}}
+		if !reflect.ValueOf(state.{{$list}}[i].{{toGoName .TfName}}.Value).IsZero() {
+			emptyKeys = false
+		}
+		{{- end}}
+		{{- end}}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.{{toGoName .TfName}} {
-			if i.{{$goKey}}.Value == j.{{$goKey}}.Value {
-				found = true
+		for j := range data.{{toGoName .TfName}} {
+			found = true
+			{{- range .Attributes}}
+			{{- if eq .Id true}}
+			if state.{{$list}}[i].{{toGoName .TfName}}.Value != data.{{$list}}[j].{{toGoName .TfName}}.Value {
+				found = false
+			} 
+			{{- end}}
+			{{- end}}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/{{.YangName}}=%v", state.getPath(), i.{{$goKey}}.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/{{.YangName}}=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	{{- end}}
@@ -336,7 +376,7 @@ func (data *{{camelCase .Name}}) getDeletedListItems(state {{camelCase .Name}}) 
 	return deletedListItems
 }
 
-func (data *{{camelCase .Name}}) getEmptyLeafsDelete() []string {
+func (data *{{camelCase .Name}}) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	{{- range .Attributes}}
 	{{- if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}
@@ -345,23 +385,17 @@ func (data *{{camelCase .Name}}) getEmptyLeafsDelete() []string {
 	}
 	{{- end}}
 	{{- if eq .Type "List"}}
-	{{- $goKey := ""}}
 	{{- $hasEmpty := false}}
-	{{- range .Attributes}}
-	{{- if eq .Id true}}
-	{{- $goKey = (toGoName .TfName)}}
-	{{- if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}
-	{{- $hasEmpty = true}}
-	{{- end}}
-	{{- end}}
-	{{- end}}
+	{{ range .Attributes}}{{ if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}{{ $hasEmpty = true}}{{ end}}{{- end}}
 	{{- if $hasEmpty}}
 	{{- $yangName := .YangName}}
-	for _, i := range data.{{toGoName .TfName}} {
+	for i := range data.{{toGoName .TfName}} {
+		{{- $list := (toGoName .TfName)}}
+		keyValues := [...]string{ {{range .Attributes}}{{if eq .Id true}}{{if eq .Type "Int64"}}strconv.FormatInt(data.{{$list}}[i].{{toGoName .TfName}}.Value, 10), {{else if eq .Type "Bool"}}strconv.FormatBool(data.{{$list}}[i].{{toGoName .TfName}}.Value), {{else}}data.{{$list}}[i].{{toGoName .TfName}}.Value, {{end}}{{end}}{{end}} }
 		{{- range .Attributes}}
 		{{- if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}
-		if !i.{{toGoName .TfName}}.Value {
-			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{$yangName}}=%v/{{.YangName}}", data.getPath(), i.{{$goKey}}.Value))
+		if !data.{{$list}}[i].{{toGoName .TfName}}.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{$yangName}}=%v/{{.YangName}}", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 		{{- end}}
 		{{- end}}

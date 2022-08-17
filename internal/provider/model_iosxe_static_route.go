@@ -3,11 +3,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -46,7 +48,7 @@ func (data StaticRoute) getPathShort() string {
 	return matches[1]
 }
 
-func (data StaticRoute) toBody() string {
+func (data StaticRoute) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Prefix.Null && !data.Prefix.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"prefix", data.Prefix.Value)
@@ -84,7 +86,7 @@ func (data StaticRoute) toBody() string {
 	return body
 }
 
-func (data *StaticRoute) updateFromBody(res gjson.Result) {
+func (data *StaticRoute) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -100,33 +102,54 @@ func (data *StaticRoute) updateFromBody(res gjson.Result) {
 		data.Mask.Null = true
 	}
 	for i := range data.NextHops {
-		key := data.NextHops[i].NextHop.Value
-		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").fwd", prefix, key)); value.Exists() {
+		keys := [...]string{"fwd"}
+		keyValues := [...]string{data.NextHops[i].NextHop.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "fwd-list").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("fwd"); value.Exists() {
 			data.NextHops[i].NextHop.Value = value.String()
 		} else {
 			data.NextHops[i].NextHop.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").metric", prefix, key)); value.Exists() {
+		if value := r.Get("metric"); value.Exists() {
 			data.NextHops[i].Metric.Value = value.Int()
 		} else {
 			data.NextHops[i].Metric.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").global", prefix, key)); value.Exists() {
+		if value := r.Get("global"); value.Exists() {
 			data.NextHops[i].Global.Value = true
 		} else {
 			data.NextHops[i].Global.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").name", prefix, key)); value.Exists() {
+		if value := r.Get("name"); value.Exists() {
 			data.NextHops[i].Name.Value = value.String()
 		} else {
 			data.NextHops[i].Name.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").permanent", prefix, key)); value.Exists() {
+		if value := r.Get("permanent"); value.Exists() {
 			data.NextHops[i].Permanent.Value = true
 		} else {
 			data.NextHops[i].Permanent.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%vfwd-list.#(fwd==\"%v\").tag", prefix, key)); value.Exists() {
+		if value := r.Get("tag"); value.Exists() {
 			data.NextHops[i].Tag.Value = value.Int()
 		} else {
 			data.NextHops[i].Tag.Null = true
@@ -134,7 +157,7 @@ func (data *StaticRoute) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *StaticRoute) fromBody(res gjson.Result) {
+func (data *StaticRoute) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -173,7 +196,7 @@ func (data *StaticRoute) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *StaticRoute) setUnknownValues() {
+func (data *StaticRoute) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -218,26 +241,47 @@ func (data *StaticRoute) setUnknownValues() {
 	}
 }
 
-func (data *StaticRoute) getDeletedListItems(state StaticRoute) []string {
+func (data *StaticRoute) getDeletedListItems(ctx context.Context, state StaticRoute) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.NextHops {
-		if reflect.ValueOf(i.NextHop.Value).IsZero() {
+	for i := range state.NextHops {
+		stateKeyValues := [...]string{state.NextHops[i].NextHop.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.NextHops[i].NextHop.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.NextHops {
-			if i.NextHop.Value == j.NextHop.Value {
-				found = true
+		for j := range data.NextHops {
+			found = true
+			if state.NextHops[i].NextHop.Value != data.NextHops[j].NextHop.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/fwd-list=%v", state.getPath(), i.NextHop.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/fwd-list=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *StaticRoute) getEmptyLeafsDelete() []string {
+func (data *StaticRoute) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
+
+	for i := range data.NextHops {
+		keyValues := [...]string{data.NextHops[i].NextHop.Value}
+		if !data.NextHops[i].Global.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/fwd-list=%v/global", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
+		if !data.NextHops[i].Permanent.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/fwd-list=%v/permanent", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
+	}
 	return emptyLeafsDelete
 }

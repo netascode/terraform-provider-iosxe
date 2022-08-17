@@ -103,7 +103,7 @@ func (d dataSourceBGPAddressFamilyIPv4VRF) Read(ctx context.Context, req tfsdk.R
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

@@ -3,10 +3,12 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -46,7 +48,7 @@ func (data System) getPathShort() string {
 	return matches[1]
 }
 
-func (data System) toBody() string {
+func (data System) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Hostname.Null && !data.Hostname.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"hostname", data.Hostname.Value)
@@ -93,7 +95,7 @@ func (data System) toBody() string {
 	return body
 }
 
-func (data *System) updateFromBody(res gjson.Result) {
+func (data *System) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -134,13 +136,34 @@ func (data *System) updateFromBody(res gjson.Result) {
 		data.MulticastRoutingDistributed.Value = false
 	}
 	for i := range data.MulticastRoutingVrfs {
-		key := data.MulticastRoutingVrfs[i].Vrf.Value
-		if value := res.Get(fmt.Sprintf("%vip.Cisco-IOS-XE-multicast:multicast-routing.vrf.#(name==\"%v\").name", prefix, key)); value.Exists() {
+		keys := [...]string{"name"}
+		keyValues := [...]string{data.MulticastRoutingVrfs[i].Vrf.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing.vrf").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("name"); value.Exists() {
 			data.MulticastRoutingVrfs[i].Vrf.Value = value.String()
 		} else {
 			data.MulticastRoutingVrfs[i].Vrf.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vip.Cisco-IOS-XE-multicast:multicast-routing.vrf.#(name==\"%v\").distributed", prefix, key)); value.Exists() {
+		if value := r.Get("distributed"); value.Exists() {
 			data.MulticastRoutingVrfs[i].Distributed.Value = true
 		} else {
 			data.MulticastRoutingVrfs[i].Distributed.Value = false
@@ -148,7 +171,7 @@ func (data *System) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *System) fromBody(res gjson.Result) {
+func (data *System) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -214,7 +237,7 @@ func (data *System) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *System) setUnknownValues() {
+func (data *System) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -263,26 +286,37 @@ func (data *System) setUnknownValues() {
 	}
 }
 
-func (data *System) getDeletedListItems(state System) []string {
+func (data *System) getDeletedListItems(ctx context.Context, state System) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.MulticastRoutingVrfs {
-		if reflect.ValueOf(i.Vrf.Value).IsZero() {
+	for i := range state.MulticastRoutingVrfs {
+		stateKeyValues := [...]string{state.MulticastRoutingVrfs[i].Vrf.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.MulticastRoutingVrfs[i].Vrf.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.MulticastRoutingVrfs {
-			if i.Vrf.Value == j.Vrf.Value {
-				found = true
+		for j := range data.MulticastRoutingVrfs {
+			found = true
+			if state.MulticastRoutingVrfs[i].Vrf.Value != data.MulticastRoutingVrfs[j].Vrf.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/vrf=%v", state.getPath(), i.Vrf.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/vrf=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *System) getEmptyLeafsDelete() []string {
+func (data *System) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Ipv6UnicastRouting.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ipv6/unicast-routing", data.getPath()))
@@ -292,6 +326,13 @@ func (data *System) getEmptyLeafsDelete() []string {
 	}
 	if !data.MulticastRoutingDistributed.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/distributed", data.getPath()))
+	}
+
+	for i := range data.MulticastRoutingVrfs {
+		keyValues := [...]string{data.MulticastRoutingVrfs[i].Vrf.Value}
+		if !data.MulticastRoutingVrfs[i].Distributed.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/vrf=%v/distributed", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
 	}
 	return emptyLeafsDelete
 }

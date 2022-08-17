@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -43,7 +44,7 @@ func (data BGPIPv4UnicastVRFNeighbor) getPathShort() string {
 	return matches[1]
 }
 
-func (data BGPIPv4UnicastVRFNeighbor) toBody() string {
+func (data BGPIPv4UnicastVRFNeighbor) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Ip.Null && !data.Ip.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Ip.Value)
@@ -78,7 +79,7 @@ func (data BGPIPv4UnicastVRFNeighbor) toBody() string {
 	return body
 }
 
-func (data *BGPIPv4UnicastVRFNeighbor) updateFromBody(res gjson.Result) {
+func (data *BGPIPv4UnicastVRFNeighbor) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -125,7 +126,7 @@ func (data *BGPIPv4UnicastVRFNeighbor) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPIPv4UnicastVRFNeighbor) fromBody(res gjson.Result) {
+func (data *BGPIPv4UnicastVRFNeighbor) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -169,7 +170,7 @@ func (data *BGPIPv4UnicastVRFNeighbor) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPIPv4UnicastVRFNeighbor) setUnknownValues() {
+func (data *BGPIPv4UnicastVRFNeighbor) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -220,12 +221,12 @@ func (data *BGPIPv4UnicastVRFNeighbor) setUnknownValues() {
 	}
 }
 
-func (data *BGPIPv4UnicastVRFNeighbor) getDeletedListItems(state BGPIPv4UnicastVRFNeighbor) []string {
+func (data *BGPIPv4UnicastVRFNeighbor) getDeletedListItems(ctx context.Context, state BGPIPv4UnicastVRFNeighbor) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *BGPIPv4UnicastVRFNeighbor) getEmptyLeafsDelete() []string {
+func (data *BGPIPv4UnicastVRFNeighbor) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Shutdown.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))

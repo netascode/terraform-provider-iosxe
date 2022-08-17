@@ -129,7 +129,7 @@ func (d dataSourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadDataSour
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

@@ -3,11 +3,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -50,7 +52,7 @@ func (data InterfaceVLAN) getPathShort() string {
 	return matches[1]
 }
 
-func (data InterfaceVLAN) toBody() string {
+func (data InterfaceVLAN) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Name.Null && !data.Name.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.Value, 10))
@@ -100,7 +102,7 @@ func (data InterfaceVLAN) toBody() string {
 	return body
 }
 
-func (data *InterfaceVLAN) updateFromBody(res gjson.Result) {
+func (data *InterfaceVLAN) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -151,18 +153,39 @@ func (data *InterfaceVLAN) updateFromBody(res gjson.Result) {
 		data.IpDhcpRelaySourceInterface.Null = true
 	}
 	for i := range data.HelperAddresses {
-		key := data.HelperAddresses[i].Address.Value
-		if value := res.Get(fmt.Sprintf("%vip.helper-address.#(address==\"%v\").address", prefix, key)); value.Exists() {
+		keys := [...]string{"address"}
+		keyValues := [...]string{data.HelperAddresses[i].Address.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "ip.helper-address").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("address"); value.Exists() {
 			data.HelperAddresses[i].Address.Value = value.String()
 		} else {
 			data.HelperAddresses[i].Address.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vip.helper-address.#(address==\"%v\").global", prefix, key)); value.Exists() {
+		if value := r.Get("global"); value.Exists() {
 			data.HelperAddresses[i].Global.Value = true
 		} else {
 			data.HelperAddresses[i].Global.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%vip.helper-address.#(address==\"%v\").vrf", prefix, key)); value.Exists() {
+		if value := r.Get("vrf"); value.Exists() {
 			data.HelperAddresses[i].Vrf.Value = value.String()
 		} else {
 			data.HelperAddresses[i].Vrf.Null = true
@@ -170,7 +193,7 @@ func (data *InterfaceVLAN) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceVLAN) fromBody(res gjson.Result) {
+func (data *InterfaceVLAN) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -235,7 +258,7 @@ func (data *InterfaceVLAN) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceVLAN) setUnknownValues() {
+func (data *InterfaceVLAN) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -296,29 +319,47 @@ func (data *InterfaceVLAN) setUnknownValues() {
 	}
 }
 
-func (data *InterfaceVLAN) getDeletedListItems(state InterfaceVLAN) []string {
+func (data *InterfaceVLAN) getDeletedListItems(ctx context.Context, state InterfaceVLAN) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.HelperAddresses {
-		if reflect.ValueOf(i.Address.Value).IsZero() {
+	for i := range state.HelperAddresses {
+		stateKeyValues := [...]string{state.HelperAddresses[i].Address.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.HelperAddresses[i].Address.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.HelperAddresses {
-			if i.Address.Value == j.Address.Value {
-				found = true
+		for j := range data.HelperAddresses {
+			found = true
+			if state.HelperAddresses[i].Address.Value != data.HelperAddresses[j].Address.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/helper-address=%v", state.getPath(), i.Address.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/ip/helper-address=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *InterfaceVLAN) getEmptyLeafsDelete() []string {
+func (data *InterfaceVLAN) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Shutdown.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+
+	for i := range data.HelperAddresses {
+		keyValues := [...]string{data.HelperAddresses[i].Address.Value}
+		if !data.HelperAddresses[i].Global.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/helper-address=%v/helper-choice/global/global", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
 	}
 	return emptyLeafsDelete
 }

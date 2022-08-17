@@ -130,7 +130,7 @@ func (r resourceSystem) Create(ctx context.Context, req tfsdk.CreateResourceRequ
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.getPath()))
 
 	// Create object
-	body := plan.toBody()
+	body := plan.toBody(ctx)
 
 	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
 	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
@@ -141,7 +141,7 @@ func (r resourceSystem) Create(ctx context.Context, req tfsdk.CreateResourceRequ
 		return
 	}
 
-	emptyLeafsDelete := plan.getEmptyLeafsDelete()
+	emptyLeafsDelete := plan.getEmptyLeafsDelete(ctx)
 	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
 
 	for _, i := range emptyLeafsDelete {
@@ -152,7 +152,7 @@ func (r resourceSystem) Create(ctx context.Context, req tfsdk.CreateResourceRequ
 		}
 	}
 
-	plan.setUnknownValues()
+	plan.setUnknownValues(ctx)
 
 	plan.Id = types.String{Value: plan.getPath()}
 
@@ -183,7 +183,7 @@ func (r resourceSystem) Read(ctx context.Context, req tfsdk.ReadResourceRequest,
 			return
 		}
 
-		state.updateFromBody(res.Res)
+		state.updateFromBody(ctx, res.Res)
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", state.Id.Value))
@@ -211,7 +211,7 @@ func (r resourceSystem) Update(ctx context.Context, req tfsdk.UpdateResourceRequ
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.Id.Value))
 
-	body := plan.toBody()
+	body := plan.toBody(ctx)
 	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
 	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
 		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
@@ -221,9 +221,9 @@ func (r resourceSystem) Update(ctx context.Context, req tfsdk.UpdateResourceRequ
 		return
 	}
 
-	plan.setUnknownValues()
+	plan.setUnknownValues(ctx)
 
-	deletedListItems := plan.getDeletedListItems(state)
+	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
 
 	for _, i := range deletedListItems {
@@ -234,7 +234,7 @@ func (r resourceSystem) Update(ctx context.Context, req tfsdk.UpdateResourceRequ
 		}
 	}
 
-	emptyLeafsDelete := plan.getEmptyLeafsDelete()
+	emptyLeafsDelete := plan.getEmptyLeafsDelete(ctx)
 	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
 
 	for _, i := range emptyLeafsDelete {

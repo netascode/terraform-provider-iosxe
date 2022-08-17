@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -48,7 +49,7 @@ func (data InterfaceSwitchport) getPathShort() string {
 	return matches[1]
 }
 
-func (data InterfaceSwitchport) toBody() string {
+func (data InterfaceSwitchport) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.ModeAccess.Null && !data.ModeAccess.Unknown {
 		if data.ModeAccess.Value {
@@ -105,7 +106,7 @@ func (data InterfaceSwitchport) toBody() string {
 	return body
 }
 
-func (data *InterfaceSwitchport) updateFromBody(res gjson.Result) {
+func (data *InterfaceSwitchport) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -172,7 +173,7 @@ func (data *InterfaceSwitchport) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceSwitchport) fromBody(res gjson.Result) {
+func (data *InterfaceSwitchport) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -254,7 +255,7 @@ func (data *InterfaceSwitchport) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceSwitchport) setUnknownValues() {
+func (data *InterfaceSwitchport) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -321,12 +322,12 @@ func (data *InterfaceSwitchport) setUnknownValues() {
 	}
 }
 
-func (data *InterfaceSwitchport) getDeletedListItems(state InterfaceSwitchport) []string {
+func (data *InterfaceSwitchport) getDeletedListItems(ctx context.Context, state InterfaceSwitchport) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *InterfaceSwitchport) getEmptyLeafsDelete() []string {
+func (data *InterfaceSwitchport) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.ModePrivateVlanHost.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/host", data.getPath()))

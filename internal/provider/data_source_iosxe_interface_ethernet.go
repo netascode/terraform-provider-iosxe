@@ -174,7 +174,7 @@ func (d dataSourceInterfaceEthernet) Read(ctx context.Context, req tfsdk.ReadDat
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

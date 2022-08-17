@@ -123,7 +123,7 @@ func (d dataSourceInterfacePortChannelSubinterface) Read(ctx context.Context, re
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

@@ -3,10 +3,12 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -44,7 +46,7 @@ func (data DHCP) getPathShort() string {
 	return matches[1]
 }
 
-func (data DHCP) toBody() string {
+func (data DHCP) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.CompatibilitySuboptionLinkSelection.Null && !data.CompatibilitySuboptionLinkSelection.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:compatibility.suboption.link-selection", data.CompatibilitySuboptionLinkSelection.Value)
@@ -83,7 +85,7 @@ func (data DHCP) toBody() string {
 	return body
 }
 
-func (data *DHCP) updateFromBody(res gjson.Result) {
+func (data *DHCP) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -119,8 +121,29 @@ func (data *DHCP) updateFromBody(res gjson.Result) {
 		data.Snooping.Value = false
 	}
 	for i := range data.SnoopingVlans {
-		key := data.SnoopingVlans[i].VlanId.Value
-		if value := res.Get(fmt.Sprintf("%vCisco-IOS-XE-dhcp:snooping-conf.snooping.vlan.#(id==\"%v\").id", prefix, key)); value.Exists() {
+		keys := [...]string{"id"}
+		keyValues := [...]string{strconv.FormatInt(data.SnoopingVlans[i].VlanId.Value, 10)}
+
+		var r gjson.Result
+		res.Get(prefix + "Cisco-IOS-XE-dhcp:snooping-conf.snooping.vlan").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("id"); value.Exists() {
 			data.SnoopingVlans[i].VlanId.Value = value.Int()
 		} else {
 			data.SnoopingVlans[i].VlanId.Null = true
@@ -128,7 +151,7 @@ func (data *DHCP) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *DHCP) fromBody(res gjson.Result) {
+func (data *DHCP) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -183,7 +206,7 @@ func (data *DHCP) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *DHCP) setUnknownValues() {
+func (data *DHCP) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -224,26 +247,37 @@ func (data *DHCP) setUnknownValues() {
 	}
 }
 
-func (data *DHCP) getDeletedListItems(state DHCP) []string {
+func (data *DHCP) getDeletedListItems(ctx context.Context, state DHCP) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.SnoopingVlans {
-		if reflect.ValueOf(i.VlanId.Value).IsZero() {
+	for i := range state.SnoopingVlans {
+		stateKeyValues := [...]string{strconv.FormatInt(state.SnoopingVlans[i].VlanId.Value, 10)}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.SnoopingVlans[i].VlanId.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.SnoopingVlans {
-			if i.VlanId.Value == j.VlanId.Value {
-				found = true
+		for j := range data.SnoopingVlans {
+			found = true
+			if state.SnoopingVlans[i].VlanId.Value != data.SnoopingVlans[j].VlanId.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:snooping-conf/snooping/vlan=%v", state.getPath(), i.VlanId.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:snooping-conf/snooping/vlan=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *DHCP) getEmptyLeafsDelete() []string {
+func (data *DHCP) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.RelayInformationTrustAll.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/trust-all", data.getPath()))
@@ -257,5 +291,6 @@ func (data *DHCP) getEmptyLeafsDelete() []string {
 	if !data.Snooping.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:snooping", data.getPath()))
 	}
+
 	return emptyLeafsDelete
 }

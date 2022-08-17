@@ -3,11 +3,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -42,7 +44,7 @@ func (data InterfaceOSPFProcess) getPathShort() string {
 	return matches[1]
 }
 
-func (data InterfaceOSPFProcess) toBody() string {
+func (data InterfaceOSPFProcess) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.ProcessId.Null && !data.ProcessId.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.ProcessId.Value, 10))
@@ -58,7 +60,7 @@ func (data InterfaceOSPFProcess) toBody() string {
 	return body
 }
 
-func (data *InterfaceOSPFProcess) updateFromBody(res gjson.Result) {
+func (data *InterfaceOSPFProcess) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -69,8 +71,29 @@ func (data *InterfaceOSPFProcess) updateFromBody(res gjson.Result) {
 		data.ProcessId.Null = true
 	}
 	for i := range data.Area {
-		key := data.Area[i].AreaId.Value
-		if value := res.Get(fmt.Sprintf("%varea.#(area-id==\"%v\").area-id", prefix, key)); value.Exists() {
+		keys := [...]string{"area-id"}
+		keyValues := [...]string{data.Area[i].AreaId.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "area").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("area-id"); value.Exists() {
 			data.Area[i].AreaId.Value = value.String()
 		} else {
 			data.Area[i].AreaId.Null = true
@@ -78,7 +101,7 @@ func (data *InterfaceOSPFProcess) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceOSPFProcess) fromBody(res gjson.Result) {
+func (data *InterfaceOSPFProcess) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -97,7 +120,7 @@ func (data *InterfaceOSPFProcess) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *InterfaceOSPFProcess) setUnknownValues() {
+func (data *InterfaceOSPFProcess) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -126,26 +149,38 @@ func (data *InterfaceOSPFProcess) setUnknownValues() {
 	}
 }
 
-func (data *InterfaceOSPFProcess) getDeletedListItems(state InterfaceOSPFProcess) []string {
+func (data *InterfaceOSPFProcess) getDeletedListItems(ctx context.Context, state InterfaceOSPFProcess) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.Area {
-		if reflect.ValueOf(i.AreaId.Value).IsZero() {
+	for i := range state.Area {
+		stateKeyValues := [...]string{state.Area[i].AreaId.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.Area[i].AreaId.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.Area {
-			if i.AreaId.Value == j.AreaId.Value {
-				found = true
+		for j := range data.Area {
+			found = true
+			if state.Area[i].AreaId.Value != data.Area[j].AreaId.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/area=%v", state.getPath(), i.AreaId.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/area=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *InterfaceOSPFProcess) getEmptyLeafsDelete() []string {
+func (data *InterfaceOSPFProcess) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
+
 	return emptyLeafsDelete
 }

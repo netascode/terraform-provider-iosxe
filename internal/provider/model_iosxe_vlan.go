@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -42,7 +43,7 @@ func (data VLAN) getPathShort() string {
 	return matches[1]
 }
 
-func (data VLAN) toBody() string {
+func (data VLAN) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.VlanId.Null && !data.VlanId.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.VlanId.Value, 10))
@@ -81,7 +82,7 @@ func (data VLAN) toBody() string {
 	return body
 }
 
-func (data *VLAN) updateFromBody(res gjson.Result) {
+func (data *VLAN) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -128,7 +129,7 @@ func (data *VLAN) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *VLAN) fromBody(res gjson.Result) {
+func (data *VLAN) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -178,7 +179,7 @@ func (data *VLAN) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *VLAN) setUnknownValues() {
+func (data *VLAN) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -221,12 +222,12 @@ func (data *VLAN) setUnknownValues() {
 	}
 }
 
-func (data *VLAN) getDeletedListItems(state VLAN) []string {
+func (data *VLAN) getDeletedListItems(ctx context.Context, state VLAN) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *VLAN) getEmptyLeafsDelete() []string {
+func (data *VLAN) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.RemoteSpan.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/remote-span", data.getPath()))

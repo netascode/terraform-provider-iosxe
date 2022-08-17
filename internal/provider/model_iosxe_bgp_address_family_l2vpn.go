@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -35,7 +36,7 @@ func (data BGPAddressFamilyL2VPN) getPathShort() string {
 	return matches[1]
 }
 
-func (data BGPAddressFamilyL2VPN) toBody() string {
+func (data BGPAddressFamilyL2VPN) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.AfName.Null && !data.AfName.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"af-name", data.AfName.Value)
@@ -43,7 +44,7 @@ func (data BGPAddressFamilyL2VPN) toBody() string {
 	return body
 }
 
-func (data *BGPAddressFamilyL2VPN) updateFromBody(res gjson.Result) {
+func (data *BGPAddressFamilyL2VPN) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -55,14 +56,14 @@ func (data *BGPAddressFamilyL2VPN) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPAddressFamilyL2VPN) fromBody(res gjson.Result) {
+func (data *BGPAddressFamilyL2VPN) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
 }
 
-func (data *BGPAddressFamilyL2VPN) setUnknownValues() {
+func (data *BGPAddressFamilyL2VPN) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -81,12 +82,12 @@ func (data *BGPAddressFamilyL2VPN) setUnknownValues() {
 	}
 }
 
-func (data *BGPAddressFamilyL2VPN) getDeletedListItems(state BGPAddressFamilyL2VPN) []string {
+func (data *BGPAddressFamilyL2VPN) getDeletedListItems(ctx context.Context, state BGPAddressFamilyL2VPN) []string {
 	deletedListItems := make([]string, 0)
 	return deletedListItems
 }
 
-func (data *BGPAddressFamilyL2VPN) getEmptyLeafsDelete() []string {
+func (data *BGPAddressFamilyL2VPN) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
 }

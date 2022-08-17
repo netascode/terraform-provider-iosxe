@@ -3,11 +3,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -49,7 +51,7 @@ func (data MSDPVRF) getPathShort() string {
 	return matches[1]
 }
 
-func (data MSDPVRF) toBody() string {
+func (data MSDPVRF) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.Vrf.Null && !data.Vrf.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Vrf.Value)
@@ -88,7 +90,7 @@ func (data MSDPVRF) toBody() string {
 	return body
 }
 
-func (data *MSDPVRF) updateFromBody(res gjson.Result) {
+func (data *MSDPVRF) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -104,36 +106,78 @@ func (data *MSDPVRF) updateFromBody(res gjson.Result) {
 		data.OriginatorId.Null = true
 	}
 	for i := range data.Peers {
-		key := data.Peers[i].Addr.Value
-		if value := res.Get(fmt.Sprintf("%vpeer.#(addr==\"%v\").addr", prefix, key)); value.Exists() {
+		keys := [...]string{"addr"}
+		keyValues := [...]string{data.Peers[i].Addr.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "peer").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("addr"); value.Exists() {
 			data.Peers[i].Addr.Value = value.String()
 		} else {
 			data.Peers[i].Addr.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vpeer.#(addr==\"%v\").remote-as", prefix, key)); value.Exists() {
+		if value := r.Get("remote-as"); value.Exists() {
 			data.Peers[i].RemoteAs.Value = value.Int()
 		} else {
 			data.Peers[i].RemoteAs.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vpeer.#(addr==\"%v\").connect-source.Loopback", prefix, key)); value.Exists() {
+		if value := r.Get("connect-source.Loopback"); value.Exists() {
 			data.Peers[i].ConnectSourceLoopback.Value = value.Int()
 		} else {
 			data.Peers[i].ConnectSourceLoopback.Null = true
 		}
 	}
 	for i := range data.Passwords {
-		key := data.Passwords[i].Addr.Value
-		if value := res.Get(fmt.Sprintf("%vpassword.peer-list.#(addr==\"%v\").addr", prefix, key)); value.Exists() {
+		keys := [...]string{"addr"}
+		keyValues := [...]string{data.Passwords[i].Addr.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "password.peer-list").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("addr"); value.Exists() {
 			data.Passwords[i].Addr.Value = value.String()
 		} else {
 			data.Passwords[i].Addr.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vpassword.peer-list.#(addr==\"%v\").encryption", prefix, key)); value.Exists() {
+		if value := r.Get("encryption"); value.Exists() {
 			data.Passwords[i].Encryption.Value = value.Int()
 		} else {
 			data.Passwords[i].Encryption.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vpassword.peer-list.#(addr==\"%v\").password", prefix, key)); value.Exists() {
+		if value := r.Get("password"); value.Exists() {
 			data.Passwords[i].Password.Value = value.String()
 		} else {
 			data.Passwords[i].Password.Null = true
@@ -141,7 +185,7 @@ func (data *MSDPVRF) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *MSDPVRF) fromBody(res gjson.Result) {
+func (data *MSDPVRF) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -192,7 +236,7 @@ func (data *MSDPVRF) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *MSDPVRF) setUnknownValues() {
+func (data *MSDPVRF) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -239,40 +283,63 @@ func (data *MSDPVRF) setUnknownValues() {
 	}
 }
 
-func (data *MSDPVRF) getDeletedListItems(state MSDPVRF) []string {
+func (data *MSDPVRF) getDeletedListItems(ctx context.Context, state MSDPVRF) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.Peers {
-		if reflect.ValueOf(i.Addr.Value).IsZero() {
+	for i := range state.Peers {
+		stateKeyValues := [...]string{state.Peers[i].Addr.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.Peers[i].Addr.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.Peers {
-			if i.Addr.Value == j.Addr.Value {
-				found = true
+		for j := range data.Peers {
+			found = true
+			if state.Peers[i].Addr.Value != data.Peers[j].Addr.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/peer=%v", state.getPath(), i.Addr.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/peer=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
-	for _, i := range state.Passwords {
-		if reflect.ValueOf(i.Addr.Value).IsZero() {
+	for i := range state.Passwords {
+		stateKeyValues := [...]string{state.Passwords[i].Addr.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.Passwords[i].Addr.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.Passwords {
-			if i.Addr.Value == j.Addr.Value {
-				found = true
+		for j := range data.Passwords {
+			found = true
+			if state.Passwords[i].Addr.Value != data.Passwords[j].Addr.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/password/peer-list=%v", state.getPath(), i.Addr.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/password/peer-list=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *MSDPVRF) getEmptyLeafsDelete() []string {
+func (data *MSDPVRF) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
+
 	return emptyLeafsDelete
 }

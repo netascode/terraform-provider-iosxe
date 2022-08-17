@@ -3,11 +3,13 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -44,7 +46,7 @@ func (data BGPAddressFamilyIPv4VRF) getPathShort() string {
 	return matches[1]
 }
 
-func (data BGPAddressFamilyIPv4VRF) toBody() string {
+func (data BGPAddressFamilyIPv4VRF) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
 	if !data.AfName.Null && !data.AfName.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"af-name", data.AfName.Value)
@@ -75,7 +77,7 @@ func (data BGPAddressFamilyIPv4VRF) toBody() string {
 	return body
 }
 
-func (data *BGPAddressFamilyIPv4VRF) updateFromBody(res gjson.Result) {
+func (data *BGPAddressFamilyIPv4VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -86,23 +88,44 @@ func (data *BGPAddressFamilyIPv4VRF) updateFromBody(res gjson.Result) {
 		data.AfName.Null = true
 	}
 	for i := range data.Vrfs {
-		key := data.Vrfs[i].Name.Value
-		if value := res.Get(fmt.Sprintf("%vvrf.#(name==\"%v\").name", prefix, key)); value.Exists() {
+		keys := [...]string{"name"}
+		keyValues := [...]string{data.Vrfs[i].Name.Value}
+
+		var r gjson.Result
+		res.Get(prefix + "vrf").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("name"); value.Exists() {
 			data.Vrfs[i].Name.Value = value.String()
 		} else {
 			data.Vrfs[i].Name.Null = true
 		}
-		if value := res.Get(fmt.Sprintf("%vvrf.#(name==\"%v\").ipv4-unicast.advertise.l2vpn.evpn", prefix, key)); value.Exists() {
+		if value := r.Get("ipv4-unicast.advertise.l2vpn.evpn"); value.Exists() {
 			data.Vrfs[i].AdvertiseL2vpnEvpn.Value = true
 		} else {
 			data.Vrfs[i].AdvertiseL2vpnEvpn.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%vvrf.#(name==\"%v\").ipv4-unicast.redistribute-vrf.connected", prefix, key)); value.Exists() {
+		if value := r.Get("ipv4-unicast.redistribute-vrf.connected"); value.Exists() {
 			data.Vrfs[i].RedistributeConnected.Value = true
 		} else {
 			data.Vrfs[i].RedistributeConnected.Value = false
 		}
-		if value := res.Get(fmt.Sprintf("%vvrf.#(name==\"%v\").ipv4-unicast.redistribute-vrf.static", prefix, key)); value.Exists() {
+		if value := r.Get("ipv4-unicast.redistribute-vrf.static"); value.Exists() {
 			data.Vrfs[i].RedistributeStatic.Value = true
 		} else {
 			data.Vrfs[i].RedistributeStatic.Value = false
@@ -110,7 +133,7 @@ func (data *BGPAddressFamilyIPv4VRF) updateFromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPAddressFamilyIPv4VRF) fromBody(res gjson.Result) {
+func (data *BGPAddressFamilyIPv4VRF) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -141,7 +164,7 @@ func (data *BGPAddressFamilyIPv4VRF) fromBody(res gjson.Result) {
 	}
 }
 
-func (data *BGPAddressFamilyIPv4VRF) setUnknownValues() {
+func (data *BGPAddressFamilyIPv4VRF) setUnknownValues(ctx context.Context) {
 	if data.Device.Unknown {
 		data.Device.Unknown = false
 		data.Device.Null = true
@@ -178,26 +201,44 @@ func (data *BGPAddressFamilyIPv4VRF) setUnknownValues() {
 	}
 }
 
-func (data *BGPAddressFamilyIPv4VRF) getDeletedListItems(state BGPAddressFamilyIPv4VRF) []string {
+func (data *BGPAddressFamilyIPv4VRF) getDeletedListItems(ctx context.Context, state BGPAddressFamilyIPv4VRF) []string {
 	deletedListItems := make([]string, 0)
-	for _, i := range state.Vrfs {
-		if reflect.ValueOf(i.Name.Value).IsZero() {
+	for i := range state.Vrfs {
+		stateKeyValues := [...]string{state.Vrfs[i].Name.Value}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.Vrfs[i].Name.Value).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
 			continue
 		}
+
 		found := false
-		for _, j := range data.Vrfs {
-			if i.Name.Value == j.Name.Value {
-				found = true
+		for j := range data.Vrfs {
+			found = true
+			if state.Vrfs[i].Name.Value != data.Vrfs[j].Name.Value {
+				found = false
+			}
+			if found {
+				break
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/vrf=%v", state.getPath(), i.Name.Value))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/vrf=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
 }
 
-func (data *BGPAddressFamilyIPv4VRF) getEmptyLeafsDelete() []string {
+func (data *BGPAddressFamilyIPv4VRF) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
+
+	for i := range data.Vrfs {
+		keyValues := [...]string{data.Vrfs[i].Name.Value}
+		if !data.Vrfs[i].AdvertiseL2vpnEvpn.Value {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/vrf=%v/ipv4-unicast/advertise/l2vpn/evpn", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
+	}
 	return emptyLeafsDelete
 }

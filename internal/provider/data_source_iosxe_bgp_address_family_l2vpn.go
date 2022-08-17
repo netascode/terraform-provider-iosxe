@@ -77,7 +77,7 @@ func (d dataSourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req tfsdk.Rea
 			return
 		}
 
-		config.fromBody(res.Res)
+		config.fromBody(ctx, res.Res)
 	}
 
 	config.Id = types.String{Value: config.getPath()}

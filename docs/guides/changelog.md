@@ -10,6 +10,7 @@ description: |-
 ## 0.1.10 (unreleased)
 
 - Add iosxe_service resource and data source
+- Add iosxe_logging resource and data source
 
 ## 0.1.9
 
