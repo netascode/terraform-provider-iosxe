@@ -2,6 +2,7 @@
 
 - Add iosxe_service resource and data source
 - Add iosxe_logging resource and data source
+- Add iosxe_logging_ipv4_host_transport resource and data source
 
 ## 0.1.9
 
