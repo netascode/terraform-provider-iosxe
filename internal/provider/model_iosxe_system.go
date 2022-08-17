@@ -23,6 +23,14 @@ type System struct {
 	IpRouting                   types.Bool                   `tfsdk:"ip_routing"`
 	Ipv6UnicastRouting          types.Bool                   `tfsdk:"ipv6_unicast_routing"`
 	Mtu                         types.Int64                  `tfsdk:"mtu"`
+	IpSourceRoute               types.Bool                   `tfsdk:"ip_source_route"`
+	IpDomainLookup              types.Bool                   `tfsdk:"ip_domain_lookup"`
+	IpDomainName                types.String                 `tfsdk:"ip_domain_name"`
+	LoginDelay                  types.Int64                  `tfsdk:"login_delay"`
+	LoginOnFailure              types.Bool                   `tfsdk:"login_on_failure"`
+	LoginOnFailureLog           types.Bool                   `tfsdk:"login_on_failure_log"`
+	LoginOnSuccess              types.Bool                   `tfsdk:"login_on_success"`
+	LoginOnSuccessLog           types.Bool                   `tfsdk:"login_on_success_log"`
 	MulticastRouting            types.Bool                   `tfsdk:"multicast_routing"`
 	MulticastRoutingSwitch      types.Bool                   `tfsdk:"multicast_routing_switch"`
 	MulticastRoutingDistributed types.Bool                   `tfsdk:"multicast_routing_distributed"`
@@ -63,6 +71,38 @@ func (data System) toBody(ctx context.Context) string {
 	}
 	if !data.Mtu.Null && !data.Mtu.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"system.Cisco-IOS-XE-switch:mtu.size", strconv.FormatInt(data.Mtu.Value, 10))
+	}
+	if !data.IpSourceRoute.Null && !data.IpSourceRoute.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.source-route", data.IpSourceRoute.Value)
+	}
+	if !data.IpDomainLookup.Null && !data.IpDomainLookup.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.domain.lookup", data.IpDomainLookup.Value)
+	}
+	if !data.IpDomainName.Null && !data.IpDomainName.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.domain.name", data.IpDomainName.Value)
+	}
+	if !data.LoginDelay.Null && !data.LoginDelay.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"login.delay", strconv.FormatInt(data.LoginDelay.Value, 10))
+	}
+	if !data.LoginOnFailure.Null && !data.LoginOnFailure.Unknown {
+		if data.LoginOnFailure.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"login.on-failure", map[string]string{})
+		}
+	}
+	if !data.LoginOnFailureLog.Null && !data.LoginOnFailureLog.Unknown {
+		if data.LoginOnFailureLog.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"login.on-failure.log", map[string]string{})
+		}
+	}
+	if !data.LoginOnSuccess.Null && !data.LoginOnSuccess.Unknown {
+		if data.LoginOnSuccess.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"login.on-success", map[string]string{})
+		}
+	}
+	if !data.LoginOnSuccessLog.Null && !data.LoginOnSuccessLog.Unknown {
+		if data.LoginOnSuccessLog.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"login.on-success.log", map[string]string{})
+		}
 	}
 	if !data.MulticastRouting.Null && !data.MulticastRouting.Unknown {
 		if data.MulticastRouting.Value {
@@ -119,6 +159,46 @@ func (data *System) updateFromBody(ctx context.Context, res gjson.Result) {
 		data.Mtu.Value = value.Int()
 	} else {
 		data.Mtu.Null = true
+	}
+	if value := res.Get(prefix + "ip.source-route"); value.Exists() {
+		data.IpSourceRoute.Value = value.Bool()
+	} else {
+		data.IpSourceRoute.Value = false
+	}
+	if value := res.Get(prefix + "ip.domain.lookup"); value.Exists() {
+		data.IpDomainLookup.Value = value.Bool()
+	} else {
+		data.IpDomainLookup.Value = false
+	}
+	if value := res.Get(prefix + "ip.domain.name"); value.Exists() {
+		data.IpDomainName.Value = value.String()
+	} else {
+		data.IpDomainName.Null = true
+	}
+	if value := res.Get(prefix + "login.delay"); value.Exists() {
+		data.LoginDelay.Value = value.Int()
+	} else {
+		data.LoginDelay.Null = true
+	}
+	if value := res.Get(prefix + "login.on-failure"); value.Exists() {
+		data.LoginOnFailure.Value = true
+	} else {
+		data.LoginOnFailure.Value = false
+	}
+	if value := res.Get(prefix + "login.on-failure.log"); value.Exists() {
+		data.LoginOnFailureLog.Value = true
+	} else {
+		data.LoginOnFailureLog.Value = false
+	}
+	if value := res.Get(prefix + "login.on-success"); value.Exists() {
+		data.LoginOnSuccess.Value = true
+	} else {
+		data.LoginOnSuccess.Value = false
+	}
+	if value := res.Get(prefix + "login.on-success.log"); value.Exists() {
+		data.LoginOnSuccessLog.Value = true
+	} else {
+		data.LoginOnSuccessLog.Value = false
 	}
 	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing"); value.Exists() {
 		data.MulticastRouting.Value = true
@@ -198,6 +278,56 @@ func (data *System) fromBody(ctx context.Context, res gjson.Result) {
 		data.Mtu.Value = value.Int()
 		data.Mtu.Null = false
 	}
+	if value := res.Get(prefix + "ip.source-route"); value.Exists() {
+		data.IpSourceRoute.Value = value.Bool()
+		data.IpSourceRoute.Null = false
+	} else {
+		data.IpSourceRoute.Value = false
+		data.IpSourceRoute.Null = false
+	}
+	if value := res.Get(prefix + "ip.domain.lookup"); value.Exists() {
+		data.IpDomainLookup.Value = value.Bool()
+		data.IpDomainLookup.Null = false
+	} else {
+		data.IpDomainLookup.Value = false
+		data.IpDomainLookup.Null = false
+	}
+	if value := res.Get(prefix + "ip.domain.name"); value.Exists() {
+		data.IpDomainName.Value = value.String()
+		data.IpDomainName.Null = false
+	}
+	if value := res.Get(prefix + "login.delay"); value.Exists() {
+		data.LoginDelay.Value = value.Int()
+		data.LoginDelay.Null = false
+	}
+	if value := res.Get(prefix + "login.on-failure"); value.Exists() {
+		data.LoginOnFailure.Value = true
+		data.LoginOnFailure.Null = false
+	} else {
+		data.LoginOnFailure.Value = false
+		data.LoginOnFailure.Null = false
+	}
+	if value := res.Get(prefix + "login.on-failure.log"); value.Exists() {
+		data.LoginOnFailureLog.Value = true
+		data.LoginOnFailureLog.Null = false
+	} else {
+		data.LoginOnFailureLog.Value = false
+		data.LoginOnFailureLog.Null = false
+	}
+	if value := res.Get(prefix + "login.on-success"); value.Exists() {
+		data.LoginOnSuccess.Value = true
+		data.LoginOnSuccess.Null = false
+	} else {
+		data.LoginOnSuccess.Value = false
+		data.LoginOnSuccess.Null = false
+	}
+	if value := res.Get(prefix + "login.on-success.log"); value.Exists() {
+		data.LoginOnSuccessLog.Value = true
+		data.LoginOnSuccessLog.Null = false
+	} else {
+		data.LoginOnSuccessLog.Value = false
+		data.LoginOnSuccessLog.Null = false
+	}
 	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing"); value.Exists() {
 		data.MulticastRouting.Value = true
 		data.MulticastRouting.Null = false
@@ -261,6 +391,38 @@ func (data *System) setUnknownValues(ctx context.Context) {
 	if data.Mtu.Unknown {
 		data.Mtu.Unknown = false
 		data.Mtu.Null = true
+	}
+	if data.IpSourceRoute.Unknown {
+		data.IpSourceRoute.Unknown = false
+		data.IpSourceRoute.Null = true
+	}
+	if data.IpDomainLookup.Unknown {
+		data.IpDomainLookup.Unknown = false
+		data.IpDomainLookup.Null = true
+	}
+	if data.IpDomainName.Unknown {
+		data.IpDomainName.Unknown = false
+		data.IpDomainName.Null = true
+	}
+	if data.LoginDelay.Unknown {
+		data.LoginDelay.Unknown = false
+		data.LoginDelay.Null = true
+	}
+	if data.LoginOnFailure.Unknown {
+		data.LoginOnFailure.Unknown = false
+		data.LoginOnFailure.Null = true
+	}
+	if data.LoginOnFailureLog.Unknown {
+		data.LoginOnFailureLog.Unknown = false
+		data.LoginOnFailureLog.Null = true
+	}
+	if data.LoginOnSuccess.Unknown {
+		data.LoginOnSuccess.Unknown = false
+		data.LoginOnSuccess.Null = true
+	}
+	if data.LoginOnSuccessLog.Unknown {
+		data.LoginOnSuccessLog.Unknown = false
+		data.LoginOnSuccessLog.Null = true
 	}
 	if data.MulticastRouting.Unknown {
 		data.MulticastRouting.Unknown = false

@@ -65,6 +65,57 @@ func (t resourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 					helpers.IntegerRangeValidator(1500, 9198),
 				},
 			},
+			"ip_source_route": {
+				MarkdownDescription: helpers.NewAttributeDescription("Process packets with source routing header options").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"ip_domain_lookup": {
+				MarkdownDescription: helpers.NewAttributeDescription("Enable IP Domain Name System hostname translation").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"ip_domain_name": {
+				MarkdownDescription: helpers.NewAttributeDescription("Define the default domain name").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"login_delay": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set delay between successive fail login").AddIntegerRangeDescription(1, 10).String,
+				Type:                types.Int64Type,
+				Optional:            true,
+				Computed:            true,
+				Validators: []tfsdk.AttributeValidator{
+					helpers.IntegerRangeValidator(1, 10),
+				},
+			},
+			"login_on_failure": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set options for failed login attempt").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"login_on_failure_log": {
+				MarkdownDescription: helpers.NewAttributeDescription("Generate syslogs on failure logins").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"login_on_success": {
+				MarkdownDescription: helpers.NewAttributeDescription("Set options for successful login attempt").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"login_on_success_log": {
+				MarkdownDescription: helpers.NewAttributeDescription("Generate syslogs on successful logins").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+			},
 			"multicast_routing": {
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP multicast forwarding").String,
 				Type:                types.BoolType,

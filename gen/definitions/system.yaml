@@ -16,6 +16,22 @@ attributes:
     tf_name: mtu
     exclude_test: true
     example: 9198
+  - yang_name: ip/source-route
+    example: false
+  - yang_name: ip/domain/lookup
+    example: false
+  - yang_name: ip/domain/name
+    example: test.com
+  - yang_name: login/delay
+    example: 10
+  - yang_name: login/on-failure
+    example: true
+  - yang_name: login/on-failure/log
+    example: true
+  - yang_name: login/on-success
+    example: true
+  - yang_name: login/on-success/log
+    example: true
   - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing
     example: true
   - yang_name: ip/Cisco-IOS-XE-multicast:mcr-conf/multicast-routing

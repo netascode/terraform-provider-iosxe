@@ -50,6 +50,46 @@ func (t dataSourceSystemType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 				Type:                types.Int64Type,
 				Computed:            true,
 			},
+			"ip_source_route": {
+				MarkdownDescription: "Process packets with source routing header options",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"ip_domain_lookup": {
+				MarkdownDescription: "Enable IP Domain Name System hostname translation",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"ip_domain_name": {
+				MarkdownDescription: "Define the default domain name",
+				Type:                types.StringType,
+				Computed:            true,
+			},
+			"login_delay": {
+				MarkdownDescription: "Set delay between successive fail login",
+				Type:                types.Int64Type,
+				Computed:            true,
+			},
+			"login_on_failure": {
+				MarkdownDescription: "Set options for failed login attempt",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"login_on_failure_log": {
+				MarkdownDescription: "Generate syslogs on failure logins",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"login_on_success": {
+				MarkdownDescription: "Set options for successful login attempt",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"login_on_success_log": {
+				MarkdownDescription: "Generate syslogs on successful logins",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
 			"multicast_routing": {
 				MarkdownDescription: "Enable IP multicast forwarding",
 				Type:                types.BoolType,

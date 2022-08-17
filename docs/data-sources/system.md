@@ -28,8 +28,16 @@ data "iosxe_system" "example" {
 
 - `hostname` (String) Set system's network name
 - `id` (String) The path of the retrieved object.
+- `ip_domain_lookup` (Boolean) Enable IP Domain Name System hostname translation
+- `ip_domain_name` (String) Define the default domain name
 - `ip_routing` (Boolean) Enable or disable IP routing
+- `ip_source_route` (Boolean) Process packets with source routing header options
 - `ipv6_unicast_routing` (Boolean) Enable unicast routing
+- `login_delay` (Number) Set delay between successive fail login
+- `login_on_failure` (Boolean) Set options for failed login attempt
+- `login_on_failure_log` (Boolean) Generate syslogs on failure logins
+- `login_on_success` (Boolean) Set options for successful login attempt
+- `login_on_success_log` (Boolean) Generate syslogs on successful logins
 - `mtu` (Number)
 - `multicast_routing` (Boolean) Enable IP multicast forwarding
 - `multicast_routing_distributed` (Boolean) Distributed multicast switching

@@ -16,6 +16,14 @@ This resource can manage the System configuration.
 resource "iosxe_system" "example" {
   hostname                      = "ROUTER-1"
   ipv6_unicast_routing          = true
+  ip_source_route               = false
+  ip_domain_lookup              = false
+  ip_domain_name                = "test.com"
+  login_delay                   = 10
+  login_on_failure              = true
+  login_on_failure_log          = true
+  login_on_success              = true
+  login_on_success_log          = true
   multicast_routing             = true
   multicast_routing_distributed = true
   multicast_routing_vrfs = [
@@ -34,8 +42,17 @@ resource "iosxe_system" "example" {
 
 - `device` (String) A device name from the provider configuration.
 - `hostname` (String) Set system's network name
+- `ip_domain_lookup` (Boolean) Enable IP Domain Name System hostname translation
+- `ip_domain_name` (String) Define the default domain name
 - `ip_routing` (Boolean) Enable or disable IP routing
+- `ip_source_route` (Boolean) Process packets with source routing header options
 - `ipv6_unicast_routing` (Boolean) Enable unicast routing
+- `login_delay` (Number) Set delay between successive fail login
+  - Range: `1`-`10`
+- `login_on_failure` (Boolean) Set options for failed login attempt
+- `login_on_failure_log` (Boolean) Generate syslogs on failure logins
+- `login_on_success` (Boolean) Set options for successful login attempt
+- `login_on_success_log` (Boolean) Generate syslogs on successful logins
 - `mtu` (Number) - Range: `1500`-`9198`
 - `multicast_routing` (Boolean) Enable IP multicast forwarding
 - `multicast_routing_distributed` (Boolean) Distributed multicast switching
