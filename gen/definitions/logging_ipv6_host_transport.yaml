@@ -1,7 +1,7 @@
 ---
 name: Logging IPv6 Host Transport
 path: Cisco-IOS-XE-native:native/logging/host/ipv6/ipv6-host-transport-list=%s
-doc_category: System
+doc_category: Management
 attributes:
   - yang_name: ipv6-host
     example: 2001::1

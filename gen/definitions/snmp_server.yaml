@@ -1,8 +1,7 @@
 ---
 name: SNMP Server
 path: Cisco-IOS-XE-native:native/snmp-server
-doc_category: System
-
+doc_category: Management
 attributes:
   - yang_name: Cisco-IOS-XE-snmp:chassis-id
     example: R1

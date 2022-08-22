@@ -1,7 +1,7 @@
 ---
 name: Logging
 path: Cisco-IOS-XE-native:native/logging
-doc_category: System
+doc_category: Management
 attributes:
   - yang_name: monitor-config/config-options/common-case/common-config/monitor/severity
     xpath: monitor-config/common-config/monitor/severity

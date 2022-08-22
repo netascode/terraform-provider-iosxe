@@ -1,7 +1,7 @@
 ---
 name: Logging IPv4 Host VRF Transport
 path: Cisco-IOS-XE-native:native/logging/host/ipv4-host-vrf-transport-list=%s,%s
-doc_category: System
+doc_category: Management
 attributes:
   - yang_name: ipv4-host
     example: 2.2.2.2
