@@ -7,7 +7,7 @@ description: |-
 
 # Changelog
 
-## 0.1.10 (unreleased)
+## 0.1.10
 
 - Add iosxe_service resource and data source
 - Add iosxe_logging resource and data source
