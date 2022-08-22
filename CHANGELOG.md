@@ -7,6 +7,7 @@
 - Add iosxe_logging_ipv6_host_transport resource and data source
 - Add iosxe_logging_ipv6_host_vrf_transport resource and data source
 - Add attributes to iosxe_system resource and data source
+- Add iosxe_snmp_server resource and data source
 
 ## 0.1.9
 
