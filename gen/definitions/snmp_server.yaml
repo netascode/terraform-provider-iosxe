@@ -16,6 +16,34 @@ attributes:
     example: 2000
   - yang_name: Cisco-IOS-XE-snmp:queue-length
     example: 100
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/logging/getop
+    tf_name: enable_logging_getop
+    example: true
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/logging/setop
+    tf_name: enable_logging_setop
+    example: true
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/informs
+    tf_name: enable_informs
+    example: true
+    exclude_test: true
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/traps
+    tf_name: enable_traps
+    example: true
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/authentication
+    tf_name: enable_traps_snmp_authentication
+    example: true
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/coldstart
+    tf_name: enable_traps_snmp_coldstart
+    example: true
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkdown
+    tf_name: enable_traps_snmp_linkdown
+    example: true
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkup
+    tf_name: enable_traps_snmp_linkup
+    example: true
+  - yang_name: Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/warmstart
+    tf_name: enable_traps_snmp_warmstart
+    example: true
   - yang_name: Cisco-IOS-XE-snmp:source-interface/informs/interface-choice/GigabitEthernet/GigabitEthernet
     xpath: Cisco-IOS-XE-snmp:source-interface/informs/GigabitEthernet
     tf_name: source_interface_informs_gigabit_ethernet

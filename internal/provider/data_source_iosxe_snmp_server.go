@@ -60,6 +60,51 @@ func (t dataSourceSNMPServerType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 				Type:                types.Int64Type,
 				Computed:            true,
 			},
+			"enable_logging_getop": {
+				MarkdownDescription: "Enable SNMP GET Operation logging",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"enable_logging_setop": {
+				MarkdownDescription: "Enable SNMP SET Operation logging",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"enable_informs": {
+				MarkdownDescription: "Enable SNMP Informs",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"enable_traps": {
+				MarkdownDescription: "Enable SNMP Traps",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"enable_traps_snmp_authentication": {
+				MarkdownDescription: "Enable authentication trap",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"enable_traps_snmp_coldstart": {
+				MarkdownDescription: "Enable coldStart trap",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"enable_traps_snmp_linkdown": {
+				MarkdownDescription: "Enable linkDown trap",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"enable_traps_snmp_linkup": {
+				MarkdownDescription: "Enable linkUp trap",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"enable_traps_snmp_warmstart": {
+				MarkdownDescription: "Enable warmStart trap",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
 			"source_interface_informs_gigabit_ethernet": {
 				MarkdownDescription: "GigabitEthernet IEEE 802.3z",
 				Type:                types.StringType,

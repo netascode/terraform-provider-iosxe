@@ -29,6 +29,15 @@ data "iosxe_snmp_server" "example" {
 - `chassis_id` (String) String to uniquely identify this chassis
 - `contact` (String) Text for mib object sysContact
 - `contexts` (Attributes List) Create/Delete a context apart from default (see [below for nested schema](#nestedatt--contexts))
+- `enable_informs` (Boolean) Enable SNMP Informs
+- `enable_logging_getop` (Boolean) Enable SNMP GET Operation logging
+- `enable_logging_setop` (Boolean) Enable SNMP SET Operation logging
+- `enable_traps` (Boolean) Enable SNMP Traps
+- `enable_traps_snmp_authentication` (Boolean) Enable authentication trap
+- `enable_traps_snmp_coldstart` (Boolean) Enable coldStart trap
+- `enable_traps_snmp_linkdown` (Boolean) Enable linkDown trap
+- `enable_traps_snmp_linkup` (Boolean) Enable linkUp trap
+- `enable_traps_snmp_warmstart` (Boolean) Enable warmStart trap
 - `id` (String) The path of the retrieved object.
 - `ifindex_persist` (Boolean) Persist interface indices
 - `location` (String) Text for mib object sysLocation

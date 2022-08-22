@@ -22,6 +22,14 @@ func TestAccIosxeSNMPServer(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "location", "Location1"),
 					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "packetsize", "2000"),
 					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "queue_length", "100"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_logging_getop", "true"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_logging_setop", "true"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps", "true"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_authentication", "true"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_coldstart", "true"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_linkdown", "true"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_linkup", "true"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_warmstart", "true"),
 					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "source_interface_informs_gigabit_ethernet", "1"),
 					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "source_interface_traps_gigabit_ethernet", "1"),
 					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "trap_source_gigabit_ethernet", "1"),
@@ -61,6 +69,14 @@ func testAccIosxeSNMPServerConfig_all() string {
 		location = "Location1"
 		packetsize = 2000
 		queue_length = 100
+		enable_logging_getop = true
+		enable_logging_setop = true
+		enable_traps = true
+		enable_traps_snmp_authentication = true
+		enable_traps_snmp_coldstart = true
+		enable_traps_snmp_linkdown = true
+		enable_traps_snmp_linkup = true
+		enable_traps_snmp_warmstart = true
 		source_interface_informs_gigabit_ethernet = "1"
 		source_interface_traps_gigabit_ethernet = "1"
 		trap_source_gigabit_ethernet = "1"

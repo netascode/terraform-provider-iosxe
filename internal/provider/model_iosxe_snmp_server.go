@@ -25,6 +25,15 @@ type SNMPServer struct {
 	Location                                      types.String                `tfsdk:"location"`
 	Packetsize                                    types.Int64                 `tfsdk:"packetsize"`
 	QueueLength                                   types.Int64                 `tfsdk:"queue_length"`
+	EnableLoggingGetop                            types.Bool                  `tfsdk:"enable_logging_getop"`
+	EnableLoggingSetop                            types.Bool                  `tfsdk:"enable_logging_setop"`
+	EnableInforms                                 types.Bool                  `tfsdk:"enable_informs"`
+	EnableTraps                                   types.Bool                  `tfsdk:"enable_traps"`
+	EnableTrapsSnmpAuthentication                 types.Bool                  `tfsdk:"enable_traps_snmp_authentication"`
+	EnableTrapsSnmpColdstart                      types.Bool                  `tfsdk:"enable_traps_snmp_coldstart"`
+	EnableTrapsSnmpLinkdown                       types.Bool                  `tfsdk:"enable_traps_snmp_linkdown"`
+	EnableTrapsSnmpLinkup                         types.Bool                  `tfsdk:"enable_traps_snmp_linkup"`
+	EnableTrapsSnmpWarmstart                      types.Bool                  `tfsdk:"enable_traps_snmp_warmstart"`
 	SourceInterfaceInformsGigabitEthernet         types.String                `tfsdk:"source_interface_informs_gigabit_ethernet"`
 	SourceInterfaceInformsTenGigabitEthernet      types.String                `tfsdk:"source_interface_informs_ten_gigabit_ethernet"`
 	SourceInterfaceInformsFortyGigabitEthernet    types.String                `tfsdk:"source_interface_informs_forty_gigabit_ethernet"`
@@ -105,6 +114,47 @@ func (data SNMPServer) toBody(ctx context.Context) string {
 	}
 	if !data.QueueLength.Null && !data.QueueLength.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:queue-length", strconv.FormatInt(data.QueueLength.Value, 10))
+	}
+	if !data.EnableLoggingGetop.Null && !data.EnableLoggingGetop.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.logging.getop", data.EnableLoggingGetop.Value)
+	}
+	if !data.EnableLoggingSetop.Null && !data.EnableLoggingSetop.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.logging.setop", data.EnableLoggingSetop.Value)
+	}
+	if !data.EnableInforms.Null && !data.EnableInforms.Unknown {
+		if data.EnableInforms.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.informs", map[string]string{})
+		}
+	}
+	if !data.EnableTraps.Null && !data.EnableTraps.Unknown {
+		if data.EnableTraps.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps", map[string]string{})
+		}
+	}
+	if !data.EnableTrapsSnmpAuthentication.Null && !data.EnableTrapsSnmpAuthentication.Unknown {
+		if data.EnableTrapsSnmpAuthentication.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.authentication", map[string]string{})
+		}
+	}
+	if !data.EnableTrapsSnmpColdstart.Null && !data.EnableTrapsSnmpColdstart.Unknown {
+		if data.EnableTrapsSnmpColdstart.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.coldstart", map[string]string{})
+		}
+	}
+	if !data.EnableTrapsSnmpLinkdown.Null && !data.EnableTrapsSnmpLinkdown.Unknown {
+		if data.EnableTrapsSnmpLinkdown.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkdown", map[string]string{})
+		}
+	}
+	if !data.EnableTrapsSnmpLinkup.Null && !data.EnableTrapsSnmpLinkup.Unknown {
+		if data.EnableTrapsSnmpLinkup.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkup", map[string]string{})
+		}
+	}
+	if !data.EnableTrapsSnmpWarmstart.Null && !data.EnableTrapsSnmpWarmstart.Unknown {
+		if data.EnableTrapsSnmpWarmstart.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.warmstart", map[string]string{})
+		}
 	}
 	if !data.SourceInterfaceInformsGigabitEthernet.Null && !data.SourceInterfaceInformsGigabitEthernet.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.GigabitEthernet", data.SourceInterfaceInformsGigabitEthernet.Value)
@@ -257,6 +307,51 @@ func (data *SNMPServer) updateFromBody(ctx context.Context, res gjson.Result) {
 		data.QueueLength.Value = value.Int()
 	} else {
 		data.QueueLength.Null = true
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.logging.getop"); value.Exists() {
+		data.EnableLoggingGetop.Value = value.Bool()
+	} else {
+		data.EnableLoggingGetop.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.logging.setop"); value.Exists() {
+		data.EnableLoggingSetop.Value = value.Bool()
+	} else {
+		data.EnableLoggingSetop.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.informs"); value.Exists() {
+		data.EnableInforms.Value = true
+	} else {
+		data.EnableInforms.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps"); value.Exists() {
+		data.EnableTraps.Value = true
+	} else {
+		data.EnableTraps.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.authentication"); value.Exists() {
+		data.EnableTrapsSnmpAuthentication.Value = true
+	} else {
+		data.EnableTrapsSnmpAuthentication.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.coldstart"); value.Exists() {
+		data.EnableTrapsSnmpColdstart.Value = true
+	} else {
+		data.EnableTrapsSnmpColdstart.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkdown"); value.Exists() {
+		data.EnableTrapsSnmpLinkdown.Value = true
+	} else {
+		data.EnableTrapsSnmpLinkdown.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkup"); value.Exists() {
+		data.EnableTrapsSnmpLinkup.Value = true
+	} else {
+		data.EnableTrapsSnmpLinkup.Value = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.warmstart"); value.Exists() {
+		data.EnableTrapsSnmpWarmstart.Value = true
+	} else {
+		data.EnableTrapsSnmpWarmstart.Value = false
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.GigabitEthernet"); value.Exists() {
 		data.SourceInterfaceInformsGigabitEthernet.Value = value.String()
@@ -529,6 +624,69 @@ func (data *SNMPServer) fromBody(ctx context.Context, res gjson.Result) {
 		data.QueueLength.Value = value.Int()
 		data.QueueLength.Null = false
 	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.logging.getop"); value.Exists() {
+		data.EnableLoggingGetop.Value = value.Bool()
+		data.EnableLoggingGetop.Null = false
+	} else {
+		data.EnableLoggingGetop.Value = false
+		data.EnableLoggingGetop.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.logging.setop"); value.Exists() {
+		data.EnableLoggingSetop.Value = value.Bool()
+		data.EnableLoggingSetop.Null = false
+	} else {
+		data.EnableLoggingSetop.Value = false
+		data.EnableLoggingSetop.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.informs"); value.Exists() {
+		data.EnableInforms.Value = true
+		data.EnableInforms.Null = false
+	} else {
+		data.EnableInforms.Value = false
+		data.EnableInforms.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps"); value.Exists() {
+		data.EnableTraps.Value = true
+		data.EnableTraps.Null = false
+	} else {
+		data.EnableTraps.Value = false
+		data.EnableTraps.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.authentication"); value.Exists() {
+		data.EnableTrapsSnmpAuthentication.Value = true
+		data.EnableTrapsSnmpAuthentication.Null = false
+	} else {
+		data.EnableTrapsSnmpAuthentication.Value = false
+		data.EnableTrapsSnmpAuthentication.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.coldstart"); value.Exists() {
+		data.EnableTrapsSnmpColdstart.Value = true
+		data.EnableTrapsSnmpColdstart.Null = false
+	} else {
+		data.EnableTrapsSnmpColdstart.Value = false
+		data.EnableTrapsSnmpColdstart.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkdown"); value.Exists() {
+		data.EnableTrapsSnmpLinkdown.Value = true
+		data.EnableTrapsSnmpLinkdown.Null = false
+	} else {
+		data.EnableTrapsSnmpLinkdown.Value = false
+		data.EnableTrapsSnmpLinkdown.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkup"); value.Exists() {
+		data.EnableTrapsSnmpLinkup.Value = true
+		data.EnableTrapsSnmpLinkup.Null = false
+	} else {
+		data.EnableTrapsSnmpLinkup.Value = false
+		data.EnableTrapsSnmpLinkup.Null = false
+	}
+	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.warmstart"); value.Exists() {
+		data.EnableTrapsSnmpWarmstart.Value = true
+		data.EnableTrapsSnmpWarmstart.Null = false
+	} else {
+		data.EnableTrapsSnmpWarmstart.Value = false
+		data.EnableTrapsSnmpWarmstart.Null = false
+	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.GigabitEthernet"); value.Exists() {
 		data.SourceInterfaceInformsGigabitEthernet.Value = value.String()
 		data.SourceInterfaceInformsGigabitEthernet.Null = false
@@ -719,6 +877,42 @@ func (data *SNMPServer) setUnknownValues(ctx context.Context) {
 	if data.QueueLength.Unknown {
 		data.QueueLength.Unknown = false
 		data.QueueLength.Null = true
+	}
+	if data.EnableLoggingGetop.Unknown {
+		data.EnableLoggingGetop.Unknown = false
+		data.EnableLoggingGetop.Null = true
+	}
+	if data.EnableLoggingSetop.Unknown {
+		data.EnableLoggingSetop.Unknown = false
+		data.EnableLoggingSetop.Null = true
+	}
+	if data.EnableInforms.Unknown {
+		data.EnableInforms.Unknown = false
+		data.EnableInforms.Null = true
+	}
+	if data.EnableTraps.Unknown {
+		data.EnableTraps.Unknown = false
+		data.EnableTraps.Null = true
+	}
+	if data.EnableTrapsSnmpAuthentication.Unknown {
+		data.EnableTrapsSnmpAuthentication.Unknown = false
+		data.EnableTrapsSnmpAuthentication.Null = true
+	}
+	if data.EnableTrapsSnmpColdstart.Unknown {
+		data.EnableTrapsSnmpColdstart.Unknown = false
+		data.EnableTrapsSnmpColdstart.Null = true
+	}
+	if data.EnableTrapsSnmpLinkdown.Unknown {
+		data.EnableTrapsSnmpLinkdown.Unknown = false
+		data.EnableTrapsSnmpLinkdown.Null = true
+	}
+	if data.EnableTrapsSnmpLinkup.Unknown {
+		data.EnableTrapsSnmpLinkup.Unknown = false
+		data.EnableTrapsSnmpLinkup.Null = true
+	}
+	if data.EnableTrapsSnmpWarmstart.Unknown {
+		data.EnableTrapsSnmpWarmstart.Unknown = false
+		data.EnableTrapsSnmpWarmstart.Null = true
 	}
 	if data.SourceInterfaceInformsGigabitEthernet.Unknown {
 		data.SourceInterfaceInformsGigabitEthernet.Unknown = false
@@ -950,6 +1144,24 @@ func (data *SNMPServer) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.IfindexPersist.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:ifindex/persist", data.getPath()))
+	}
+	if !data.EnableInforms.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/informs", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpAuthentication.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/authentication", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpColdstart.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/coldstart", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpLinkdown.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkdown", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpLinkup.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkup", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpWarmstart.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/warmstart", data.getPath()))
 	}
 
 	return emptyLeafsDelete

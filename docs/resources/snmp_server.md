@@ -20,6 +20,14 @@ resource "iosxe_snmp_server" "example" {
   location                                  = "Location1"
   packetsize                                = 2000
   queue_length                              = 100
+  enable_logging_getop                      = true
+  enable_logging_setop                      = true
+  enable_traps                              = true
+  enable_traps_snmp_authentication          = true
+  enable_traps_snmp_coldstart               = true
+  enable_traps_snmp_linkdown                = true
+  enable_traps_snmp_linkup                  = true
+  enable_traps_snmp_warmstart               = true
   source_interface_informs_gigabit_ethernet = "1"
   source_interface_traps_gigabit_ethernet   = "1"
   trap_source_gigabit_ethernet              = "1"
@@ -56,6 +64,15 @@ resource "iosxe_snmp_server" "example" {
 - `contact` (String) Text for mib object sysContact
 - `contexts` (Attributes List) Create/Delete a context apart from default (see [below for nested schema](#nestedatt--contexts))
 - `device` (String) A device name from the provider configuration.
+- `enable_informs` (Boolean) Enable SNMP Informs
+- `enable_logging_getop` (Boolean) Enable SNMP GET Operation logging
+- `enable_logging_setop` (Boolean) Enable SNMP SET Operation logging
+- `enable_traps` (Boolean) Enable SNMP Traps
+- `enable_traps_snmp_authentication` (Boolean) Enable authentication trap
+- `enable_traps_snmp_coldstart` (Boolean) Enable coldStart trap
+- `enable_traps_snmp_linkdown` (Boolean) Enable linkDown trap
+- `enable_traps_snmp_linkup` (Boolean) Enable linkUp trap
+- `enable_traps_snmp_warmstart` (Boolean) Enable warmStart trap
 - `ifindex_persist` (Boolean) Persist interface indices
 - `location` (String) Text for mib object sysLocation
 - `packetsize` (Number) Largest SNMP packet size
