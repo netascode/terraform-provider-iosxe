@@ -1,6 +1,7 @@
 ## 0.1.11 (unreleased)
 
 - Add iosxe_access_list_standard resource and data source
+- Add iosxe_access_list_extended resource and data source
 
 ## 0.1.10
 
