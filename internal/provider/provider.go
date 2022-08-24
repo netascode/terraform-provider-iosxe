@@ -262,6 +262,7 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 func (p *provider) GetResources(ctx context.Context) (map[string]tfsdk.ResourceType, diag.Diagnostics) {
 	return map[string]tfsdk.ResourceType{
 		"iosxe_restconf":                            resourceRestconfType{},
+		"iosxe_access_list_standard":                resourceAccessListStandardType{},
 		"iosxe_banner":                              resourceBannerType{},
 		"iosxe_bgp":                                 resourceBGPType{},
 		"iosxe_bgp_address_family_ipv4_vrf":         resourceBGPAddressFamilyIPv4VRFType{},
@@ -310,6 +311,7 @@ func (p *provider) GetResources(ctx context.Context) (map[string]tfsdk.ResourceT
 func (p *provider) GetDataSources(ctx context.Context) (map[string]tfsdk.DataSourceType, diag.Diagnostics) {
 	return map[string]tfsdk.DataSourceType{
 		"iosxe_restconf":                            dataSourceRestconfType{},
+		"iosxe_access_list_standard":                dataSourceAccessListStandardType{},
 		"iosxe_banner":                              dataSourceBannerType{},
 		"iosxe_bgp":                                 dataSourceBGPType{},
 		"iosxe_bgp_address_family_ipv4_vrf":         dataSourceBGPAddressFamilyIPv4VRFType{},

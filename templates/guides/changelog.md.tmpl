@@ -7,6 +7,10 @@ description: |-
 
 # Changelog
 
+## 0.1.11 (unreleased)
+
+- Add iosxe_access_list_standard resource and data source
+
 ## 0.1.10
 
 - Add iosxe_service resource and data source
