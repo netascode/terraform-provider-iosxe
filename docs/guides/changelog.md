@@ -13,6 +13,7 @@ description: |-
 - Add iosxe_access_list_extended resource and data source
 - Add ip_access_group_* attributes to iosxe_interface_ethernet resource and data source
 - Add ip_access_group_* attributes to iosxe_interface_loopback resource and data source
+- Add ip_access_group_* attributes to iosxe_interface_vlan resource and data source
 
 ## 0.1.10
 
