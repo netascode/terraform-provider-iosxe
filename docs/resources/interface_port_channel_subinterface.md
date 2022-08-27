@@ -21,6 +21,10 @@ resource "iosxe_interface_port_channel_subinterface" "example" {
   ipv4_address                = "192.0.2.2"
   ipv4_address_mask           = "255.255.255.0"
   encapsulation_dot1q_vlan_id = 666
+  ip_access_group_in          = "1"
+  ip_access_group_in_enable   = true
+  ip_access_group_out         = "1"
+  ip_access_group_out_enable  = true
   helper_addresses = [
     {
       address = "10.10.10.10"
@@ -43,6 +47,12 @@ resource "iosxe_interface_port_channel_subinterface" "example" {
 - `device` (String) A device name from the provider configuration.
 - `encapsulation_dot1q_vlan_id` (Number) - Range: `1`-`4094`
 - `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
+- `ip_access_group_in` (String)
+- `ip_access_group_in_enable` (Boolean) inbound packets
+  - Default value: `true`
+- `ip_access_group_out` (String)
+- `ip_access_group_out_enable` (Boolean) outbound packets
+  - Default value: `true`
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface

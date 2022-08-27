@@ -35,6 +35,10 @@ data "iosxe_interface_port_channel_subinterface" "example" {
 - `encapsulation_dot1q_vlan_id` (Number)
 - `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
 - `id` (String) The path of the retrieved object.
+- `ip_access_group_in` (String)
+- `ip_access_group_in_enable` (Boolean) inbound packets
+- `ip_access_group_out` (String)
+- `ip_access_group_out_enable` (Boolean) outbound packets
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface
