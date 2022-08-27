@@ -7,7 +7,7 @@ description: |-
 
 # Changelog
 
-## 0.1.11 (unreleased)
+## 0.1.11
 
 - Add iosxe_access_list_standard resource and data source
 - Add iosxe_access_list_extended resource and data source
