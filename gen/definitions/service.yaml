@@ -2,6 +2,7 @@
 name: Service
 path: Cisco-IOS-XE-native:native/service
 doc_category: System
+exclude_test: true
 attributes:
   - yang_name: pad-conf/pad
     tf_name: pad
