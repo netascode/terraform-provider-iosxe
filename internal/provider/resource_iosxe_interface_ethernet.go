@@ -150,6 +150,36 @@ func (t resourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.Sch
 				Optional:            true,
 				Computed:            true,
 			},
+			"ip_access_group_in": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"ip_access_group_in_enable": {
+				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").AddDefaultValueDescription("true").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					helpers.BooleanDefaultModifier(true),
+				},
+			},
+			"ip_access_group_out": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"ip_access_group_out_enable": {
+				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").AddDefaultValueDescription("true").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					helpers.BooleanDefaultModifier(true),
+				},
+			},
 			"helper_addresses": {
 				MarkdownDescription: helpers.NewAttributeDescription("Specify a destination address for UDP broadcasts").String,
 				Optional:            true,

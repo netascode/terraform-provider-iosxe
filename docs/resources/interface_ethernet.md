@@ -21,6 +21,10 @@ resource "iosxe_interface_ethernet" "example" {
   ipv4_address                   = "15.1.1.1"
   ipv4_address_mask              = "255.255.255.252"
   ip_dhcp_relay_source_interface = "Loopback100"
+  ip_access_group_in             = "1"
+  ip_access_group_in_enable      = true
+  ip_access_group_out            = "1"
+  ip_access_group_out_enable     = true
   helper_addresses = [
     {
       address = "10.10.10.10"
@@ -55,6 +59,12 @@ resource "iosxe_interface_ethernet" "example" {
 - `device` (String) A device name from the provider configuration.
 - `encapsulation_dot1q_vlan_id` (Number) - Range: `1`-`4094`
 - `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
+- `ip_access_group_in` (String)
+- `ip_access_group_in_enable` (Boolean) inbound packets
+  - Default value: `true`
+- `ip_access_group_out` (String)
+- `ip_access_group_out_enable` (Boolean) outbound packets
+  - Default value: `true`
 - `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)

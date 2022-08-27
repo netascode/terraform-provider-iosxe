@@ -100,6 +100,26 @@ func (t dataSourceInterfaceEthernetType) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.StringType,
 				Computed:            true,
 			},
+			"ip_access_group_in": {
+				MarkdownDescription: "",
+				Type:                types.StringType,
+				Computed:            true,
+			},
+			"ip_access_group_in_enable": {
+				MarkdownDescription: "inbound packets",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"ip_access_group_out": {
+				MarkdownDescription: "",
+				Type:                types.StringType,
+				Computed:            true,
+			},
+			"ip_access_group_out_enable": {
+				MarkdownDescription: "outbound packets",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
 			"helper_addresses": {
 				MarkdownDescription: "Specify a destination address for UDP broadcasts",
 				Computed:            true,
