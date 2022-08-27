@@ -16,14 +16,18 @@ import (
 )
 
 type InterfaceLoopback struct {
-	Device          types.String `tfsdk:"device"`
-	Id              types.String `tfsdk:"id"`
-	Name            types.Int64  `tfsdk:"name"`
-	Description     types.String `tfsdk:"description"`
-	Shutdown        types.Bool   `tfsdk:"shutdown"`
-	VrfForwarding   types.String `tfsdk:"vrf_forwarding"`
-	Ipv4Address     types.String `tfsdk:"ipv4_address"`
-	Ipv4AddressMask types.String `tfsdk:"ipv4_address_mask"`
+	Device                 types.String `tfsdk:"device"`
+	Id                     types.String `tfsdk:"id"`
+	Name                   types.Int64  `tfsdk:"name"`
+	Description            types.String `tfsdk:"description"`
+	Shutdown               types.Bool   `tfsdk:"shutdown"`
+	VrfForwarding          types.String `tfsdk:"vrf_forwarding"`
+	Ipv4Address            types.String `tfsdk:"ipv4_address"`
+	Ipv4AddressMask        types.String `tfsdk:"ipv4_address_mask"`
+	IpAccessGroupIn        types.String `tfsdk:"ip_access_group_in"`
+	IpAccessGroupInEnable  types.Bool   `tfsdk:"ip_access_group_in_enable"`
+	IpAccessGroupOut       types.String `tfsdk:"ip_access_group_out"`
+	IpAccessGroupOutEnable types.Bool   `tfsdk:"ip_access_group_out_enable"`
 }
 
 func (data InterfaceLoopback) getPath() string {
@@ -63,6 +67,22 @@ func (data InterfaceLoopback) toBody(ctx context.Context) string {
 	if !data.Ipv4AddressMask.Null && !data.Ipv4AddressMask.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.mask", data.Ipv4AddressMask.Value)
 	}
+	if !data.IpAccessGroupIn.Null && !data.IpAccessGroupIn.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.in.acl.acl-name", data.IpAccessGroupIn.Value)
+	}
+	if !data.IpAccessGroupInEnable.Null && !data.IpAccessGroupInEnable.Unknown {
+		if data.IpAccessGroupInEnable.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.in.acl.in", map[string]string{})
+		}
+	}
+	if !data.IpAccessGroupOut.Null && !data.IpAccessGroupOut.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.out.acl.acl-name", data.IpAccessGroupOut.Value)
+	}
+	if !data.IpAccessGroupOutEnable.Null && !data.IpAccessGroupOutEnable.Unknown {
+		if data.IpAccessGroupOutEnable.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.out.acl.out", map[string]string{})
+		}
+	}
 	return body
 }
 
@@ -101,6 +121,26 @@ func (data *InterfaceLoopback) updateFromBody(ctx context.Context, res gjson.Res
 	} else {
 		data.Ipv4AddressMask.Null = true
 	}
+	if value := res.Get(prefix + "ip.access-group.in.acl.acl-name"); value.Exists() {
+		data.IpAccessGroupIn.Value = value.String()
+	} else {
+		data.IpAccessGroupIn.Null = true
+	}
+	if value := res.Get(prefix + "ip.access-group.in.acl.in"); value.Exists() {
+		data.IpAccessGroupInEnable.Value = true
+	} else {
+		data.IpAccessGroupInEnable.Value = false
+	}
+	if value := res.Get(prefix + "ip.access-group.out.acl.acl-name"); value.Exists() {
+		data.IpAccessGroupOut.Value = value.String()
+	} else {
+		data.IpAccessGroupOut.Null = true
+	}
+	if value := res.Get(prefix + "ip.access-group.out.acl.out"); value.Exists() {
+		data.IpAccessGroupOutEnable.Value = true
+	} else {
+		data.IpAccessGroupOutEnable.Value = false
+	}
 }
 
 func (data *InterfaceLoopback) fromBody(ctx context.Context, res gjson.Result) {
@@ -130,6 +170,28 @@ func (data *InterfaceLoopback) fromBody(ctx context.Context, res gjson.Result) {
 	if value := res.Get(prefix + "ip.address.primary.mask"); value.Exists() {
 		data.Ipv4AddressMask.Value = value.String()
 		data.Ipv4AddressMask.Null = false
+	}
+	if value := res.Get(prefix + "ip.access-group.in.acl.acl-name"); value.Exists() {
+		data.IpAccessGroupIn.Value = value.String()
+		data.IpAccessGroupIn.Null = false
+	}
+	if value := res.Get(prefix + "ip.access-group.in.acl.in"); value.Exists() {
+		data.IpAccessGroupInEnable.Value = true
+		data.IpAccessGroupInEnable.Null = false
+	} else {
+		data.IpAccessGroupInEnable.Value = false
+		data.IpAccessGroupInEnable.Null = false
+	}
+	if value := res.Get(prefix + "ip.access-group.out.acl.acl-name"); value.Exists() {
+		data.IpAccessGroupOut.Value = value.String()
+		data.IpAccessGroupOut.Null = false
+	}
+	if value := res.Get(prefix + "ip.access-group.out.acl.out"); value.Exists() {
+		data.IpAccessGroupOutEnable.Value = true
+		data.IpAccessGroupOutEnable.Null = false
+	} else {
+		data.IpAccessGroupOutEnable.Value = false
+		data.IpAccessGroupOutEnable.Null = false
 	}
 }
 
@@ -166,6 +228,22 @@ func (data *InterfaceLoopback) setUnknownValues(ctx context.Context) {
 		data.Ipv4AddressMask.Unknown = false
 		data.Ipv4AddressMask.Null = true
 	}
+	if data.IpAccessGroupIn.Unknown {
+		data.IpAccessGroupIn.Unknown = false
+		data.IpAccessGroupIn.Null = true
+	}
+	if data.IpAccessGroupInEnable.Unknown {
+		data.IpAccessGroupInEnable.Unknown = false
+		data.IpAccessGroupInEnable.Null = true
+	}
+	if data.IpAccessGroupOut.Unknown {
+		data.IpAccessGroupOut.Unknown = false
+		data.IpAccessGroupOut.Null = true
+	}
+	if data.IpAccessGroupOutEnable.Unknown {
+		data.IpAccessGroupOutEnable.Unknown = false
+		data.IpAccessGroupOutEnable.Null = true
+	}
 }
 
 func (data *InterfaceLoopback) getDeletedListItems(ctx context.Context, state InterfaceLoopback) []string {
@@ -177,6 +255,12 @@ func (data *InterfaceLoopback) getEmptyLeafsDelete(ctx context.Context) []string
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Shutdown.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.IpAccessGroupInEnable.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/apply-type/apply-intf/acl/in", data.getPath()))
+	}
+	if !data.IpAccessGroupOutEnable.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/apply-type/apply-intf/acl/out", data.getPath()))
 	}
 	return emptyLeafsDelete
 }

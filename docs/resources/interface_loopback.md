@@ -14,12 +14,16 @@ This resource can manage the Interface Loopback configuration.
 
 ```terraform
 resource "iosxe_interface_loopback" "example" {
-  name              = 100
-  description       = "My Interface Description"
-  shutdown          = false
-  vrf_forwarding    = "VRF1"
-  ipv4_address      = "200.1.1.1"
-  ipv4_address_mask = "255.255.255.255"
+  name                       = 100
+  description                = "My Interface Description"
+  shutdown                   = false
+  vrf_forwarding             = "VRF1"
+  ipv4_address               = "200.1.1.1"
+  ipv4_address_mask          = "255.255.255.255"
+  ip_access_group_in         = "1"
+  ip_access_group_in_enable  = true
+  ip_access_group_out        = "1"
+  ip_access_group_out_enable = true
 }
 ```
 
@@ -34,6 +38,12 @@ resource "iosxe_interface_loopback" "example" {
 
 - `description` (String) Interface specific description
 - `device` (String) A device name from the provider configuration.
+- `ip_access_group_in` (String)
+- `ip_access_group_in_enable` (Boolean) inbound packets
+  - Default value: `true`
+- `ip_access_group_out` (String)
+- `ip_access_group_out_enable` (Boolean) outbound packets
+  - Default value: `true`
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface
