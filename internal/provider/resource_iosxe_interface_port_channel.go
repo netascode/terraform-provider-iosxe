@@ -91,6 +91,36 @@ func (t resourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsdk.
 				Optional:            true,
 				Computed:            true,
 			},
+			"ip_access_group_in": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"ip_access_group_in_enable": {
+				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").AddDefaultValueDescription("true").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					helpers.BooleanDefaultModifier(true),
+				},
+			},
+			"ip_access_group_out": {
+				MarkdownDescription: helpers.NewAttributeDescription("").String,
+				Type:                types.StringType,
+				Optional:            true,
+				Computed:            true,
+			},
+			"ip_access_group_out_enable": {
+				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").AddDefaultValueDescription("true").String,
+				Type:                types.BoolType,
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					helpers.BooleanDefaultModifier(true),
+				},
+			},
 			"ip_dhcp_relay_source_interface": {
 				MarkdownDescription: helpers.NewAttributeDescription("Set source interface for relayed messages").String,
 				Type:                types.StringType,

@@ -65,6 +65,26 @@ func (t dataSourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsd
 				Type:                types.BoolType,
 				Computed:            true,
 			},
+			"ip_access_group_in": {
+				MarkdownDescription: "",
+				Type:                types.StringType,
+				Computed:            true,
+			},
+			"ip_access_group_in_enable": {
+				MarkdownDescription: "inbound packets",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
+			"ip_access_group_out": {
+				MarkdownDescription: "",
+				Type:                types.StringType,
+				Computed:            true,
+			},
+			"ip_access_group_out_enable": {
+				MarkdownDescription: "outbound packets",
+				Type:                types.BoolType,
+				Computed:            true,
+			},
 			"ip_dhcp_relay_source_interface": {
 				MarkdownDescription: "Set source interface for relayed messages",
 				Type:                types.StringType,

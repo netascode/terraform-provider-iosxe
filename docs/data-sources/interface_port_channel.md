@@ -34,6 +34,10 @@ data "iosxe_interface_port_channel" "example" {
 - `description` (String) Interface specific description
 - `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
 - `id` (String) The path of the retrieved object.
+- `ip_access_group_in` (String)
+- `ip_access_group_in_enable` (Boolean) inbound packets
+- `ip_access_group_out` (String)
+- `ip_access_group_out_enable` (Boolean) outbound packets
 - `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)

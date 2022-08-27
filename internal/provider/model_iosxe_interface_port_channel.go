@@ -27,6 +27,10 @@ type InterfacePortChannel struct {
 	Ipv4Address                types.String                          `tfsdk:"ipv4_address"`
 	Ipv4AddressMask            types.String                          `tfsdk:"ipv4_address_mask"`
 	Switchport                 types.Bool                            `tfsdk:"switchport"`
+	IpAccessGroupIn            types.String                          `tfsdk:"ip_access_group_in"`
+	IpAccessGroupInEnable      types.Bool                            `tfsdk:"ip_access_group_in_enable"`
+	IpAccessGroupOut           types.String                          `tfsdk:"ip_access_group_out"`
+	IpAccessGroupOutEnable     types.Bool                            `tfsdk:"ip_access_group_out_enable"`
 	IpDhcpRelaySourceInterface types.String                          `tfsdk:"ip_dhcp_relay_source_interface"`
 	HelperAddresses            []InterfacePortChannelHelperAddresses `tfsdk:"helper_addresses"`
 }
@@ -75,6 +79,22 @@ func (data InterfacePortChannel) toBody(ctx context.Context) string {
 	}
 	if !data.Switchport.Null && !data.Switchport.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport-conf.switchport", data.Switchport.Value)
+	}
+	if !data.IpAccessGroupIn.Null && !data.IpAccessGroupIn.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.in.acl.acl-name", data.IpAccessGroupIn.Value)
+	}
+	if !data.IpAccessGroupInEnable.Null && !data.IpAccessGroupInEnable.Unknown {
+		if data.IpAccessGroupInEnable.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.in.acl.in", map[string]string{})
+		}
+	}
+	if !data.IpAccessGroupOut.Null && !data.IpAccessGroupOut.Unknown {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.out.acl.acl-name", data.IpAccessGroupOut.Value)
+	}
+	if !data.IpAccessGroupOutEnable.Null && !data.IpAccessGroupOutEnable.Unknown {
+		if data.IpAccessGroupOutEnable.Value {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.out.acl.out", map[string]string{})
+		}
 	}
 	if !data.IpDhcpRelaySourceInterface.Null && !data.IpDhcpRelaySourceInterface.Unknown {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface", data.IpDhcpRelaySourceInterface.Value)
@@ -137,6 +157,26 @@ func (data *InterfacePortChannel) updateFromBody(ctx context.Context, res gjson.
 		data.Switchport.Value = value.Bool()
 	} else {
 		data.Switchport.Value = false
+	}
+	if value := res.Get(prefix + "ip.access-group.in.acl.acl-name"); value.Exists() {
+		data.IpAccessGroupIn.Value = value.String()
+	} else {
+		data.IpAccessGroupIn.Null = true
+	}
+	if value := res.Get(prefix + "ip.access-group.in.acl.in"); value.Exists() {
+		data.IpAccessGroupInEnable.Value = true
+	} else {
+		data.IpAccessGroupInEnable.Value = false
+	}
+	if value := res.Get(prefix + "ip.access-group.out.acl.acl-name"); value.Exists() {
+		data.IpAccessGroupOut.Value = value.String()
+	} else {
+		data.IpAccessGroupOut.Null = true
+	}
+	if value := res.Get(prefix + "ip.access-group.out.acl.out"); value.Exists() {
+		data.IpAccessGroupOutEnable.Value = true
+	} else {
+		data.IpAccessGroupOutEnable.Value = false
 	}
 	if value := res.Get(prefix + "ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface"); value.Exists() {
 		data.IpDhcpRelaySourceInterface.Value = value.String()
@@ -219,6 +259,28 @@ func (data *InterfacePortChannel) fromBody(ctx context.Context, res gjson.Result
 		data.Switchport.Value = false
 		data.Switchport.Null = false
 	}
+	if value := res.Get(prefix + "ip.access-group.in.acl.acl-name"); value.Exists() {
+		data.IpAccessGroupIn.Value = value.String()
+		data.IpAccessGroupIn.Null = false
+	}
+	if value := res.Get(prefix + "ip.access-group.in.acl.in"); value.Exists() {
+		data.IpAccessGroupInEnable.Value = true
+		data.IpAccessGroupInEnable.Null = false
+	} else {
+		data.IpAccessGroupInEnable.Value = false
+		data.IpAccessGroupInEnable.Null = false
+	}
+	if value := res.Get(prefix + "ip.access-group.out.acl.acl-name"); value.Exists() {
+		data.IpAccessGroupOut.Value = value.String()
+		data.IpAccessGroupOut.Null = false
+	}
+	if value := res.Get(prefix + "ip.access-group.out.acl.out"); value.Exists() {
+		data.IpAccessGroupOutEnable.Value = true
+		data.IpAccessGroupOutEnable.Null = false
+	} else {
+		data.IpAccessGroupOutEnable.Value = false
+		data.IpAccessGroupOutEnable.Null = false
+	}
 	if value := res.Get(prefix + "ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface"); value.Exists() {
 		data.IpDhcpRelaySourceInterface.Value = value.String()
 		data.IpDhcpRelaySourceInterface.Null = false
@@ -282,6 +344,22 @@ func (data *InterfacePortChannel) setUnknownValues(ctx context.Context) {
 		data.Switchport.Unknown = false
 		data.Switchport.Null = true
 	}
+	if data.IpAccessGroupIn.Unknown {
+		data.IpAccessGroupIn.Unknown = false
+		data.IpAccessGroupIn.Null = true
+	}
+	if data.IpAccessGroupInEnable.Unknown {
+		data.IpAccessGroupInEnable.Unknown = false
+		data.IpAccessGroupInEnable.Null = true
+	}
+	if data.IpAccessGroupOut.Unknown {
+		data.IpAccessGroupOut.Unknown = false
+		data.IpAccessGroupOut.Null = true
+	}
+	if data.IpAccessGroupOutEnable.Unknown {
+		data.IpAccessGroupOutEnable.Unknown = false
+		data.IpAccessGroupOutEnable.Null = true
+	}
 	if data.IpDhcpRelaySourceInterface.Unknown {
 		data.IpDhcpRelaySourceInterface.Unknown = false
 		data.IpDhcpRelaySourceInterface.Null = true
@@ -336,6 +414,12 @@ func (data *InterfacePortChannel) getEmptyLeafsDelete(ctx context.Context) []str
 	emptyLeafsDelete := make([]string, 0)
 	if !data.Shutdown.Value {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.IpAccessGroupInEnable.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/apply-type/apply-intf/acl/in", data.getPath()))
+	}
+	if !data.IpAccessGroupOutEnable.Value {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/apply-type/apply-intf/acl/out", data.getPath()))
 	}
 
 	for i := range data.HelperAddresses {

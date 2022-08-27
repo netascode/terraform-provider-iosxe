@@ -20,6 +20,10 @@ resource "iosxe_interface_port_channel" "example" {
   vrf_forwarding                 = "VRF1"
   ipv4_address                   = "192.0.2.1"
   ipv4_address_mask              = "255.255.255.0"
+  ip_access_group_in             = "1"
+  ip_access_group_in_enable      = true
+  ip_access_group_out            = "1"
+  ip_access_group_out_enable     = true
   ip_dhcp_relay_source_interface = "Loopback100"
   helper_addresses = [
     {
@@ -42,6 +46,12 @@ resource "iosxe_interface_port_channel" "example" {
 - `description` (String) Interface specific description
 - `device` (String) A device name from the provider configuration.
 - `helper_addresses` (Attributes List) Specify a destination address for UDP broadcasts (see [below for nested schema](#nestedatt--helper_addresses))
+- `ip_access_group_in` (String)
+- `ip_access_group_in_enable` (Boolean) inbound packets
+  - Default value: `true`
+- `ip_access_group_out` (String)
+- `ip_access_group_out_enable` (Boolean) outbound packets
+  - Default value: `true`
 - `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
