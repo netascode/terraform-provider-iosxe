@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -44,7 +46,7 @@ func (t dataSourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 	}, nil
 }
 
-func (t dataSourceRestconfType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceRestconfType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceRestconf{
@@ -53,10 +55,10 @@ func (t dataSourceRestconfType) NewDataSource(ctx context.Context, in tfsdk.Prov
 }
 
 type dataSourceRestconf struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceRestconf) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceRestconf) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config, state RestconfDataSource
 
 	// Read config

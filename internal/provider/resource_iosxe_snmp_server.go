@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceSNMPServerType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"chassis_id": {
@@ -384,7 +386,7 @@ func (t resourceSNMPServerType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 	}, nil
 }
 
-func (t resourceSNMPServerType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceSNMPServerType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceSNMPServer{
@@ -393,10 +395,10 @@ func (t resourceSNMPServerType) NewResource(ctx context.Context, in tfsdk.Provid
 }
 
 type resourceSNMPServer struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceSNMPServer) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceSNMPServer) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan SNMPServer
 
 	// Read plan
@@ -441,7 +443,7 @@ func (r resourceSNMPServer) Create(ctx context.Context, req tfsdk.CreateResource
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceSNMPServer) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceSNMPServer) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state SNMPServer
 
 	// Read state
@@ -471,7 +473,7 @@ func (r resourceSNMPServer) Read(ctx context.Context, req tfsdk.ReadResourceRequ
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceSNMPServer) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceSNMPServer) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state SNMPServer
 
 	// Read plan
@@ -530,7 +532,7 @@ func (r resourceSNMPServer) Update(ctx context.Context, req tfsdk.UpdateResource
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceSNMPServer) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceSNMPServer) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state SNMPServer
 
 	// Read state
@@ -553,6 +555,6 @@ func (r resourceSNMPServer) Delete(ctx context.Context, req tfsdk.DeleteResource
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceSNMPServer) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceSNMPServer) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

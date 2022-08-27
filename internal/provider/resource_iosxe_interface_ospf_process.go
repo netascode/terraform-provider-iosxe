@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceInterfaceOSPFProcessType) GetSchema(ctx context.Context) (tfsdk.
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"type": {
@@ -43,7 +45,7 @@ func (t resourceInterfaceOSPFProcessType) GetSchema(ctx context.Context) (tfsdk.
 					helpers.StringEnumValidator("GigabitEthernet", "TwoGigabitEthernet", "FiveGigabitEthernet", "TenGigabitEthernet", "TwentyFiveGigE", "FortyGigabitEthernet", "HundredGigE", "TwoHundredGigE", "FourHundredGigE", "Loopback", "Vlan"),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"name": {
@@ -54,7 +56,7 @@ func (t resourceInterfaceOSPFProcessType) GetSchema(ctx context.Context) (tfsdk.
 					helpers.StringPatternValidator(0, 0, `(0|[1-9][0-9]*)(/(0|[1-9][0-9]*))*(\.[0-9]*)?`),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"process_id": {
@@ -65,7 +67,7 @@ func (t resourceInterfaceOSPFProcessType) GetSchema(ctx context.Context) (tfsdk.
 					helpers.IntegerRangeValidator(1, 65535),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"area": {
@@ -84,7 +86,7 @@ func (t resourceInterfaceOSPFProcessType) GetSchema(ctx context.Context) (tfsdk.
 	}, nil
 }
 
-func (t resourceInterfaceOSPFProcessType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfaceOSPFProcessType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceInterfaceOSPFProcess{
@@ -93,10 +95,10 @@ func (t resourceInterfaceOSPFProcessType) NewResource(ctx context.Context, in tf
 }
 
 type resourceInterfaceOSPFProcess struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceInterfaceOSPFProcess) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceInterfaceOSPFProcess) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan InterfaceOSPFProcess
 
 	// Read plan
@@ -141,7 +143,7 @@ func (r resourceInterfaceOSPFProcess) Create(ctx context.Context, req tfsdk.Crea
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceOSPFProcess) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceInterfaceOSPFProcess) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state InterfaceOSPFProcess
 
 	// Read state
@@ -171,7 +173,7 @@ func (r resourceInterfaceOSPFProcess) Read(ctx context.Context, req tfsdk.ReadRe
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceOSPFProcess) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceInterfaceOSPFProcess) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state InterfaceOSPFProcess
 
 	// Read plan
@@ -230,7 +232,7 @@ func (r resourceInterfaceOSPFProcess) Update(ctx context.Context, req tfsdk.Upda
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceOSPFProcess) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceInterfaceOSPFProcess) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state InterfaceOSPFProcess
 
 	// Read state
@@ -253,6 +255,6 @@ func (r resourceInterfaceOSPFProcess) Delete(ctx context.Context, req tfsdk.Dele
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfaceOSPFProcess) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceInterfaceOSPFProcess) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

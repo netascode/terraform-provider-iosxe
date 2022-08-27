@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"name": {
@@ -40,7 +42,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"description": {
@@ -58,7 +60,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 					helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"address_family_ipv4": {
@@ -284,7 +286,7 @@ func (t resourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diag
 	}, nil
 }
 
-func (t resourceVRFType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceVRFType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceVRF{
@@ -293,10 +295,10 @@ func (t resourceVRFType) NewResource(ctx context.Context, in tfsdk.Provider) (tf
 }
 
 type resourceVRF struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceVRF) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceVRF) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan VRF
 
 	// Read plan
@@ -341,7 +343,7 @@ func (r resourceVRF) Create(ctx context.Context, req tfsdk.CreateResourceRequest
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVRF) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceVRF) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state VRF
 
 	// Read state
@@ -371,7 +373,7 @@ func (r resourceVRF) Read(ctx context.Context, req tfsdk.ReadResourceRequest, re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVRF) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceVRF) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state VRF
 
 	// Read plan
@@ -430,7 +432,7 @@ func (r resourceVRF) Update(ctx context.Context, req tfsdk.UpdateResourceRequest
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceVRF) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state VRF
 
 	// Read state
@@ -453,6 +455,6 @@ func (r resourceVRF) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceVRF) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceVRF) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

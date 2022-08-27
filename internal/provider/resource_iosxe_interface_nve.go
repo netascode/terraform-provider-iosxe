@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceInterfaceNVEType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"name": {
@@ -43,7 +45,7 @@ func (t resourceInterfaceNVEType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 					helpers.IntegerRangeValidator(1, 4096),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"description": {
@@ -125,7 +127,7 @@ func (t resourceInterfaceNVEType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 	}, nil
 }
 
-func (t resourceInterfaceNVEType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfaceNVEType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceInterfaceNVE{
@@ -134,10 +136,10 @@ func (t resourceInterfaceNVEType) NewResource(ctx context.Context, in tfsdk.Prov
 }
 
 type resourceInterfaceNVE struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceInterfaceNVE) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceInterfaceNVE) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan InterfaceNVE
 
 	// Read plan
@@ -182,7 +184,7 @@ func (r resourceInterfaceNVE) Create(ctx context.Context, req tfsdk.CreateResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceInterfaceNVE) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state InterfaceNVE
 
 	// Read state
@@ -212,7 +214,7 @@ func (r resourceInterfaceNVE) Read(ctx context.Context, req tfsdk.ReadResourceRe
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceNVE) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceInterfaceNVE) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state InterfaceNVE
 
 	// Read plan
@@ -271,7 +273,7 @@ func (r resourceInterfaceNVE) Update(ctx context.Context, req tfsdk.UpdateResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceNVE) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceInterfaceNVE) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state InterfaceNVE
 
 	// Read state
@@ -294,6 +296,6 @@ func (r resourceInterfaceNVE) Delete(ctx context.Context, req tfsdk.DeleteResour
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfaceNVE) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceInterfaceNVE) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

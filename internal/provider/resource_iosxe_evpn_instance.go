@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceEVPNInstanceType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"evpn_instance_num": {
@@ -43,7 +45,7 @@ func (t resourceEVPNInstanceType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 					helpers.IntegerRangeValidator(1, 65535),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"vlan_based_replication_type_ingress": {
@@ -146,7 +148,7 @@ func (t resourceEVPNInstanceType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 	}, nil
 }
 
-func (t resourceEVPNInstanceType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceEVPNInstanceType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceEVPNInstance{
@@ -155,10 +157,10 @@ func (t resourceEVPNInstanceType) NewResource(ctx context.Context, in tfsdk.Prov
 }
 
 type resourceEVPNInstance struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceEVPNInstance) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceEVPNInstance) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan EVPNInstance
 
 	// Read plan
@@ -203,7 +205,7 @@ func (r resourceEVPNInstance) Create(ctx context.Context, req tfsdk.CreateResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceEVPNInstance) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceEVPNInstance) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state EVPNInstance
 
 	// Read state
@@ -233,7 +235,7 @@ func (r resourceEVPNInstance) Read(ctx context.Context, req tfsdk.ReadResourceRe
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceEVPNInstance) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceEVPNInstance) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state EVPNInstance
 
 	// Read plan
@@ -292,7 +294,7 @@ func (r resourceEVPNInstance) Update(ctx context.Context, req tfsdk.UpdateResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceEVPNInstance) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceEVPNInstance) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state EVPNInstance
 
 	// Read state
@@ -315,6 +317,6 @@ func (r resourceEVPNInstance) Delete(ctx context.Context, req tfsdk.DeleteResour
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceEVPNInstance) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceEVPNInstance) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

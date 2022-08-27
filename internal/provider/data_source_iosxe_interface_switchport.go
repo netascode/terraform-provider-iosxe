@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -104,7 +106,7 @@ func (t dataSourceInterfaceSwitchportType) GetSchema(ctx context.Context) (tfsdk
 	}, nil
 }
 
-func (t dataSourceInterfaceSwitchportType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceInterfaceSwitchportType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceInterfaceSwitchport{
@@ -113,10 +115,10 @@ func (t dataSourceInterfaceSwitchportType) NewDataSource(ctx context.Context, in
 }
 
 type dataSourceInterfaceSwitchport struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceInterfaceSwitchport) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceInterfaceSwitchport) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config InterfaceSwitchport
 
 	// Read config

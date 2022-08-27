@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceBGPL2VPNEVPNNeighborType) GetSchema(ctx context.Context) (tfsdk.
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"asn": {
@@ -40,7 +42,7 @@ func (t resourceBGPL2VPNEVPNNeighborType) GetSchema(ctx context.Context) (tfsdk.
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"ip": {
@@ -48,7 +50,7 @@ func (t resourceBGPL2VPNEVPNNeighborType) GetSchema(ctx context.Context) (tfsdk.
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"activate": {
@@ -76,7 +78,7 @@ func (t resourceBGPL2VPNEVPNNeighborType) GetSchema(ctx context.Context) (tfsdk.
 	}, nil
 }
 
-func (t resourceBGPL2VPNEVPNNeighborType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceBGPL2VPNEVPNNeighborType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceBGPL2VPNEVPNNeighbor{
@@ -85,10 +87,10 @@ func (t resourceBGPL2VPNEVPNNeighborType) NewResource(ctx context.Context, in tf
 }
 
 type resourceBGPL2VPNEVPNNeighbor struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceBGPL2VPNEVPNNeighbor) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceBGPL2VPNEVPNNeighbor) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan BGPL2VPNEVPNNeighbor
 
 	// Read plan
@@ -133,7 +135,7 @@ func (r resourceBGPL2VPNEVPNNeighbor) Create(ctx context.Context, req tfsdk.Crea
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state BGPL2VPNEVPNNeighbor
 
 	// Read state
@@ -163,7 +165,7 @@ func (r resourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req tfsdk.ReadRe
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPL2VPNEVPNNeighbor) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceBGPL2VPNEVPNNeighbor) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state BGPL2VPNEVPNNeighbor
 
 	// Read plan
@@ -222,7 +224,7 @@ func (r resourceBGPL2VPNEVPNNeighbor) Update(ctx context.Context, req tfsdk.Upda
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPL2VPNEVPNNeighbor) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceBGPL2VPNEVPNNeighbor) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state BGPL2VPNEVPNNeighbor
 
 	// Read state
@@ -245,6 +247,6 @@ func (r resourceBGPL2VPNEVPNNeighbor) Delete(ctx context.Context, req tfsdk.Dele
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceBGPL2VPNEVPNNeighbor) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceBGPL2VPNEVPNNeighbor) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

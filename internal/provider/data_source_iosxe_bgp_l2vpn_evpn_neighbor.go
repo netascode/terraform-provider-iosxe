@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -59,7 +61,7 @@ func (t dataSourceBGPL2VPNEVPNNeighborType) GetSchema(ctx context.Context) (tfsd
 	}, nil
 }
 
-func (t dataSourceBGPL2VPNEVPNNeighborType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceBGPL2VPNEVPNNeighborType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceBGPL2VPNEVPNNeighbor{
@@ -68,10 +70,10 @@ func (t dataSourceBGPL2VPNEVPNNeighborType) NewDataSource(ctx context.Context, i
 }
 
 type dataSourceBGPL2VPNEVPNNeighbor struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceBGPL2VPNEVPNNeighbor) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config BGPL2VPNEVPNNeighbor
 
 	// Read config

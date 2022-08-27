@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -120,7 +122,7 @@ func (t dataSourceInterfaceVLANType) GetSchema(ctx context.Context) (tfsdk.Schem
 	}, nil
 }
 
-func (t dataSourceInterfaceVLANType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceInterfaceVLANType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceInterfaceVLAN{
@@ -129,10 +131,10 @@ func (t dataSourceInterfaceVLANType) NewDataSource(ctx context.Context, in tfsdk
 }
 
 type dataSourceInterfaceVLAN struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceInterfaceVLAN) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceInterfaceVLAN) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config InterfaceVLAN
 
 	// Read config

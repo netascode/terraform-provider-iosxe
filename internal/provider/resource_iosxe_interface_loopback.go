@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceInterfaceLoopbackType) GetSchema(ctx context.Context) (tfsdk.Sch
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"name": {
@@ -43,7 +45,7 @@ func (t resourceInterfaceLoopbackType) GetSchema(ctx context.Context) (tfsdk.Sch
 					helpers.IntegerRangeValidator(0, 2147483647),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"description": {
@@ -119,7 +121,7 @@ func (t resourceInterfaceLoopbackType) GetSchema(ctx context.Context) (tfsdk.Sch
 	}, nil
 }
 
-func (t resourceInterfaceLoopbackType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfaceLoopbackType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceInterfaceLoopback{
@@ -128,10 +130,10 @@ func (t resourceInterfaceLoopbackType) NewResource(ctx context.Context, in tfsdk
 }
 
 type resourceInterfaceLoopback struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceInterfaceLoopback) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceInterfaceLoopback) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan InterfaceLoopback
 
 	// Read plan
@@ -176,7 +178,7 @@ func (r resourceInterfaceLoopback) Create(ctx context.Context, req tfsdk.CreateR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceLoopback) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceInterfaceLoopback) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state InterfaceLoopback
 
 	// Read state
@@ -206,7 +208,7 @@ func (r resourceInterfaceLoopback) Read(ctx context.Context, req tfsdk.ReadResou
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceLoopback) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceInterfaceLoopback) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state InterfaceLoopback
 
 	// Read plan
@@ -265,7 +267,7 @@ func (r resourceInterfaceLoopback) Update(ctx context.Context, req tfsdk.UpdateR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceLoopback) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceInterfaceLoopback) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state InterfaceLoopback
 
 	// Read state
@@ -288,6 +290,6 @@ func (r resourceInterfaceLoopback) Delete(ctx context.Context, req tfsdk.DeleteR
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfaceLoopback) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceInterfaceLoopback) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

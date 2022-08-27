@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceInterfaceSwitchportType) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"type": {
@@ -43,7 +45,7 @@ func (t resourceInterfaceSwitchportType) GetSchema(ctx context.Context) (tfsdk.S
 					helpers.StringEnumValidator("GigabitEthernet", "TwoGigabitEthernet", "FiveGigabitEthernet", "TenGigabitEthernet", "TwentyFiveGigE", "FortyGigabitEthernet", "HundredGigE", "TwoHundredGigE", "FourHundredGigE"),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"name": {
@@ -54,7 +56,7 @@ func (t resourceInterfaceSwitchportType) GetSchema(ctx context.Context) (tfsdk.S
 					helpers.StringPatternValidator(0, 0, `(0|[1-9][0-9]*)(/(0|[1-9][0-9]*))*(\.[0-9]*)?`),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"mode_access": {
@@ -136,7 +138,7 @@ func (t resourceInterfaceSwitchportType) GetSchema(ctx context.Context) (tfsdk.S
 	}, nil
 }
 
-func (t resourceInterfaceSwitchportType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfaceSwitchportType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceInterfaceSwitchport{
@@ -145,10 +147,10 @@ func (t resourceInterfaceSwitchportType) NewResource(ctx context.Context, in tfs
 }
 
 type resourceInterfaceSwitchport struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceInterfaceSwitchport) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceInterfaceSwitchport) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan InterfaceSwitchport
 
 	// Read plan
@@ -193,7 +195,7 @@ func (r resourceInterfaceSwitchport) Create(ctx context.Context, req tfsdk.Creat
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceSwitchport) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceInterfaceSwitchport) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state InterfaceSwitchport
 
 	// Read state
@@ -223,7 +225,7 @@ func (r resourceInterfaceSwitchport) Read(ctx context.Context, req tfsdk.ReadRes
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceSwitchport) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceInterfaceSwitchport) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state InterfaceSwitchport
 
 	// Read plan
@@ -282,7 +284,7 @@ func (r resourceInterfaceSwitchport) Update(ctx context.Context, req tfsdk.Updat
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfaceSwitchport) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceInterfaceSwitchport) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state InterfaceSwitchport
 
 	// Read state
@@ -305,6 +307,6 @@ func (r resourceInterfaceSwitchport) Delete(ctx context.Context, req tfsdk.Delet
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfaceSwitchport) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceInterfaceSwitchport) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

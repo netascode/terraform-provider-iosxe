@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -54,7 +56,7 @@ func (t dataSourceBGPType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Di
 	}, nil
 }
 
-func (t dataSourceBGPType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceBGPType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceBGP{
@@ -63,10 +65,10 @@ func (t dataSourceBGPType) NewDataSource(ctx context.Context, in tfsdk.Provider)
 }
 
 type dataSourceBGP struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceBGP) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceBGP) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config BGP
 
 	// Read config

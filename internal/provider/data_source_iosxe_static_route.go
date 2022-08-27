@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -80,7 +82,7 @@ func (t dataSourceStaticRouteType) GetSchema(ctx context.Context) (tfsdk.Schema,
 	}, nil
 }
 
-func (t dataSourceStaticRouteType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceStaticRouteType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceStaticRoute{
@@ -89,10 +91,10 @@ func (t dataSourceStaticRouteType) NewDataSource(ctx context.Context, in tfsdk.P
 }
 
 type dataSourceStaticRoute struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceStaticRoute) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceStaticRoute) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config StaticRoute
 
 	// Read config

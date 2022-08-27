@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -33,7 +35,7 @@ func (t resource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk.S
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			{{- range  .Attributes}}
@@ -80,7 +82,7 @@ func (t resource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk.S
 				{{- if or (len .DefaultValue) (eq .Id true) (eq .Reference true) (eq .RequiresReplace true)}}
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					{{- if or (eq .Id true) (eq .Reference true) (eq .RequiresReplace true)}}
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 					{{- else if eq .Type "Int64"}}
 					helpers.IntegerDefaultModifier({{.DefaultValue}}),
 					{{- else if eq .Type "Bool"}}
@@ -149,7 +151,7 @@ func (t resource{{camelCase .Name}}Type) GetSchema(ctx context.Context) (tfsdk.S
 	}, nil
 }
 
-func (t resource{{camelCase .Name}}Type) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resource{{camelCase .Name}}Type) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resource{{camelCase .Name}}{
@@ -158,10 +160,10 @@ func (t resource{{camelCase .Name}}Type) NewResource(ctx context.Context, in tfs
 }
 
 type resource{{camelCase .Name}} struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resource{{camelCase .Name}}) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resource{{camelCase .Name}}) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan {{camelCase .Name}}
 
 	// Read plan
@@ -206,7 +208,7 @@ func (r resource{{camelCase .Name}}) Create(ctx context.Context, req tfsdk.Creat
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resource{{camelCase .Name}}) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resource{{camelCase .Name}}) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state {{camelCase .Name}}
 
 	// Read state
@@ -236,7 +238,7 @@ func (r resource{{camelCase .Name}}) Read(ctx context.Context, req tfsdk.ReadRes
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resource{{camelCase .Name}}) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resource{{camelCase .Name}}) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state {{camelCase .Name}}
 
 	// Read plan
@@ -295,7 +297,7 @@ func (r resource{{camelCase .Name}}) Update(ctx context.Context, req tfsdk.Updat
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resource{{camelCase .Name}}) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resource{{camelCase .Name}}) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state {{camelCase .Name}}
 
 	// Read state
@@ -318,6 +320,6 @@ func (r resource{{camelCase .Name}}) Delete(ctx context.Context, req tfsdk.Delet
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resource{{camelCase .Name}}) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resource{{camelCase .Name}}) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

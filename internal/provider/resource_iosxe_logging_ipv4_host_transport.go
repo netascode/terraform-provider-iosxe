@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceLoggingIPv4HostTransportType) GetSchema(ctx context.Context) (tf
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"ipv4_host": {
@@ -40,7 +42,7 @@ func (t resourceLoggingIPv4HostTransportType) GetSchema(ctx context.Context) (tf
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"transport_udp_ports": {
@@ -98,7 +100,7 @@ func (t resourceLoggingIPv4HostTransportType) GetSchema(ctx context.Context) (tf
 	}, nil
 }
 
-func (t resourceLoggingIPv4HostTransportType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceLoggingIPv4HostTransportType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceLoggingIPv4HostTransport{
@@ -107,10 +109,10 @@ func (t resourceLoggingIPv4HostTransportType) NewResource(ctx context.Context, i
 }
 
 type resourceLoggingIPv4HostTransport struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceLoggingIPv4HostTransport) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceLoggingIPv4HostTransport) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan LoggingIPv4HostTransport
 
 	// Read plan
@@ -155,7 +157,7 @@ func (r resourceLoggingIPv4HostTransport) Create(ctx context.Context, req tfsdk.
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceLoggingIPv4HostTransport) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceLoggingIPv4HostTransport) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state LoggingIPv4HostTransport
 
 	// Read state
@@ -185,7 +187,7 @@ func (r resourceLoggingIPv4HostTransport) Read(ctx context.Context, req tfsdk.Re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceLoggingIPv4HostTransport) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceLoggingIPv4HostTransport) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state LoggingIPv4HostTransport
 
 	// Read plan
@@ -244,7 +246,7 @@ func (r resourceLoggingIPv4HostTransport) Update(ctx context.Context, req tfsdk.
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceLoggingIPv4HostTransport) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceLoggingIPv4HostTransport) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state LoggingIPv4HostTransport
 
 	// Read state
@@ -267,6 +269,6 @@ func (r resourceLoggingIPv4HostTransport) Delete(ctx context.Context, req tfsdk.
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceLoggingIPv4HostTransport) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceLoggingIPv4HostTransport) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

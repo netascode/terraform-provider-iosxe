@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceInterfacePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"type": {
@@ -43,7 +45,7 @@ func (t resourceInterfacePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 					helpers.StringEnumValidator("GigabitEthernet", "TwoGigabitEthernet", "FiveGigabitEthernet", "TenGigabitEthernet", "TwentyFiveGigE", "FortyGigabitEthernet", "HundredGigE", "TwoHundredGigE", "FourHundredGigE", "Loopback", "Vlan"),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"name": {
@@ -54,7 +56,7 @@ func (t resourceInterfacePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 					helpers.StringPatternValidator(0, 0, `(0|[1-9][0-9]*)(/(0|[1-9][0-9]*))*(\.[0-9]*)?`),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"passive": {
@@ -112,7 +114,7 @@ func (t resourceInterfacePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 	}, nil
 }
 
-func (t resourceInterfacePIMType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfacePIMType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceInterfacePIM{
@@ -121,10 +123,10 @@ func (t resourceInterfacePIMType) NewResource(ctx context.Context, in tfsdk.Prov
 }
 
 type resourceInterfacePIM struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceInterfacePIM) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceInterfacePIM) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan InterfacePIM
 
 	// Read plan
@@ -169,7 +171,7 @@ func (r resourceInterfacePIM) Create(ctx context.Context, req tfsdk.CreateResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePIM) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceInterfacePIM) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state InterfacePIM
 
 	// Read state
@@ -199,7 +201,7 @@ func (r resourceInterfacePIM) Read(ctx context.Context, req tfsdk.ReadResourceRe
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePIM) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceInterfacePIM) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state InterfacePIM
 
 	// Read plan
@@ -258,7 +260,7 @@ func (r resourceInterfacePIM) Update(ctx context.Context, req tfsdk.UpdateResour
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePIM) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceInterfacePIM) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state InterfacePIM
 
 	// Read state
@@ -275,6 +277,6 @@ func (r resourceInterfacePIM) Delete(ctx context.Context, req tfsdk.DeleteResour
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfacePIM) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceInterfacePIM) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

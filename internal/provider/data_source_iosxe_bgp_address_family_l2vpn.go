@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -44,7 +46,7 @@ func (t dataSourceBGPAddressFamilyL2VPNType) GetSchema(ctx context.Context) (tfs
 	}, nil
 }
 
-func (t dataSourceBGPAddressFamilyL2VPNType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceBGPAddressFamilyL2VPNType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceBGPAddressFamilyL2VPN{
@@ -53,10 +55,10 @@ func (t dataSourceBGPAddressFamilyL2VPNType) NewDataSource(ctx context.Context, 
 }
 
 type dataSourceBGPAddressFamilyL2VPN struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config BGPAddressFamilyL2VPN
 
 	// Read config

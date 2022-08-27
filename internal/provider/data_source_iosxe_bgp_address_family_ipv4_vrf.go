@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -70,7 +72,7 @@ func (t dataSourceBGPAddressFamilyIPv4VRFType) GetSchema(ctx context.Context) (t
 	}, nil
 }
 
-func (t dataSourceBGPAddressFamilyIPv4VRFType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceBGPAddressFamilyIPv4VRFType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceBGPAddressFamilyIPv4VRF{
@@ -79,10 +81,10 @@ func (t dataSourceBGPAddressFamilyIPv4VRFType) NewDataSource(ctx context.Context
 }
 
 type dataSourceBGPAddressFamilyIPv4VRF struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceBGPAddressFamilyIPv4VRF) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceBGPAddressFamilyIPv4VRF) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config BGPAddressFamilyIPv4VRF
 
 	// Read config

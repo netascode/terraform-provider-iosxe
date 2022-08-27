@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceBGPNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, d
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"asn": {
@@ -40,7 +42,7 @@ func (t resourceBGPNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, d
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"ip": {
@@ -48,7 +50,7 @@ func (t resourceBGPNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, d
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"remote_as": {
@@ -79,7 +81,7 @@ func (t resourceBGPNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, d
 	}, nil
 }
 
-func (t resourceBGPNeighborType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceBGPNeighborType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceBGPNeighbor{
@@ -88,10 +90,10 @@ func (t resourceBGPNeighborType) NewResource(ctx context.Context, in tfsdk.Provi
 }
 
 type resourceBGPNeighbor struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceBGPNeighbor) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceBGPNeighbor) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan BGPNeighbor
 
 	// Read plan
@@ -136,7 +138,7 @@ func (r resourceBGPNeighbor) Create(ctx context.Context, req tfsdk.CreateResourc
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPNeighbor) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceBGPNeighbor) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state BGPNeighbor
 
 	// Read state
@@ -166,7 +168,7 @@ func (r resourceBGPNeighbor) Read(ctx context.Context, req tfsdk.ReadResourceReq
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPNeighbor) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceBGPNeighbor) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state BGPNeighbor
 
 	// Read plan
@@ -225,7 +227,7 @@ func (r resourceBGPNeighbor) Update(ctx context.Context, req tfsdk.UpdateResourc
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPNeighbor) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceBGPNeighbor) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state BGPNeighbor
 
 	// Read state
@@ -248,6 +250,6 @@ func (r resourceBGPNeighbor) Delete(ctx context.Context, req tfsdk.DeleteResourc
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceBGPNeighbor) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceBGPNeighbor) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

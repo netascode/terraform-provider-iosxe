@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -82,7 +84,7 @@ func (t dataSourceLoggingIPv4HostVRFTransportType) GetSchema(ctx context.Context
 	}, nil
 }
 
-func (t dataSourceLoggingIPv4HostVRFTransportType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourceLoggingIPv4HostVRFTransportType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourceLoggingIPv4HostVRFTransport{
@@ -91,10 +93,10 @@ func (t dataSourceLoggingIPv4HostVRFTransportType) NewDataSource(ctx context.Con
 }
 
 type dataSourceLoggingIPv4HostVRFTransport struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourceLoggingIPv4HostVRFTransport) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourceLoggingIPv4HostVRFTransport) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config LoggingIPv4HostVRFTransport
 
 	// Read config

@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceDHCPType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"compatibility_suboption_link_selection": {
@@ -96,7 +98,7 @@ func (t resourceDHCPType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 	}, nil
 }
 
-func (t resourceDHCPType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceDHCPType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceDHCP{
@@ -105,10 +107,10 @@ func (t resourceDHCPType) NewResource(ctx context.Context, in tfsdk.Provider) (t
 }
 
 type resourceDHCP struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceDHCP) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceDHCP) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan DHCP
 
 	// Read plan
@@ -153,7 +155,7 @@ func (r resourceDHCP) Create(ctx context.Context, req tfsdk.CreateResourceReques
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceDHCP) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceDHCP) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state DHCP
 
 	// Read state
@@ -183,7 +185,7 @@ func (r resourceDHCP) Read(ctx context.Context, req tfsdk.ReadResourceRequest, r
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceDHCP) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceDHCP) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state DHCP
 
 	// Read plan
@@ -242,7 +244,7 @@ func (r resourceDHCP) Update(ctx context.Context, req tfsdk.UpdateResourceReques
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceDHCP) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceDHCP) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state DHCP
 
 	// Read state
@@ -265,6 +267,6 @@ func (r resourceDHCP) Delete(ctx context.Context, req tfsdk.DeleteResourceReques
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceDHCP) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceDHCP) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

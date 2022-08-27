@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceVLANConfigurationType) GetSchema(ctx context.Context) (tfsdk.Sch
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"vlan_id": {
@@ -43,7 +45,7 @@ func (t resourceVLANConfigurationType) GetSchema(ctx context.Context) (tfsdk.Sch
 					helpers.IntegerRangeValidator(1, 4094),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"vni": {
@@ -83,7 +85,7 @@ func (t resourceVLANConfigurationType) GetSchema(ctx context.Context) (tfsdk.Sch
 	}, nil
 }
 
-func (t resourceVLANConfigurationType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceVLANConfigurationType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceVLANConfiguration{
@@ -92,10 +94,10 @@ func (t resourceVLANConfigurationType) NewResource(ctx context.Context, in tfsdk
 }
 
 type resourceVLANConfiguration struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceVLANConfiguration) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceVLANConfiguration) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan VLANConfiguration
 
 	// Read plan
@@ -140,7 +142,7 @@ func (r resourceVLANConfiguration) Create(ctx context.Context, req tfsdk.CreateR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVLANConfiguration) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceVLANConfiguration) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state VLANConfiguration
 
 	// Read state
@@ -170,7 +172,7 @@ func (r resourceVLANConfiguration) Read(ctx context.Context, req tfsdk.ReadResou
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVLANConfiguration) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceVLANConfiguration) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state VLANConfiguration
 
 	// Read plan
@@ -229,7 +231,7 @@ func (r resourceVLANConfiguration) Update(ctx context.Context, req tfsdk.UpdateR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceVLANConfiguration) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceVLANConfiguration) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state VLANConfiguration
 
 	// Read state
@@ -252,6 +254,6 @@ func (r resourceVLANConfiguration) Delete(ctx context.Context, req tfsdk.DeleteR
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceVLANConfiguration) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceVLANConfiguration) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

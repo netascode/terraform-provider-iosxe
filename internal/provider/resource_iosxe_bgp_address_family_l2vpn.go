@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceBGPAddressFamilyL2VPNType) GetSchema(ctx context.Context) (tfsdk
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"asn": {
@@ -40,7 +42,7 @@ func (t resourceBGPAddressFamilyL2VPNType) GetSchema(ctx context.Context) (tfsdk
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"af_name": {
@@ -51,14 +53,14 @@ func (t resourceBGPAddressFamilyL2VPNType) GetSchema(ctx context.Context) (tfsdk
 					helpers.StringEnumValidator("evpn", "vpls"),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 		},
 	}, nil
 }
 
-func (t resourceBGPAddressFamilyL2VPNType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceBGPAddressFamilyL2VPNType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceBGPAddressFamilyL2VPN{
@@ -67,10 +69,10 @@ func (t resourceBGPAddressFamilyL2VPNType) NewResource(ctx context.Context, in t
 }
 
 type resourceBGPAddressFamilyL2VPN struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceBGPAddressFamilyL2VPN) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceBGPAddressFamilyL2VPN) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan BGPAddressFamilyL2VPN
 
 	// Read plan
@@ -115,7 +117,7 @@ func (r resourceBGPAddressFamilyL2VPN) Create(ctx context.Context, req tfsdk.Cre
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state BGPAddressFamilyL2VPN
 
 	// Read state
@@ -145,7 +147,7 @@ func (r resourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req tfsdk.ReadR
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPAddressFamilyL2VPN) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceBGPAddressFamilyL2VPN) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state BGPAddressFamilyL2VPN
 
 	// Read plan
@@ -204,7 +206,7 @@ func (r resourceBGPAddressFamilyL2VPN) Update(ctx context.Context, req tfsdk.Upd
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPAddressFamilyL2VPN) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceBGPAddressFamilyL2VPN) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state BGPAddressFamilyL2VPN
 
 	// Read state
@@ -227,6 +229,6 @@ func (r resourceBGPAddressFamilyL2VPN) Delete(ctx context.Context, req tfsdk.Del
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceBGPAddressFamilyL2VPN) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceBGPAddressFamilyL2VPN) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

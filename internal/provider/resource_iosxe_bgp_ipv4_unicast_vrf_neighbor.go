@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (t
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"asn": {
@@ -40,7 +42,7 @@ func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (t
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"vrf": {
@@ -48,7 +50,7 @@ func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (t
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"ip": {
@@ -56,7 +58,7 @@ func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (t
 				Type:                types.StringType,
 				Required:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"remote_as": {
@@ -108,7 +110,7 @@ func (t resourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (t
 	}, nil
 }
 
-func (t resourceBGPIPv4UnicastVRFNeighborType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceBGPIPv4UnicastVRFNeighborType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceBGPIPv4UnicastVRFNeighbor{
@@ -117,10 +119,10 @@ func (t resourceBGPIPv4UnicastVRFNeighborType) NewResource(ctx context.Context, 
 }
 
 type resourceBGPIPv4UnicastVRFNeighbor struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceBGPIPv4UnicastVRFNeighbor) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan BGPIPv4UnicastVRFNeighbor
 
 	// Read plan
@@ -165,7 +167,7 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Create(ctx context.Context, req tfsdk
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state BGPIPv4UnicastVRFNeighbor
 
 	// Read state
@@ -195,7 +197,7 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req tfsdk.R
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceBGPIPv4UnicastVRFNeighbor) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state BGPIPv4UnicastVRFNeighbor
 
 	// Read plan
@@ -254,7 +256,7 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Update(ctx context.Context, req tfsdk
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceBGPIPv4UnicastVRFNeighbor) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state BGPIPv4UnicastVRFNeighbor
 
 	// Read state
@@ -277,6 +279,6 @@ func (r resourceBGPIPv4UnicastVRFNeighbor) Delete(ctx context.Context, req tfsdk
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceBGPIPv4UnicastVRFNeighbor) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceBGPIPv4UnicastVRFNeighbor) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

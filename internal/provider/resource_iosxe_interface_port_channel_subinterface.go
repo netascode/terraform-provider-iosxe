@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -32,7 +34,7 @@ func (t resourceInterfacePortChannelSubinterfaceType) GetSchema(ctx context.Cont
 				Type:                types.StringType,
 				Computed:            true,
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.UseStateForUnknown(),
+					resource.UseStateForUnknown(),
 				},
 			},
 			"name": {
@@ -43,7 +45,7 @@ func (t resourceInterfacePortChannelSubinterfaceType) GetSchema(ctx context.Cont
 					helpers.StringPatternValidator(0, 0, `[1-9][0-9]*\.[1-9][0-9]*`),
 				},
 				PlanModifiers: tfsdk.AttributePlanModifiers{
-					tfsdk.RequiresReplace(),
+					resource.RequiresReplace(),
 				},
 			},
 			"description": {
@@ -155,7 +157,7 @@ func (t resourceInterfacePortChannelSubinterfaceType) GetSchema(ctx context.Cont
 	}, nil
 }
 
-func (t resourceInterfacePortChannelSubinterfaceType) NewResource(ctx context.Context, in tfsdk.Provider) (tfsdk.Resource, diag.Diagnostics) {
+func (t resourceInterfacePortChannelSubinterfaceType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return resourceInterfacePortChannelSubinterface{
@@ -164,10 +166,10 @@ func (t resourceInterfacePortChannelSubinterfaceType) NewResource(ctx context.Co
 }
 
 type resourceInterfacePortChannelSubinterface struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (r resourceInterfacePortChannelSubinterface) Create(ctx context.Context, req tfsdk.CreateResourceRequest, resp *tfsdk.CreateResourceResponse) {
+func (r resourceInterfacePortChannelSubinterface) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan InterfacePortChannelSubinterface
 
 	// Read plan
@@ -212,7 +214,7 @@ func (r resourceInterfacePortChannelSubinterface) Create(ctx context.Context, re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePortChannelSubinterface) Read(ctx context.Context, req tfsdk.ReadResourceRequest, resp *tfsdk.ReadResourceResponse) {
+func (r resourceInterfacePortChannelSubinterface) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state InterfacePortChannelSubinterface
 
 	// Read state
@@ -242,7 +244,7 @@ func (r resourceInterfacePortChannelSubinterface) Read(ctx context.Context, req 
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePortChannelSubinterface) Update(ctx context.Context, req tfsdk.UpdateResourceRequest, resp *tfsdk.UpdateResourceResponse) {
+func (r resourceInterfacePortChannelSubinterface) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state InterfacePortChannelSubinterface
 
 	// Read plan
@@ -301,7 +303,7 @@ func (r resourceInterfacePortChannelSubinterface) Update(ctx context.Context, re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePortChannelSubinterface) Delete(ctx context.Context, req tfsdk.DeleteResourceRequest, resp *tfsdk.DeleteResourceResponse) {
+func (r resourceInterfacePortChannelSubinterface) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state InterfacePortChannelSubinterface
 
 	// Read state
@@ -324,6 +326,6 @@ func (r resourceInterfacePortChannelSubinterface) Delete(ctx context.Context, re
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfacePortChannelSubinterface) ImportState(ctx context.Context, req tfsdk.ImportResourceStateRequest, resp *tfsdk.ImportResourceStateResponse) {
-	tfsdk.ResourceImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r resourceInterfacePortChannelSubinterface) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

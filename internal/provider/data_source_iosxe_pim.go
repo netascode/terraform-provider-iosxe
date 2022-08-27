@@ -6,7 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -146,7 +148,7 @@ func (t dataSourcePIMType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Di
 	}, nil
 }
 
-func (t dataSourcePIMType) NewDataSource(ctx context.Context, in tfsdk.Provider) (tfsdk.DataSource, diag.Diagnostics) {
+func (t dataSourcePIMType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
 	provider, diags := convertProviderType(in)
 
 	return dataSourcePIM{
@@ -155,10 +157,10 @@ func (t dataSourcePIMType) NewDataSource(ctx context.Context, in tfsdk.Provider)
 }
 
 type dataSourcePIM struct {
-	provider provider
+	provider iosxeProvider
 }
 
-func (d dataSourcePIM) Read(ctx context.Context, req tfsdk.ReadDataSourceRequest, resp *tfsdk.ReadDataSourceResponse) {
+func (d dataSourcePIM) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config PIM
 
 	// Read config
