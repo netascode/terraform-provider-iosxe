@@ -24,15 +24,15 @@ type SNMPServerGroup struct {
 	V3Security []SNMPServerGroupV3Security `tfsdk:"v3_security"`
 }
 type SNMPServerGroupV3Security struct {
-	SecurityLevel       types.String `tfsdk:"security_level"`
-	ContextNode         types.String `tfsdk:"context_node"`
-	MatchNode           types.String `tfsdk:"match_node"`
-	ReadNode            types.String `tfsdk:"read_node"`
-	WriteNode           types.String `tfsdk:"write_node"`
-	NotifyNode          types.String `tfsdk:"notify_node"`
-	AccessConfigIpv6Acl types.String `tfsdk:"access_config_ipv6_acl"`
-	AccessStandardAcl   types.Int64  `tfsdk:"access_standard_acl"`
-	AccessAclName       types.String `tfsdk:"access_acl_name"`
+	SecurityLevel     types.String `tfsdk:"security_level"`
+	ContextNode       types.String `tfsdk:"context_node"`
+	MatchNode         types.String `tfsdk:"match_node"`
+	ReadNode          types.String `tfsdk:"read_node"`
+	WriteNode         types.String `tfsdk:"write_node"`
+	NotifyNode        types.String `tfsdk:"notify_node"`
+	AccessIpv6Acl     types.String `tfsdk:"access_ipv6_acl"`
+	AccessStandardAcl types.Int64  `tfsdk:"access_standard_acl"`
+	AccessAclName     types.String `tfsdk:"access_acl_name"`
 }
 
 func (data SNMPServerGroup) getPath() string {
@@ -76,8 +76,8 @@ func (data SNMPServerGroup) toBody(ctx context.Context) string {
 			if !item.NotifyNode.Null && !item.NotifyNode.Unknown {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"notify-node", item.NotifyNode.Value)
 			}
-			if !item.AccessConfigIpv6Acl.Null && !item.AccessConfigIpv6Acl.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.ipv6-acl", item.AccessConfigIpv6Acl.Value)
+			if !item.AccessIpv6Acl.Null && !item.AccessIpv6Acl.Unknown {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.ipv6-acl", item.AccessIpv6Acl.Value)
 			}
 			if !item.AccessStandardAcl.Null && !item.AccessStandardAcl.Unknown {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.standard-acl", strconv.FormatInt(item.AccessStandardAcl.Value, 10))
@@ -154,9 +154,9 @@ func (data *SNMPServerGroup) updateFromBody(ctx context.Context, res gjson.Resul
 			data.V3Security[i].NotifyNode.Null = true
 		}
 		if value := r.Get("access-config.ipv6-acl"); value.Exists() {
-			data.V3Security[i].AccessConfigIpv6Acl.Value = value.String()
+			data.V3Security[i].AccessIpv6Acl.Value = value.String()
 		} else {
-			data.V3Security[i].AccessConfigIpv6Acl.Null = true
+			data.V3Security[i].AccessIpv6Acl.Null = true
 		}
 		if value := r.Get("access-config.standard-acl"); value.Exists() {
 			data.V3Security[i].AccessStandardAcl.Value = value.Int()
@@ -205,8 +205,8 @@ func (data *SNMPServerGroup) fromBody(ctx context.Context, res gjson.Result) {
 				item.NotifyNode.Null = false
 			}
 			if cValue := v.Get("access-config.ipv6-acl"); cValue.Exists() {
-				item.AccessConfigIpv6Acl.Value = cValue.String()
-				item.AccessConfigIpv6Acl.Null = false
+				item.AccessIpv6Acl.Value = cValue.String()
+				item.AccessIpv6Acl.Null = false
 			}
 			if cValue := v.Get("access-config.standard-acl"); cValue.Exists() {
 				item.AccessStandardAcl.Value = cValue.Int()
@@ -260,9 +260,9 @@ func (data *SNMPServerGroup) setUnknownValues(ctx context.Context) {
 			data.V3Security[i].NotifyNode.Unknown = false
 			data.V3Security[i].NotifyNode.Null = true
 		}
-		if data.V3Security[i].AccessConfigIpv6Acl.Unknown {
-			data.V3Security[i].AccessConfigIpv6Acl.Unknown = false
-			data.V3Security[i].AccessConfigIpv6Acl.Null = true
+		if data.V3Security[i].AccessIpv6Acl.Unknown {
+			data.V3Security[i].AccessIpv6Acl.Unknown = false
+			data.V3Security[i].AccessIpv6Acl.Null = true
 		}
 		if data.V3Security[i].AccessStandardAcl.Unknown {
 			data.V3Security[i].AccessStandardAcl.Unknown = false

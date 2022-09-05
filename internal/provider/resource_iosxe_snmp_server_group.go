@@ -91,7 +91,7 @@ func (t resourceSNMPServerGroupType) GetSchema(ctx context.Context) (tfsdk.Schem
 						Optional:            true,
 						Computed:            true,
 					},
-					"access_config_ipv6_acl": {
+					"access_ipv6_acl": {
 						MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
 						Type:                types.StringType,
 						Optional:            true,

@@ -23,7 +23,7 @@ func TestAccIosxeSNMPServerGroup(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.read_node", "VIEW1"),
 					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.write_node", "VIEW2"),
 					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.notify_node", "VIEW3"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.access_config_ipv6_acl", "V6ACL1"),
+					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.access_ipv6_acl", "V6ACL1"),
 					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.access_acl_name", "ACL1"),
 				),
 			},
@@ -55,7 +55,7 @@ func testAccIosxeSNMPServerGroupConfig_all() string {
 		read_node = "VIEW1"
 		write_node = "VIEW2"
 		notify_node = "VIEW3"
-		access_config_ipv6_acl = "V6ACL1"
+		access_ipv6_acl = "V6ACL1"
 		access_acl_name = "ACL1"
 		}]
 	}

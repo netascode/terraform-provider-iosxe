@@ -25,6 +25,7 @@ attributes:
       - yang_name: notify-node
         example: VIEW3
       - yang_name: access-config/ipv6-acl
+        tf_name: access_ipv6_acl
         example: V6ACL1
       - yang_name: access-config/access-option/standard-acl/standard-acl
         xpath: access-config/standard-acl

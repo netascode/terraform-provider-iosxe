@@ -17,14 +17,14 @@ resource "iosxe_snmp_server_group" "example" {
   name = "GROUP1"
   v3_security = [
     {
-      security_level         = "priv"
-      context_node           = "CON1"
-      match_node             = "exact"
-      read_node              = "VIEW1"
-      write_node             = "VIEW2"
-      notify_node            = "VIEW3"
-      access_config_ipv6_acl = "V6ACL1"
-      access_acl_name        = "ACL1"
+      security_level  = "priv"
+      context_node    = "CON1"
+      match_node      = "exact"
+      read_node       = "VIEW1"
+      write_node      = "VIEW2"
+      notify_node     = "VIEW3"
+      access_ipv6_acl = "V6ACL1"
+      access_acl_name = "ACL1"
     }
   ]
 }
@@ -52,7 +52,7 @@ resource "iosxe_snmp_server_group" "example" {
 Optional:
 
 - `access_acl_name` (String) Access-list name
-- `access_config_ipv6_acl` (String) Specify IPv6 Named Access-List
+- `access_ipv6_acl` (String) Specify IPv6 Named Access-List
 - `access_standard_acl` (Number) Standard IP Access-list allowing access with this community string
   - Range: `1`-`99`
 - `context_node` (String) specify a context to associate these views for the group

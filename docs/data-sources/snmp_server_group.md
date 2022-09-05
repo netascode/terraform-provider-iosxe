@@ -40,7 +40,7 @@ data "iosxe_snmp_server_group" "example" {
 Read-Only:
 
 - `access_acl_name` (String) Access-list name
-- `access_config_ipv6_acl` (String) Specify IPv6 Named Access-List
+- `access_ipv6_acl` (String) Specify IPv6 Named Access-List
 - `access_standard_acl` (Number) Standard IP Access-list allowing access with this community string
 - `context_node` (String) specify a context to associate these views for the group
 - `match_node` (String) context name match criteria
