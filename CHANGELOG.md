@@ -1,3 +1,7 @@
+## 0.1.12 (unreleased)
+
+- Add iosxe_snmp_server_user resource and data source
+
 ## 0.1.11
 
 - Add iosxe_access_list_standard resource and data source
