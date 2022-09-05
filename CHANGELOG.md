@@ -1,4 +1,4 @@
-## 0.1.12 (unreleased)
+## 0.1.12
 
 - Add iosxe_snmp_server_user resource and data source
 - BREAKING CHANGE: Rename access_config_ipv6_acl attribute of iosxe_snmp_server_group resource to access_ipv6_acl
