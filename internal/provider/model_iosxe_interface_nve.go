@@ -39,7 +39,7 @@ type InterfaceNVEVnis struct {
 }
 
 func (data InterfaceNVE) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/nve=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/nve=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueInt64())))
 }
 
 // if last path element has a key -> remove it
@@ -55,47 +55,47 @@ func (data InterfaceNVE) getPathShort() string {
 
 func (data InterfaceNVE) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Name.Null && !data.Name.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.Value, 10))
+	if !data.Name.IsNull() && !data.Name.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.ValueInt64(), 10))
 	}
-	if !data.Description.Null && !data.Description.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.Value)
+	if !data.Description.IsNull() && !data.Description.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.ValueString())
 	}
-	if !data.Shutdown.Null && !data.Shutdown.Unknown {
-		if data.Shutdown.Value {
+	if !data.Shutdown.IsNull() && !data.Shutdown.IsUnknown() {
+		if data.Shutdown.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"shutdown", map[string]string{})
 		}
 	}
-	if !data.HostReachabilityProtocolBgp.Null && !data.HostReachabilityProtocolBgp.Unknown {
-		if data.HostReachabilityProtocolBgp.Value {
+	if !data.HostReachabilityProtocolBgp.IsNull() && !data.HostReachabilityProtocolBgp.IsUnknown() {
+		if data.HostReachabilityProtocolBgp.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host-reachability.protocol.bgp", map[string]string{})
 		}
 	}
-	if !data.SourceInterfaceLoopback.Null && !data.SourceInterfaceLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface.Loopback", strconv.FormatInt(data.SourceInterfaceLoopback.Value, 10))
+	if !data.SourceInterfaceLoopback.IsNull() && !data.SourceInterfaceLoopback.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface.Loopback", strconv.FormatInt(data.SourceInterfaceLoopback.ValueInt64(), 10))
 	}
 	if len(data.VniVrfs) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni", []interface{}{})
 		for index, item := range data.VniVrfs {
-			if !item.VniRange.Null && !item.VniRange.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.Value)
+			if !item.VniRange.IsNull() && !item.VniRange.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.ValueString())
 			}
-			if !item.Vrf.Null && !item.Vrf.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
+			if !item.Vrf.IsNull() && !item.Vrf.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member-in-one-line.member.vni"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.ValueString())
 			}
 		}
 	}
 	if len(data.Vnis) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni", []interface{}{})
 		for index, item := range data.Vnis {
-			if !item.VniRange.Null && !item.VniRange.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.Value)
+			if !item.VniRange.IsNull() && !item.VniRange.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"vni-range", item.VniRange.ValueString())
 			}
-			if !item.Ipv4MulticastGroup.Null && !item.Ipv4MulticastGroup.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"mcast-group.multicast-group-min", item.Ipv4MulticastGroup.Value)
+			if !item.Ipv4MulticastGroup.IsNull() && !item.Ipv4MulticastGroup.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"mcast-group.multicast-group-min", item.Ipv4MulticastGroup.ValueString())
 			}
-			if !item.IngressReplication.Null && !item.IngressReplication.Unknown {
-				if item.IngressReplication.Value {
+			if !item.IngressReplication.IsNull() && !item.IngressReplication.IsUnknown() {
+				if item.IngressReplication.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"member.vni"+"."+strconv.Itoa(index)+"."+"ir-cp-config.ingress-replication", map[string]string{})
 				}
 			}
@@ -110,33 +110,33 @@ func (data *InterfaceNVE) updateFromBody(ctx context.Context, res gjson.Result) 
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "name"); value.Exists() {
-		data.Name.Value = value.Int()
+		data.Name = types.Int64Value(value.Int())
 	} else {
-		data.Name.Null = true
+		data.Name = types.Int64Null()
 	}
 	if value := res.Get(prefix + "description"); value.Exists() {
-		data.Description.Value = value.String()
+		data.Description = types.StringValue(value.String())
 	} else {
-		data.Description.Null = true
+		data.Description = types.StringNull()
 	}
 	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown.Value = true
+		data.Shutdown = types.BoolValue(true)
 	} else {
-		data.Shutdown.Value = false
+		data.Shutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "host-reachability.protocol.bgp"); value.Exists() {
-		data.HostReachabilityProtocolBgp.Value = true
+		data.HostReachabilityProtocolBgp = types.BoolValue(true)
 	} else {
-		data.HostReachabilityProtocolBgp.Value = false
+		data.HostReachabilityProtocolBgp = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "source-interface.Loopback"); value.Exists() {
-		data.SourceInterfaceLoopback.Value = value.Int()
+		data.SourceInterfaceLoopback = types.Int64Value(value.Int())
 	} else {
-		data.SourceInterfaceLoopback.Null = true
+		data.SourceInterfaceLoopback = types.Int64Null()
 	}
 	for i := range data.VniVrfs {
 		keys := [...]string{"vni-range"}
-		keyValues := [...]string{data.VniVrfs[i].VniRange.Value}
+		keyValues := [...]string{data.VniVrfs[i].VniRange.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "member-in-one-line.member.vni").ForEach(
@@ -158,19 +158,19 @@ func (data *InterfaceNVE) updateFromBody(ctx context.Context, res gjson.Result) 
 			},
 		)
 		if value := r.Get("vni-range"); value.Exists() {
-			data.VniVrfs[i].VniRange.Value = value.String()
+			data.VniVrfs[i].VniRange = types.StringValue(value.String())
 		} else {
-			data.VniVrfs[i].VniRange.Null = true
+			data.VniVrfs[i].VniRange = types.StringNull()
 		}
 		if value := r.Get("vrf"); value.Exists() {
-			data.VniVrfs[i].Vrf.Value = value.String()
+			data.VniVrfs[i].Vrf = types.StringValue(value.String())
 		} else {
-			data.VniVrfs[i].Vrf.Null = true
+			data.VniVrfs[i].Vrf = types.StringNull()
 		}
 	}
 	for i := range data.Vnis {
 		keys := [...]string{"vni-range"}
-		keyValues := [...]string{data.Vnis[i].VniRange.Value}
+		keyValues := [...]string{data.Vnis[i].VniRange.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "member.vni").ForEach(
@@ -192,19 +192,19 @@ func (data *InterfaceNVE) updateFromBody(ctx context.Context, res gjson.Result) 
 			},
 		)
 		if value := r.Get("vni-range"); value.Exists() {
-			data.Vnis[i].VniRange.Value = value.String()
+			data.Vnis[i].VniRange = types.StringValue(value.String())
 		} else {
-			data.Vnis[i].VniRange.Null = true
+			data.Vnis[i].VniRange = types.StringNull()
 		}
 		if value := r.Get("mcast-group.multicast-group-min"); value.Exists() {
-			data.Vnis[i].Ipv4MulticastGroup.Value = value.String()
+			data.Vnis[i].Ipv4MulticastGroup = types.StringValue(value.String())
 		} else {
-			data.Vnis[i].Ipv4MulticastGroup.Null = true
+			data.Vnis[i].Ipv4MulticastGroup = types.StringNull()
 		}
 		if value := r.Get("ir-cp-config.ingress-replication"); value.Exists() {
-			data.Vnis[i].IngressReplication.Value = true
+			data.Vnis[i].IngressReplication = types.BoolValue(true)
 		} else {
-			data.Vnis[i].IngressReplication.Value = false
+			data.Vnis[i].IngressReplication = types.BoolValue(false)
 		}
 	}
 }
@@ -215,38 +215,30 @@ func (data *InterfaceNVE) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "description"); value.Exists() {
-		data.Description.Value = value.String()
-		data.Description.Null = false
+		data.Description = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown.Value = true
-		data.Shutdown.Null = false
+		data.Shutdown = types.BoolValue(true)
 	} else {
-		data.Shutdown.Value = false
-		data.Shutdown.Null = false
+		data.Shutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "host-reachability.protocol.bgp"); value.Exists() {
-		data.HostReachabilityProtocolBgp.Value = true
-		data.HostReachabilityProtocolBgp.Null = false
+		data.HostReachabilityProtocolBgp = types.BoolValue(true)
 	} else {
-		data.HostReachabilityProtocolBgp.Value = false
-		data.HostReachabilityProtocolBgp.Null = false
+		data.HostReachabilityProtocolBgp = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "source-interface.Loopback"); value.Exists() {
-		data.SourceInterfaceLoopback.Value = value.Int()
-		data.SourceInterfaceLoopback.Null = false
+		data.SourceInterfaceLoopback = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "member-in-one-line.member.vni"); value.Exists() {
 		data.VniVrfs = make([]InterfaceNVEVniVrfs, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfaceNVEVniVrfs{}
 			if cValue := v.Get("vni-range"); cValue.Exists() {
-				item.VniRange.Value = cValue.String()
-				item.VniRange.Null = false
+				item.VniRange = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("vrf"); cValue.Exists() {
-				item.Vrf.Value = cValue.String()
-				item.Vrf.Null = false
+				item.Vrf = types.StringValue(cValue.String())
 			}
 			data.VniVrfs = append(data.VniVrfs, item)
 			return true
@@ -257,16 +249,15 @@ func (data *InterfaceNVE) fromBody(ctx context.Context, res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfaceNVEVnis{}
 			if cValue := v.Get("vni-range"); cValue.Exists() {
-				item.VniRange.Value = cValue.String()
-				item.VniRange.Null = false
+				item.VniRange = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("mcast-group.multicast-group-min"); cValue.Exists() {
-				item.Ipv4MulticastGroup.Value = cValue.String()
-				item.Ipv4MulticastGroup.Null = false
+				item.Ipv4MulticastGroup = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ir-cp-config.ingress-replication"); cValue.Exists() {
-				item.IngressReplication.Value = true
-				item.IngressReplication.Null = false
+				item.IngressReplication = types.BoolValue(true)
+			} else {
+				item.IngressReplication = types.BoolValue(false)
 			}
 			data.Vnis = append(data.Vnis, item)
 			return true
@@ -275,56 +266,44 @@ func (data *InterfaceNVE) fromBody(ctx context.Context, res gjson.Result) {
 }
 
 func (data *InterfaceNVE) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Name.Unknown {
-		data.Name.Unknown = false
-		data.Name.Null = true
+	if data.Name.IsUnknown() {
+		data.Name = types.Int64Null()
 	}
-	if data.Description.Unknown {
-		data.Description.Unknown = false
-		data.Description.Null = true
+	if data.Description.IsUnknown() {
+		data.Description = types.StringNull()
 	}
-	if data.Shutdown.Unknown {
-		data.Shutdown.Unknown = false
-		data.Shutdown.Null = true
+	if data.Shutdown.IsUnknown() {
+		data.Shutdown = types.BoolNull()
 	}
-	if data.HostReachabilityProtocolBgp.Unknown {
-		data.HostReachabilityProtocolBgp.Unknown = false
-		data.HostReachabilityProtocolBgp.Null = true
+	if data.HostReachabilityProtocolBgp.IsUnknown() {
+		data.HostReachabilityProtocolBgp = types.BoolNull()
 	}
-	if data.SourceInterfaceLoopback.Unknown {
-		data.SourceInterfaceLoopback.Unknown = false
-		data.SourceInterfaceLoopback.Null = true
+	if data.SourceInterfaceLoopback.IsUnknown() {
+		data.SourceInterfaceLoopback = types.Int64Null()
 	}
 	for i := range data.VniVrfs {
-		if data.VniVrfs[i].VniRange.Unknown {
-			data.VniVrfs[i].VniRange.Unknown = false
-			data.VniVrfs[i].VniRange.Null = true
+		if data.VniVrfs[i].VniRange.IsUnknown() {
+			data.VniVrfs[i].VniRange = types.StringNull()
 		}
-		if data.VniVrfs[i].Vrf.Unknown {
-			data.VniVrfs[i].Vrf.Unknown = false
-			data.VniVrfs[i].Vrf.Null = true
+		if data.VniVrfs[i].Vrf.IsUnknown() {
+			data.VniVrfs[i].Vrf = types.StringNull()
 		}
 	}
 	for i := range data.Vnis {
-		if data.Vnis[i].VniRange.Unknown {
-			data.Vnis[i].VniRange.Unknown = false
-			data.Vnis[i].VniRange.Null = true
+		if data.Vnis[i].VniRange.IsUnknown() {
+			data.Vnis[i].VniRange = types.StringNull()
 		}
-		if data.Vnis[i].Ipv4MulticastGroup.Unknown {
-			data.Vnis[i].Ipv4MulticastGroup.Unknown = false
-			data.Vnis[i].Ipv4MulticastGroup.Null = true
+		if data.Vnis[i].Ipv4MulticastGroup.IsUnknown() {
+			data.Vnis[i].Ipv4MulticastGroup = types.StringNull()
 		}
-		if data.Vnis[i].IngressReplication.Unknown {
-			data.Vnis[i].IngressReplication.Unknown = false
-			data.Vnis[i].IngressReplication.Null = true
+		if data.Vnis[i].IngressReplication.IsUnknown() {
+			data.Vnis[i].IngressReplication = types.BoolNull()
 		}
 	}
 }
@@ -332,10 +311,10 @@ func (data *InterfaceNVE) setUnknownValues(ctx context.Context) {
 func (data *InterfaceNVE) getDeletedListItems(ctx context.Context, state InterfaceNVE) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.VniVrfs {
-		stateKeyValues := [...]string{state.VniVrfs[i].VniRange.Value}
+		stateKeyValues := [...]string{state.VniVrfs[i].VniRange.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.VniVrfs[i].VniRange.Value).IsZero() {
+		if !reflect.ValueOf(state.VniVrfs[i].VniRange.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -345,7 +324,7 @@ func (data *InterfaceNVE) getDeletedListItems(ctx context.Context, state Interfa
 		found := false
 		for j := range data.VniVrfs {
 			found = true
-			if state.VniVrfs[i].VniRange.Value != data.VniVrfs[j].VniRange.Value {
+			if state.VniVrfs[i].VniRange.ValueString() != data.VniVrfs[j].VniRange.ValueString() {
 				found = false
 			}
 			if found {
@@ -357,10 +336,10 @@ func (data *InterfaceNVE) getDeletedListItems(ctx context.Context, state Interfa
 		}
 	}
 	for i := range state.Vnis {
-		stateKeyValues := [...]string{state.Vnis[i].VniRange.Value}
+		stateKeyValues := [...]string{state.Vnis[i].VniRange.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Vnis[i].VniRange.Value).IsZero() {
+		if !reflect.ValueOf(state.Vnis[i].VniRange.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -370,7 +349,7 @@ func (data *InterfaceNVE) getDeletedListItems(ctx context.Context, state Interfa
 		found := false
 		for j := range data.Vnis {
 			found = true
-			if state.Vnis[i].VniRange.Value != data.Vnis[j].VniRange.Value {
+			if state.Vnis[i].VniRange.ValueString() != data.Vnis[j].VniRange.ValueString() {
 				found = false
 			}
 			if found {
@@ -386,16 +365,16 @@ func (data *InterfaceNVE) getDeletedListItems(ctx context.Context, state Interfa
 
 func (data *InterfaceNVE) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Shutdown.Value {
+	if !data.Shutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
-	if !data.HostReachabilityProtocolBgp.Value {
+	if !data.HostReachabilityProtocolBgp.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/host-reachability/protocol/bgp", data.getPath()))
 	}
 
 	for i := range data.Vnis {
-		keyValues := [...]string{data.Vnis[i].VniRange.Value}
-		if !data.Vnis[i].IngressReplication.Value {
+		keyValues := [...]string{data.Vnis[i].VniRange.ValueString()}
+		if !data.Vnis[i].IngressReplication.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/member/vni=%v/ir-cp-config/ingress-replication", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

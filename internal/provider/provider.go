@@ -4,50 +4,52 @@ package provider
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"strconv"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/go-restconf"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-// provider satisfies the tfsdk.Provider interface and usually is included
-// with all Resource and DataSource implementations.
-type iosxeProvider struct {
-	clients map[string]*restconf.Client
+// Ensure NxosProvider satisfies various provider interfaces.
+var _ provider.Provider = &IosxeProvider{}
+var _ provider.ProviderWithMetadata = &IosxeProvider{}
 
-	// configured is set to true at the end of the Configure method.
-	// This can be used in Resource and DataSource implementations to verify
-	// that the provider was previously configured.
-	configured bool
-
+// IosxeProvider defines the provider implementation.
+type IosxeProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-// providerData can be used to store data from the Terraform configuration.
-type providerData struct {
-	Username types.String         `tfsdk:"username"`
-	Password types.String         `tfsdk:"password"`
-	URL      types.String         `tfsdk:"url"`
-	Insecure types.Bool           `tfsdk:"insecure"`
-	Retries  types.Int64          `tfsdk:"retries"`
-	Devices  []providerDataDevice `tfsdk:"devices"`
+// IosxeProviderModel describes the provider data model.
+type IosxeProviderModel struct {
+	Username types.String               `tfsdk:"username"`
+	Password types.String               `tfsdk:"password"`
+	URL      types.String               `tfsdk:"url"`
+	Insecure types.Bool                 `tfsdk:"insecure"`
+	Retries  types.Int64                `tfsdk:"retries"`
+	Devices  []IosxeProviderModelDevice `tfsdk:"devices"`
 }
 
-type providerDataDevice struct {
+type IosxeProviderModelDevice struct {
 	Name types.String `tfsdk:"name"`
 	URL  types.String `tfsdk:"url"`
 }
 
-func (p *iosxeProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (p *IosxeProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "iosxe"
+	resp.Version = p.version
+}
+
+func (p *IosxeProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		Attributes: map[string]tfsdk.Attribute{
 			"username": {
@@ -99,9 +101,9 @@ func (p *iosxeProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagn
 	}, nil
 }
 
-func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *IosxeProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	// Retrieve provider data from configuration
-	var config providerData
+	var config IosxeProviderModel
 	diags := req.Config.Get(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -110,7 +112,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 
 	// User must provide a username to the provider
 	var username string
-	if config.Username.Unknown {
+	if config.Username.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -119,10 +121,10 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.Username.Null {
+	if config.Username.IsNull() {
 		username = os.Getenv("IOSXE_USERNAME")
 	} else {
-		username = config.Username.Value
+		username = config.Username.ValueString()
 	}
 
 	if username == "" {
@@ -136,7 +138,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 
 	// User must provide a password to the provider
 	var password string
-	if config.Password.Unknown {
+	if config.Password.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -145,10 +147,10 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.Password.Null {
+	if config.Password.IsNull() {
 		password = os.Getenv("IOSXE_PASSWORD")
 	} else {
-		password = config.Password.Value
+		password = config.Password.ValueString()
 	}
 
 	if password == "" {
@@ -162,7 +164,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 
 	// User must provide a username to the provider
 	var url string
-	if config.URL.Unknown {
+	if config.URL.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -171,13 +173,13 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.URL.Null {
+	if config.URL.IsNull() {
 		url = os.Getenv("IOSXE_URL")
 		if url == "" && len(config.Devices) > 0 {
-			url = config.Devices[0].URL.Value
+			url = config.Devices[0].URL.ValueString()
 		}
 	} else {
-		url = config.URL.Value
+		url = config.URL.ValueString()
 	}
 
 	if url == "" {
@@ -190,7 +192,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	}
 
 	var insecure bool
-	if config.Insecure.Unknown {
+	if config.Insecure.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -199,7 +201,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.Insecure.Null {
+	if config.Insecure.IsNull() {
 		insecureStr := os.Getenv("IOSXE_INSECURE")
 		if insecureStr == "" {
 			insecure = true
@@ -207,11 +209,11 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 			insecure, _ = strconv.ParseBool(insecureStr)
 		}
 	} else {
-		insecure = config.Insecure.Value
+		insecure = config.Insecure.ValueBool()
 	}
 
 	var retries int64
-	if config.Retries.Unknown {
+	if config.Retries.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -220,7 +222,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.Retries.Null {
+	if config.Retries.IsNull() {
 		retriesStr := os.Getenv("IOSXE_RETRIES")
 		if retriesStr == "" {
 			retries = 10
@@ -228,7 +230,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 			retries, _ = strconv.ParseInt(retriesStr, 0, 64)
 		}
 	} else {
-		retries = config.Retries.Value
+		retries = config.Retries.ValueInt64()
 	}
 
 	clients := make(map[string]*restconf.Client)
@@ -244,7 +246,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	clients[""] = &c
 
 	for _, device := range config.Devices {
-		c, err := restconf.NewClient(device.URL.Value, username, password, insecure, restconf.MaxRetries(int(retries)))
+		c, err := restconf.NewClient(device.URL.ValueString(), username, password, insecure, restconf.MaxRetries(int(retries)))
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Unable to create client",
@@ -253,148 +255,119 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 			return
 		}
 		c.Discovery()
-		clients[device.Name.Value] = &c
+		clients[device.Name.ValueString()] = &c
 	}
 
-	p.clients = clients
-	p.configured = true
+	resp.DataSourceData = clients
+	resp.ResourceData = clients
 }
 
-func (p *iosxeProvider) GetResources(ctx context.Context) (map[string]provider.ResourceType, diag.Diagnostics) {
-	return map[string]provider.ResourceType{
-		"iosxe_restconf":                            resourceRestconfType{},
-		"iosxe_access_list_extended":                resourceAccessListExtendedType{},
-		"iosxe_access_list_standard":                resourceAccessListStandardType{},
-		"iosxe_banner":                              resourceBannerType{},
-		"iosxe_bgp":                                 resourceBGPType{},
-		"iosxe_bgp_address_family_ipv4_vrf":         resourceBGPAddressFamilyIPv4VRFType{},
-		"iosxe_bgp_address_family_ipv6_vrf":         resourceBGPAddressFamilyIPv6VRFType{},
-		"iosxe_bgp_address_family_l2vpn":            resourceBGPAddressFamilyL2VPNType{},
-		"iosxe_bgp_ipv4_unicast_vrf_neighbor":       resourceBGPIPv4UnicastVRFNeighborType{},
-		"iosxe_bgp_l2vpn_evpn_neighbor":             resourceBGPL2VPNEVPNNeighborType{},
-		"iosxe_bgp_neighbor":                        resourceBGPNeighborType{},
-		"iosxe_dhcp":                                resourceDHCPType{},
-		"iosxe_evpn":                                resourceEVPNType{},
-		"iosxe_evpn_instance":                       resourceEVPNInstanceType{},
-		"iosxe_interface_ethernet":                  resourceInterfaceEthernetType{},
-		"iosxe_interface_loopback":                  resourceInterfaceLoopbackType{},
-		"iosxe_interface_nve":                       resourceInterfaceNVEType{},
-		"iosxe_interface_ospf":                      resourceInterfaceOSPFType{},
-		"iosxe_interface_ospf_process":              resourceInterfaceOSPFProcessType{},
-		"iosxe_interface_pim":                       resourceInterfacePIMType{},
-		"iosxe_interface_port_channel":              resourceInterfacePortChannelType{},
-		"iosxe_interface_port_channel_subinterface": resourceInterfacePortChannelSubinterfaceType{},
-		"iosxe_interface_switchport":                resourceInterfaceSwitchportType{},
-		"iosxe_interface_vlan":                      resourceInterfaceVLANType{},
-		"iosxe_logging":                             resourceLoggingType{},
-		"iosxe_logging_ipv4_host_transport":         resourceLoggingIPv4HostTransportType{},
-		"iosxe_logging_ipv4_host_vrf_transport":     resourceLoggingIPv4HostVRFTransportType{},
-		"iosxe_logging_ipv6_host_transport":         resourceLoggingIPv6HostTransportType{},
-		"iosxe_logging_ipv6_host_vrf_transport":     resourceLoggingIPv6HostVRFTransportType{},
-		"iosxe_msdp":                                resourceMSDPType{},
-		"iosxe_msdp_vrf":                            resourceMSDPVRFType{},
-		"iosxe_ospf":                                resourceOSPFType{},
-		"iosxe_ospf_vrf":                            resourceOSPFVRFType{},
-		"iosxe_pim":                                 resourcePIMType{},
-		"iosxe_pim_vrf":                             resourcePIMVRFType{},
-		"iosxe_service":                             resourceServiceType{},
-		"iosxe_snmp_server":                         resourceSNMPServerType{},
-		"iosxe_snmp_server_group":                   resourceSNMPServerGroupType{},
-		"iosxe_snmp_server_user":                    resourceSNMPServerUserType{},
-		"iosxe_static_route":                        resourceStaticRouteType{},
-		"iosxe_system":                              resourceSystemType{},
-		"iosxe_template":                            resourceTemplateType{},
-		"iosxe_username":                            resourceUsernameType{},
-		"iosxe_vlan":                                resourceVLANType{},
-		"iosxe_vlan_configuration":                  resourceVLANConfigurationType{},
-		"iosxe_vrf":                                 resourceVRFType{},
-	}, nil
+func (p *IosxeProvider) Resources(ctx context.Context) []func() resource.Resource {
+	return []func() resource.Resource{
+		NewRestconfResource,
+		NewAccessListExtendedResource,
+		NewAccessListStandardResource,
+		NewBannerResource,
+		NewBGPResource,
+		NewBGPAddressFamilyIPv4VRFResource,
+		NewBGPAddressFamilyIPv6VRFResource,
+		NewBGPAddressFamilyL2VPNResource,
+		NewBGPIPv4UnicastVRFNeighborResource,
+		NewBGPL2VPNEVPNNeighborResource,
+		NewBGPNeighborResource,
+		NewDHCPResource,
+		NewEVPNResource,
+		NewEVPNInstanceResource,
+		NewInterfaceEthernetResource,
+		NewInterfaceLoopbackResource,
+		NewInterfaceNVEResource,
+		NewInterfaceOSPFResource,
+		NewInterfaceOSPFProcessResource,
+		NewInterfacePIMResource,
+		NewInterfacePortChannelResource,
+		NewInterfacePortChannelSubinterfaceResource,
+		NewInterfaceSwitchportResource,
+		NewInterfaceVLANResource,
+		NewLoggingResource,
+		NewLoggingIPv4HostTransportResource,
+		NewLoggingIPv4HostVRFTransportResource,
+		NewLoggingIPv6HostTransportResource,
+		NewLoggingIPv6HostVRFTransportResource,
+		NewMSDPResource,
+		NewMSDPVRFResource,
+		NewOSPFResource,
+		NewOSPFVRFResource,
+		NewPIMResource,
+		NewPIMVRFResource,
+		NewServiceResource,
+		NewSNMPServerResource,
+		NewSNMPServerGroupResource,
+		NewSNMPServerUserResource,
+		NewStaticRouteResource,
+		NewSystemResource,
+		NewTemplateResource,
+		NewUsernameResource,
+		NewVLANResource,
+		NewVLANConfigurationResource,
+		NewVRFResource,
+	}
 }
 
-func (p *iosxeProvider) GetDataSources(ctx context.Context) (map[string]provider.DataSourceType, diag.Diagnostics) {
-	return map[string]provider.DataSourceType{
-		"iosxe_restconf":                            dataSourceRestconfType{},
-		"iosxe_access_list_extended":                dataSourceAccessListExtendedType{},
-		"iosxe_access_list_standard":                dataSourceAccessListStandardType{},
-		"iosxe_banner":                              dataSourceBannerType{},
-		"iosxe_bgp":                                 dataSourceBGPType{},
-		"iosxe_bgp_address_family_ipv4_vrf":         dataSourceBGPAddressFamilyIPv4VRFType{},
-		"iosxe_bgp_address_family_ipv6_vrf":         dataSourceBGPAddressFamilyIPv6VRFType{},
-		"iosxe_bgp_address_family_l2vpn":            dataSourceBGPAddressFamilyL2VPNType{},
-		"iosxe_bgp_ipv4_unicast_vrf_neighbor":       dataSourceBGPIPv4UnicastVRFNeighborType{},
-		"iosxe_bgp_l2vpn_evpn_neighbor":             dataSourceBGPL2VPNEVPNNeighborType{},
-		"iosxe_bgp_neighbor":                        dataSourceBGPNeighborType{},
-		"iosxe_dhcp":                                dataSourceDHCPType{},
-		"iosxe_evpn":                                dataSourceEVPNType{},
-		"iosxe_evpn_instance":                       dataSourceEVPNInstanceType{},
-		"iosxe_interface_ethernet":                  dataSourceInterfaceEthernetType{},
-		"iosxe_interface_loopback":                  dataSourceInterfaceLoopbackType{},
-		"iosxe_interface_nve":                       dataSourceInterfaceNVEType{},
-		"iosxe_interface_ospf":                      dataSourceInterfaceOSPFType{},
-		"iosxe_interface_ospf_process":              dataSourceInterfaceOSPFProcessType{},
-		"iosxe_interface_pim":                       dataSourceInterfacePIMType{},
-		"iosxe_interface_port_channel":              dataSourceInterfacePortChannelType{},
-		"iosxe_interface_port_channel_subinterface": dataSourceInterfacePortChannelSubinterfaceType{},
-		"iosxe_interface_switchport":                dataSourceInterfaceSwitchportType{},
-		"iosxe_interface_vlan":                      dataSourceInterfaceVLANType{},
-		"iosxe_logging":                             dataSourceLoggingType{},
-		"iosxe_logging_ipv4_host_transport":         dataSourceLoggingIPv4HostTransportType{},
-		"iosxe_logging_ipv4_host_vrf_transport":     dataSourceLoggingIPv4HostVRFTransportType{},
-		"iosxe_logging_ipv6_host_transport":         dataSourceLoggingIPv6HostTransportType{},
-		"iosxe_logging_ipv6_host_vrf_transport":     dataSourceLoggingIPv6HostVRFTransportType{},
-		"iosxe_msdp":                                dataSourceMSDPType{},
-		"iosxe_msdp_vrf":                            dataSourceMSDPVRFType{},
-		"iosxe_ospf":                                dataSourceOSPFType{},
-		"iosxe_ospf_vrf":                            dataSourceOSPFVRFType{},
-		"iosxe_pim":                                 dataSourcePIMType{},
-		"iosxe_pim_vrf":                             dataSourcePIMVRFType{},
-		"iosxe_service":                             dataSourceServiceType{},
-		"iosxe_snmp_server":                         dataSourceSNMPServerType{},
-		"iosxe_snmp_server_group":                   dataSourceSNMPServerGroupType{},
-		"iosxe_snmp_server_user":                    dataSourceSNMPServerUserType{},
-		"iosxe_static_route":                        dataSourceStaticRouteType{},
-		"iosxe_system":                              dataSourceSystemType{},
-		"iosxe_template":                            dataSourceTemplateType{},
-		"iosxe_username":                            dataSourceUsernameType{},
-		"iosxe_vlan":                                dataSourceVLANType{},
-		"iosxe_vlan_configuration":                  dataSourceVLANConfigurationType{},
-		"iosxe_vrf":                                 dataSourceVRFType{},
-	}, nil
+func (p *IosxeProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+	return []func() datasource.DataSource{
+		NewRestconfDataSource,
+		NewAccessListExtendedDataSource,
+		NewAccessListStandardDataSource,
+		NewBannerDataSource,
+		NewBGPDataSource,
+		NewBGPAddressFamilyIPv4VRFDataSource,
+		NewBGPAddressFamilyIPv6VRFDataSource,
+		NewBGPAddressFamilyL2VPNDataSource,
+		NewBGPIPv4UnicastVRFNeighborDataSource,
+		NewBGPL2VPNEVPNNeighborDataSource,
+		NewBGPNeighborDataSource,
+		NewDHCPDataSource,
+		NewEVPNDataSource,
+		NewEVPNInstanceDataSource,
+		NewInterfaceEthernetDataSource,
+		NewInterfaceLoopbackDataSource,
+		NewInterfaceNVEDataSource,
+		NewInterfaceOSPFDataSource,
+		NewInterfaceOSPFProcessDataSource,
+		NewInterfacePIMDataSource,
+		NewInterfacePortChannelDataSource,
+		NewInterfacePortChannelSubinterfaceDataSource,
+		NewInterfaceSwitchportDataSource,
+		NewInterfaceVLANDataSource,
+		NewLoggingDataSource,
+		NewLoggingIPv4HostTransportDataSource,
+		NewLoggingIPv4HostVRFTransportDataSource,
+		NewLoggingIPv6HostTransportDataSource,
+		NewLoggingIPv6HostVRFTransportDataSource,
+		NewMSDPDataSource,
+		NewMSDPVRFDataSource,
+		NewOSPFDataSource,
+		NewOSPFVRFDataSource,
+		NewPIMDataSource,
+		NewPIMVRFDataSource,
+		NewServiceDataSource,
+		NewSNMPServerDataSource,
+		NewSNMPServerGroupDataSource,
+		NewSNMPServerUserDataSource,
+		NewStaticRouteDataSource,
+		NewSystemDataSource,
+		NewTemplateDataSource,
+		NewUsernameDataSource,
+		NewVLANDataSource,
+		NewVLANConfigurationDataSource,
+		NewVRFDataSource,
+	}
 }
 
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &iosxeProvider{
+		return &IosxeProvider{
 			version: version,
 		}
 	}
-}
-
-// convertProviderType is a helper function for NewResource and NewDataSource
-// implementations to associate the concrete provider type. Alternatively,
-// this helper can be skipped and the provider type can be directly type
-// asserted (e.g. provider: in.(*provider)), however using this can prevent
-// potential panics.
-func convertProviderType(in provider.Provider) (iosxeProvider, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	p, ok := in.(*iosxeProvider)
-
-	if !ok {
-		diags.AddError(
-			"Unexpected Provider Instance Type",
-			fmt.Sprintf("While creating the data source or resource, an unexpected provider type (%T) was received. This is always a bug in the provider code and should be reported to the provider developers.", p),
-		)
-		return iosxeProvider{}, diags
-	}
-
-	if p == nil {
-		diags.AddError(
-			"Unexpected Provider Instance Type",
-			"While creating the data source or resource, an unexpected empty provider instance was received. This is always a bug in the provider code and should be reported to the provider developers.",
-		)
-		return iosxeProvider{}, diags
-	}
-
-	return *p, diags
 }

@@ -25,7 +25,7 @@ type BGPL2VPNEVPNNeighbor struct {
 }
 
 func (data BGPL2VPNEVPNNeighbor) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.Value)), url.QueryEscape(fmt.Sprintf("%v", data.Ip.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -41,19 +41,19 @@ func (data BGPL2VPNEVPNNeighbor) getPathShort() string {
 
 func (data BGPL2VPNEVPNNeighbor) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Ip.Null && !data.Ip.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Ip.Value)
+	if !data.Ip.IsNull() && !data.Ip.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Ip.ValueString())
 	}
-	if !data.Activate.Null && !data.Activate.Unknown {
-		if data.Activate.Value {
+	if !data.Activate.IsNull() && !data.Activate.IsUnknown() {
+		if data.Activate.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"activate", map[string]string{})
 		}
 	}
-	if !data.SendCommunity.Null && !data.SendCommunity.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"send-community.send-community-where", data.SendCommunity.Value)
+	if !data.SendCommunity.IsNull() && !data.SendCommunity.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"send-community.send-community-where", data.SendCommunity.ValueString())
 	}
-	if !data.RouteReflectorClient.Null && !data.RouteReflectorClient.Unknown {
-		if data.RouteReflectorClient.Value {
+	if !data.RouteReflectorClient.IsNull() && !data.RouteReflectorClient.IsUnknown() {
+		if data.RouteReflectorClient.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-reflector-client", map[string]string{})
 		}
 	}
@@ -66,24 +66,24 @@ func (data *BGPL2VPNEVPNNeighbor) updateFromBody(ctx context.Context, res gjson.
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "id"); value.Exists() {
-		data.Ip.Value = value.String()
+		data.Ip = types.StringValue(value.String())
 	} else {
-		data.Ip.Null = true
+		data.Ip = types.StringNull()
 	}
 	if value := res.Get(prefix + "activate"); value.Exists() {
-		data.Activate.Value = true
+		data.Activate = types.BoolValue(true)
 	} else {
-		data.Activate.Value = false
+		data.Activate = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "send-community.send-community-where"); value.Exists() {
-		data.SendCommunity.Value = value.String()
+		data.SendCommunity = types.StringValue(value.String())
 	} else {
-		data.SendCommunity.Null = true
+		data.SendCommunity = types.StringNull()
 	}
 	if value := res.Get(prefix + "route-reflector-client"); value.Exists() {
-		data.RouteReflectorClient.Value = true
+		data.RouteReflectorClient = types.BoolValue(true)
 	} else {
-		data.RouteReflectorClient.Value = false
+		data.RouteReflectorClient = types.BoolValue(false)
 	}
 }
 
@@ -93,53 +93,41 @@ func (data *BGPL2VPNEVPNNeighbor) fromBody(ctx context.Context, res gjson.Result
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "activate"); value.Exists() {
-		data.Activate.Value = true
-		data.Activate.Null = false
+		data.Activate = types.BoolValue(true)
 	} else {
-		data.Activate.Value = false
-		data.Activate.Null = false
+		data.Activate = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "send-community.send-community-where"); value.Exists() {
-		data.SendCommunity.Value = value.String()
-		data.SendCommunity.Null = false
+		data.SendCommunity = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "route-reflector-client"); value.Exists() {
-		data.RouteReflectorClient.Value = true
-		data.RouteReflectorClient.Null = false
+		data.RouteReflectorClient = types.BoolValue(true)
 	} else {
-		data.RouteReflectorClient.Value = false
-		data.RouteReflectorClient.Null = false
+		data.RouteReflectorClient = types.BoolValue(false)
 	}
 }
 
 func (data *BGPL2VPNEVPNNeighbor) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Asn.Unknown {
-		data.Asn.Unknown = false
-		data.Asn.Null = true
+	if data.Asn.IsUnknown() {
+		data.Asn = types.StringNull()
 	}
-	if data.Ip.Unknown {
-		data.Ip.Unknown = false
-		data.Ip.Null = true
+	if data.Ip.IsUnknown() {
+		data.Ip = types.StringNull()
 	}
-	if data.Activate.Unknown {
-		data.Activate.Unknown = false
-		data.Activate.Null = true
+	if data.Activate.IsUnknown() {
+		data.Activate = types.BoolNull()
 	}
-	if data.SendCommunity.Unknown {
-		data.SendCommunity.Unknown = false
-		data.SendCommunity.Null = true
+	if data.SendCommunity.IsUnknown() {
+		data.SendCommunity = types.StringNull()
 	}
-	if data.RouteReflectorClient.Unknown {
-		data.RouteReflectorClient.Unknown = false
-		data.RouteReflectorClient.Null = true
+	if data.RouteReflectorClient.IsUnknown() {
+		data.RouteReflectorClient = types.BoolNull()
 	}
 }
 
@@ -150,10 +138,10 @@ func (data *BGPL2VPNEVPNNeighbor) getDeletedListItems(ctx context.Context, state
 
 func (data *BGPL2VPNEVPNNeighbor) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Activate.Value {
+	if !data.Activate.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/activate", data.getPath()))
 	}
-	if !data.RouteReflectorClient.Value {
+	if !data.RouteReflectorClient.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
 	}
 	return emptyLeafsDelete

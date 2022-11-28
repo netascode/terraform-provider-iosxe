@@ -38,7 +38,7 @@ func LastElement(path string) string {
 func GetValueSlice(result []gjson.Result) []attr.Value {
 	v := make([]attr.Value, len(result))
 	for r := range result {
-		v[r] = types.String{Value: result[r].String()}
+		v[r] = types.StringValue(result[r].String())
 	}
 	return v
 }

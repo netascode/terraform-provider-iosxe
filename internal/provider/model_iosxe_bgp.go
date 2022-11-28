@@ -25,7 +25,7 @@ type BGP struct {
 }
 
 func (data BGP) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v", url.QueryEscape(fmt.Sprintf("%v", data.Asn.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -41,17 +41,17 @@ func (data BGP) getPathShort() string {
 
 func (data BGP) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Asn.Null && !data.Asn.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Asn.Value)
+	if !data.Asn.IsNull() && !data.Asn.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Asn.ValueString())
 	}
-	if !data.DefaultIpv4Unicast.Null && !data.DefaultIpv4Unicast.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.default.ipv4-unicast", data.DefaultIpv4Unicast.Value)
+	if !data.DefaultIpv4Unicast.IsNull() && !data.DefaultIpv4Unicast.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.default.ipv4-unicast", data.DefaultIpv4Unicast.ValueBool())
 	}
-	if !data.LogNeighborChanges.Null && !data.LogNeighborChanges.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.log-neighbor-changes", data.LogNeighborChanges.Value)
+	if !data.LogNeighborChanges.IsNull() && !data.LogNeighborChanges.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.log-neighbor-changes", data.LogNeighborChanges.ValueBool())
 	}
-	if !data.RouterIdLoopback.Null && !data.RouterIdLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.router-id.interface.Loopback", strconv.FormatInt(data.RouterIdLoopback.Value, 10))
+	if !data.RouterIdLoopback.IsNull() && !data.RouterIdLoopback.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"bgp.router-id.interface.Loopback", strconv.FormatInt(data.RouterIdLoopback.ValueInt64(), 10))
 	}
 	return body
 }
@@ -62,24 +62,24 @@ func (data *BGP) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "id"); value.Exists() {
-		data.Asn.Value = value.String()
+		data.Asn = types.StringValue(value.String())
 	} else {
-		data.Asn.Null = true
+		data.Asn = types.StringNull()
 	}
 	if value := res.Get(prefix + "bgp.default.ipv4-unicast"); value.Exists() {
-		data.DefaultIpv4Unicast.Value = value.Bool()
+		data.DefaultIpv4Unicast = types.BoolValue(value.Bool())
 	} else {
-		data.DefaultIpv4Unicast.Value = false
+		data.DefaultIpv4Unicast = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "bgp.log-neighbor-changes"); value.Exists() {
-		data.LogNeighborChanges.Value = value.Bool()
+		data.LogNeighborChanges = types.BoolValue(value.Bool())
 	} else {
-		data.LogNeighborChanges.Value = false
+		data.LogNeighborChanges = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "bgp.router-id.interface.Loopback"); value.Exists() {
-		data.RouterIdLoopback.Value = value.Int()
+		data.RouterIdLoopback = types.Int64Value(value.Int())
 	} else {
-		data.RouterIdLoopback.Null = true
+		data.RouterIdLoopback = types.Int64Null()
 	}
 }
 
@@ -89,49 +89,38 @@ func (data *BGP) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "bgp.default.ipv4-unicast"); value.Exists() {
-		data.DefaultIpv4Unicast.Value = value.Bool()
-		data.DefaultIpv4Unicast.Null = false
+		data.DefaultIpv4Unicast = types.BoolValue(value.Bool())
 	} else {
-		data.DefaultIpv4Unicast.Value = false
-		data.DefaultIpv4Unicast.Null = false
+		data.DefaultIpv4Unicast = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "bgp.log-neighbor-changes"); value.Exists() {
-		data.LogNeighborChanges.Value = value.Bool()
-		data.LogNeighborChanges.Null = false
+		data.LogNeighborChanges = types.BoolValue(value.Bool())
 	} else {
-		data.LogNeighborChanges.Value = false
-		data.LogNeighborChanges.Null = false
+		data.LogNeighborChanges = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "bgp.router-id.interface.Loopback"); value.Exists() {
-		data.RouterIdLoopback.Value = value.Int()
-		data.RouterIdLoopback.Null = false
+		data.RouterIdLoopback = types.Int64Value(value.Int())
 	}
 }
 
 func (data *BGP) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Asn.Unknown {
-		data.Asn.Unknown = false
-		data.Asn.Null = true
+	if data.Asn.IsUnknown() {
+		data.Asn = types.StringNull()
 	}
-	if data.DefaultIpv4Unicast.Unknown {
-		data.DefaultIpv4Unicast.Unknown = false
-		data.DefaultIpv4Unicast.Null = true
+	if data.DefaultIpv4Unicast.IsUnknown() {
+		data.DefaultIpv4Unicast = types.BoolNull()
 	}
-	if data.LogNeighborChanges.Unknown {
-		data.LogNeighborChanges.Unknown = false
-		data.LogNeighborChanges.Null = true
+	if data.LogNeighborChanges.IsUnknown() {
+		data.LogNeighborChanges = types.BoolNull()
 	}
-	if data.RouterIdLoopback.Unknown {
-		data.RouterIdLoopback.Unknown = false
-		data.RouterIdLoopback.Null = true
+	if data.RouterIdLoopback.IsUnknown() {
+		data.RouterIdLoopback = types.Int64Null()
 	}
 }
 

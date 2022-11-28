@@ -28,7 +28,7 @@ type Username struct {
 }
 
 func (data Username) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/username=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/username=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -44,26 +44,26 @@ func (data Username) getPathShort() string {
 
 func (data Username) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Name.Null && !data.Name.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Name.Value)
+	if !data.Name.IsNull() && !data.Name.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Name.ValueString())
 	}
-	if !data.Privilege.Null && !data.Privilege.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"privilege", strconv.FormatInt(data.Privilege.Value, 10))
+	if !data.Privilege.IsNull() && !data.Privilege.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"privilege", strconv.FormatInt(data.Privilege.ValueInt64(), 10))
 	}
-	if !data.Description.Null && !data.Description.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.Value)
+	if !data.Description.IsNull() && !data.Description.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.ValueString())
 	}
-	if !data.PasswordEncryption.Null && !data.PasswordEncryption.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"password.encryption", data.PasswordEncryption.Value)
+	if !data.PasswordEncryption.IsNull() && !data.PasswordEncryption.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"password.encryption", data.PasswordEncryption.ValueString())
 	}
-	if !data.Password.Null && !data.Password.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"password.password", data.Password.Value)
+	if !data.Password.IsNull() && !data.Password.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"password.password", data.Password.ValueString())
 	}
-	if !data.SecretEncryption.Null && !data.SecretEncryption.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"secret.encryption", data.SecretEncryption.Value)
+	if !data.SecretEncryption.IsNull() && !data.SecretEncryption.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"secret.encryption", data.SecretEncryption.ValueString())
 	}
-	if !data.Secret.Null && !data.Secret.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"secret.secret", data.Secret.Value)
+	if !data.Secret.IsNull() && !data.Secret.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"secret.secret", data.Secret.ValueString())
 	}
 	return body
 }
@@ -74,39 +74,39 @@ func (data *Username) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "name"); value.Exists() {
-		data.Name.Value = value.String()
+		data.Name = types.StringValue(value.String())
 	} else {
-		data.Name.Null = true
+		data.Name = types.StringNull()
 	}
 	if value := res.Get(prefix + "privilege"); value.Exists() {
-		data.Privilege.Value = value.Int()
+		data.Privilege = types.Int64Value(value.Int())
 	} else {
-		data.Privilege.Null = true
+		data.Privilege = types.Int64Null()
 	}
 	if value := res.Get(prefix + "description"); value.Exists() {
-		data.Description.Value = value.String()
+		data.Description = types.StringValue(value.String())
 	} else {
-		data.Description.Null = true
+		data.Description = types.StringNull()
 	}
 	if value := res.Get(prefix + "password.encryption"); value.Exists() {
-		data.PasswordEncryption.Value = value.String()
+		data.PasswordEncryption = types.StringValue(value.String())
 	} else {
-		data.PasswordEncryption.Null = true
+		data.PasswordEncryption = types.StringNull()
 	}
 	if value := res.Get(prefix + "password.password"); value.Exists() {
-		data.Password.Value = value.String()
+		data.Password = types.StringValue(value.String())
 	} else {
-		data.Password.Null = true
+		data.Password = types.StringNull()
 	}
 	if value := res.Get(prefix + "secret.encryption"); value.Exists() {
-		data.SecretEncryption.Value = value.String()
+		data.SecretEncryption = types.StringValue(value.String())
 	} else {
-		data.SecretEncryption.Null = true
+		data.SecretEncryption = types.StringNull()
 	}
 	if value := res.Get(prefix + "secret.secret"); value.Exists() {
-		data.Secret.Value = value.String()
+		data.Secret = types.StringValue(value.String())
 	} else {
-		data.Secret.Null = true
+		data.Secret = types.StringNull()
 	}
 }
 
@@ -116,67 +116,52 @@ func (data *Username) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "privilege"); value.Exists() {
-		data.Privilege.Value = value.Int()
-		data.Privilege.Null = false
+		data.Privilege = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "description"); value.Exists() {
-		data.Description.Value = value.String()
-		data.Description.Null = false
+		data.Description = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "password.encryption"); value.Exists() {
-		data.PasswordEncryption.Value = value.String()
-		data.PasswordEncryption.Null = false
+		data.PasswordEncryption = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "password.password"); value.Exists() {
-		data.Password.Value = value.String()
-		data.Password.Null = false
+		data.Password = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "secret.encryption"); value.Exists() {
-		data.SecretEncryption.Value = value.String()
-		data.SecretEncryption.Null = false
+		data.SecretEncryption = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "secret.secret"); value.Exists() {
-		data.Secret.Value = value.String()
-		data.Secret.Null = false
+		data.Secret = types.StringValue(value.String())
 	}
 }
 
 func (data *Username) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Name.Unknown {
-		data.Name.Unknown = false
-		data.Name.Null = true
+	if data.Name.IsUnknown() {
+		data.Name = types.StringNull()
 	}
-	if data.Privilege.Unknown {
-		data.Privilege.Unknown = false
-		data.Privilege.Null = true
+	if data.Privilege.IsUnknown() {
+		data.Privilege = types.Int64Null()
 	}
-	if data.Description.Unknown {
-		data.Description.Unknown = false
-		data.Description.Null = true
+	if data.Description.IsUnknown() {
+		data.Description = types.StringNull()
 	}
-	if data.PasswordEncryption.Unknown {
-		data.PasswordEncryption.Unknown = false
-		data.PasswordEncryption.Null = true
+	if data.PasswordEncryption.IsUnknown() {
+		data.PasswordEncryption = types.StringNull()
 	}
-	if data.Password.Unknown {
-		data.Password.Unknown = false
-		data.Password.Null = true
+	if data.Password.IsUnknown() {
+		data.Password = types.StringNull()
 	}
-	if data.SecretEncryption.Unknown {
-		data.SecretEncryption.Unknown = false
-		data.SecretEncryption.Null = true
+	if data.SecretEncryption.IsUnknown() {
+		data.SecretEncryption = types.StringNull()
 	}
-	if data.Secret.Unknown {
-		data.Secret.Unknown = false
-		data.Secret.Null = true
+	if data.Secret.IsUnknown() {
+		data.Secret = types.StringNull()
 	}
 }
 

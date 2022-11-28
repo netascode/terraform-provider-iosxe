@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceVRFType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &VRFDataSource{}
+	_ datasource.DataSourceWithConfigure = &VRFDataSource{}
+)
 
-func (t dataSourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewVRFDataSource() datasource.DataSource {
+	return &VRFDataSource{}
+}
+
+type VRFDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *VRFDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_vrf"
+}
+
+func (d *VRFDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the VRF configuration.",
@@ -206,19 +222,15 @@ func (t dataSourceVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Di
 	}, nil
 }
 
-func (t dataSourceVRFType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *VRFDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceVRF{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceVRF struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceVRF) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *VRFDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config VRF
 
 	// Read config
@@ -230,7 +242,7 @@ func (d dataSourceVRF) Read(ctx context.Context, req datasource.ReadRequest, res
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = VRF{Device: config.Device}
 	} else {
@@ -242,7 +254,7 @@ func (d dataSourceVRF) Read(ctx context.Context, req datasource.ReadRequest, res
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

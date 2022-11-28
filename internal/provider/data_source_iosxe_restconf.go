@@ -7,16 +7,32 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type dataSourceRestconfType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &RestconfDataSource{}
+	_ datasource.DataSourceWithConfigure = &RestconfDataSource{}
+)
 
-func (t dataSourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewRestconfDataSource() datasource.DataSource {
+	return &RestconfDataSource{}
+}
+
+type RestconfDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *RestconfDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_restconf"
+}
+
+func (d *RestconfDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can retrieve one or more attributes via RESTCONF.",
@@ -46,20 +62,16 @@ func (t dataSourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 	}, nil
 }
 
-func (t dataSourceRestconfType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *RestconfDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceRestconf{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceRestconf struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceRestconf) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config, state RestconfDataSource
+func (d *RestconfDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var config, state RestconfDataSourceModel
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -68,37 +80,36 @@ func (d dataSourceRestconf) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.Id.ValueString()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.Path.Value)
+	res, err := d.clients[config.Device.ValueString()].GetData(config.Path.ValueString())
 	if res.StatusCode == 404 {
-		state.Attributes.Elems = map[string]attr.Value{}
+		state.Attributes = types.MapValueMust(types.StringType, map[string]attr.Value{})
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
 			return
 		}
 
-		state.Path.Value = config.Path.Value
-		state.Id.Value = config.Path.Value
+		state.Path = config.Path
+		state.Id = config.Path
 
 		attributes := make(map[string]attr.Value)
 
-		for attr, value := range res.Res.Get(helpers.LastElement(config.Path.Value)).Map() {
+		for attr, value := range res.Res.Get(helpers.LastElement(config.Path.ValueString())).Map() {
 			// handle empty maps
 			if value.IsObject() && len(value.Map()) == 0 {
-				attributes[attr] = types.String{Value: ""}
+				attributes[attr] = types.StringValue("")
 			} else if value.Raw == "[null]" {
-				attributes[attr] = types.String{Value: ""}
+				attributes[attr] = types.StringValue("")
 			} else {
-				attributes[attr] = types.String{Value: value.String()}
+				attributes[attr] = types.StringValue(value.String())
 			}
 		}
-		state.Attributes.Elems = attributes
-		state.Attributes.ElemType = types.StringType
+		state.Attributes = types.MapValueMust(types.StringType, attributes)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)

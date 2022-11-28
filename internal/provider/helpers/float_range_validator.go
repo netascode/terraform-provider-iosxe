@@ -35,11 +35,11 @@ func (v floatRangeValidator) Validate(ctx context.Context, req tfsdk.ValidateAtt
 		}
 	}
 
-	if float.Unknown || float.Null {
+	if float.IsUnknown() || float.IsNull() {
 		return
 	}
 
-	if float.Value >= v.min && float.Value <= v.max {
+	if float.ValueFloat64() >= v.min && float.ValueFloat64() <= v.max {
 		return
 	}
 

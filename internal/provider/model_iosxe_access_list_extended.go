@@ -63,7 +63,7 @@ type AccessListExtendedEntries struct {
 }
 
 func (data AccessListExtended) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/access-list/Cisco-IOS-XE-acl:extended=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/access-list/Cisco-IOS-XE-acl:extended=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -79,139 +79,139 @@ func (data AccessListExtended) getPathShort() string {
 
 func (data AccessListExtended) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Name.Null && !data.Name.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Name.Value)
+	if !data.Name.IsNull() && !data.Name.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", data.Name.ValueString())
 	}
 	if len(data.Entries) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule", []interface{}{})
 		for index, item := range data.Entries {
-			if !item.Sequence.Null && !item.Sequence.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"sequence", strconv.FormatInt(item.Sequence.Value, 10))
+			if !item.Sequence.IsNull() && !item.Sequence.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"sequence", strconv.FormatInt(item.Sequence.ValueInt64(), 10))
 			}
-			if !item.Remark.Null && !item.Remark.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"remark", item.Remark.Value)
+			if !item.Remark.IsNull() && !item.Remark.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"remark", item.Remark.ValueString())
 			}
-			if !item.AceRuleAction.Null && !item.AceRuleAction.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.action", item.AceRuleAction.Value)
+			if !item.AceRuleAction.IsNull() && !item.AceRuleAction.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.action", item.AceRuleAction.ValueString())
 			}
-			if !item.AceRuleProtocol.Null && !item.AceRuleProtocol.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.protocol", item.AceRuleProtocol.Value)
+			if !item.AceRuleProtocol.IsNull() && !item.AceRuleProtocol.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.protocol", item.AceRuleProtocol.ValueString())
 			}
-			if !item.ServiceObjectGroup.Null && !item.ServiceObjectGroup.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.object-group-str", item.ServiceObjectGroup.Value)
+			if !item.ServiceObjectGroup.IsNull() && !item.ServiceObjectGroup.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.object-group-str", item.ServiceObjectGroup.ValueString())
 			}
-			if !item.SourcePrefix.Null && !item.SourcePrefix.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.ipv4-address", item.SourcePrefix.Value)
+			if !item.SourcePrefix.IsNull() && !item.SourcePrefix.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.ipv4-address", item.SourcePrefix.ValueString())
 			}
-			if !item.SourcePrefixMask.Null && !item.SourcePrefixMask.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.mask", item.SourcePrefixMask.Value)
+			if !item.SourcePrefixMask.IsNull() && !item.SourcePrefixMask.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.mask", item.SourcePrefixMask.ValueString())
 			}
-			if !item.SourceAny.Null && !item.SourceAny.Unknown {
-				if item.SourceAny.Value {
+			if !item.SourceAny.IsNull() && !item.SourceAny.IsUnknown() {
+				if item.SourceAny.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.any", map[string]string{})
 				}
 			}
-			if !item.SourceHost.Null && !item.SourceHost.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.host", item.SourceHost.Value)
+			if !item.SourceHost.IsNull() && !item.SourceHost.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.host", item.SourceHost.ValueString())
 			}
-			if !item.SourceObjectGroup.Null && !item.SourceObjectGroup.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.object-group", item.SourceObjectGroup.Value)
+			if !item.SourceObjectGroup.IsNull() && !item.SourceObjectGroup.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.object-group", item.SourceObjectGroup.ValueString())
 			}
-			if !item.SourcePortEqual.Null && !item.SourcePortEqual.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-eq", item.SourcePortEqual.Value)
+			if !item.SourcePortEqual.IsNull() && !item.SourcePortEqual.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-eq", item.SourcePortEqual.ValueString())
 			}
-			if !item.SourcePortGreaterThan.Null && !item.SourcePortGreaterThan.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-gt", item.SourcePortGreaterThan.Value)
+			if !item.SourcePortGreaterThan.IsNull() && !item.SourcePortGreaterThan.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-gt", item.SourcePortGreaterThan.ValueString())
 			}
-			if !item.SourcePortLesserThan.Null && !item.SourcePortLesserThan.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-lt", item.SourcePortLesserThan.Value)
+			if !item.SourcePortLesserThan.IsNull() && !item.SourcePortLesserThan.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-lt", item.SourcePortLesserThan.ValueString())
 			}
-			if !item.SourcePortRangeFrom.Null && !item.SourcePortRangeFrom.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-range1", item.SourcePortRangeFrom.Value)
+			if !item.SourcePortRangeFrom.IsNull() && !item.SourcePortRangeFrom.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-range1", item.SourcePortRangeFrom.ValueString())
 			}
-			if !item.SourcePortRangeTo.Null && !item.SourcePortRangeTo.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-range2", item.SourcePortRangeTo.Value)
+			if !item.SourcePortRangeTo.IsNull() && !item.SourcePortRangeTo.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.src-range2", item.SourcePortRangeTo.ValueString())
 			}
-			if !item.DestinationPrefix.Null && !item.DestinationPrefix.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dest-ipv4-address", item.DestinationPrefix.Value)
+			if !item.DestinationPrefix.IsNull() && !item.DestinationPrefix.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dest-ipv4-address", item.DestinationPrefix.ValueString())
 			}
-			if !item.DestinationPrefixMask.Null && !item.DestinationPrefixMask.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dest-mask", item.DestinationPrefixMask.Value)
+			if !item.DestinationPrefixMask.IsNull() && !item.DestinationPrefixMask.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dest-mask", item.DestinationPrefixMask.ValueString())
 			}
-			if !item.DestinationAny.Null && !item.DestinationAny.Unknown {
-				if item.DestinationAny.Value {
+			if !item.DestinationAny.IsNull() && !item.DestinationAny.IsUnknown() {
+				if item.DestinationAny.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-any", map[string]string{})
 				}
 			}
-			if !item.DestinationHost.Null && !item.DestinationHost.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-host", item.DestinationHost.Value)
+			if !item.DestinationHost.IsNull() && !item.DestinationHost.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-host", item.DestinationHost.ValueString())
 			}
-			if !item.DestinationObjectGroup.Null && !item.DestinationObjectGroup.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-object-group", item.DestinationObjectGroup.Value)
+			if !item.DestinationObjectGroup.IsNull() && !item.DestinationObjectGroup.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-object-group", item.DestinationObjectGroup.ValueString())
 			}
-			if !item.DestinationPortEqual.Null && !item.DestinationPortEqual.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-eq", item.DestinationPortEqual.Value)
+			if !item.DestinationPortEqual.IsNull() && !item.DestinationPortEqual.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-eq", item.DestinationPortEqual.ValueString())
 			}
-			if !item.DestinationPortGreaterThan.Null && !item.DestinationPortGreaterThan.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-gt", item.DestinationPortGreaterThan.Value)
+			if !item.DestinationPortGreaterThan.IsNull() && !item.DestinationPortGreaterThan.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-gt", item.DestinationPortGreaterThan.ValueString())
 			}
-			if !item.DestinationPortLesserThan.Null && !item.DestinationPortLesserThan.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-lt", item.DestinationPortLesserThan.Value)
+			if !item.DestinationPortLesserThan.IsNull() && !item.DestinationPortLesserThan.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-lt", item.DestinationPortLesserThan.ValueString())
 			}
-			if !item.DestinationPortRangeFrom.Null && !item.DestinationPortRangeFrom.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-range1", item.DestinationPortRangeFrom.Value)
+			if !item.DestinationPortRangeFrom.IsNull() && !item.DestinationPortRangeFrom.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-range1", item.DestinationPortRangeFrom.ValueString())
 			}
-			if !item.DestinationPortRangeTo.Null && !item.DestinationPortRangeTo.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-range2", item.DestinationPortRangeTo.Value)
+			if !item.DestinationPortRangeTo.IsNull() && !item.DestinationPortRangeTo.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-range2", item.DestinationPortRangeTo.ValueString())
 			}
-			if !item.Ack.Null && !item.Ack.Unknown {
-				if item.Ack.Value {
+			if !item.Ack.IsNull() && !item.Ack.IsUnknown() {
+				if item.Ack.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.ack", map[string]string{})
 				}
 			}
-			if !item.Fin.Null && !item.Fin.Unknown {
-				if item.Fin.Value {
+			if !item.Fin.IsNull() && !item.Fin.IsUnknown() {
+				if item.Fin.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.fin", map[string]string{})
 				}
 			}
-			if !item.Psh.Null && !item.Psh.Unknown {
-				if item.Psh.Value {
+			if !item.Psh.IsNull() && !item.Psh.IsUnknown() {
+				if item.Psh.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.psh", map[string]string{})
 				}
 			}
-			if !item.Rst.Null && !item.Rst.Unknown {
-				if item.Rst.Value {
+			if !item.Rst.IsNull() && !item.Rst.IsUnknown() {
+				if item.Rst.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.rst", map[string]string{})
 				}
 			}
-			if !item.Syn.Null && !item.Syn.Unknown {
-				if item.Syn.Value {
+			if !item.Syn.IsNull() && !item.Syn.IsUnknown() {
+				if item.Syn.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.syn", map[string]string{})
 				}
 			}
-			if !item.Urg.Null && !item.Urg.Unknown {
-				if item.Urg.Value {
+			if !item.Urg.IsNull() && !item.Urg.IsUnknown() {
+				if item.Urg.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.urg", map[string]string{})
 				}
 			}
-			if !item.Established.Null && !item.Established.Unknown {
-				if item.Established.Value {
+			if !item.Established.IsNull() && !item.Established.IsUnknown() {
+				if item.Established.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.established", map[string]string{})
 				}
 			}
-			if !item.Dscp.Null && !item.Dscp.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dscp", item.Dscp.Value)
+			if !item.Dscp.IsNull() && !item.Dscp.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dscp", item.Dscp.ValueString())
 			}
-			if !item.Fragments.Null && !item.Fragments.Unknown {
-				if item.Fragments.Value {
+			if !item.Fragments.IsNull() && !item.Fragments.IsUnknown() {
+				if item.Fragments.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.fragments", map[string]string{})
 				}
 			}
-			if !item.Precedence.Null && !item.Precedence.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.precedence", item.Precedence.Value)
+			if !item.Precedence.IsNull() && !item.Precedence.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.precedence", item.Precedence.ValueString())
 			}
-			if !item.Tos.Null && !item.Tos.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.tos", item.Tos.Value)
+			if !item.Tos.IsNull() && !item.Tos.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.tos", item.Tos.ValueString())
 			}
 		}
 	}
@@ -224,13 +224,13 @@ func (data *AccessListExtended) updateFromBody(ctx context.Context, res gjson.Re
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "name"); value.Exists() {
-		data.Name.Value = value.String()
+		data.Name = types.StringValue(value.String())
 	} else {
-		data.Name.Null = true
+		data.Name = types.StringNull()
 	}
 	for i := range data.Entries {
 		keys := [...]string{"sequence"}
-		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.Value, 10)}
+		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.ValueInt64(), 10)}
 
 		var r gjson.Result
 		res.Get(prefix + "access-list-seq-rule").ForEach(
@@ -252,184 +252,184 @@ func (data *AccessListExtended) updateFromBody(ctx context.Context, res gjson.Re
 			},
 		)
 		if value := r.Get("sequence"); value.Exists() {
-			data.Entries[i].Sequence.Value = value.Int()
+			data.Entries[i].Sequence = types.Int64Value(value.Int())
 		} else {
-			data.Entries[i].Sequence.Null = true
+			data.Entries[i].Sequence = types.Int64Null()
 		}
 		if value := r.Get("remark"); value.Exists() {
-			data.Entries[i].Remark.Value = value.String()
+			data.Entries[i].Remark = types.StringValue(value.String())
 		} else {
-			data.Entries[i].Remark.Null = true
+			data.Entries[i].Remark = types.StringNull()
 		}
 		if value := r.Get("ace-rule.action"); value.Exists() {
-			data.Entries[i].AceRuleAction.Value = value.String()
+			data.Entries[i].AceRuleAction = types.StringValue(value.String())
 		} else {
-			data.Entries[i].AceRuleAction.Null = true
+			data.Entries[i].AceRuleAction = types.StringNull()
 		}
 		if value := r.Get("ace-rule.protocol"); value.Exists() {
-			data.Entries[i].AceRuleProtocol.Value = value.String()
+			data.Entries[i].AceRuleProtocol = types.StringValue(value.String())
 		} else {
-			data.Entries[i].AceRuleProtocol.Null = true
+			data.Entries[i].AceRuleProtocol = types.StringNull()
 		}
 		if value := r.Get("ace-rule.object-group-str"); value.Exists() {
-			data.Entries[i].ServiceObjectGroup.Value = value.String()
+			data.Entries[i].ServiceObjectGroup = types.StringValue(value.String())
 		} else {
-			data.Entries[i].ServiceObjectGroup.Null = true
+			data.Entries[i].ServiceObjectGroup = types.StringNull()
 		}
 		if value := r.Get("ace-rule.ipv4-address"); value.Exists() {
-			data.Entries[i].SourcePrefix.Value = value.String()
+			data.Entries[i].SourcePrefix = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourcePrefix.Null = true
+			data.Entries[i].SourcePrefix = types.StringNull()
 		}
 		if value := r.Get("ace-rule.mask"); value.Exists() {
-			data.Entries[i].SourcePrefixMask.Value = value.String()
+			data.Entries[i].SourcePrefixMask = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourcePrefixMask.Null = true
+			data.Entries[i].SourcePrefixMask = types.StringNull()
 		}
 		if value := r.Get("ace-rule.any"); value.Exists() {
-			data.Entries[i].SourceAny.Value = true
+			data.Entries[i].SourceAny = types.BoolValue(true)
 		} else {
-			data.Entries[i].SourceAny.Value = false
+			data.Entries[i].SourceAny = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.host"); value.Exists() {
-			data.Entries[i].SourceHost.Value = value.String()
+			data.Entries[i].SourceHost = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourceHost.Null = true
+			data.Entries[i].SourceHost = types.StringNull()
 		}
 		if value := r.Get("ace-rule.object-group"); value.Exists() {
-			data.Entries[i].SourceObjectGroup.Value = value.String()
+			data.Entries[i].SourceObjectGroup = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourceObjectGroup.Null = true
+			data.Entries[i].SourceObjectGroup = types.StringNull()
 		}
 		if value := r.Get("ace-rule.src-eq"); value.Exists() {
-			data.Entries[i].SourcePortEqual.Value = value.String()
+			data.Entries[i].SourcePortEqual = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourcePortEqual.Null = true
+			data.Entries[i].SourcePortEqual = types.StringNull()
 		}
 		if value := r.Get("ace-rule.src-gt"); value.Exists() {
-			data.Entries[i].SourcePortGreaterThan.Value = value.String()
+			data.Entries[i].SourcePortGreaterThan = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourcePortGreaterThan.Null = true
+			data.Entries[i].SourcePortGreaterThan = types.StringNull()
 		}
 		if value := r.Get("ace-rule.src-lt"); value.Exists() {
-			data.Entries[i].SourcePortLesserThan.Value = value.String()
+			data.Entries[i].SourcePortLesserThan = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourcePortLesserThan.Null = true
+			data.Entries[i].SourcePortLesserThan = types.StringNull()
 		}
 		if value := r.Get("ace-rule.src-range1"); value.Exists() {
-			data.Entries[i].SourcePortRangeFrom.Value = value.String()
+			data.Entries[i].SourcePortRangeFrom = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourcePortRangeFrom.Null = true
+			data.Entries[i].SourcePortRangeFrom = types.StringNull()
 		}
 		if value := r.Get("ace-rule.src-range2"); value.Exists() {
-			data.Entries[i].SourcePortRangeTo.Value = value.String()
+			data.Entries[i].SourcePortRangeTo = types.StringValue(value.String())
 		} else {
-			data.Entries[i].SourcePortRangeTo.Null = true
+			data.Entries[i].SourcePortRangeTo = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dest-ipv4-address"); value.Exists() {
-			data.Entries[i].DestinationPrefix.Value = value.String()
+			data.Entries[i].DestinationPrefix = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationPrefix.Null = true
+			data.Entries[i].DestinationPrefix = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dest-mask"); value.Exists() {
-			data.Entries[i].DestinationPrefixMask.Value = value.String()
+			data.Entries[i].DestinationPrefixMask = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationPrefixMask.Null = true
+			data.Entries[i].DestinationPrefixMask = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dst-any"); value.Exists() {
-			data.Entries[i].DestinationAny.Value = true
+			data.Entries[i].DestinationAny = types.BoolValue(true)
 		} else {
-			data.Entries[i].DestinationAny.Value = false
+			data.Entries[i].DestinationAny = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.dst-host"); value.Exists() {
-			data.Entries[i].DestinationHost.Value = value.String()
+			data.Entries[i].DestinationHost = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationHost.Null = true
+			data.Entries[i].DestinationHost = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dst-object-group"); value.Exists() {
-			data.Entries[i].DestinationObjectGroup.Value = value.String()
+			data.Entries[i].DestinationObjectGroup = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationObjectGroup.Null = true
+			data.Entries[i].DestinationObjectGroup = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dst-eq"); value.Exists() {
-			data.Entries[i].DestinationPortEqual.Value = value.String()
+			data.Entries[i].DestinationPortEqual = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationPortEqual.Null = true
+			data.Entries[i].DestinationPortEqual = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dst-gt"); value.Exists() {
-			data.Entries[i].DestinationPortGreaterThan.Value = value.String()
+			data.Entries[i].DestinationPortGreaterThan = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationPortGreaterThan.Null = true
+			data.Entries[i].DestinationPortGreaterThan = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dst-lt"); value.Exists() {
-			data.Entries[i].DestinationPortLesserThan.Value = value.String()
+			data.Entries[i].DestinationPortLesserThan = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationPortLesserThan.Null = true
+			data.Entries[i].DestinationPortLesserThan = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dst-range1"); value.Exists() {
-			data.Entries[i].DestinationPortRangeFrom.Value = value.String()
+			data.Entries[i].DestinationPortRangeFrom = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationPortRangeFrom.Null = true
+			data.Entries[i].DestinationPortRangeFrom = types.StringNull()
 		}
 		if value := r.Get("ace-rule.dst-range2"); value.Exists() {
-			data.Entries[i].DestinationPortRangeTo.Value = value.String()
+			data.Entries[i].DestinationPortRangeTo = types.StringValue(value.String())
 		} else {
-			data.Entries[i].DestinationPortRangeTo.Null = true
+			data.Entries[i].DestinationPortRangeTo = types.StringNull()
 		}
 		if value := r.Get("ace-rule.ack"); value.Exists() {
-			data.Entries[i].Ack.Value = true
+			data.Entries[i].Ack = types.BoolValue(true)
 		} else {
-			data.Entries[i].Ack.Value = false
+			data.Entries[i].Ack = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.fin"); value.Exists() {
-			data.Entries[i].Fin.Value = true
+			data.Entries[i].Fin = types.BoolValue(true)
 		} else {
-			data.Entries[i].Fin.Value = false
+			data.Entries[i].Fin = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.psh"); value.Exists() {
-			data.Entries[i].Psh.Value = true
+			data.Entries[i].Psh = types.BoolValue(true)
 		} else {
-			data.Entries[i].Psh.Value = false
+			data.Entries[i].Psh = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.rst"); value.Exists() {
-			data.Entries[i].Rst.Value = true
+			data.Entries[i].Rst = types.BoolValue(true)
 		} else {
-			data.Entries[i].Rst.Value = false
+			data.Entries[i].Rst = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.syn"); value.Exists() {
-			data.Entries[i].Syn.Value = true
+			data.Entries[i].Syn = types.BoolValue(true)
 		} else {
-			data.Entries[i].Syn.Value = false
+			data.Entries[i].Syn = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.urg"); value.Exists() {
-			data.Entries[i].Urg.Value = true
+			data.Entries[i].Urg = types.BoolValue(true)
 		} else {
-			data.Entries[i].Urg.Value = false
+			data.Entries[i].Urg = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.established"); value.Exists() {
-			data.Entries[i].Established.Value = true
+			data.Entries[i].Established = types.BoolValue(true)
 		} else {
-			data.Entries[i].Established.Value = false
+			data.Entries[i].Established = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.dscp"); value.Exists() {
-			data.Entries[i].Dscp.Value = value.String()
+			data.Entries[i].Dscp = types.StringValue(value.String())
 		} else {
-			data.Entries[i].Dscp.Null = true
+			data.Entries[i].Dscp = types.StringNull()
 		}
 		if value := r.Get("ace-rule.fragments"); value.Exists() {
-			data.Entries[i].Fragments.Value = true
+			data.Entries[i].Fragments = types.BoolValue(true)
 		} else {
-			data.Entries[i].Fragments.Value = false
+			data.Entries[i].Fragments = types.BoolValue(false)
 		}
 		if value := r.Get("ace-rule.precedence"); value.Exists() {
-			data.Entries[i].Precedence.Value = value.String()
+			data.Entries[i].Precedence = types.StringValue(value.String())
 		} else {
-			data.Entries[i].Precedence.Null = true
+			data.Entries[i].Precedence = types.StringNull()
 		}
 		if value := r.Get("ace-rule.tos"); value.Exists() {
-			data.Entries[i].Tos.Value = value.String()
+			data.Entries[i].Tos = types.StringValue(value.String())
 		} else {
-			data.Entries[i].Tos.Null = true
+			data.Entries[i].Tos = types.StringNull()
 		}
 	}
 }
@@ -444,148 +444,132 @@ func (data *AccessListExtended) fromBody(ctx context.Context, res gjson.Result) 
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := AccessListExtendedEntries{}
 			if cValue := v.Get("sequence"); cValue.Exists() {
-				item.Sequence.Value = cValue.Int()
-				item.Sequence.Null = false
+				item.Sequence = types.Int64Value(cValue.Int())
 			}
 			if cValue := v.Get("remark"); cValue.Exists() {
-				item.Remark.Value = cValue.String()
-				item.Remark.Null = false
+				item.Remark = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.action"); cValue.Exists() {
-				item.AceRuleAction.Value = cValue.String()
-				item.AceRuleAction.Null = false
+				item.AceRuleAction = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.protocol"); cValue.Exists() {
-				item.AceRuleProtocol.Value = cValue.String()
-				item.AceRuleProtocol.Null = false
+				item.AceRuleProtocol = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.object-group-str"); cValue.Exists() {
-				item.ServiceObjectGroup.Value = cValue.String()
-				item.ServiceObjectGroup.Null = false
+				item.ServiceObjectGroup = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.ipv4-address"); cValue.Exists() {
-				item.SourcePrefix.Value = cValue.String()
-				item.SourcePrefix.Null = false
+				item.SourcePrefix = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.mask"); cValue.Exists() {
-				item.SourcePrefixMask.Value = cValue.String()
-				item.SourcePrefixMask.Null = false
+				item.SourcePrefixMask = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.any"); cValue.Exists() {
-				item.SourceAny.Value = true
-				item.SourceAny.Null = false
+				item.SourceAny = types.BoolValue(true)
+			} else {
+				item.SourceAny = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.host"); cValue.Exists() {
-				item.SourceHost.Value = cValue.String()
-				item.SourceHost.Null = false
+				item.SourceHost = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.object-group"); cValue.Exists() {
-				item.SourceObjectGroup.Value = cValue.String()
-				item.SourceObjectGroup.Null = false
+				item.SourceObjectGroup = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.src-eq"); cValue.Exists() {
-				item.SourcePortEqual.Value = cValue.String()
-				item.SourcePortEqual.Null = false
+				item.SourcePortEqual = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.src-gt"); cValue.Exists() {
-				item.SourcePortGreaterThan.Value = cValue.String()
-				item.SourcePortGreaterThan.Null = false
+				item.SourcePortGreaterThan = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.src-lt"); cValue.Exists() {
-				item.SourcePortLesserThan.Value = cValue.String()
-				item.SourcePortLesserThan.Null = false
+				item.SourcePortLesserThan = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.src-range1"); cValue.Exists() {
-				item.SourcePortRangeFrom.Value = cValue.String()
-				item.SourcePortRangeFrom.Null = false
+				item.SourcePortRangeFrom = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.src-range2"); cValue.Exists() {
-				item.SourcePortRangeTo.Value = cValue.String()
-				item.SourcePortRangeTo.Null = false
+				item.SourcePortRangeTo = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dest-ipv4-address"); cValue.Exists() {
-				item.DestinationPrefix.Value = cValue.String()
-				item.DestinationPrefix.Null = false
+				item.DestinationPrefix = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dest-mask"); cValue.Exists() {
-				item.DestinationPrefixMask.Value = cValue.String()
-				item.DestinationPrefixMask.Null = false
+				item.DestinationPrefixMask = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dst-any"); cValue.Exists() {
-				item.DestinationAny.Value = true
-				item.DestinationAny.Null = false
+				item.DestinationAny = types.BoolValue(true)
+			} else {
+				item.DestinationAny = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.dst-host"); cValue.Exists() {
-				item.DestinationHost.Value = cValue.String()
-				item.DestinationHost.Null = false
+				item.DestinationHost = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dst-object-group"); cValue.Exists() {
-				item.DestinationObjectGroup.Value = cValue.String()
-				item.DestinationObjectGroup.Null = false
+				item.DestinationObjectGroup = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dst-eq"); cValue.Exists() {
-				item.DestinationPortEqual.Value = cValue.String()
-				item.DestinationPortEqual.Null = false
+				item.DestinationPortEqual = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dst-gt"); cValue.Exists() {
-				item.DestinationPortGreaterThan.Value = cValue.String()
-				item.DestinationPortGreaterThan.Null = false
+				item.DestinationPortGreaterThan = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dst-lt"); cValue.Exists() {
-				item.DestinationPortLesserThan.Value = cValue.String()
-				item.DestinationPortLesserThan.Null = false
+				item.DestinationPortLesserThan = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dst-range1"); cValue.Exists() {
-				item.DestinationPortRangeFrom.Value = cValue.String()
-				item.DestinationPortRangeFrom.Null = false
+				item.DestinationPortRangeFrom = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dst-range2"); cValue.Exists() {
-				item.DestinationPortRangeTo.Value = cValue.String()
-				item.DestinationPortRangeTo.Null = false
+				item.DestinationPortRangeTo = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.ack"); cValue.Exists() {
-				item.Ack.Value = true
-				item.Ack.Null = false
+				item.Ack = types.BoolValue(true)
+			} else {
+				item.Ack = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.fin"); cValue.Exists() {
-				item.Fin.Value = true
-				item.Fin.Null = false
+				item.Fin = types.BoolValue(true)
+			} else {
+				item.Fin = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.psh"); cValue.Exists() {
-				item.Psh.Value = true
-				item.Psh.Null = false
+				item.Psh = types.BoolValue(true)
+			} else {
+				item.Psh = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.rst"); cValue.Exists() {
-				item.Rst.Value = true
-				item.Rst.Null = false
+				item.Rst = types.BoolValue(true)
+			} else {
+				item.Rst = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.syn"); cValue.Exists() {
-				item.Syn.Value = true
-				item.Syn.Null = false
+				item.Syn = types.BoolValue(true)
+			} else {
+				item.Syn = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.urg"); cValue.Exists() {
-				item.Urg.Value = true
-				item.Urg.Null = false
+				item.Urg = types.BoolValue(true)
+			} else {
+				item.Urg = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.established"); cValue.Exists() {
-				item.Established.Value = true
-				item.Established.Null = false
+				item.Established = types.BoolValue(true)
+			} else {
+				item.Established = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.dscp"); cValue.Exists() {
-				item.Dscp.Value = cValue.String()
-				item.Dscp.Null = false
+				item.Dscp = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.fragments"); cValue.Exists() {
-				item.Fragments.Value = true
-				item.Fragments.Null = false
+				item.Fragments = types.BoolValue(true)
+			} else {
+				item.Fragments = types.BoolValue(false)
 			}
 			if cValue := v.Get("ace-rule.precedence"); cValue.Exists() {
-				item.Precedence.Value = cValue.String()
-				item.Precedence.Null = false
+				item.Precedence = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.tos"); cValue.Exists() {
-				item.Tos.Value = cValue.String()
-				item.Tos.Null = false
+				item.Tos = types.StringValue(cValue.String())
 			}
 			data.Entries = append(data.Entries, item)
 			return true
@@ -594,162 +578,123 @@ func (data *AccessListExtended) fromBody(ctx context.Context, res gjson.Result) 
 }
 
 func (data *AccessListExtended) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Name.Unknown {
-		data.Name.Unknown = false
-		data.Name.Null = true
+	if data.Name.IsUnknown() {
+		data.Name = types.StringNull()
 	}
 	for i := range data.Entries {
-		if data.Entries[i].Sequence.Unknown {
-			data.Entries[i].Sequence.Unknown = false
-			data.Entries[i].Sequence.Null = true
+		if data.Entries[i].Sequence.IsUnknown() {
+			data.Entries[i].Sequence = types.Int64Null()
 		}
-		if data.Entries[i].Remark.Unknown {
-			data.Entries[i].Remark.Unknown = false
-			data.Entries[i].Remark.Null = true
+		if data.Entries[i].Remark.IsUnknown() {
+			data.Entries[i].Remark = types.StringNull()
 		}
-		if data.Entries[i].AceRuleAction.Unknown {
-			data.Entries[i].AceRuleAction.Unknown = false
-			data.Entries[i].AceRuleAction.Null = true
+		if data.Entries[i].AceRuleAction.IsUnknown() {
+			data.Entries[i].AceRuleAction = types.StringNull()
 		}
-		if data.Entries[i].AceRuleProtocol.Unknown {
-			data.Entries[i].AceRuleProtocol.Unknown = false
-			data.Entries[i].AceRuleProtocol.Null = true
+		if data.Entries[i].AceRuleProtocol.IsUnknown() {
+			data.Entries[i].AceRuleProtocol = types.StringNull()
 		}
-		if data.Entries[i].ServiceObjectGroup.Unknown {
-			data.Entries[i].ServiceObjectGroup.Unknown = false
-			data.Entries[i].ServiceObjectGroup.Null = true
+		if data.Entries[i].ServiceObjectGroup.IsUnknown() {
+			data.Entries[i].ServiceObjectGroup = types.StringNull()
 		}
-		if data.Entries[i].SourcePrefix.Unknown {
-			data.Entries[i].SourcePrefix.Unknown = false
-			data.Entries[i].SourcePrefix.Null = true
+		if data.Entries[i].SourcePrefix.IsUnknown() {
+			data.Entries[i].SourcePrefix = types.StringNull()
 		}
-		if data.Entries[i].SourcePrefixMask.Unknown {
-			data.Entries[i].SourcePrefixMask.Unknown = false
-			data.Entries[i].SourcePrefixMask.Null = true
+		if data.Entries[i].SourcePrefixMask.IsUnknown() {
+			data.Entries[i].SourcePrefixMask = types.StringNull()
 		}
-		if data.Entries[i].SourceAny.Unknown {
-			data.Entries[i].SourceAny.Unknown = false
-			data.Entries[i].SourceAny.Null = true
+		if data.Entries[i].SourceAny.IsUnknown() {
+			data.Entries[i].SourceAny = types.BoolNull()
 		}
-		if data.Entries[i].SourceHost.Unknown {
-			data.Entries[i].SourceHost.Unknown = false
-			data.Entries[i].SourceHost.Null = true
+		if data.Entries[i].SourceHost.IsUnknown() {
+			data.Entries[i].SourceHost = types.StringNull()
 		}
-		if data.Entries[i].SourceObjectGroup.Unknown {
-			data.Entries[i].SourceObjectGroup.Unknown = false
-			data.Entries[i].SourceObjectGroup.Null = true
+		if data.Entries[i].SourceObjectGroup.IsUnknown() {
+			data.Entries[i].SourceObjectGroup = types.StringNull()
 		}
-		if data.Entries[i].SourcePortEqual.Unknown {
-			data.Entries[i].SourcePortEqual.Unknown = false
-			data.Entries[i].SourcePortEqual.Null = true
+		if data.Entries[i].SourcePortEqual.IsUnknown() {
+			data.Entries[i].SourcePortEqual = types.StringNull()
 		}
-		if data.Entries[i].SourcePortGreaterThan.Unknown {
-			data.Entries[i].SourcePortGreaterThan.Unknown = false
-			data.Entries[i].SourcePortGreaterThan.Null = true
+		if data.Entries[i].SourcePortGreaterThan.IsUnknown() {
+			data.Entries[i].SourcePortGreaterThan = types.StringNull()
 		}
-		if data.Entries[i].SourcePortLesserThan.Unknown {
-			data.Entries[i].SourcePortLesserThan.Unknown = false
-			data.Entries[i].SourcePortLesserThan.Null = true
+		if data.Entries[i].SourcePortLesserThan.IsUnknown() {
+			data.Entries[i].SourcePortLesserThan = types.StringNull()
 		}
-		if data.Entries[i].SourcePortRangeFrom.Unknown {
-			data.Entries[i].SourcePortRangeFrom.Unknown = false
-			data.Entries[i].SourcePortRangeFrom.Null = true
+		if data.Entries[i].SourcePortRangeFrom.IsUnknown() {
+			data.Entries[i].SourcePortRangeFrom = types.StringNull()
 		}
-		if data.Entries[i].SourcePortRangeTo.Unknown {
-			data.Entries[i].SourcePortRangeTo.Unknown = false
-			data.Entries[i].SourcePortRangeTo.Null = true
+		if data.Entries[i].SourcePortRangeTo.IsUnknown() {
+			data.Entries[i].SourcePortRangeTo = types.StringNull()
 		}
-		if data.Entries[i].DestinationPrefix.Unknown {
-			data.Entries[i].DestinationPrefix.Unknown = false
-			data.Entries[i].DestinationPrefix.Null = true
+		if data.Entries[i].DestinationPrefix.IsUnknown() {
+			data.Entries[i].DestinationPrefix = types.StringNull()
 		}
-		if data.Entries[i].DestinationPrefixMask.Unknown {
-			data.Entries[i].DestinationPrefixMask.Unknown = false
-			data.Entries[i].DestinationPrefixMask.Null = true
+		if data.Entries[i].DestinationPrefixMask.IsUnknown() {
+			data.Entries[i].DestinationPrefixMask = types.StringNull()
 		}
-		if data.Entries[i].DestinationAny.Unknown {
-			data.Entries[i].DestinationAny.Unknown = false
-			data.Entries[i].DestinationAny.Null = true
+		if data.Entries[i].DestinationAny.IsUnknown() {
+			data.Entries[i].DestinationAny = types.BoolNull()
 		}
-		if data.Entries[i].DestinationHost.Unknown {
-			data.Entries[i].DestinationHost.Unknown = false
-			data.Entries[i].DestinationHost.Null = true
+		if data.Entries[i].DestinationHost.IsUnknown() {
+			data.Entries[i].DestinationHost = types.StringNull()
 		}
-		if data.Entries[i].DestinationObjectGroup.Unknown {
-			data.Entries[i].DestinationObjectGroup.Unknown = false
-			data.Entries[i].DestinationObjectGroup.Null = true
+		if data.Entries[i].DestinationObjectGroup.IsUnknown() {
+			data.Entries[i].DestinationObjectGroup = types.StringNull()
 		}
-		if data.Entries[i].DestinationPortEqual.Unknown {
-			data.Entries[i].DestinationPortEqual.Unknown = false
-			data.Entries[i].DestinationPortEqual.Null = true
+		if data.Entries[i].DestinationPortEqual.IsUnknown() {
+			data.Entries[i].DestinationPortEqual = types.StringNull()
 		}
-		if data.Entries[i].DestinationPortGreaterThan.Unknown {
-			data.Entries[i].DestinationPortGreaterThan.Unknown = false
-			data.Entries[i].DestinationPortGreaterThan.Null = true
+		if data.Entries[i].DestinationPortGreaterThan.IsUnknown() {
+			data.Entries[i].DestinationPortGreaterThan = types.StringNull()
 		}
-		if data.Entries[i].DestinationPortLesserThan.Unknown {
-			data.Entries[i].DestinationPortLesserThan.Unknown = false
-			data.Entries[i].DestinationPortLesserThan.Null = true
+		if data.Entries[i].DestinationPortLesserThan.IsUnknown() {
+			data.Entries[i].DestinationPortLesserThan = types.StringNull()
 		}
-		if data.Entries[i].DestinationPortRangeFrom.Unknown {
-			data.Entries[i].DestinationPortRangeFrom.Unknown = false
-			data.Entries[i].DestinationPortRangeFrom.Null = true
+		if data.Entries[i].DestinationPortRangeFrom.IsUnknown() {
+			data.Entries[i].DestinationPortRangeFrom = types.StringNull()
 		}
-		if data.Entries[i].DestinationPortRangeTo.Unknown {
-			data.Entries[i].DestinationPortRangeTo.Unknown = false
-			data.Entries[i].DestinationPortRangeTo.Null = true
+		if data.Entries[i].DestinationPortRangeTo.IsUnknown() {
+			data.Entries[i].DestinationPortRangeTo = types.StringNull()
 		}
-		if data.Entries[i].Ack.Unknown {
-			data.Entries[i].Ack.Unknown = false
-			data.Entries[i].Ack.Null = true
+		if data.Entries[i].Ack.IsUnknown() {
+			data.Entries[i].Ack = types.BoolNull()
 		}
-		if data.Entries[i].Fin.Unknown {
-			data.Entries[i].Fin.Unknown = false
-			data.Entries[i].Fin.Null = true
+		if data.Entries[i].Fin.IsUnknown() {
+			data.Entries[i].Fin = types.BoolNull()
 		}
-		if data.Entries[i].Psh.Unknown {
-			data.Entries[i].Psh.Unknown = false
-			data.Entries[i].Psh.Null = true
+		if data.Entries[i].Psh.IsUnknown() {
+			data.Entries[i].Psh = types.BoolNull()
 		}
-		if data.Entries[i].Rst.Unknown {
-			data.Entries[i].Rst.Unknown = false
-			data.Entries[i].Rst.Null = true
+		if data.Entries[i].Rst.IsUnknown() {
+			data.Entries[i].Rst = types.BoolNull()
 		}
-		if data.Entries[i].Syn.Unknown {
-			data.Entries[i].Syn.Unknown = false
-			data.Entries[i].Syn.Null = true
+		if data.Entries[i].Syn.IsUnknown() {
+			data.Entries[i].Syn = types.BoolNull()
 		}
-		if data.Entries[i].Urg.Unknown {
-			data.Entries[i].Urg.Unknown = false
-			data.Entries[i].Urg.Null = true
+		if data.Entries[i].Urg.IsUnknown() {
+			data.Entries[i].Urg = types.BoolNull()
 		}
-		if data.Entries[i].Established.Unknown {
-			data.Entries[i].Established.Unknown = false
-			data.Entries[i].Established.Null = true
+		if data.Entries[i].Established.IsUnknown() {
+			data.Entries[i].Established = types.BoolNull()
 		}
-		if data.Entries[i].Dscp.Unknown {
-			data.Entries[i].Dscp.Unknown = false
-			data.Entries[i].Dscp.Null = true
+		if data.Entries[i].Dscp.IsUnknown() {
+			data.Entries[i].Dscp = types.StringNull()
 		}
-		if data.Entries[i].Fragments.Unknown {
-			data.Entries[i].Fragments.Unknown = false
-			data.Entries[i].Fragments.Null = true
+		if data.Entries[i].Fragments.IsUnknown() {
+			data.Entries[i].Fragments = types.BoolNull()
 		}
-		if data.Entries[i].Precedence.Unknown {
-			data.Entries[i].Precedence.Unknown = false
-			data.Entries[i].Precedence.Null = true
+		if data.Entries[i].Precedence.IsUnknown() {
+			data.Entries[i].Precedence = types.StringNull()
 		}
-		if data.Entries[i].Tos.Unknown {
-			data.Entries[i].Tos.Unknown = false
-			data.Entries[i].Tos.Null = true
+		if data.Entries[i].Tos.IsUnknown() {
+			data.Entries[i].Tos = types.StringNull()
 		}
 	}
 }
@@ -757,10 +702,10 @@ func (data *AccessListExtended) setUnknownValues(ctx context.Context) {
 func (data *AccessListExtended) getDeletedListItems(ctx context.Context, state AccessListExtended) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.Entries {
-		stateKeyValues := [...]string{strconv.FormatInt(state.Entries[i].Sequence.Value, 10)}
+		stateKeyValues := [...]string{strconv.FormatInt(state.Entries[i].Sequence.ValueInt64(), 10)}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Entries[i].Sequence.Value).IsZero() {
+		if !reflect.ValueOf(state.Entries[i].Sequence.ValueInt64()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -770,7 +715,7 @@ func (data *AccessListExtended) getDeletedListItems(ctx context.Context, state A
 		found := false
 		for j := range data.Entries {
 			found = true
-			if state.Entries[i].Sequence.Value != data.Entries[j].Sequence.Value {
+			if state.Entries[i].Sequence.ValueInt64() != data.Entries[j].Sequence.ValueInt64() {
 				found = false
 			}
 			if found {
@@ -788,35 +733,35 @@ func (data *AccessListExtended) getEmptyLeafsDelete(ctx context.Context) []strin
 	emptyLeafsDelete := make([]string, 0)
 
 	for i := range data.Entries {
-		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.Value, 10)}
-		if !data.Entries[i].SourceAny.Value {
+		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.ValueInt64(), 10)}
+		if !data.Entries[i].SourceAny.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/source-choice/any-case/any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].DestinationAny.Value {
+		if !data.Entries[i].DestinationAny.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/destination-choice/any-case/dst-any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Ack.Value {
+		if !data.Entries[i].Ack.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/ack", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Fin.Value {
+		if !data.Entries[i].Fin.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/fin", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Psh.Value {
+		if !data.Entries[i].Psh.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/psh", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Rst.Value {
+		if !data.Entries[i].Rst.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/rst", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Syn.Value {
+		if !data.Entries[i].Syn.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/syn", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Urg.Value {
+		if !data.Entries[i].Urg.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/urg", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Established.Value {
+		if !data.Entries[i].Established.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/established", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Fragments.Value {
+		if !data.Entries[i].Fragments.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/fragments", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

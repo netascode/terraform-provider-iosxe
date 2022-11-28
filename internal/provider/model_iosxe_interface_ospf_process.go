@@ -30,7 +30,7 @@ type InterfaceOSPFProcessArea struct {
 }
 
 func (data InterfaceOSPFProcess) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v", url.QueryEscape(fmt.Sprintf("%v", data.Type.Value)), url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)), url.QueryEscape(fmt.Sprintf("%v", data.ProcessId.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v", url.QueryEscape(fmt.Sprintf("%v", data.Type.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.ProcessId.ValueInt64())))
 }
 
 // if last path element has a key -> remove it
@@ -46,14 +46,14 @@ func (data InterfaceOSPFProcess) getPathShort() string {
 
 func (data InterfaceOSPFProcess) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.ProcessId.Null && !data.ProcessId.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.ProcessId.Value, 10))
+	if !data.ProcessId.IsNull() && !data.ProcessId.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", strconv.FormatInt(data.ProcessId.ValueInt64(), 10))
 	}
 	if len(data.Area) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"area", []interface{}{})
 		for index, item := range data.Area {
-			if !item.AreaId.Null && !item.AreaId.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"area"+"."+strconv.Itoa(index)+"."+"area-id", item.AreaId.Value)
+			if !item.AreaId.IsNull() && !item.AreaId.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"area"+"."+strconv.Itoa(index)+"."+"area-id", item.AreaId.ValueString())
 			}
 		}
 	}
@@ -66,13 +66,13 @@ func (data *InterfaceOSPFProcess) updateFromBody(ctx context.Context, res gjson.
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "id"); value.Exists() {
-		data.ProcessId.Value = value.Int()
+		data.ProcessId = types.Int64Value(value.Int())
 	} else {
-		data.ProcessId.Null = true
+		data.ProcessId = types.Int64Null()
 	}
 	for i := range data.Area {
 		keys := [...]string{"area-id"}
-		keyValues := [...]string{data.Area[i].AreaId.Value}
+		keyValues := [...]string{data.Area[i].AreaId.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "area").ForEach(
@@ -94,9 +94,9 @@ func (data *InterfaceOSPFProcess) updateFromBody(ctx context.Context, res gjson.
 			},
 		)
 		if value := r.Get("area-id"); value.Exists() {
-			data.Area[i].AreaId.Value = value.String()
+			data.Area[i].AreaId = types.StringValue(value.String())
 		} else {
-			data.Area[i].AreaId.Null = true
+			data.Area[i].AreaId = types.StringNull()
 		}
 	}
 }
@@ -111,8 +111,7 @@ func (data *InterfaceOSPFProcess) fromBody(ctx context.Context, res gjson.Result
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfaceOSPFProcessArea{}
 			if cValue := v.Get("area-id"); cValue.Exists() {
-				item.AreaId.Value = cValue.String()
-				item.AreaId.Null = false
+				item.AreaId = types.StringValue(cValue.String())
 			}
 			data.Area = append(data.Area, item)
 			return true
@@ -121,30 +120,24 @@ func (data *InterfaceOSPFProcess) fromBody(ctx context.Context, res gjson.Result
 }
 
 func (data *InterfaceOSPFProcess) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Type.Unknown {
-		data.Type.Unknown = false
-		data.Type.Null = true
+	if data.Type.IsUnknown() {
+		data.Type = types.StringNull()
 	}
-	if data.Name.Unknown {
-		data.Name.Unknown = false
-		data.Name.Null = true
+	if data.Name.IsUnknown() {
+		data.Name = types.StringNull()
 	}
-	if data.ProcessId.Unknown {
-		data.ProcessId.Unknown = false
-		data.ProcessId.Null = true
+	if data.ProcessId.IsUnknown() {
+		data.ProcessId = types.Int64Null()
 	}
 	for i := range data.Area {
-		if data.Area[i].AreaId.Unknown {
-			data.Area[i].AreaId.Unknown = false
-			data.Area[i].AreaId.Null = true
+		if data.Area[i].AreaId.IsUnknown() {
+			data.Area[i].AreaId = types.StringNull()
 		}
 	}
 }
@@ -152,10 +145,10 @@ func (data *InterfaceOSPFProcess) setUnknownValues(ctx context.Context) {
 func (data *InterfaceOSPFProcess) getDeletedListItems(ctx context.Context, state InterfaceOSPFProcess) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.Area {
-		stateKeyValues := [...]string{state.Area[i].AreaId.Value}
+		stateKeyValues := [...]string{state.Area[i].AreaId.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Area[i].AreaId.Value).IsZero() {
+		if !reflect.ValueOf(state.Area[i].AreaId.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -165,7 +158,7 @@ func (data *InterfaceOSPFProcess) getDeletedListItems(ctx context.Context, state
 		found := false
 		for j := range data.Area {
 			found = true
-			if state.Area[i].AreaId.Value != data.Area[j].AreaId.Value {
+			if state.Area[i].AreaId.ValueString() != data.Area[j].AreaId.ValueString() {
 				found = false
 			}
 			if found {

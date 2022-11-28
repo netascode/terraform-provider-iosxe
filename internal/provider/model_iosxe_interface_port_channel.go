@@ -41,7 +41,7 @@ type InterfacePortChannelHelperAddresses struct {
 }
 
 func (data InterfacePortChannel) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Port-channel=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Port-channel=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueInt64())))
 }
 
 // if last path element has a key -> remove it
@@ -57,61 +57,61 @@ func (data InterfacePortChannel) getPathShort() string {
 
 func (data InterfacePortChannel) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Name.Null && !data.Name.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.Value, 10))
+	if !data.Name.IsNull() && !data.Name.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"name", strconv.FormatInt(data.Name.ValueInt64(), 10))
 	}
-	if !data.Description.Null && !data.Description.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.Value)
+	if !data.Description.IsNull() && !data.Description.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.ValueString())
 	}
-	if !data.Shutdown.Null && !data.Shutdown.Unknown {
-		if data.Shutdown.Value {
+	if !data.Shutdown.IsNull() && !data.Shutdown.IsUnknown() {
+		if data.Shutdown.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"shutdown", map[string]string{})
 		}
 	}
-	if !data.VrfForwarding.Null && !data.VrfForwarding.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf.forwarding", data.VrfForwarding.Value)
+	if !data.VrfForwarding.IsNull() && !data.VrfForwarding.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf.forwarding", data.VrfForwarding.ValueString())
 	}
-	if !data.Ipv4Address.Null && !data.Ipv4Address.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.address", data.Ipv4Address.Value)
+	if !data.Ipv4Address.IsNull() && !data.Ipv4Address.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.address", data.Ipv4Address.ValueString())
 	}
-	if !data.Ipv4AddressMask.Null && !data.Ipv4AddressMask.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.mask", data.Ipv4AddressMask.Value)
+	if !data.Ipv4AddressMask.IsNull() && !data.Ipv4AddressMask.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.address.primary.mask", data.Ipv4AddressMask.ValueString())
 	}
-	if !data.Switchport.Null && !data.Switchport.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport-conf.switchport", data.Switchport.Value)
+	if !data.Switchport.IsNull() && !data.Switchport.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport-conf.switchport", data.Switchport.ValueBool())
 	}
-	if !data.IpAccessGroupIn.Null && !data.IpAccessGroupIn.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.in.acl.acl-name", data.IpAccessGroupIn.Value)
+	if !data.IpAccessGroupIn.IsNull() && !data.IpAccessGroupIn.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.in.acl.acl-name", data.IpAccessGroupIn.ValueString())
 	}
-	if !data.IpAccessGroupInEnable.Null && !data.IpAccessGroupInEnable.Unknown {
-		if data.IpAccessGroupInEnable.Value {
+	if !data.IpAccessGroupInEnable.IsNull() && !data.IpAccessGroupInEnable.IsUnknown() {
+		if data.IpAccessGroupInEnable.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.in.acl.in", map[string]string{})
 		}
 	}
-	if !data.IpAccessGroupOut.Null && !data.IpAccessGroupOut.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.out.acl.acl-name", data.IpAccessGroupOut.Value)
+	if !data.IpAccessGroupOut.IsNull() && !data.IpAccessGroupOut.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.out.acl.acl-name", data.IpAccessGroupOut.ValueString())
 	}
-	if !data.IpAccessGroupOutEnable.Null && !data.IpAccessGroupOutEnable.Unknown {
-		if data.IpAccessGroupOutEnable.Value {
+	if !data.IpAccessGroupOutEnable.IsNull() && !data.IpAccessGroupOutEnable.IsUnknown() {
+		if data.IpAccessGroupOutEnable.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group.out.acl.out", map[string]string{})
 		}
 	}
-	if !data.IpDhcpRelaySourceInterface.Null && !data.IpDhcpRelaySourceInterface.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface", data.IpDhcpRelaySourceInterface.Value)
+	if !data.IpDhcpRelaySourceInterface.IsNull() && !data.IpDhcpRelaySourceInterface.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface", data.IpDhcpRelaySourceInterface.ValueString())
 	}
 	if len(data.HelperAddresses) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address", []interface{}{})
 		for index, item := range data.HelperAddresses {
-			if !item.Address.Null && !item.Address.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"address", item.Address.Value)
+			if !item.Address.IsNull() && !item.Address.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"address", item.Address.ValueString())
 			}
-			if !item.Global.Null && !item.Global.Unknown {
-				if item.Global.Value {
+			if !item.Global.IsNull() && !item.Global.IsUnknown() {
+				if item.Global.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"global", map[string]string{})
 				}
 			}
-			if !item.Vrf.Null && !item.Vrf.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
+			if !item.Vrf.IsNull() && !item.Vrf.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.helper-address"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.ValueString())
 			}
 		}
 	}
@@ -124,68 +124,68 @@ func (data *InterfacePortChannel) updateFromBody(ctx context.Context, res gjson.
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "name"); value.Exists() {
-		data.Name.Value = value.Int()
+		data.Name = types.Int64Value(value.Int())
 	} else {
-		data.Name.Null = true
+		data.Name = types.Int64Null()
 	}
 	if value := res.Get(prefix + "description"); value.Exists() {
-		data.Description.Value = value.String()
+		data.Description = types.StringValue(value.String())
 	} else {
-		data.Description.Null = true
+		data.Description = types.StringNull()
 	}
 	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown.Value = true
+		data.Shutdown = types.BoolValue(true)
 	} else {
-		data.Shutdown.Value = false
+		data.Shutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "vrf.forwarding"); value.Exists() {
-		data.VrfForwarding.Value = value.String()
+		data.VrfForwarding = types.StringValue(value.String())
 	} else {
-		data.VrfForwarding.Null = true
+		data.VrfForwarding = types.StringNull()
 	}
 	if value := res.Get(prefix + "ip.address.primary.address"); value.Exists() {
-		data.Ipv4Address.Value = value.String()
+		data.Ipv4Address = types.StringValue(value.String())
 	} else {
-		data.Ipv4Address.Null = true
+		data.Ipv4Address = types.StringNull()
 	}
 	if value := res.Get(prefix + "ip.address.primary.mask"); value.Exists() {
-		data.Ipv4AddressMask.Value = value.String()
+		data.Ipv4AddressMask = types.StringValue(value.String())
 	} else {
-		data.Ipv4AddressMask.Null = true
+		data.Ipv4AddressMask = types.StringNull()
 	}
 	if value := res.Get(prefix + "switchport-conf.switchport"); value.Exists() {
-		data.Switchport.Value = value.Bool()
+		data.Switchport = types.BoolValue(value.Bool())
 	} else {
-		data.Switchport.Value = false
+		data.Switchport = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "ip.access-group.in.acl.acl-name"); value.Exists() {
-		data.IpAccessGroupIn.Value = value.String()
+		data.IpAccessGroupIn = types.StringValue(value.String())
 	} else {
-		data.IpAccessGroupIn.Null = true
+		data.IpAccessGroupIn = types.StringNull()
 	}
 	if value := res.Get(prefix + "ip.access-group.in.acl.in"); value.Exists() {
-		data.IpAccessGroupInEnable.Value = true
+		data.IpAccessGroupInEnable = types.BoolValue(true)
 	} else {
-		data.IpAccessGroupInEnable.Value = false
+		data.IpAccessGroupInEnable = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "ip.access-group.out.acl.acl-name"); value.Exists() {
-		data.IpAccessGroupOut.Value = value.String()
+		data.IpAccessGroupOut = types.StringValue(value.String())
 	} else {
-		data.IpAccessGroupOut.Null = true
+		data.IpAccessGroupOut = types.StringNull()
 	}
 	if value := res.Get(prefix + "ip.access-group.out.acl.out"); value.Exists() {
-		data.IpAccessGroupOutEnable.Value = true
+		data.IpAccessGroupOutEnable = types.BoolValue(true)
 	} else {
-		data.IpAccessGroupOutEnable.Value = false
+		data.IpAccessGroupOutEnable = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface"); value.Exists() {
-		data.IpDhcpRelaySourceInterface.Value = value.String()
+		data.IpDhcpRelaySourceInterface = types.StringValue(value.String())
 	} else {
-		data.IpDhcpRelaySourceInterface.Null = true
+		data.IpDhcpRelaySourceInterface = types.StringNull()
 	}
 	for i := range data.HelperAddresses {
 		keys := [...]string{"address"}
-		keyValues := [...]string{data.HelperAddresses[i].Address.Value}
+		keyValues := [...]string{data.HelperAddresses[i].Address.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "ip.helper-address").ForEach(
@@ -207,19 +207,19 @@ func (data *InterfacePortChannel) updateFromBody(ctx context.Context, res gjson.
 			},
 		)
 		if value := r.Get("address"); value.Exists() {
-			data.HelperAddresses[i].Address.Value = value.String()
+			data.HelperAddresses[i].Address = types.StringValue(value.String())
 		} else {
-			data.HelperAddresses[i].Address.Null = true
+			data.HelperAddresses[i].Address = types.StringNull()
 		}
 		if value := r.Get("global"); value.Exists() {
-			data.HelperAddresses[i].Global.Value = true
+			data.HelperAddresses[i].Global = types.BoolValue(true)
 		} else {
-			data.HelperAddresses[i].Global.Value = false
+			data.HelperAddresses[i].Global = types.BoolValue(false)
 		}
 		if value := r.Get("vrf"); value.Exists() {
-			data.HelperAddresses[i].Vrf.Value = value.String()
+			data.HelperAddresses[i].Vrf = types.StringValue(value.String())
 		} else {
-			data.HelperAddresses[i].Vrf.Null = true
+			data.HelperAddresses[i].Vrf = types.StringNull()
 		}
 	}
 }
@@ -230,76 +230,60 @@ func (data *InterfacePortChannel) fromBody(ctx context.Context, res gjson.Result
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "description"); value.Exists() {
-		data.Description.Value = value.String()
-		data.Description.Null = false
+		data.Description = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown.Value = true
-		data.Shutdown.Null = false
+		data.Shutdown = types.BoolValue(true)
 	} else {
-		data.Shutdown.Value = false
-		data.Shutdown.Null = false
+		data.Shutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "vrf.forwarding"); value.Exists() {
-		data.VrfForwarding.Value = value.String()
-		data.VrfForwarding.Null = false
+		data.VrfForwarding = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "ip.address.primary.address"); value.Exists() {
-		data.Ipv4Address.Value = value.String()
-		data.Ipv4Address.Null = false
+		data.Ipv4Address = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "ip.address.primary.mask"); value.Exists() {
-		data.Ipv4AddressMask.Value = value.String()
-		data.Ipv4AddressMask.Null = false
+		data.Ipv4AddressMask = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "switchport-conf.switchport"); value.Exists() {
-		data.Switchport.Value = value.Bool()
-		data.Switchport.Null = false
+		data.Switchport = types.BoolValue(value.Bool())
 	} else {
-		data.Switchport.Value = false
-		data.Switchport.Null = false
+		data.Switchport = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "ip.access-group.in.acl.acl-name"); value.Exists() {
-		data.IpAccessGroupIn.Value = value.String()
-		data.IpAccessGroupIn.Null = false
+		data.IpAccessGroupIn = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "ip.access-group.in.acl.in"); value.Exists() {
-		data.IpAccessGroupInEnable.Value = true
-		data.IpAccessGroupInEnable.Null = false
+		data.IpAccessGroupInEnable = types.BoolValue(true)
 	} else {
-		data.IpAccessGroupInEnable.Value = false
-		data.IpAccessGroupInEnable.Null = false
+		data.IpAccessGroupInEnable = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "ip.access-group.out.acl.acl-name"); value.Exists() {
-		data.IpAccessGroupOut.Value = value.String()
-		data.IpAccessGroupOut.Null = false
+		data.IpAccessGroupOut = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "ip.access-group.out.acl.out"); value.Exists() {
-		data.IpAccessGroupOutEnable.Value = true
-		data.IpAccessGroupOutEnable.Null = false
+		data.IpAccessGroupOutEnable = types.BoolValue(true)
 	} else {
-		data.IpAccessGroupOutEnable.Value = false
-		data.IpAccessGroupOutEnable.Null = false
+		data.IpAccessGroupOutEnable = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "ip.dhcp.Cisco-IOS-XE-dhcp:relay.source-interface"); value.Exists() {
-		data.IpDhcpRelaySourceInterface.Value = value.String()
-		data.IpDhcpRelaySourceInterface.Null = false
+		data.IpDhcpRelaySourceInterface = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "ip.helper-address"); value.Exists() {
 		data.HelperAddresses = make([]InterfacePortChannelHelperAddresses, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := InterfacePortChannelHelperAddresses{}
 			if cValue := v.Get("address"); cValue.Exists() {
-				item.Address.Value = cValue.String()
-				item.Address.Null = false
+				item.Address = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("global"); cValue.Exists() {
-				item.Global.Value = true
-				item.Global.Null = false
+				item.Global = types.BoolValue(true)
+			} else {
+				item.Global = types.BoolValue(false)
 			}
 			if cValue := v.Get("vrf"); cValue.Exists() {
-				item.Vrf.Value = cValue.String()
-				item.Vrf.Null = false
+				item.Vrf = types.StringValue(cValue.String())
 			}
 			data.HelperAddresses = append(data.HelperAddresses, item)
 			return true
@@ -308,74 +292,57 @@ func (data *InterfacePortChannel) fromBody(ctx context.Context, res gjson.Result
 }
 
 func (data *InterfacePortChannel) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Name.Unknown {
-		data.Name.Unknown = false
-		data.Name.Null = true
+	if data.Name.IsUnknown() {
+		data.Name = types.Int64Null()
 	}
-	if data.Description.Unknown {
-		data.Description.Unknown = false
-		data.Description.Null = true
+	if data.Description.IsUnknown() {
+		data.Description = types.StringNull()
 	}
-	if data.Shutdown.Unknown {
-		data.Shutdown.Unknown = false
-		data.Shutdown.Null = true
+	if data.Shutdown.IsUnknown() {
+		data.Shutdown = types.BoolNull()
 	}
-	if data.VrfForwarding.Unknown {
-		data.VrfForwarding.Unknown = false
-		data.VrfForwarding.Null = true
+	if data.VrfForwarding.IsUnknown() {
+		data.VrfForwarding = types.StringNull()
 	}
-	if data.Ipv4Address.Unknown {
-		data.Ipv4Address.Unknown = false
-		data.Ipv4Address.Null = true
+	if data.Ipv4Address.IsUnknown() {
+		data.Ipv4Address = types.StringNull()
 	}
-	if data.Ipv4AddressMask.Unknown {
-		data.Ipv4AddressMask.Unknown = false
-		data.Ipv4AddressMask.Null = true
+	if data.Ipv4AddressMask.IsUnknown() {
+		data.Ipv4AddressMask = types.StringNull()
 	}
-	if data.Switchport.Unknown {
-		data.Switchport.Unknown = false
-		data.Switchport.Null = true
+	if data.Switchport.IsUnknown() {
+		data.Switchport = types.BoolNull()
 	}
-	if data.IpAccessGroupIn.Unknown {
-		data.IpAccessGroupIn.Unknown = false
-		data.IpAccessGroupIn.Null = true
+	if data.IpAccessGroupIn.IsUnknown() {
+		data.IpAccessGroupIn = types.StringNull()
 	}
-	if data.IpAccessGroupInEnable.Unknown {
-		data.IpAccessGroupInEnable.Unknown = false
-		data.IpAccessGroupInEnable.Null = true
+	if data.IpAccessGroupInEnable.IsUnknown() {
+		data.IpAccessGroupInEnable = types.BoolNull()
 	}
-	if data.IpAccessGroupOut.Unknown {
-		data.IpAccessGroupOut.Unknown = false
-		data.IpAccessGroupOut.Null = true
+	if data.IpAccessGroupOut.IsUnknown() {
+		data.IpAccessGroupOut = types.StringNull()
 	}
-	if data.IpAccessGroupOutEnable.Unknown {
-		data.IpAccessGroupOutEnable.Unknown = false
-		data.IpAccessGroupOutEnable.Null = true
+	if data.IpAccessGroupOutEnable.IsUnknown() {
+		data.IpAccessGroupOutEnable = types.BoolNull()
 	}
-	if data.IpDhcpRelaySourceInterface.Unknown {
-		data.IpDhcpRelaySourceInterface.Unknown = false
-		data.IpDhcpRelaySourceInterface.Null = true
+	if data.IpDhcpRelaySourceInterface.IsUnknown() {
+		data.IpDhcpRelaySourceInterface = types.StringNull()
 	}
 	for i := range data.HelperAddresses {
-		if data.HelperAddresses[i].Address.Unknown {
-			data.HelperAddresses[i].Address.Unknown = false
-			data.HelperAddresses[i].Address.Null = true
+		if data.HelperAddresses[i].Address.IsUnknown() {
+			data.HelperAddresses[i].Address = types.StringNull()
 		}
-		if data.HelperAddresses[i].Global.Unknown {
-			data.HelperAddresses[i].Global.Unknown = false
-			data.HelperAddresses[i].Global.Null = true
+		if data.HelperAddresses[i].Global.IsUnknown() {
+			data.HelperAddresses[i].Global = types.BoolNull()
 		}
-		if data.HelperAddresses[i].Vrf.Unknown {
-			data.HelperAddresses[i].Vrf.Unknown = false
-			data.HelperAddresses[i].Vrf.Null = true
+		if data.HelperAddresses[i].Vrf.IsUnknown() {
+			data.HelperAddresses[i].Vrf = types.StringNull()
 		}
 	}
 }
@@ -383,10 +350,10 @@ func (data *InterfacePortChannel) setUnknownValues(ctx context.Context) {
 func (data *InterfacePortChannel) getDeletedListItems(ctx context.Context, state InterfacePortChannel) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.HelperAddresses {
-		stateKeyValues := [...]string{state.HelperAddresses[i].Address.Value}
+		stateKeyValues := [...]string{state.HelperAddresses[i].Address.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.HelperAddresses[i].Address.Value).IsZero() {
+		if !reflect.ValueOf(state.HelperAddresses[i].Address.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -396,7 +363,7 @@ func (data *InterfacePortChannel) getDeletedListItems(ctx context.Context, state
 		found := false
 		for j := range data.HelperAddresses {
 			found = true
-			if state.HelperAddresses[i].Address.Value != data.HelperAddresses[j].Address.Value {
+			if state.HelperAddresses[i].Address.ValueString() != data.HelperAddresses[j].Address.ValueString() {
 				found = false
 			}
 			if found {
@@ -412,19 +379,19 @@ func (data *InterfacePortChannel) getDeletedListItems(ctx context.Context, state
 
 func (data *InterfacePortChannel) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Shutdown.Value {
+	if !data.Shutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
-	if !data.IpAccessGroupInEnable.Value {
+	if !data.IpAccessGroupInEnable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/apply-type/apply-intf/acl/in", data.getPath()))
 	}
-	if !data.IpAccessGroupOutEnable.Value {
+	if !data.IpAccessGroupOutEnable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/apply-type/apply-intf/acl/out", data.getPath()))
 	}
 
 	for i := range data.HelperAddresses {
-		keyValues := [...]string{data.HelperAddresses[i].Address.Value}
-		if !data.HelperAddresses[i].Global.Value {
+		keyValues := [...]string{data.HelperAddresses[i].Address.ValueString()}
+		if !data.HelperAddresses[i].Global.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/helper-address=%v/helper-choice/global/global", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

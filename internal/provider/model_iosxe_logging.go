@@ -77,102 +77,102 @@ func (data Logging) getPathShort() string {
 
 func (data Logging) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.MonitorSeverity.Null && !data.MonitorSeverity.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"monitor-config.common-config.monitor.severity", data.MonitorSeverity.Value)
+	if !data.MonitorSeverity.IsNull() && !data.MonitorSeverity.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"monitor-config.common-config.monitor.severity", data.MonitorSeverity.ValueString())
 	}
-	if !data.BufferedSize.Null && !data.BufferedSize.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"buffered.size-value", strconv.FormatInt(data.BufferedSize.Value, 10))
+	if !data.BufferedSize.IsNull() && !data.BufferedSize.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"buffered.size-value", strconv.FormatInt(data.BufferedSize.ValueInt64(), 10))
 	}
-	if !data.BufferedSeverity.Null && !data.BufferedSeverity.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"buffered.severity-level", data.BufferedSeverity.Value)
+	if !data.BufferedSeverity.IsNull() && !data.BufferedSeverity.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"buffered.severity-level", data.BufferedSeverity.ValueString())
 	}
-	if !data.ConsoleSeverity.Null && !data.ConsoleSeverity.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"console-config.common-config.console.severity", data.ConsoleSeverity.Value)
+	if !data.ConsoleSeverity.IsNull() && !data.ConsoleSeverity.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"console-config.common-config.console.severity", data.ConsoleSeverity.ValueString())
 	}
-	if !data.Facility.Null && !data.Facility.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"facility", data.Facility.Value)
+	if !data.Facility.IsNull() && !data.Facility.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"facility", data.Facility.ValueString())
 	}
-	if !data.HistorySize.Null && !data.HistorySize.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"history.size", strconv.FormatInt(data.HistorySize.Value, 10))
+	if !data.HistorySize.IsNull() && !data.HistorySize.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"history.size", strconv.FormatInt(data.HistorySize.ValueInt64(), 10))
 	}
-	if !data.HistorySeverity.Null && !data.HistorySeverity.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"history.severity-level", data.HistorySeverity.Value)
+	if !data.HistorySeverity.IsNull() && !data.HistorySeverity.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"history.severity-level", data.HistorySeverity.ValueString())
 	}
-	if !data.Trap.Null && !data.Trap.Unknown {
-		if data.Trap.Value {
+	if !data.Trap.IsNull() && !data.Trap.IsUnknown() {
+		if data.Trap.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"trap", map[string]string{})
 		}
 	}
-	if !data.TrapSeverity.Null && !data.TrapSeverity.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"trap.severity", data.TrapSeverity.Value)
+	if !data.TrapSeverity.IsNull() && !data.TrapSeverity.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"trap.severity", data.TrapSeverity.ValueString())
 	}
-	if !data.OriginIdType.Null && !data.OriginIdType.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"origin-id.type-value", data.OriginIdType.Value)
+	if !data.OriginIdType.IsNull() && !data.OriginIdType.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"origin-id.type-value", data.OriginIdType.ValueString())
 	}
-	if !data.OriginIdName.Null && !data.OriginIdName.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"origin-id.string", data.OriginIdName.Value)
+	if !data.OriginIdName.IsNull() && !data.OriginIdName.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"origin-id.string", data.OriginIdName.ValueString())
 	}
-	if !data.FileName.Null && !data.FileName.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"file.name", data.FileName.Value)
+	if !data.FileName.IsNull() && !data.FileName.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"file.name", data.FileName.ValueString())
 	}
-	if !data.FileMaxSize.Null && !data.FileMaxSize.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"file.max-size", strconv.FormatInt(data.FileMaxSize.Value, 10))
+	if !data.FileMaxSize.IsNull() && !data.FileMaxSize.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"file.max-size", strconv.FormatInt(data.FileMaxSize.ValueInt64(), 10))
 	}
-	if !data.FileMinSize.Null && !data.FileMinSize.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"file.min-size", strconv.FormatInt(data.FileMinSize.Value, 10))
+	if !data.FileMinSize.IsNull() && !data.FileMinSize.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"file.min-size", strconv.FormatInt(data.FileMinSize.ValueInt64(), 10))
 	}
-	if !data.FileSeverity.Null && !data.FileSeverity.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"file.severity", data.FileSeverity.Value)
+	if !data.FileSeverity.IsNull() && !data.FileSeverity.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"file.severity", data.FileSeverity.ValueString())
 	}
-	if !data.SourceInterface.Null && !data.SourceInterface.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface-conf.interface-name-non-vrf", data.SourceInterface.Value)
+	if !data.SourceInterface.IsNull() && !data.SourceInterface.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface-conf.interface-name-non-vrf", data.SourceInterface.ValueString())
 	}
 	if len(data.SourceInterfacesVrf) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface-conf.source-interface-vrf", []interface{}{})
 		for index, item := range data.SourceInterfacesVrf {
-			if !item.Vrf.Null && !item.Vrf.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface-conf.source-interface-vrf"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
+			if !item.Vrf.IsNull() && !item.Vrf.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface-conf.source-interface-vrf"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.ValueString())
 			}
-			if !item.InterfaceName.Null && !item.InterfaceName.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface-conf.source-interface-vrf"+"."+strconv.Itoa(index)+"."+"interface-name", item.InterfaceName.Value)
+			if !item.InterfaceName.IsNull() && !item.InterfaceName.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source-interface-conf.source-interface-vrf"+"."+strconv.Itoa(index)+"."+"interface-name", item.InterfaceName.ValueString())
 			}
 		}
 	}
 	if len(data.Ipv4Hosts) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv4-host-list", []interface{}{})
 		for index, item := range data.Ipv4Hosts {
-			if !item.Ipv4Host.Null && !item.Ipv4Host.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv4-host-list"+"."+strconv.Itoa(index)+"."+"ipv4-host", item.Ipv4Host.Value)
+			if !item.Ipv4Host.IsNull() && !item.Ipv4Host.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv4-host-list"+"."+strconv.Itoa(index)+"."+"ipv4-host", item.Ipv4Host.ValueString())
 			}
 		}
 	}
 	if len(data.Ipv4VrfHosts) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv4-host-vrf-list", []interface{}{})
 		for index, item := range data.Ipv4VrfHosts {
-			if !item.Ipv4Host.Null && !item.Ipv4Host.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv4-host-vrf-list"+"."+strconv.Itoa(index)+"."+"ipv4-host", item.Ipv4Host.Value)
+			if !item.Ipv4Host.IsNull() && !item.Ipv4Host.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv4-host-vrf-list"+"."+strconv.Itoa(index)+"."+"ipv4-host", item.Ipv4Host.ValueString())
 			}
-			if !item.Vrf.Null && !item.Vrf.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv4-host-vrf-list"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
+			if !item.Vrf.IsNull() && !item.Vrf.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv4-host-vrf-list"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.ValueString())
 			}
 		}
 	}
 	if len(data.Ipv6Hosts) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv6.ipv6-host-list", []interface{}{})
 		for index, item := range data.Ipv6Hosts {
-			if !item.Ipv6Host.Null && !item.Ipv6Host.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv6.ipv6-host-list"+"."+strconv.Itoa(index)+"."+"ipv6-host", item.Ipv6Host.Value)
+			if !item.Ipv6Host.IsNull() && !item.Ipv6Host.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv6.ipv6-host-list"+"."+strconv.Itoa(index)+"."+"ipv6-host", item.Ipv6Host.ValueString())
 			}
 		}
 	}
 	if len(data.Ipv6VrfHosts) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv6.ipv6-host-vrf-list", []interface{}{})
 		for index, item := range data.Ipv6VrfHosts {
-			if !item.Ipv6Host.Null && !item.Ipv6Host.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv6.ipv6-host-vrf-list"+"."+strconv.Itoa(index)+"."+"ipv6-host", item.Ipv6Host.Value)
+			if !item.Ipv6Host.IsNull() && !item.Ipv6Host.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv6.ipv6-host-vrf-list"+"."+strconv.Itoa(index)+"."+"ipv6-host", item.Ipv6Host.ValueString())
 			}
-			if !item.Vrf.Null && !item.Vrf.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv6.ipv6-host-vrf-list"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.Value)
+			if !item.Vrf.IsNull() && !item.Vrf.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"host.ipv6.ipv6-host-vrf-list"+"."+strconv.Itoa(index)+"."+"vrf", item.Vrf.ValueString())
 			}
 		}
 	}
@@ -185,88 +185,88 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "monitor-config.common-config.monitor.severity"); value.Exists() {
-		data.MonitorSeverity.Value = value.String()
+		data.MonitorSeverity = types.StringValue(value.String())
 	} else {
-		data.MonitorSeverity.Null = true
+		data.MonitorSeverity = types.StringNull()
 	}
 	if value := res.Get(prefix + "buffered.size-value"); value.Exists() {
-		data.BufferedSize.Value = value.Int()
+		data.BufferedSize = types.Int64Value(value.Int())
 	} else {
-		data.BufferedSize.Null = true
+		data.BufferedSize = types.Int64Null()
 	}
 	if value := res.Get(prefix + "buffered.severity-level"); value.Exists() {
-		data.BufferedSeverity.Value = value.String()
+		data.BufferedSeverity = types.StringValue(value.String())
 	} else {
-		data.BufferedSeverity.Null = true
+		data.BufferedSeverity = types.StringNull()
 	}
 	if value := res.Get(prefix + "console-config.common-config.console.severity"); value.Exists() {
-		data.ConsoleSeverity.Value = value.String()
+		data.ConsoleSeverity = types.StringValue(value.String())
 	} else {
-		data.ConsoleSeverity.Null = true
+		data.ConsoleSeverity = types.StringNull()
 	}
 	if value := res.Get(prefix + "facility"); value.Exists() {
-		data.Facility.Value = value.String()
+		data.Facility = types.StringValue(value.String())
 	} else {
-		data.Facility.Null = true
+		data.Facility = types.StringNull()
 	}
 	if value := res.Get(prefix + "history.size"); value.Exists() {
-		data.HistorySize.Value = value.Int()
+		data.HistorySize = types.Int64Value(value.Int())
 	} else {
-		data.HistorySize.Null = true
+		data.HistorySize = types.Int64Null()
 	}
 	if value := res.Get(prefix + "history.severity-level"); value.Exists() {
-		data.HistorySeverity.Value = value.String()
+		data.HistorySeverity = types.StringValue(value.String())
 	} else {
-		data.HistorySeverity.Null = true
+		data.HistorySeverity = types.StringNull()
 	}
 	if value := res.Get(prefix + "trap"); value.Exists() {
-		data.Trap.Value = true
+		data.Trap = types.BoolValue(true)
 	} else {
-		data.Trap.Value = false
+		data.Trap = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "trap.severity"); value.Exists() {
-		data.TrapSeverity.Value = value.String()
+		data.TrapSeverity = types.StringValue(value.String())
 	} else {
-		data.TrapSeverity.Null = true
+		data.TrapSeverity = types.StringNull()
 	}
 	if value := res.Get(prefix + "origin-id.type-value"); value.Exists() {
-		data.OriginIdType.Value = value.String()
+		data.OriginIdType = types.StringValue(value.String())
 	} else {
-		data.OriginIdType.Null = true
+		data.OriginIdType = types.StringNull()
 	}
 	if value := res.Get(prefix + "origin-id.string"); value.Exists() {
-		data.OriginIdName.Value = value.String()
+		data.OriginIdName = types.StringValue(value.String())
 	} else {
-		data.OriginIdName.Null = true
+		data.OriginIdName = types.StringNull()
 	}
 	if value := res.Get(prefix + "file.name"); value.Exists() {
-		data.FileName.Value = value.String()
+		data.FileName = types.StringValue(value.String())
 	} else {
-		data.FileName.Null = true
+		data.FileName = types.StringNull()
 	}
 	if value := res.Get(prefix + "file.max-size"); value.Exists() {
-		data.FileMaxSize.Value = value.Int()
+		data.FileMaxSize = types.Int64Value(value.Int())
 	} else {
-		data.FileMaxSize.Null = true
+		data.FileMaxSize = types.Int64Null()
 	}
 	if value := res.Get(prefix + "file.min-size"); value.Exists() {
-		data.FileMinSize.Value = value.Int()
+		data.FileMinSize = types.Int64Value(value.Int())
 	} else {
-		data.FileMinSize.Null = true
+		data.FileMinSize = types.Int64Null()
 	}
 	if value := res.Get(prefix + "file.severity"); value.Exists() {
-		data.FileSeverity.Value = value.String()
+		data.FileSeverity = types.StringValue(value.String())
 	} else {
-		data.FileSeverity.Null = true
+		data.FileSeverity = types.StringNull()
 	}
 	if value := res.Get(prefix + "source-interface-conf.interface-name-non-vrf"); value.Exists() {
-		data.SourceInterface.Value = value.String()
+		data.SourceInterface = types.StringValue(value.String())
 	} else {
-		data.SourceInterface.Null = true
+		data.SourceInterface = types.StringNull()
 	}
 	for i := range data.SourceInterfacesVrf {
 		keys := [...]string{"vrf"}
-		keyValues := [...]string{data.SourceInterfacesVrf[i].Vrf.Value}
+		keyValues := [...]string{data.SourceInterfacesVrf[i].Vrf.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "source-interface-conf.source-interface-vrf").ForEach(
@@ -288,19 +288,19 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("vrf"); value.Exists() {
-			data.SourceInterfacesVrf[i].Vrf.Value = value.String()
+			data.SourceInterfacesVrf[i].Vrf = types.StringValue(value.String())
 		} else {
-			data.SourceInterfacesVrf[i].Vrf.Null = true
+			data.SourceInterfacesVrf[i].Vrf = types.StringNull()
 		}
 		if value := r.Get("interface-name"); value.Exists() {
-			data.SourceInterfacesVrf[i].InterfaceName.Value = value.String()
+			data.SourceInterfacesVrf[i].InterfaceName = types.StringValue(value.String())
 		} else {
-			data.SourceInterfacesVrf[i].InterfaceName.Null = true
+			data.SourceInterfacesVrf[i].InterfaceName = types.StringNull()
 		}
 	}
 	for i := range data.Ipv4Hosts {
 		keys := [...]string{"ipv4-host"}
-		keyValues := [...]string{data.Ipv4Hosts[i].Ipv4Host.Value}
+		keyValues := [...]string{data.Ipv4Hosts[i].Ipv4Host.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "host.ipv4-host-list").ForEach(
@@ -322,14 +322,14 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("ipv4-host"); value.Exists() {
-			data.Ipv4Hosts[i].Ipv4Host.Value = value.String()
+			data.Ipv4Hosts[i].Ipv4Host = types.StringValue(value.String())
 		} else {
-			data.Ipv4Hosts[i].Ipv4Host.Null = true
+			data.Ipv4Hosts[i].Ipv4Host = types.StringNull()
 		}
 	}
 	for i := range data.Ipv4VrfHosts {
 		keys := [...]string{"ipv4-host", "vrf"}
-		keyValues := [...]string{data.Ipv4VrfHosts[i].Ipv4Host.Value, data.Ipv4VrfHosts[i].Vrf.Value}
+		keyValues := [...]string{data.Ipv4VrfHosts[i].Ipv4Host.ValueString(), data.Ipv4VrfHosts[i].Vrf.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "host.ipv4-host-vrf-list").ForEach(
@@ -351,19 +351,19 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("ipv4-host"); value.Exists() {
-			data.Ipv4VrfHosts[i].Ipv4Host.Value = value.String()
+			data.Ipv4VrfHosts[i].Ipv4Host = types.StringValue(value.String())
 		} else {
-			data.Ipv4VrfHosts[i].Ipv4Host.Null = true
+			data.Ipv4VrfHosts[i].Ipv4Host = types.StringNull()
 		}
 		if value := r.Get("vrf"); value.Exists() {
-			data.Ipv4VrfHosts[i].Vrf.Value = value.String()
+			data.Ipv4VrfHosts[i].Vrf = types.StringValue(value.String())
 		} else {
-			data.Ipv4VrfHosts[i].Vrf.Null = true
+			data.Ipv4VrfHosts[i].Vrf = types.StringNull()
 		}
 	}
 	for i := range data.Ipv6Hosts {
 		keys := [...]string{"ipv6-host"}
-		keyValues := [...]string{data.Ipv6Hosts[i].Ipv6Host.Value}
+		keyValues := [...]string{data.Ipv6Hosts[i].Ipv6Host.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "host.ipv6.ipv6-host-list").ForEach(
@@ -385,14 +385,14 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("ipv6-host"); value.Exists() {
-			data.Ipv6Hosts[i].Ipv6Host.Value = value.String()
+			data.Ipv6Hosts[i].Ipv6Host = types.StringValue(value.String())
 		} else {
-			data.Ipv6Hosts[i].Ipv6Host.Null = true
+			data.Ipv6Hosts[i].Ipv6Host = types.StringNull()
 		}
 	}
 	for i := range data.Ipv6VrfHosts {
 		keys := [...]string{"ipv6-host", "vrf"}
-		keyValues := [...]string{data.Ipv6VrfHosts[i].Ipv6Host.Value, data.Ipv6VrfHosts[i].Vrf.Value}
+		keyValues := [...]string{data.Ipv6VrfHosts[i].Ipv6Host.ValueString(), data.Ipv6VrfHosts[i].Vrf.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "host.ipv6.ipv6-host-vrf-list").ForEach(
@@ -414,14 +414,14 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("ipv6-host"); value.Exists() {
-			data.Ipv6VrfHosts[i].Ipv6Host.Value = value.String()
+			data.Ipv6VrfHosts[i].Ipv6Host = types.StringValue(value.String())
 		} else {
-			data.Ipv6VrfHosts[i].Ipv6Host.Null = true
+			data.Ipv6VrfHosts[i].Ipv6Host = types.StringNull()
 		}
 		if value := r.Get("vrf"); value.Exists() {
-			data.Ipv6VrfHosts[i].Vrf.Value = value.String()
+			data.Ipv6VrfHosts[i].Vrf = types.StringValue(value.String())
 		} else {
-			data.Ipv6VrfHosts[i].Vrf.Null = true
+			data.Ipv6VrfHosts[i].Vrf = types.StringNull()
 		}
 	}
 }
@@ -432,83 +432,64 @@ func (data *Logging) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "monitor-config.common-config.monitor.severity"); value.Exists() {
-		data.MonitorSeverity.Value = value.String()
-		data.MonitorSeverity.Null = false
+		data.MonitorSeverity = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "buffered.size-value"); value.Exists() {
-		data.BufferedSize.Value = value.Int()
-		data.BufferedSize.Null = false
+		data.BufferedSize = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "buffered.severity-level"); value.Exists() {
-		data.BufferedSeverity.Value = value.String()
-		data.BufferedSeverity.Null = false
+		data.BufferedSeverity = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "console-config.common-config.console.severity"); value.Exists() {
-		data.ConsoleSeverity.Value = value.String()
-		data.ConsoleSeverity.Null = false
+		data.ConsoleSeverity = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "facility"); value.Exists() {
-		data.Facility.Value = value.String()
-		data.Facility.Null = false
+		data.Facility = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "history.size"); value.Exists() {
-		data.HistorySize.Value = value.Int()
-		data.HistorySize.Null = false
+		data.HistorySize = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "history.severity-level"); value.Exists() {
-		data.HistorySeverity.Value = value.String()
-		data.HistorySeverity.Null = false
+		data.HistorySeverity = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "trap"); value.Exists() {
-		data.Trap.Value = true
-		data.Trap.Null = false
+		data.Trap = types.BoolValue(true)
 	} else {
-		data.Trap.Value = false
-		data.Trap.Null = false
+		data.Trap = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "trap.severity"); value.Exists() {
-		data.TrapSeverity.Value = value.String()
-		data.TrapSeverity.Null = false
+		data.TrapSeverity = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "origin-id.type-value"); value.Exists() {
-		data.OriginIdType.Value = value.String()
-		data.OriginIdType.Null = false
+		data.OriginIdType = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "origin-id.string"); value.Exists() {
-		data.OriginIdName.Value = value.String()
-		data.OriginIdName.Null = false
+		data.OriginIdName = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "file.name"); value.Exists() {
-		data.FileName.Value = value.String()
-		data.FileName.Null = false
+		data.FileName = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "file.max-size"); value.Exists() {
-		data.FileMaxSize.Value = value.Int()
-		data.FileMaxSize.Null = false
+		data.FileMaxSize = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "file.min-size"); value.Exists() {
-		data.FileMinSize.Value = value.Int()
-		data.FileMinSize.Null = false
+		data.FileMinSize = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "file.severity"); value.Exists() {
-		data.FileSeverity.Value = value.String()
-		data.FileSeverity.Null = false
+		data.FileSeverity = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "source-interface-conf.interface-name-non-vrf"); value.Exists() {
-		data.SourceInterface.Value = value.String()
-		data.SourceInterface.Null = false
+		data.SourceInterface = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "source-interface-conf.source-interface-vrf"); value.Exists() {
 		data.SourceInterfacesVrf = make([]LoggingSourceInterfacesVrf, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := LoggingSourceInterfacesVrf{}
 			if cValue := v.Get("vrf"); cValue.Exists() {
-				item.Vrf.Value = cValue.String()
-				item.Vrf.Null = false
+				item.Vrf = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("interface-name"); cValue.Exists() {
-				item.InterfaceName.Value = cValue.String()
-				item.InterfaceName.Null = false
+				item.InterfaceName = types.StringValue(cValue.String())
 			}
 			data.SourceInterfacesVrf = append(data.SourceInterfacesVrf, item)
 			return true
@@ -519,8 +500,7 @@ func (data *Logging) fromBody(ctx context.Context, res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := LoggingIpv4Hosts{}
 			if cValue := v.Get("ipv4-host"); cValue.Exists() {
-				item.Ipv4Host.Value = cValue.String()
-				item.Ipv4Host.Null = false
+				item.Ipv4Host = types.StringValue(cValue.String())
 			}
 			data.Ipv4Hosts = append(data.Ipv4Hosts, item)
 			return true
@@ -531,12 +511,10 @@ func (data *Logging) fromBody(ctx context.Context, res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := LoggingIpv4VrfHosts{}
 			if cValue := v.Get("ipv4-host"); cValue.Exists() {
-				item.Ipv4Host.Value = cValue.String()
-				item.Ipv4Host.Null = false
+				item.Ipv4Host = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("vrf"); cValue.Exists() {
-				item.Vrf.Value = cValue.String()
-				item.Vrf.Null = false
+				item.Vrf = types.StringValue(cValue.String())
 			}
 			data.Ipv4VrfHosts = append(data.Ipv4VrfHosts, item)
 			return true
@@ -547,8 +525,7 @@ func (data *Logging) fromBody(ctx context.Context, res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := LoggingIpv6Hosts{}
 			if cValue := v.Get("ipv6-host"); cValue.Exists() {
-				item.Ipv6Host.Value = cValue.String()
-				item.Ipv6Host.Null = false
+				item.Ipv6Host = types.StringValue(cValue.String())
 			}
 			data.Ipv6Hosts = append(data.Ipv6Hosts, item)
 			return true
@@ -559,12 +536,10 @@ func (data *Logging) fromBody(ctx context.Context, res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := LoggingIpv6VrfHosts{}
 			if cValue := v.Get("ipv6-host"); cValue.Exists() {
-				item.Ipv6Host.Value = cValue.String()
-				item.Ipv6Host.Null = false
+				item.Ipv6Host = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("vrf"); cValue.Exists() {
-				item.Vrf.Value = cValue.String()
-				item.Vrf.Null = false
+				item.Vrf = types.StringValue(cValue.String())
 			}
 			data.Ipv6VrfHosts = append(data.Ipv6VrfHosts, item)
 			return true
@@ -573,118 +548,92 @@ func (data *Logging) fromBody(ctx context.Context, res gjson.Result) {
 }
 
 func (data *Logging) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.MonitorSeverity.Unknown {
-		data.MonitorSeverity.Unknown = false
-		data.MonitorSeverity.Null = true
+	if data.MonitorSeverity.IsUnknown() {
+		data.MonitorSeverity = types.StringNull()
 	}
-	if data.BufferedSize.Unknown {
-		data.BufferedSize.Unknown = false
-		data.BufferedSize.Null = true
+	if data.BufferedSize.IsUnknown() {
+		data.BufferedSize = types.Int64Null()
 	}
-	if data.BufferedSeverity.Unknown {
-		data.BufferedSeverity.Unknown = false
-		data.BufferedSeverity.Null = true
+	if data.BufferedSeverity.IsUnknown() {
+		data.BufferedSeverity = types.StringNull()
 	}
-	if data.ConsoleSeverity.Unknown {
-		data.ConsoleSeverity.Unknown = false
-		data.ConsoleSeverity.Null = true
+	if data.ConsoleSeverity.IsUnknown() {
+		data.ConsoleSeverity = types.StringNull()
 	}
-	if data.Facility.Unknown {
-		data.Facility.Unknown = false
-		data.Facility.Null = true
+	if data.Facility.IsUnknown() {
+		data.Facility = types.StringNull()
 	}
-	if data.HistorySize.Unknown {
-		data.HistorySize.Unknown = false
-		data.HistorySize.Null = true
+	if data.HistorySize.IsUnknown() {
+		data.HistorySize = types.Int64Null()
 	}
-	if data.HistorySeverity.Unknown {
-		data.HistorySeverity.Unknown = false
-		data.HistorySeverity.Null = true
+	if data.HistorySeverity.IsUnknown() {
+		data.HistorySeverity = types.StringNull()
 	}
-	if data.Trap.Unknown {
-		data.Trap.Unknown = false
-		data.Trap.Null = true
+	if data.Trap.IsUnknown() {
+		data.Trap = types.BoolNull()
 	}
-	if data.TrapSeverity.Unknown {
-		data.TrapSeverity.Unknown = false
-		data.TrapSeverity.Null = true
+	if data.TrapSeverity.IsUnknown() {
+		data.TrapSeverity = types.StringNull()
 	}
-	if data.OriginIdType.Unknown {
-		data.OriginIdType.Unknown = false
-		data.OriginIdType.Null = true
+	if data.OriginIdType.IsUnknown() {
+		data.OriginIdType = types.StringNull()
 	}
-	if data.OriginIdName.Unknown {
-		data.OriginIdName.Unknown = false
-		data.OriginIdName.Null = true
+	if data.OriginIdName.IsUnknown() {
+		data.OriginIdName = types.StringNull()
 	}
-	if data.FileName.Unknown {
-		data.FileName.Unknown = false
-		data.FileName.Null = true
+	if data.FileName.IsUnknown() {
+		data.FileName = types.StringNull()
 	}
-	if data.FileMaxSize.Unknown {
-		data.FileMaxSize.Unknown = false
-		data.FileMaxSize.Null = true
+	if data.FileMaxSize.IsUnknown() {
+		data.FileMaxSize = types.Int64Null()
 	}
-	if data.FileMinSize.Unknown {
-		data.FileMinSize.Unknown = false
-		data.FileMinSize.Null = true
+	if data.FileMinSize.IsUnknown() {
+		data.FileMinSize = types.Int64Null()
 	}
-	if data.FileSeverity.Unknown {
-		data.FileSeverity.Unknown = false
-		data.FileSeverity.Null = true
+	if data.FileSeverity.IsUnknown() {
+		data.FileSeverity = types.StringNull()
 	}
-	if data.SourceInterface.Unknown {
-		data.SourceInterface.Unknown = false
-		data.SourceInterface.Null = true
+	if data.SourceInterface.IsUnknown() {
+		data.SourceInterface = types.StringNull()
 	}
 	for i := range data.SourceInterfacesVrf {
-		if data.SourceInterfacesVrf[i].Vrf.Unknown {
-			data.SourceInterfacesVrf[i].Vrf.Unknown = false
-			data.SourceInterfacesVrf[i].Vrf.Null = true
+		if data.SourceInterfacesVrf[i].Vrf.IsUnknown() {
+			data.SourceInterfacesVrf[i].Vrf = types.StringNull()
 		}
-		if data.SourceInterfacesVrf[i].InterfaceName.Unknown {
-			data.SourceInterfacesVrf[i].InterfaceName.Unknown = false
-			data.SourceInterfacesVrf[i].InterfaceName.Null = true
+		if data.SourceInterfacesVrf[i].InterfaceName.IsUnknown() {
+			data.SourceInterfacesVrf[i].InterfaceName = types.StringNull()
 		}
 	}
 	for i := range data.Ipv4Hosts {
-		if data.Ipv4Hosts[i].Ipv4Host.Unknown {
-			data.Ipv4Hosts[i].Ipv4Host.Unknown = false
-			data.Ipv4Hosts[i].Ipv4Host.Null = true
+		if data.Ipv4Hosts[i].Ipv4Host.IsUnknown() {
+			data.Ipv4Hosts[i].Ipv4Host = types.StringNull()
 		}
 	}
 	for i := range data.Ipv4VrfHosts {
-		if data.Ipv4VrfHosts[i].Ipv4Host.Unknown {
-			data.Ipv4VrfHosts[i].Ipv4Host.Unknown = false
-			data.Ipv4VrfHosts[i].Ipv4Host.Null = true
+		if data.Ipv4VrfHosts[i].Ipv4Host.IsUnknown() {
+			data.Ipv4VrfHosts[i].Ipv4Host = types.StringNull()
 		}
-		if data.Ipv4VrfHosts[i].Vrf.Unknown {
-			data.Ipv4VrfHosts[i].Vrf.Unknown = false
-			data.Ipv4VrfHosts[i].Vrf.Null = true
+		if data.Ipv4VrfHosts[i].Vrf.IsUnknown() {
+			data.Ipv4VrfHosts[i].Vrf = types.StringNull()
 		}
 	}
 	for i := range data.Ipv6Hosts {
-		if data.Ipv6Hosts[i].Ipv6Host.Unknown {
-			data.Ipv6Hosts[i].Ipv6Host.Unknown = false
-			data.Ipv6Hosts[i].Ipv6Host.Null = true
+		if data.Ipv6Hosts[i].Ipv6Host.IsUnknown() {
+			data.Ipv6Hosts[i].Ipv6Host = types.StringNull()
 		}
 	}
 	for i := range data.Ipv6VrfHosts {
-		if data.Ipv6VrfHosts[i].Ipv6Host.Unknown {
-			data.Ipv6VrfHosts[i].Ipv6Host.Unknown = false
-			data.Ipv6VrfHosts[i].Ipv6Host.Null = true
+		if data.Ipv6VrfHosts[i].Ipv6Host.IsUnknown() {
+			data.Ipv6VrfHosts[i].Ipv6Host = types.StringNull()
 		}
-		if data.Ipv6VrfHosts[i].Vrf.Unknown {
-			data.Ipv6VrfHosts[i].Vrf.Unknown = false
-			data.Ipv6VrfHosts[i].Vrf.Null = true
+		if data.Ipv6VrfHosts[i].Vrf.IsUnknown() {
+			data.Ipv6VrfHosts[i].Vrf = types.StringNull()
 		}
 	}
 }
@@ -692,10 +641,10 @@ func (data *Logging) setUnknownValues(ctx context.Context) {
 func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.SourceInterfacesVrf {
-		stateKeyValues := [...]string{state.SourceInterfacesVrf[i].Vrf.Value}
+		stateKeyValues := [...]string{state.SourceInterfacesVrf[i].Vrf.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.SourceInterfacesVrf[i].Vrf.Value).IsZero() {
+		if !reflect.ValueOf(state.SourceInterfacesVrf[i].Vrf.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -705,7 +654,7 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		found := false
 		for j := range data.SourceInterfacesVrf {
 			found = true
-			if state.SourceInterfacesVrf[i].Vrf.Value != data.SourceInterfacesVrf[j].Vrf.Value {
+			if state.SourceInterfacesVrf[i].Vrf.ValueString() != data.SourceInterfacesVrf[j].Vrf.ValueString() {
 				found = false
 			}
 			if found {
@@ -717,10 +666,10 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		}
 	}
 	for i := range state.Ipv4Hosts {
-		stateKeyValues := [...]string{state.Ipv4Hosts[i].Ipv4Host.Value}
+		stateKeyValues := [...]string{state.Ipv4Hosts[i].Ipv4Host.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Ipv4Hosts[i].Ipv4Host.Value).IsZero() {
+		if !reflect.ValueOf(state.Ipv4Hosts[i].Ipv4Host.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -730,7 +679,7 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		found := false
 		for j := range data.Ipv4Hosts {
 			found = true
-			if state.Ipv4Hosts[i].Ipv4Host.Value != data.Ipv4Hosts[j].Ipv4Host.Value {
+			if state.Ipv4Hosts[i].Ipv4Host.ValueString() != data.Ipv4Hosts[j].Ipv4Host.ValueString() {
 				found = false
 			}
 			if found {
@@ -742,13 +691,13 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		}
 	}
 	for i := range state.Ipv4VrfHosts {
-		stateKeyValues := [...]string{state.Ipv4VrfHosts[i].Ipv4Host.Value, state.Ipv4VrfHosts[i].Vrf.Value}
+		stateKeyValues := [...]string{state.Ipv4VrfHosts[i].Ipv4Host.ValueString(), state.Ipv4VrfHosts[i].Vrf.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Ipv4VrfHosts[i].Ipv4Host.Value).IsZero() {
+		if !reflect.ValueOf(state.Ipv4VrfHosts[i].Ipv4Host.ValueString()).IsZero() {
 			emptyKeys = false
 		}
-		if !reflect.ValueOf(state.Ipv4VrfHosts[i].Vrf.Value).IsZero() {
+		if !reflect.ValueOf(state.Ipv4VrfHosts[i].Vrf.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -758,10 +707,10 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		found := false
 		for j := range data.Ipv4VrfHosts {
 			found = true
-			if state.Ipv4VrfHosts[i].Ipv4Host.Value != data.Ipv4VrfHosts[j].Ipv4Host.Value {
+			if state.Ipv4VrfHosts[i].Ipv4Host.ValueString() != data.Ipv4VrfHosts[j].Ipv4Host.ValueString() {
 				found = false
 			}
-			if state.Ipv4VrfHosts[i].Vrf.Value != data.Ipv4VrfHosts[j].Vrf.Value {
+			if state.Ipv4VrfHosts[i].Vrf.ValueString() != data.Ipv4VrfHosts[j].Vrf.ValueString() {
 				found = false
 			}
 			if found {
@@ -773,10 +722,10 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		}
 	}
 	for i := range state.Ipv6Hosts {
-		stateKeyValues := [...]string{state.Ipv6Hosts[i].Ipv6Host.Value}
+		stateKeyValues := [...]string{state.Ipv6Hosts[i].Ipv6Host.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Ipv6Hosts[i].Ipv6Host.Value).IsZero() {
+		if !reflect.ValueOf(state.Ipv6Hosts[i].Ipv6Host.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -786,7 +735,7 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		found := false
 		for j := range data.Ipv6Hosts {
 			found = true
-			if state.Ipv6Hosts[i].Ipv6Host.Value != data.Ipv6Hosts[j].Ipv6Host.Value {
+			if state.Ipv6Hosts[i].Ipv6Host.ValueString() != data.Ipv6Hosts[j].Ipv6Host.ValueString() {
 				found = false
 			}
 			if found {
@@ -798,13 +747,13 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		}
 	}
 	for i := range state.Ipv6VrfHosts {
-		stateKeyValues := [...]string{state.Ipv6VrfHosts[i].Ipv6Host.Value, state.Ipv6VrfHosts[i].Vrf.Value}
+		stateKeyValues := [...]string{state.Ipv6VrfHosts[i].Ipv6Host.ValueString(), state.Ipv6VrfHosts[i].Vrf.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Ipv6VrfHosts[i].Ipv6Host.Value).IsZero() {
+		if !reflect.ValueOf(state.Ipv6VrfHosts[i].Ipv6Host.ValueString()).IsZero() {
 			emptyKeys = false
 		}
-		if !reflect.ValueOf(state.Ipv6VrfHosts[i].Vrf.Value).IsZero() {
+		if !reflect.ValueOf(state.Ipv6VrfHosts[i].Vrf.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -814,10 +763,10 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 		found := false
 		for j := range data.Ipv6VrfHosts {
 			found = true
-			if state.Ipv6VrfHosts[i].Ipv6Host.Value != data.Ipv6VrfHosts[j].Ipv6Host.Value {
+			if state.Ipv6VrfHosts[i].Ipv6Host.ValueString() != data.Ipv6VrfHosts[j].Ipv6Host.ValueString() {
 				found = false
 			}
-			if state.Ipv6VrfHosts[i].Vrf.Value != data.Ipv6VrfHosts[j].Vrf.Value {
+			if state.Ipv6VrfHosts[i].Vrf.ValueString() != data.Ipv6VrfHosts[j].Vrf.ValueString() {
 				found = false
 			}
 			if found {

@@ -104,7 +104,7 @@ type TemplateDeviceTrackingAttachPolicy struct {
 }
 
 func (data Template) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/template/Cisco-IOS-XE-template:template_details=%v", url.QueryEscape(fmt.Sprintf("%v", data.TemplateName.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/template/Cisco-IOS-XE-template:template_details=%v", url.QueryEscape(fmt.Sprintf("%v", data.TemplateName.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -120,276 +120,276 @@ func (data Template) getPathShort() string {
 
 func (data Template) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.TemplateName.Null && !data.TemplateName.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"template_name", data.TemplateName.Value)
+	if !data.TemplateName.IsNull() && !data.TemplateName.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"template_name", data.TemplateName.ValueString())
 	}
-	if !data.Dot1xPae.Null && !data.Dot1xPae.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"dot1x.pae", data.Dot1xPae.Value)
+	if !data.Dot1xPae.IsNull() && !data.Dot1xPae.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"dot1x.pae", data.Dot1xPae.ValueString())
 	}
-	if !data.Dot1xMaxReauthReq.Null && !data.Dot1xMaxReauthReq.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"dot1x.max-reauth-req", strconv.FormatInt(data.Dot1xMaxReauthReq.Value, 10))
+	if !data.Dot1xMaxReauthReq.IsNull() && !data.Dot1xMaxReauthReq.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"dot1x.max-reauth-req", strconv.FormatInt(data.Dot1xMaxReauthReq.ValueInt64(), 10))
 	}
-	if !data.Dot1xMaxReq.Null && !data.Dot1xMaxReq.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"dot1x.max-req", strconv.FormatInt(data.Dot1xMaxReq.Value, 10))
+	if !data.Dot1xMaxReq.IsNull() && !data.Dot1xMaxReq.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"dot1x.max-req", strconv.FormatInt(data.Dot1xMaxReq.ValueInt64(), 10))
 	}
-	if !data.ServicePolicyInput.Null && !data.ServicePolicyInput.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"service-policy.input.policy-map-name", data.ServicePolicyInput.Value)
+	if !data.ServicePolicyInput.IsNull() && !data.ServicePolicyInput.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"service-policy.input.policy-map-name", data.ServicePolicyInput.ValueString())
 	}
-	if !data.ServicePolicyOutput.Null && !data.ServicePolicyOutput.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"service-policy.output.policy-map-name", data.ServicePolicyOutput.Value)
+	if !data.ServicePolicyOutput.IsNull() && !data.ServicePolicyOutput.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"service-policy.output.policy-map-name", data.ServicePolicyOutput.ValueString())
 	}
-	if !data.SourceTemplate.Null && !data.SourceTemplate.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source.template", data.SourceTemplate.Value)
+	if !data.SourceTemplate.IsNull() && !data.SourceTemplate.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"source.template", data.SourceTemplate.ValueString())
 	}
-	if !data.SwitchportModeTrunk.Null && !data.SwitchportModeTrunk.Unknown {
-		if data.SwitchportModeTrunk.Value {
+	if !data.SwitchportModeTrunk.IsNull() && !data.SwitchportModeTrunk.IsUnknown() {
+		if data.SwitchportModeTrunk.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.mode.trunk", map[string]string{})
 		}
 	}
-	if !data.SwitchportModeAccess.Null && !data.SwitchportModeAccess.Unknown {
-		if data.SwitchportModeAccess.Value {
+	if !data.SwitchportModeAccess.IsNull() && !data.SwitchportModeAccess.IsUnknown() {
+		if data.SwitchportModeAccess.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.mode.access", map[string]string{})
 		}
 	}
-	if !data.SwitchportNonegotiate.Null && !data.SwitchportNonegotiate.Unknown {
-		if data.SwitchportNonegotiate.Value {
+	if !data.SwitchportNonegotiate.IsNull() && !data.SwitchportNonegotiate.IsUnknown() {
+		if data.SwitchportNonegotiate.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.nonegotiate", map[string]string{})
 		}
 	}
-	if !data.SwitchportBlockUnicast.Null && !data.SwitchportBlockUnicast.Unknown {
-		if data.SwitchportBlockUnicast.Value {
+	if !data.SwitchportBlockUnicast.IsNull() && !data.SwitchportBlockUnicast.IsUnknown() {
+		if data.SwitchportBlockUnicast.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.block.unicast", map[string]string{})
 		}
 	}
-	if !data.SwitchportPortSecurity.Null && !data.SwitchportPortSecurity.Unknown {
-		if data.SwitchportPortSecurity.Value {
+	if !data.SwitchportPortSecurity.IsNull() && !data.SwitchportPortSecurity.IsUnknown() {
+		if data.SwitchportPortSecurity.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security", map[string]string{})
 		}
 	}
-	if !data.SwitchportPortSecurityAgingStatic.Null && !data.SwitchportPortSecurityAgingStatic.Unknown {
-		if data.SwitchportPortSecurityAgingStatic.Value {
+	if !data.SwitchportPortSecurityAgingStatic.IsNull() && !data.SwitchportPortSecurityAgingStatic.IsUnknown() {
+		if data.SwitchportPortSecurityAgingStatic.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.aging.static", map[string]string{})
 		}
 	}
-	if !data.SwitchportPortSecurityAgingTime.Null && !data.SwitchportPortSecurityAgingTime.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.aging.time", strconv.FormatInt(data.SwitchportPortSecurityAgingTime.Value, 10))
+	if !data.SwitchportPortSecurityAgingTime.IsNull() && !data.SwitchportPortSecurityAgingTime.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.aging.time", strconv.FormatInt(data.SwitchportPortSecurityAgingTime.ValueInt64(), 10))
 	}
-	if !data.SwitchportPortSecurityAgingType.Null && !data.SwitchportPortSecurityAgingType.Unknown {
-		if data.SwitchportPortSecurityAgingType.Value {
+	if !data.SwitchportPortSecurityAgingType.IsNull() && !data.SwitchportPortSecurityAgingType.IsUnknown() {
+		if data.SwitchportPortSecurityAgingType.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.aging.type", map[string]string{})
 		}
 	}
-	if !data.SwitchportPortSecurityAgingTypeInactivity.Null && !data.SwitchportPortSecurityAgingTypeInactivity.Unknown {
-		if data.SwitchportPortSecurityAgingTypeInactivity.Value {
+	if !data.SwitchportPortSecurityAgingTypeInactivity.IsNull() && !data.SwitchportPortSecurityAgingTypeInactivity.IsUnknown() {
+		if data.SwitchportPortSecurityAgingTypeInactivity.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.aging.type.inactivity", map[string]string{})
 		}
 	}
-	if !data.SwitchportPortSecurityViolationProtect.Null && !data.SwitchportPortSecurityViolationProtect.Unknown {
-		if data.SwitchportPortSecurityViolationProtect.Value {
+	if !data.SwitchportPortSecurityViolationProtect.IsNull() && !data.SwitchportPortSecurityViolationProtect.IsUnknown() {
+		if data.SwitchportPortSecurityViolationProtect.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.violation.protect", map[string]string{})
 		}
 	}
-	if !data.SwitchportPortSecurityViolationRestrict.Null && !data.SwitchportPortSecurityViolationRestrict.Unknown {
-		if data.SwitchportPortSecurityViolationRestrict.Value {
+	if !data.SwitchportPortSecurityViolationRestrict.IsNull() && !data.SwitchportPortSecurityViolationRestrict.IsUnknown() {
+		if data.SwitchportPortSecurityViolationRestrict.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.violation.restrict", map[string]string{})
 		}
 	}
-	if !data.SwitchportPortSecurityViolationShutdown.Null && !data.SwitchportPortSecurityViolationShutdown.Unknown {
-		if data.SwitchportPortSecurityViolationShutdown.Value {
+	if !data.SwitchportPortSecurityViolationShutdown.IsNull() && !data.SwitchportPortSecurityViolationShutdown.IsUnknown() {
+		if data.SwitchportPortSecurityViolationShutdown.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.violation.shutdown", map[string]string{})
 		}
 	}
-	if !data.SwitchportAccessVlan.Null && !data.SwitchportAccessVlan.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.access.vlan", strconv.FormatInt(data.SwitchportAccessVlan.Value, 10))
+	if !data.SwitchportAccessVlan.IsNull() && !data.SwitchportAccessVlan.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.access.vlan", strconv.FormatInt(data.SwitchportAccessVlan.ValueInt64(), 10))
 	}
-	if !data.SwitchportVoiceVlan.Null && !data.SwitchportVoiceVlan.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.voice.vlan", strconv.FormatInt(data.SwitchportVoiceVlan.Value, 10))
+	if !data.SwitchportVoiceVlan.IsNull() && !data.SwitchportVoiceVlan.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.voice.vlan", strconv.FormatInt(data.SwitchportVoiceVlan.ValueInt64(), 10))
 	}
-	if !data.SwitchportPrivateVlanHostAssociationPrimaryRange.Null && !data.SwitchportPrivateVlanHostAssociationPrimaryRange.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.private-vlan.host-association.primary-range", strconv.FormatInt(data.SwitchportPrivateVlanHostAssociationPrimaryRange.Value, 10))
+	if !data.SwitchportPrivateVlanHostAssociationPrimaryRange.IsNull() && !data.SwitchportPrivateVlanHostAssociationPrimaryRange.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.private-vlan.host-association.primary-range", strconv.FormatInt(data.SwitchportPrivateVlanHostAssociationPrimaryRange.ValueInt64(), 10))
 	}
-	if !data.SwitchportPrivateVlanHostAssociationSecondaryRange.Null && !data.SwitchportPrivateVlanHostAssociationSecondaryRange.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.private-vlan.host-association.secondary-range", strconv.FormatInt(data.SwitchportPrivateVlanHostAssociationSecondaryRange.Value, 10))
+	if !data.SwitchportPrivateVlanHostAssociationSecondaryRange.IsNull() && !data.SwitchportPrivateVlanHostAssociationSecondaryRange.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.private-vlan.host-association.secondary-range", strconv.FormatInt(data.SwitchportPrivateVlanHostAssociationSecondaryRange.ValueInt64(), 10))
 	}
-	if !data.SwitchportTrunkAllowedVlans.Null && !data.SwitchportTrunkAllowedVlans.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.trunk.allowed.vlan.vlans", data.SwitchportTrunkAllowedVlans.Value)
+	if !data.SwitchportTrunkAllowedVlans.IsNull() && !data.SwitchportTrunkAllowedVlans.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.trunk.allowed.vlan.vlans", data.SwitchportTrunkAllowedVlans.ValueString())
 	}
-	if !data.SwitchportTrunkNativeVlanTag.Null && !data.SwitchportTrunkNativeVlanTag.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.trunk.native.vlan.tag", data.SwitchportTrunkNativeVlanTag.Value)
+	if !data.SwitchportTrunkNativeVlanTag.IsNull() && !data.SwitchportTrunkNativeVlanTag.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.trunk.native.vlan.tag", data.SwitchportTrunkNativeVlanTag.ValueBool())
 	}
-	if !data.SwitchportTrunkNativeVlanVlanId.Null && !data.SwitchportTrunkNativeVlanVlanId.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.trunk.native.vlan.vlan-id", strconv.FormatInt(data.SwitchportTrunkNativeVlanVlanId.Value, 10))
+	if !data.SwitchportTrunkNativeVlanVlanId.IsNull() && !data.SwitchportTrunkNativeVlanVlanId.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.trunk.native.vlan.vlan-id", strconv.FormatInt(data.SwitchportTrunkNativeVlanVlanId.ValueInt64(), 10))
 	}
-	if !data.Mab.Null && !data.Mab.Unknown {
-		if data.Mab.Value {
+	if !data.Mab.IsNull() && !data.Mab.IsUnknown() {
+		if data.Mab.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"mab", map[string]string{})
 		}
 	}
-	if !data.MabEap.Null && !data.MabEap.Unknown {
-		if data.MabEap.Value {
+	if !data.MabEap.IsNull() && !data.MabEap.IsUnknown() {
+		if data.MabEap.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"mab.eap", map[string]string{})
 		}
 	}
-	if !data.AccessSessionClosed.Null && !data.AccessSessionClosed.Unknown {
-		if data.AccessSessionClosed.Value {
+	if !data.AccessSessionClosed.IsNull() && !data.AccessSessionClosed.IsUnknown() {
+		if data.AccessSessionClosed.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.closed", map[string]string{})
 		}
 	}
-	if !data.AccessSessionMonitor.Null && !data.AccessSessionMonitor.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.monitor", data.AccessSessionMonitor.Value)
+	if !data.AccessSessionMonitor.IsNull() && !data.AccessSessionMonitor.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.monitor", data.AccessSessionMonitor.ValueBool())
 	}
-	if !data.AccessSessionPortControl.Null && !data.AccessSessionPortControl.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.port-control", data.AccessSessionPortControl.Value)
+	if !data.AccessSessionPortControl.IsNull() && !data.AccessSessionPortControl.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.port-control", data.AccessSessionPortControl.ValueString())
 	}
-	if !data.AccessSessionControlDirection.Null && !data.AccessSessionControlDirection.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.control-direction", data.AccessSessionControlDirection.Value)
+	if !data.AccessSessionControlDirection.IsNull() && !data.AccessSessionControlDirection.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.control-direction", data.AccessSessionControlDirection.ValueString())
 	}
-	if !data.AccessSessionHostMode.Null && !data.AccessSessionHostMode.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.host-mode", data.AccessSessionHostMode.Value)
+	if !data.AccessSessionHostMode.IsNull() && !data.AccessSessionHostMode.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.host-mode", data.AccessSessionHostMode.ValueString())
 	}
-	if !data.AccessSessionInterfaceTemplateSticky.Null && !data.AccessSessionInterfaceTemplateSticky.Unknown {
-		if data.AccessSessionInterfaceTemplateSticky.Value {
+	if !data.AccessSessionInterfaceTemplateSticky.IsNull() && !data.AccessSessionInterfaceTemplateSticky.IsUnknown() {
+		if data.AccessSessionInterfaceTemplateSticky.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.interface-template.sticky", map[string]string{})
 		}
 	}
-	if !data.AccessSessionInterfaceTemplateStickyTimer.Null && !data.AccessSessionInterfaceTemplateStickyTimer.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.interface-template.sticky.timer", strconv.FormatInt(data.AccessSessionInterfaceTemplateStickyTimer.Value, 10))
+	if !data.AccessSessionInterfaceTemplateStickyTimer.IsNull() && !data.AccessSessionInterfaceTemplateStickyTimer.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-session.interface-template.sticky.timer", strconv.FormatInt(data.AccessSessionInterfaceTemplateStickyTimer.ValueInt64(), 10))
 	}
-	if !data.AuthenticationPeriodic.Null && !data.AuthenticationPeriodic.Unknown {
-		if data.AuthenticationPeriodic.Value {
+	if !data.AuthenticationPeriodic.IsNull() && !data.AuthenticationPeriodic.IsUnknown() {
+		if data.AuthenticationPeriodic.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"authentication.periodic", map[string]string{})
 		}
 	}
-	if !data.AuthenticationTimerReauthenticateServer.Null && !data.AuthenticationTimerReauthenticateServer.Unknown {
-		if data.AuthenticationTimerReauthenticateServer.Value {
+	if !data.AuthenticationTimerReauthenticateServer.IsNull() && !data.AuthenticationTimerReauthenticateServer.IsUnknown() {
+		if data.AuthenticationTimerReauthenticateServer.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"authentication.timer.reauthenticate.server", map[string]string{})
 		}
 	}
-	if !data.AuthenticationTimerReauthenticateRange.Null && !data.AuthenticationTimerReauthenticateRange.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"authentication.timer.reauthenticate.range", strconv.FormatInt(data.AuthenticationTimerReauthenticateRange.Value, 10))
+	if !data.AuthenticationTimerReauthenticateRange.IsNull() && !data.AuthenticationTimerReauthenticateRange.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"authentication.timer.reauthenticate.range", strconv.FormatInt(data.AuthenticationTimerReauthenticateRange.ValueInt64(), 10))
 	}
-	if !data.SpanningTreeBpduguardEnable.Null && !data.SpanningTreeBpduguardEnable.Unknown {
-		if data.SpanningTreeBpduguardEnable.Value {
+	if !data.SpanningTreeBpduguardEnable.IsNull() && !data.SpanningTreeBpduguardEnable.IsUnknown() {
+		if data.SpanningTreeBpduguardEnable.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"spanning-tree.bpduguard.enable", map[string]string{})
 		}
 	}
-	if !data.SpanningTreeServicePolicy.Null && !data.SpanningTreeServicePolicy.Unknown {
-		if data.SpanningTreeServicePolicy.Value {
+	if !data.SpanningTreeServicePolicy.IsNull() && !data.SpanningTreeServicePolicy.IsUnknown() {
+		if data.SpanningTreeServicePolicy.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"spanning-tree.service-policy", map[string]string{})
 		}
 	}
-	if !data.SpanningTreePortfast.Null && !data.SpanningTreePortfast.Unknown {
-		if data.SpanningTreePortfast.Value {
+	if !data.SpanningTreePortfast.IsNull() && !data.SpanningTreePortfast.IsUnknown() {
+		if data.SpanningTreePortfast.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"spanning-tree.portfast", map[string]string{})
 		}
 	}
-	if !data.SpanningTreePortfastDisable.Null && !data.SpanningTreePortfastDisable.Unknown {
-		if data.SpanningTreePortfastDisable.Value {
+	if !data.SpanningTreePortfastDisable.IsNull() && !data.SpanningTreePortfastDisable.IsUnknown() {
+		if data.SpanningTreePortfastDisable.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"spanning-tree.portfast.disable", map[string]string{})
 		}
 	}
-	if !data.SpanningTreePortfastEdge.Null && !data.SpanningTreePortfastEdge.Unknown {
-		if data.SpanningTreePortfastEdge.Value {
+	if !data.SpanningTreePortfastEdge.IsNull() && !data.SpanningTreePortfastEdge.IsUnknown() {
+		if data.SpanningTreePortfastEdge.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"spanning-tree.portfast.edge", map[string]string{})
 		}
 	}
-	if !data.SpanningTreePortfastNetwork.Null && !data.SpanningTreePortfastNetwork.Unknown {
-		if data.SpanningTreePortfastNetwork.Value {
+	if !data.SpanningTreePortfastNetwork.IsNull() && !data.SpanningTreePortfastNetwork.IsUnknown() {
+		if data.SpanningTreePortfastNetwork.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"spanning-tree.portfast.network", map[string]string{})
 		}
 	}
-	if !data.StormControlBroadcastLevelPpsThreshold.Null && !data.StormControlBroadcastLevelPpsThreshold.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.broadcast.level.pps.threshold", data.StormControlBroadcastLevelPpsThreshold.Value)
+	if !data.StormControlBroadcastLevelPpsThreshold.IsNull() && !data.StormControlBroadcastLevelPpsThreshold.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.broadcast.level.pps.threshold", data.StormControlBroadcastLevelPpsThreshold.ValueString())
 	}
-	if !data.StormControlBroadcastLevelBpsThreshold.Null && !data.StormControlBroadcastLevelBpsThreshold.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.broadcast.level.bps.threshold", strconv.FormatFloat(data.StormControlBroadcastLevelBpsThreshold.Value, 'f', 1, 64))
+	if !data.StormControlBroadcastLevelBpsThreshold.IsNull() && !data.StormControlBroadcastLevelBpsThreshold.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.broadcast.level.bps.threshold", strconv.FormatFloat(data.StormControlBroadcastLevelBpsThreshold.ValueFloat64(), 'f', 1, 64))
 	}
-	if !data.StormControlBroadcastLevelThreshold.Null && !data.StormControlBroadcastLevelThreshold.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.broadcast.level.threshold", strconv.FormatFloat(data.StormControlBroadcastLevelThreshold.Value, 'f', 1, 64))
+	if !data.StormControlBroadcastLevelThreshold.IsNull() && !data.StormControlBroadcastLevelThreshold.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.broadcast.level.threshold", strconv.FormatFloat(data.StormControlBroadcastLevelThreshold.ValueFloat64(), 'f', 1, 64))
 	}
-	if !data.StormControlMulticastLevelPpsThreshold.Null && !data.StormControlMulticastLevelPpsThreshold.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.multicast.level.pps.threshold", data.StormControlMulticastLevelPpsThreshold.Value)
+	if !data.StormControlMulticastLevelPpsThreshold.IsNull() && !data.StormControlMulticastLevelPpsThreshold.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.multicast.level.pps.threshold", data.StormControlMulticastLevelPpsThreshold.ValueString())
 	}
-	if !data.StormControlMulticastLevelBpsThreshold.Null && !data.StormControlMulticastLevelBpsThreshold.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.multicast.level.bps.threshold", strconv.FormatFloat(data.StormControlMulticastLevelBpsThreshold.Value, 'f', 1, 64))
+	if !data.StormControlMulticastLevelBpsThreshold.IsNull() && !data.StormControlMulticastLevelBpsThreshold.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.multicast.level.bps.threshold", strconv.FormatFloat(data.StormControlMulticastLevelBpsThreshold.ValueFloat64(), 'f', 1, 64))
 	}
-	if !data.StormControlMulticastLevelThreshold.Null && !data.StormControlMulticastLevelThreshold.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.multicast.level.threshold", strconv.FormatFloat(data.StormControlMulticastLevelThreshold.Value, 'f', 1, 64))
+	if !data.StormControlMulticastLevelThreshold.IsNull() && !data.StormControlMulticastLevelThreshold.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.multicast.level.threshold", strconv.FormatFloat(data.StormControlMulticastLevelThreshold.ValueFloat64(), 'f', 1, 64))
 	}
-	if !data.StormControlActionShutdown.Null && !data.StormControlActionShutdown.Unknown {
-		if data.StormControlActionShutdown.Value {
+	if !data.StormControlActionShutdown.IsNull() && !data.StormControlActionShutdown.IsUnknown() {
+		if data.StormControlActionShutdown.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.action.shutdown", map[string]string{})
 		}
 	}
-	if !data.StormControlActionTrap.Null && !data.StormControlActionTrap.Unknown {
-		if data.StormControlActionTrap.Value {
+	if !data.StormControlActionTrap.IsNull() && !data.StormControlActionTrap.IsUnknown() {
+		if data.StormControlActionTrap.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"storm-control.action.trap", map[string]string{})
 		}
 	}
-	if !data.LoadInterval.Null && !data.LoadInterval.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"load-interval", strconv.FormatInt(data.LoadInterval.Value, 10))
+	if !data.LoadInterval.IsNull() && !data.LoadInterval.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"load-interval", strconv.FormatInt(data.LoadInterval.ValueInt64(), 10))
 	}
-	if !data.IpDhcpSnoopingLimitRate.Null && !data.IpDhcpSnoopingLimitRate.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.dhcp.snooping.limit.rate", strconv.FormatInt(data.IpDhcpSnoopingLimitRate.Value, 10))
+	if !data.IpDhcpSnoopingLimitRate.IsNull() && !data.IpDhcpSnoopingLimitRate.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.dhcp.snooping.limit.rate", strconv.FormatInt(data.IpDhcpSnoopingLimitRate.ValueInt64(), 10))
 	}
-	if !data.IpDhcpSnoopingTrust.Null && !data.IpDhcpSnoopingTrust.Unknown {
-		if data.IpDhcpSnoopingTrust.Value {
+	if !data.IpDhcpSnoopingTrust.IsNull() && !data.IpDhcpSnoopingTrust.IsUnknown() {
+		if data.IpDhcpSnoopingTrust.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.dhcp.snooping.trust", map[string]string{})
 		}
 	}
-	if !data.SubscriberAgingInactivityTimerValue.Null && !data.SubscriberAgingInactivityTimerValue.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"subscriber.aging.inactivity-timer.value", strconv.FormatInt(data.SubscriberAgingInactivityTimerValue.Value, 10))
+	if !data.SubscriberAgingInactivityTimerValue.IsNull() && !data.SubscriberAgingInactivityTimerValue.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"subscriber.aging.inactivity-timer.value", strconv.FormatInt(data.SubscriberAgingInactivityTimerValue.ValueInt64(), 10))
 	}
-	if !data.SubscriberAgingInactivityTimerProbe.Null && !data.SubscriberAgingInactivityTimerProbe.Unknown {
-		if data.SubscriberAgingInactivityTimerProbe.Value {
+	if !data.SubscriberAgingInactivityTimerProbe.IsNull() && !data.SubscriberAgingInactivityTimerProbe.IsUnknown() {
+		if data.SubscriberAgingInactivityTimerProbe.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"subscriber.aging.inactivity-timer.probe", map[string]string{})
 		}
 	}
-	if !data.SubscriberAgingProbe.Null && !data.SubscriberAgingProbe.Unknown {
-		if data.SubscriberAgingProbe.Value {
+	if !data.SubscriberAgingProbe.IsNull() && !data.SubscriberAgingProbe.IsUnknown() {
+		if data.SubscriberAgingProbe.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"subscriber.aging.probe", map[string]string{})
 		}
 	}
-	if !data.DeviceTracking.Null && !data.DeviceTracking.Unknown {
-		if data.DeviceTracking.Value {
+	if !data.DeviceTracking.IsNull() && !data.DeviceTracking.IsUnknown() {
+		if data.DeviceTracking.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"device-tracking", map[string]string{})
 		}
 	}
-	if !data.DeviceTrackingVlanRange.Null && !data.DeviceTrackingVlanRange.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"device-tracking.vlan.vlan-range", data.DeviceTrackingVlanRange.Value)
+	if !data.DeviceTrackingVlanRange.IsNull() && !data.DeviceTrackingVlanRange.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"device-tracking.vlan.vlan-range", data.DeviceTrackingVlanRange.ValueString())
 	}
-	if !data.CtsManual.Null && !data.CtsManual.Unknown {
-		if data.CtsManual.Value {
+	if !data.CtsManual.IsNull() && !data.CtsManual.IsUnknown() {
+		if data.CtsManual.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cts.manual", map[string]string{})
 		}
 	}
-	if !data.CtsManualPolicyStaticSgt.Null && !data.CtsManualPolicyStaticSgt.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cts.manual.policy.static.sgt", strconv.FormatInt(data.CtsManualPolicyStaticSgt.Value, 10))
+	if !data.CtsManualPolicyStaticSgt.IsNull() && !data.CtsManualPolicyStaticSgt.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cts.manual.policy.static.sgt", strconv.FormatInt(data.CtsManualPolicyStaticSgt.ValueInt64(), 10))
 	}
-	if !data.CtsManualPolicyStaticTrusted.Null && !data.CtsManualPolicyStaticTrusted.Unknown {
-		if data.CtsManualPolicyStaticTrusted.Value {
+	if !data.CtsManualPolicyStaticTrusted.IsNull() && !data.CtsManualPolicyStaticTrusted.IsUnknown() {
+		if data.CtsManualPolicyStaticTrusted.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cts.manual.policy.static.trusted", map[string]string{})
 		}
 	}
-	if !data.CtsManualPropagateSgt.Null && !data.CtsManualPropagateSgt.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cts.manual.propagate.sgt", data.CtsManualPropagateSgt.Value)
+	if !data.CtsManualPropagateSgt.IsNull() && !data.CtsManualPropagateSgt.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cts.manual.propagate.sgt", data.CtsManualPropagateSgt.ValueBool())
 	}
-	if !data.CtsRoleBasedEnforcement.Null && !data.CtsRoleBasedEnforcement.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cts.role-based.enforcement", data.CtsRoleBasedEnforcement.Value)
+	if !data.CtsRoleBasedEnforcement.IsNull() && !data.CtsRoleBasedEnforcement.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cts.role-based.enforcement", data.CtsRoleBasedEnforcement.ValueBool())
 	}
 	if len(data.SwitchportPortSecurityMaximumRange) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.maximum.range", []interface{}{})
 		for index, item := range data.SwitchportPortSecurityMaximumRange {
-			if !item.Range.Null && !item.Range.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.maximum.range"+"."+strconv.Itoa(index)+"."+"range", strconv.FormatInt(item.Range.Value, 10))
+			if !item.Range.IsNull() && !item.Range.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.maximum.range"+"."+strconv.Itoa(index)+"."+"range", strconv.FormatInt(item.Range.ValueInt64(), 10))
 			}
-			if !item.Vlan.Null && !item.Vlan.Unknown {
-				if item.Vlan.Value {
+			if !item.Vlan.IsNull() && !item.Vlan.IsUnknown() {
+				if item.Vlan.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.maximum.range"+"."+strconv.Itoa(index)+"."+"vlan", map[string]string{})
 				}
 			}
-			if !item.VlanAccess.Null && !item.VlanAccess.Unknown {
-				if item.VlanAccess.Value {
+			if !item.VlanAccess.IsNull() && !item.VlanAccess.IsUnknown() {
+				if item.VlanAccess.ValueBool() {
 					body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"switchport.port-security.maximum.range"+"."+strconv.Itoa(index)+"."+"vlan.access", map[string]string{})
 				}
 			}
@@ -398,22 +398,22 @@ func (data Template) toBody(ctx context.Context) string {
 	if len(data.IpAccessGroup) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group", []interface{}{})
 		for index, item := range data.IpAccessGroup {
-			if !item.Direction.Null && !item.Direction.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group"+"."+strconv.Itoa(index)+"."+"direction", item.Direction.Value)
+			if !item.Direction.IsNull() && !item.Direction.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group"+"."+strconv.Itoa(index)+"."+"direction", item.Direction.ValueString())
 			}
-			if !item.AccessList.Null && !item.AccessList.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group"+"."+strconv.Itoa(index)+"."+"access-list", item.AccessList.Value)
+			if !item.AccessList.IsNull() && !item.AccessList.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.access-group"+"."+strconv.Itoa(index)+"."+"access-list", item.AccessList.ValueString())
 			}
 		}
 	}
 	if len(data.DeviceTrackingAttachPolicy) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"device-tracking.attach-policy.policy-name", []interface{}{})
 		for index, item := range data.DeviceTrackingAttachPolicy {
-			if !item.PolicyName.Null && !item.PolicyName.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"device-tracking.attach-policy.policy-name"+"."+strconv.Itoa(index)+"."+"policy-name", item.PolicyName.Value)
+			if !item.PolicyName.IsNull() && !item.PolicyName.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"device-tracking.attach-policy.policy-name"+"."+strconv.Itoa(index)+"."+"policy-name", item.PolicyName.ValueString())
 			}
-			if !item.VlanRange.Null && !item.VlanRange.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"device-tracking.attach-policy.policy-name"+"."+strconv.Itoa(index)+"."+"vlan.vlan-range", item.VlanRange.Value)
+			if !item.VlanRange.IsNull() && !item.VlanRange.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"device-tracking.attach-policy.policy-name"+"."+strconv.Itoa(index)+"."+"vlan.vlan-range", item.VlanRange.ValueString())
 			}
 		}
 	}
@@ -426,88 +426,88 @@ func (data *Template) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "template_name"); value.Exists() {
-		data.TemplateName.Value = value.String()
+		data.TemplateName = types.StringValue(value.String())
 	} else {
-		data.TemplateName.Null = true
+		data.TemplateName = types.StringNull()
 	}
 	if value := res.Get(prefix + "dot1x.pae"); value.Exists() {
-		data.Dot1xPae.Value = value.String()
+		data.Dot1xPae = types.StringValue(value.String())
 	} else {
-		data.Dot1xPae.Null = true
+		data.Dot1xPae = types.StringNull()
 	}
 	if value := res.Get(prefix + "dot1x.max-reauth-req"); value.Exists() {
-		data.Dot1xMaxReauthReq.Value = value.Int()
+		data.Dot1xMaxReauthReq = types.Int64Value(value.Int())
 	} else {
-		data.Dot1xMaxReauthReq.Null = true
+		data.Dot1xMaxReauthReq = types.Int64Null()
 	}
 	if value := res.Get(prefix + "dot1x.max-req"); value.Exists() {
-		data.Dot1xMaxReq.Value = value.Int()
+		data.Dot1xMaxReq = types.Int64Value(value.Int())
 	} else {
-		data.Dot1xMaxReq.Null = true
+		data.Dot1xMaxReq = types.Int64Null()
 	}
 	if value := res.Get(prefix + "service-policy.input.policy-map-name"); value.Exists() {
-		data.ServicePolicyInput.Value = value.String()
+		data.ServicePolicyInput = types.StringValue(value.String())
 	} else {
-		data.ServicePolicyInput.Null = true
+		data.ServicePolicyInput = types.StringNull()
 	}
 	if value := res.Get(prefix + "service-policy.output.policy-map-name"); value.Exists() {
-		data.ServicePolicyOutput.Value = value.String()
+		data.ServicePolicyOutput = types.StringValue(value.String())
 	} else {
-		data.ServicePolicyOutput.Null = true
+		data.ServicePolicyOutput = types.StringNull()
 	}
 	if value := res.Get(prefix + "source.template"); value.Exists() {
-		data.SourceTemplate.Value = value.String()
+		data.SourceTemplate = types.StringValue(value.String())
 	} else {
-		data.SourceTemplate.Null = true
+		data.SourceTemplate = types.StringNull()
 	}
 	if value := res.Get(prefix + "switchport.mode.trunk"); value.Exists() {
-		data.SwitchportModeTrunk.Value = true
+		data.SwitchportModeTrunk = types.BoolValue(true)
 	} else {
-		data.SwitchportModeTrunk.Value = false
+		data.SwitchportModeTrunk = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.mode.access"); value.Exists() {
-		data.SwitchportModeAccess.Value = true
+		data.SwitchportModeAccess = types.BoolValue(true)
 	} else {
-		data.SwitchportModeAccess.Value = false
+		data.SwitchportModeAccess = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.nonegotiate"); value.Exists() {
-		data.SwitchportNonegotiate.Value = true
+		data.SwitchportNonegotiate = types.BoolValue(true)
 	} else {
-		data.SwitchportNonegotiate.Value = false
+		data.SwitchportNonegotiate = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.block.unicast"); value.Exists() {
-		data.SwitchportBlockUnicast.Value = true
+		data.SwitchportBlockUnicast = types.BoolValue(true)
 	} else {
-		data.SwitchportBlockUnicast.Value = false
+		data.SwitchportBlockUnicast = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security"); value.Exists() {
-		data.SwitchportPortSecurity.Value = true
+		data.SwitchportPortSecurity = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurity.Value = false
+		data.SwitchportPortSecurity = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.aging.static"); value.Exists() {
-		data.SwitchportPortSecurityAgingStatic.Value = true
+		data.SwitchportPortSecurityAgingStatic = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityAgingStatic.Value = false
+		data.SwitchportPortSecurityAgingStatic = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.aging.time"); value.Exists() {
-		data.SwitchportPortSecurityAgingTime.Value = value.Int()
+		data.SwitchportPortSecurityAgingTime = types.Int64Value(value.Int())
 	} else {
-		data.SwitchportPortSecurityAgingTime.Null = true
+		data.SwitchportPortSecurityAgingTime = types.Int64Null()
 	}
 	if value := res.Get(prefix + "switchport.port-security.aging.type"); value.Exists() {
-		data.SwitchportPortSecurityAgingType.Value = true
+		data.SwitchportPortSecurityAgingType = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityAgingType.Value = false
+		data.SwitchportPortSecurityAgingType = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.aging.type.inactivity"); value.Exists() {
-		data.SwitchportPortSecurityAgingTypeInactivity.Value = true
+		data.SwitchportPortSecurityAgingTypeInactivity = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityAgingTypeInactivity.Value = false
+		data.SwitchportPortSecurityAgingTypeInactivity = types.BoolValue(false)
 	}
 	for i := range data.SwitchportPortSecurityMaximumRange {
 		keys := [...]string{"range"}
-		keyValues := [...]string{strconv.FormatInt(data.SwitchportPortSecurityMaximumRange[i].Range.Value, 10)}
+		keyValues := [...]string{strconv.FormatInt(data.SwitchportPortSecurityMaximumRange[i].Range.ValueInt64(), 10)}
 
 		var r gjson.Result
 		res.Get(prefix + "switchport.port-security.maximum.range").ForEach(
@@ -529,219 +529,219 @@ func (data *Template) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("range"); value.Exists() {
-			data.SwitchportPortSecurityMaximumRange[i].Range.Value = value.Int()
+			data.SwitchportPortSecurityMaximumRange[i].Range = types.Int64Value(value.Int())
 		} else {
-			data.SwitchportPortSecurityMaximumRange[i].Range.Null = true
+			data.SwitchportPortSecurityMaximumRange[i].Range = types.Int64Null()
 		}
 		if value := r.Get("vlan"); value.Exists() {
-			data.SwitchportPortSecurityMaximumRange[i].Vlan.Value = true
+			data.SwitchportPortSecurityMaximumRange[i].Vlan = types.BoolValue(true)
 		} else {
-			data.SwitchportPortSecurityMaximumRange[i].Vlan.Value = false
+			data.SwitchportPortSecurityMaximumRange[i].Vlan = types.BoolValue(false)
 		}
 		if value := r.Get("vlan.access"); value.Exists() {
-			data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Value = true
+			data.SwitchportPortSecurityMaximumRange[i].VlanAccess = types.BoolValue(true)
 		} else {
-			data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Value = false
+			data.SwitchportPortSecurityMaximumRange[i].VlanAccess = types.BoolValue(false)
 		}
 	}
 	if value := res.Get(prefix + "switchport.port-security.violation.protect"); value.Exists() {
-		data.SwitchportPortSecurityViolationProtect.Value = true
+		data.SwitchportPortSecurityViolationProtect = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityViolationProtect.Value = false
+		data.SwitchportPortSecurityViolationProtect = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.violation.restrict"); value.Exists() {
-		data.SwitchportPortSecurityViolationRestrict.Value = true
+		data.SwitchportPortSecurityViolationRestrict = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityViolationRestrict.Value = false
+		data.SwitchportPortSecurityViolationRestrict = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.violation.shutdown"); value.Exists() {
-		data.SwitchportPortSecurityViolationShutdown.Value = true
+		data.SwitchportPortSecurityViolationShutdown = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityViolationShutdown.Value = false
+		data.SwitchportPortSecurityViolationShutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.access.vlan"); value.Exists() {
-		data.SwitchportAccessVlan.Value = value.Int()
+		data.SwitchportAccessVlan = types.Int64Value(value.Int())
 	} else {
-		data.SwitchportAccessVlan.Null = true
+		data.SwitchportAccessVlan = types.Int64Null()
 	}
 	if value := res.Get(prefix + "switchport.voice.vlan"); value.Exists() {
-		data.SwitchportVoiceVlan.Value = value.Int()
+		data.SwitchportVoiceVlan = types.Int64Value(value.Int())
 	} else {
-		data.SwitchportVoiceVlan.Null = true
+		data.SwitchportVoiceVlan = types.Int64Null()
 	}
 	if value := res.Get(prefix + "switchport.private-vlan.host-association.primary-range"); value.Exists() {
-		data.SwitchportPrivateVlanHostAssociationPrimaryRange.Value = value.Int()
+		data.SwitchportPrivateVlanHostAssociationPrimaryRange = types.Int64Value(value.Int())
 	} else {
-		data.SwitchportPrivateVlanHostAssociationPrimaryRange.Null = true
+		data.SwitchportPrivateVlanHostAssociationPrimaryRange = types.Int64Null()
 	}
 	if value := res.Get(prefix + "switchport.private-vlan.host-association.secondary-range"); value.Exists() {
-		data.SwitchportPrivateVlanHostAssociationSecondaryRange.Value = value.Int()
+		data.SwitchportPrivateVlanHostAssociationSecondaryRange = types.Int64Value(value.Int())
 	} else {
-		data.SwitchportPrivateVlanHostAssociationSecondaryRange.Null = true
+		data.SwitchportPrivateVlanHostAssociationSecondaryRange = types.Int64Null()
 	}
 	if value := res.Get(prefix + "switchport.trunk.allowed.vlan.vlans"); value.Exists() {
-		data.SwitchportTrunkAllowedVlans.Value = value.String()
+		data.SwitchportTrunkAllowedVlans = types.StringValue(value.String())
 	} else {
-		data.SwitchportTrunkAllowedVlans.Null = true
+		data.SwitchportTrunkAllowedVlans = types.StringNull()
 	}
 	if value := res.Get(prefix + "switchport.trunk.native.vlan.tag"); value.Exists() {
-		data.SwitchportTrunkNativeVlanTag.Value = value.Bool()
+		data.SwitchportTrunkNativeVlanTag = types.BoolValue(value.Bool())
 	} else {
-		data.SwitchportTrunkNativeVlanTag.Value = false
+		data.SwitchportTrunkNativeVlanTag = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.trunk.native.vlan.vlan-id"); value.Exists() {
-		data.SwitchportTrunkNativeVlanVlanId.Value = value.Int()
+		data.SwitchportTrunkNativeVlanVlanId = types.Int64Value(value.Int())
 	} else {
-		data.SwitchportTrunkNativeVlanVlanId.Null = true
+		data.SwitchportTrunkNativeVlanVlanId = types.Int64Null()
 	}
 	if value := res.Get(prefix + "mab"); value.Exists() {
-		data.Mab.Value = true
+		data.Mab = types.BoolValue(true)
 	} else {
-		data.Mab.Value = false
+		data.Mab = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "mab.eap"); value.Exists() {
-		data.MabEap.Value = true
+		data.MabEap = types.BoolValue(true)
 	} else {
-		data.MabEap.Value = false
+		data.MabEap = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "access-session.closed"); value.Exists() {
-		data.AccessSessionClosed.Value = true
+		data.AccessSessionClosed = types.BoolValue(true)
 	} else {
-		data.AccessSessionClosed.Value = false
+		data.AccessSessionClosed = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "access-session.monitor"); value.Exists() {
-		data.AccessSessionMonitor.Value = value.Bool()
+		data.AccessSessionMonitor = types.BoolValue(value.Bool())
 	} else {
-		data.AccessSessionMonitor.Value = false
+		data.AccessSessionMonitor = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "access-session.port-control"); value.Exists() {
-		data.AccessSessionPortControl.Value = value.String()
+		data.AccessSessionPortControl = types.StringValue(value.String())
 	} else {
-		data.AccessSessionPortControl.Null = true
+		data.AccessSessionPortControl = types.StringNull()
 	}
 	if value := res.Get(prefix + "access-session.control-direction"); value.Exists() {
-		data.AccessSessionControlDirection.Value = value.String()
+		data.AccessSessionControlDirection = types.StringValue(value.String())
 	} else {
-		data.AccessSessionControlDirection.Null = true
+		data.AccessSessionControlDirection = types.StringNull()
 	}
 	if value := res.Get(prefix + "access-session.host-mode"); value.Exists() {
-		data.AccessSessionHostMode.Value = value.String()
+		data.AccessSessionHostMode = types.StringValue(value.String())
 	} else {
-		data.AccessSessionHostMode.Null = true
+		data.AccessSessionHostMode = types.StringNull()
 	}
 	if value := res.Get(prefix + "access-session.interface-template.sticky"); value.Exists() {
-		data.AccessSessionInterfaceTemplateSticky.Value = true
+		data.AccessSessionInterfaceTemplateSticky = types.BoolValue(true)
 	} else {
-		data.AccessSessionInterfaceTemplateSticky.Value = false
+		data.AccessSessionInterfaceTemplateSticky = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "access-session.interface-template.sticky.timer"); value.Exists() {
-		data.AccessSessionInterfaceTemplateStickyTimer.Value = value.Int()
+		data.AccessSessionInterfaceTemplateStickyTimer = types.Int64Value(value.Int())
 	} else {
-		data.AccessSessionInterfaceTemplateStickyTimer.Null = true
+		data.AccessSessionInterfaceTemplateStickyTimer = types.Int64Null()
 	}
 	if value := res.Get(prefix + "authentication.periodic"); value.Exists() {
-		data.AuthenticationPeriodic.Value = true
+		data.AuthenticationPeriodic = types.BoolValue(true)
 	} else {
-		data.AuthenticationPeriodic.Value = false
+		data.AuthenticationPeriodic = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "authentication.timer.reauthenticate.server"); value.Exists() {
-		data.AuthenticationTimerReauthenticateServer.Value = true
+		data.AuthenticationTimerReauthenticateServer = types.BoolValue(true)
 	} else {
-		data.AuthenticationTimerReauthenticateServer.Value = false
+		data.AuthenticationTimerReauthenticateServer = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "authentication.timer.reauthenticate.range"); value.Exists() {
-		data.AuthenticationTimerReauthenticateRange.Value = value.Int()
+		data.AuthenticationTimerReauthenticateRange = types.Int64Value(value.Int())
 	} else {
-		data.AuthenticationTimerReauthenticateRange.Null = true
+		data.AuthenticationTimerReauthenticateRange = types.Int64Null()
 	}
 	if value := res.Get(prefix + "spanning-tree.bpduguard.enable"); value.Exists() {
-		data.SpanningTreeBpduguardEnable.Value = true
+		data.SpanningTreeBpduguardEnable = types.BoolValue(true)
 	} else {
-		data.SpanningTreeBpduguardEnable.Value = false
+		data.SpanningTreeBpduguardEnable = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.service-policy"); value.Exists() {
-		data.SpanningTreeServicePolicy.Value = true
+		data.SpanningTreeServicePolicy = types.BoolValue(true)
 	} else {
-		data.SpanningTreeServicePolicy.Value = false
+		data.SpanningTreeServicePolicy = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.portfast"); value.Exists() {
-		data.SpanningTreePortfast.Value = true
+		data.SpanningTreePortfast = types.BoolValue(true)
 	} else {
-		data.SpanningTreePortfast.Value = false
+		data.SpanningTreePortfast = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.portfast.disable"); value.Exists() {
-		data.SpanningTreePortfastDisable.Value = true
+		data.SpanningTreePortfastDisable = types.BoolValue(true)
 	} else {
-		data.SpanningTreePortfastDisable.Value = false
+		data.SpanningTreePortfastDisable = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.portfast.edge"); value.Exists() {
-		data.SpanningTreePortfastEdge.Value = true
+		data.SpanningTreePortfastEdge = types.BoolValue(true)
 	} else {
-		data.SpanningTreePortfastEdge.Value = false
+		data.SpanningTreePortfastEdge = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.portfast.network"); value.Exists() {
-		data.SpanningTreePortfastNetwork.Value = true
+		data.SpanningTreePortfastNetwork = types.BoolValue(true)
 	} else {
-		data.SpanningTreePortfastNetwork.Value = false
+		data.SpanningTreePortfastNetwork = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "storm-control.broadcast.level.pps.threshold"); value.Exists() {
-		data.StormControlBroadcastLevelPpsThreshold.Value = value.String()
+		data.StormControlBroadcastLevelPpsThreshold = types.StringValue(value.String())
 	} else {
-		data.StormControlBroadcastLevelPpsThreshold.Null = true
+		data.StormControlBroadcastLevelPpsThreshold = types.StringNull()
 	}
 	if value := res.Get(prefix + "storm-control.broadcast.level.bps.threshold"); value.Exists() {
-		data.StormControlBroadcastLevelBpsThreshold.Value = value.Float()
+		data.StormControlBroadcastLevelBpsThreshold = types.Float64Value(value.Float())
 	} else {
-		data.StormControlBroadcastLevelBpsThreshold.Null = true
+		data.StormControlBroadcastLevelBpsThreshold = types.Float64Null()
 	}
 	if value := res.Get(prefix + "storm-control.broadcast.level.threshold"); value.Exists() {
-		data.StormControlBroadcastLevelThreshold.Value = value.Float()
+		data.StormControlBroadcastLevelThreshold = types.Float64Value(value.Float())
 	} else {
-		data.StormControlBroadcastLevelThreshold.Null = true
+		data.StormControlBroadcastLevelThreshold = types.Float64Null()
 	}
 	if value := res.Get(prefix + "storm-control.multicast.level.pps.threshold"); value.Exists() {
-		data.StormControlMulticastLevelPpsThreshold.Value = value.String()
+		data.StormControlMulticastLevelPpsThreshold = types.StringValue(value.String())
 	} else {
-		data.StormControlMulticastLevelPpsThreshold.Null = true
+		data.StormControlMulticastLevelPpsThreshold = types.StringNull()
 	}
 	if value := res.Get(prefix + "storm-control.multicast.level.bps.threshold"); value.Exists() {
-		data.StormControlMulticastLevelBpsThreshold.Value = value.Float()
+		data.StormControlMulticastLevelBpsThreshold = types.Float64Value(value.Float())
 	} else {
-		data.StormControlMulticastLevelBpsThreshold.Null = true
+		data.StormControlMulticastLevelBpsThreshold = types.Float64Null()
 	}
 	if value := res.Get(prefix + "storm-control.multicast.level.threshold"); value.Exists() {
-		data.StormControlMulticastLevelThreshold.Value = value.Float()
+		data.StormControlMulticastLevelThreshold = types.Float64Value(value.Float())
 	} else {
-		data.StormControlMulticastLevelThreshold.Null = true
+		data.StormControlMulticastLevelThreshold = types.Float64Null()
 	}
 	if value := res.Get(prefix + "storm-control.action.shutdown"); value.Exists() {
-		data.StormControlActionShutdown.Value = true
+		data.StormControlActionShutdown = types.BoolValue(true)
 	} else {
-		data.StormControlActionShutdown.Value = false
+		data.StormControlActionShutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "storm-control.action.trap"); value.Exists() {
-		data.StormControlActionTrap.Value = true
+		data.StormControlActionTrap = types.BoolValue(true)
 	} else {
-		data.StormControlActionTrap.Value = false
+		data.StormControlActionTrap = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "load-interval"); value.Exists() {
-		data.LoadInterval.Value = value.Int()
+		data.LoadInterval = types.Int64Value(value.Int())
 	} else {
-		data.LoadInterval.Null = true
+		data.LoadInterval = types.Int64Null()
 	}
 	if value := res.Get(prefix + "ip.dhcp.snooping.limit.rate"); value.Exists() {
-		data.IpDhcpSnoopingLimitRate.Value = value.Int()
+		data.IpDhcpSnoopingLimitRate = types.Int64Value(value.Int())
 	} else {
-		data.IpDhcpSnoopingLimitRate.Null = true
+		data.IpDhcpSnoopingLimitRate = types.Int64Null()
 	}
 	if value := res.Get(prefix + "ip.dhcp.snooping.trust"); value.Exists() {
-		data.IpDhcpSnoopingTrust.Value = true
+		data.IpDhcpSnoopingTrust = types.BoolValue(true)
 	} else {
-		data.IpDhcpSnoopingTrust.Value = false
+		data.IpDhcpSnoopingTrust = types.BoolValue(false)
 	}
 	for i := range data.IpAccessGroup {
 		keys := [...]string{"direction"}
-		keyValues := [...]string{data.IpAccessGroup[i].Direction.Value}
+		keyValues := [...]string{data.IpAccessGroup[i].Direction.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "ip.access-group").ForEach(
@@ -763,39 +763,39 @@ func (data *Template) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("direction"); value.Exists() {
-			data.IpAccessGroup[i].Direction.Value = value.String()
+			data.IpAccessGroup[i].Direction = types.StringValue(value.String())
 		} else {
-			data.IpAccessGroup[i].Direction.Null = true
+			data.IpAccessGroup[i].Direction = types.StringNull()
 		}
 		if value := r.Get("access-list"); value.Exists() {
-			data.IpAccessGroup[i].AccessList.Value = value.String()
+			data.IpAccessGroup[i].AccessList = types.StringValue(value.String())
 		} else {
-			data.IpAccessGroup[i].AccessList.Null = true
+			data.IpAccessGroup[i].AccessList = types.StringNull()
 		}
 	}
 	if value := res.Get(prefix + "subscriber.aging.inactivity-timer.value"); value.Exists() {
-		data.SubscriberAgingInactivityTimerValue.Value = value.Int()
+		data.SubscriberAgingInactivityTimerValue = types.Int64Value(value.Int())
 	} else {
-		data.SubscriberAgingInactivityTimerValue.Null = true
+		data.SubscriberAgingInactivityTimerValue = types.Int64Null()
 	}
 	if value := res.Get(prefix + "subscriber.aging.inactivity-timer.probe"); value.Exists() {
-		data.SubscriberAgingInactivityTimerProbe.Value = true
+		data.SubscriberAgingInactivityTimerProbe = types.BoolValue(true)
 	} else {
-		data.SubscriberAgingInactivityTimerProbe.Value = false
+		data.SubscriberAgingInactivityTimerProbe = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "subscriber.aging.probe"); value.Exists() {
-		data.SubscriberAgingProbe.Value = true
+		data.SubscriberAgingProbe = types.BoolValue(true)
 	} else {
-		data.SubscriberAgingProbe.Value = false
+		data.SubscriberAgingProbe = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "device-tracking"); value.Exists() {
-		data.DeviceTracking.Value = true
+		data.DeviceTracking = types.BoolValue(true)
 	} else {
-		data.DeviceTracking.Value = false
+		data.DeviceTracking = types.BoolValue(false)
 	}
 	for i := range data.DeviceTrackingAttachPolicy {
 		keys := [...]string{"policy-name"}
-		keyValues := [...]string{data.DeviceTrackingAttachPolicy[i].PolicyName.Value}
+		keyValues := [...]string{data.DeviceTrackingAttachPolicy[i].PolicyName.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "device-tracking.attach-policy.policy-name").ForEach(
@@ -817,45 +817,45 @@ func (data *Template) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("policy-name"); value.Exists() {
-			data.DeviceTrackingAttachPolicy[i].PolicyName.Value = value.String()
+			data.DeviceTrackingAttachPolicy[i].PolicyName = types.StringValue(value.String())
 		} else {
-			data.DeviceTrackingAttachPolicy[i].PolicyName.Null = true
+			data.DeviceTrackingAttachPolicy[i].PolicyName = types.StringNull()
 		}
 		if value := r.Get("vlan.vlan-range"); value.Exists() {
-			data.DeviceTrackingAttachPolicy[i].VlanRange.Value = value.String()
+			data.DeviceTrackingAttachPolicy[i].VlanRange = types.StringValue(value.String())
 		} else {
-			data.DeviceTrackingAttachPolicy[i].VlanRange.Null = true
+			data.DeviceTrackingAttachPolicy[i].VlanRange = types.StringNull()
 		}
 	}
 	if value := res.Get(prefix + "device-tracking.vlan.vlan-range"); value.Exists() {
-		data.DeviceTrackingVlanRange.Value = value.String()
+		data.DeviceTrackingVlanRange = types.StringValue(value.String())
 	} else {
-		data.DeviceTrackingVlanRange.Null = true
+		data.DeviceTrackingVlanRange = types.StringNull()
 	}
 	if value := res.Get(prefix + "cts.manual"); value.Exists() {
-		data.CtsManual.Value = true
+		data.CtsManual = types.BoolValue(true)
 	} else {
-		data.CtsManual.Value = false
+		data.CtsManual = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "cts.manual.policy.static.sgt"); value.Exists() {
-		data.CtsManualPolicyStaticSgt.Value = value.Int()
+		data.CtsManualPolicyStaticSgt = types.Int64Value(value.Int())
 	} else {
-		data.CtsManualPolicyStaticSgt.Null = true
+		data.CtsManualPolicyStaticSgt = types.Int64Null()
 	}
 	if value := res.Get(prefix + "cts.manual.policy.static.trusted"); value.Exists() {
-		data.CtsManualPolicyStaticTrusted.Value = true
+		data.CtsManualPolicyStaticTrusted = types.BoolValue(true)
 	} else {
-		data.CtsManualPolicyStaticTrusted.Value = false
+		data.CtsManualPolicyStaticTrusted = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "cts.manual.propagate.sgt"); value.Exists() {
-		data.CtsManualPropagateSgt.Value = value.Bool()
+		data.CtsManualPropagateSgt = types.BoolValue(value.Bool())
 	} else {
-		data.CtsManualPropagateSgt.Value = false
+		data.CtsManualPropagateSgt = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "cts.role-based.enforcement"); value.Exists() {
-		data.CtsRoleBasedEnforcement.Value = value.Bool()
+		data.CtsRoleBasedEnforcement = types.BoolValue(value.Bool())
 	} else {
-		data.CtsRoleBasedEnforcement.Value = false
+		data.CtsRoleBasedEnforcement = types.BoolValue(false)
 	}
 }
 
@@ -865,732 +865,556 @@ func (data *Template) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "dot1x.pae"); value.Exists() {
-		data.Dot1xPae.Value = value.String()
-		data.Dot1xPae.Null = false
+		data.Dot1xPae = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "dot1x.max-reauth-req"); value.Exists() {
-		data.Dot1xMaxReauthReq.Value = value.Int()
-		data.Dot1xMaxReauthReq.Null = false
+		data.Dot1xMaxReauthReq = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "dot1x.max-req"); value.Exists() {
-		data.Dot1xMaxReq.Value = value.Int()
-		data.Dot1xMaxReq.Null = false
+		data.Dot1xMaxReq = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "service-policy.input.policy-map-name"); value.Exists() {
-		data.ServicePolicyInput.Value = value.String()
-		data.ServicePolicyInput.Null = false
+		data.ServicePolicyInput = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "service-policy.output.policy-map-name"); value.Exists() {
-		data.ServicePolicyOutput.Value = value.String()
-		data.ServicePolicyOutput.Null = false
+		data.ServicePolicyOutput = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "source.template"); value.Exists() {
-		data.SourceTemplate.Value = value.String()
-		data.SourceTemplate.Null = false
+		data.SourceTemplate = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "switchport.mode.trunk"); value.Exists() {
-		data.SwitchportModeTrunk.Value = true
-		data.SwitchportModeTrunk.Null = false
+		data.SwitchportModeTrunk = types.BoolValue(true)
 	} else {
-		data.SwitchportModeTrunk.Value = false
-		data.SwitchportModeTrunk.Null = false
+		data.SwitchportModeTrunk = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.mode.access"); value.Exists() {
-		data.SwitchportModeAccess.Value = true
-		data.SwitchportModeAccess.Null = false
+		data.SwitchportModeAccess = types.BoolValue(true)
 	} else {
-		data.SwitchportModeAccess.Value = false
-		data.SwitchportModeAccess.Null = false
+		data.SwitchportModeAccess = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.nonegotiate"); value.Exists() {
-		data.SwitchportNonegotiate.Value = true
-		data.SwitchportNonegotiate.Null = false
+		data.SwitchportNonegotiate = types.BoolValue(true)
 	} else {
-		data.SwitchportNonegotiate.Value = false
-		data.SwitchportNonegotiate.Null = false
+		data.SwitchportNonegotiate = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.block.unicast"); value.Exists() {
-		data.SwitchportBlockUnicast.Value = true
-		data.SwitchportBlockUnicast.Null = false
+		data.SwitchportBlockUnicast = types.BoolValue(true)
 	} else {
-		data.SwitchportBlockUnicast.Value = false
-		data.SwitchportBlockUnicast.Null = false
+		data.SwitchportBlockUnicast = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security"); value.Exists() {
-		data.SwitchportPortSecurity.Value = true
-		data.SwitchportPortSecurity.Null = false
+		data.SwitchportPortSecurity = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurity.Value = false
-		data.SwitchportPortSecurity.Null = false
+		data.SwitchportPortSecurity = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.aging.static"); value.Exists() {
-		data.SwitchportPortSecurityAgingStatic.Value = true
-		data.SwitchportPortSecurityAgingStatic.Null = false
+		data.SwitchportPortSecurityAgingStatic = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityAgingStatic.Value = false
-		data.SwitchportPortSecurityAgingStatic.Null = false
+		data.SwitchportPortSecurityAgingStatic = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.aging.time"); value.Exists() {
-		data.SwitchportPortSecurityAgingTime.Value = value.Int()
-		data.SwitchportPortSecurityAgingTime.Null = false
+		data.SwitchportPortSecurityAgingTime = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "switchport.port-security.aging.type"); value.Exists() {
-		data.SwitchportPortSecurityAgingType.Value = true
-		data.SwitchportPortSecurityAgingType.Null = false
+		data.SwitchportPortSecurityAgingType = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityAgingType.Value = false
-		data.SwitchportPortSecurityAgingType.Null = false
+		data.SwitchportPortSecurityAgingType = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.aging.type.inactivity"); value.Exists() {
-		data.SwitchportPortSecurityAgingTypeInactivity.Value = true
-		data.SwitchportPortSecurityAgingTypeInactivity.Null = false
+		data.SwitchportPortSecurityAgingTypeInactivity = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityAgingTypeInactivity.Value = false
-		data.SwitchportPortSecurityAgingTypeInactivity.Null = false
+		data.SwitchportPortSecurityAgingTypeInactivity = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.maximum.range"); value.Exists() {
 		data.SwitchportPortSecurityMaximumRange = make([]TemplateSwitchportPortSecurityMaximumRange, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := TemplateSwitchportPortSecurityMaximumRange{}
 			if cValue := v.Get("range"); cValue.Exists() {
-				item.Range.Value = cValue.Int()
-				item.Range.Null = false
+				item.Range = types.Int64Value(cValue.Int())
 			}
 			if cValue := v.Get("vlan"); cValue.Exists() {
-				item.Vlan.Value = true
-				item.Vlan.Null = false
+				item.Vlan = types.BoolValue(true)
+			} else {
+				item.Vlan = types.BoolValue(false)
 			}
 			if cValue := v.Get("vlan.access"); cValue.Exists() {
-				item.VlanAccess.Value = true
-				item.VlanAccess.Null = false
+				item.VlanAccess = types.BoolValue(true)
+			} else {
+				item.VlanAccess = types.BoolValue(false)
 			}
 			data.SwitchportPortSecurityMaximumRange = append(data.SwitchportPortSecurityMaximumRange, item)
 			return true
 		})
 	}
 	if value := res.Get(prefix + "switchport.port-security.violation.protect"); value.Exists() {
-		data.SwitchportPortSecurityViolationProtect.Value = true
-		data.SwitchportPortSecurityViolationProtect.Null = false
+		data.SwitchportPortSecurityViolationProtect = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityViolationProtect.Value = false
-		data.SwitchportPortSecurityViolationProtect.Null = false
+		data.SwitchportPortSecurityViolationProtect = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.violation.restrict"); value.Exists() {
-		data.SwitchportPortSecurityViolationRestrict.Value = true
-		data.SwitchportPortSecurityViolationRestrict.Null = false
+		data.SwitchportPortSecurityViolationRestrict = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityViolationRestrict.Value = false
-		data.SwitchportPortSecurityViolationRestrict.Null = false
+		data.SwitchportPortSecurityViolationRestrict = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.port-security.violation.shutdown"); value.Exists() {
-		data.SwitchportPortSecurityViolationShutdown.Value = true
-		data.SwitchportPortSecurityViolationShutdown.Null = false
+		data.SwitchportPortSecurityViolationShutdown = types.BoolValue(true)
 	} else {
-		data.SwitchportPortSecurityViolationShutdown.Value = false
-		data.SwitchportPortSecurityViolationShutdown.Null = false
+		data.SwitchportPortSecurityViolationShutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.access.vlan"); value.Exists() {
-		data.SwitchportAccessVlan.Value = value.Int()
-		data.SwitchportAccessVlan.Null = false
+		data.SwitchportAccessVlan = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "switchport.voice.vlan"); value.Exists() {
-		data.SwitchportVoiceVlan.Value = value.Int()
-		data.SwitchportVoiceVlan.Null = false
+		data.SwitchportVoiceVlan = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "switchport.private-vlan.host-association.primary-range"); value.Exists() {
-		data.SwitchportPrivateVlanHostAssociationPrimaryRange.Value = value.Int()
-		data.SwitchportPrivateVlanHostAssociationPrimaryRange.Null = false
+		data.SwitchportPrivateVlanHostAssociationPrimaryRange = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "switchport.private-vlan.host-association.secondary-range"); value.Exists() {
-		data.SwitchportPrivateVlanHostAssociationSecondaryRange.Value = value.Int()
-		data.SwitchportPrivateVlanHostAssociationSecondaryRange.Null = false
+		data.SwitchportPrivateVlanHostAssociationSecondaryRange = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "switchport.trunk.allowed.vlan.vlans"); value.Exists() {
-		data.SwitchportTrunkAllowedVlans.Value = value.String()
-		data.SwitchportTrunkAllowedVlans.Null = false
+		data.SwitchportTrunkAllowedVlans = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "switchport.trunk.native.vlan.tag"); value.Exists() {
-		data.SwitchportTrunkNativeVlanTag.Value = value.Bool()
-		data.SwitchportTrunkNativeVlanTag.Null = false
+		data.SwitchportTrunkNativeVlanTag = types.BoolValue(value.Bool())
 	} else {
-		data.SwitchportTrunkNativeVlanTag.Value = false
-		data.SwitchportTrunkNativeVlanTag.Null = false
+		data.SwitchportTrunkNativeVlanTag = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "switchport.trunk.native.vlan.vlan-id"); value.Exists() {
-		data.SwitchportTrunkNativeVlanVlanId.Value = value.Int()
-		data.SwitchportTrunkNativeVlanVlanId.Null = false
+		data.SwitchportTrunkNativeVlanVlanId = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "mab"); value.Exists() {
-		data.Mab.Value = true
-		data.Mab.Null = false
+		data.Mab = types.BoolValue(true)
 	} else {
-		data.Mab.Value = false
-		data.Mab.Null = false
+		data.Mab = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "mab.eap"); value.Exists() {
-		data.MabEap.Value = true
-		data.MabEap.Null = false
+		data.MabEap = types.BoolValue(true)
 	} else {
-		data.MabEap.Value = false
-		data.MabEap.Null = false
+		data.MabEap = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "access-session.closed"); value.Exists() {
-		data.AccessSessionClosed.Value = true
-		data.AccessSessionClosed.Null = false
+		data.AccessSessionClosed = types.BoolValue(true)
 	} else {
-		data.AccessSessionClosed.Value = false
-		data.AccessSessionClosed.Null = false
+		data.AccessSessionClosed = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "access-session.monitor"); value.Exists() {
-		data.AccessSessionMonitor.Value = value.Bool()
-		data.AccessSessionMonitor.Null = false
+		data.AccessSessionMonitor = types.BoolValue(value.Bool())
 	} else {
-		data.AccessSessionMonitor.Value = false
-		data.AccessSessionMonitor.Null = false
+		data.AccessSessionMonitor = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "access-session.port-control"); value.Exists() {
-		data.AccessSessionPortControl.Value = value.String()
-		data.AccessSessionPortControl.Null = false
+		data.AccessSessionPortControl = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "access-session.control-direction"); value.Exists() {
-		data.AccessSessionControlDirection.Value = value.String()
-		data.AccessSessionControlDirection.Null = false
+		data.AccessSessionControlDirection = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "access-session.host-mode"); value.Exists() {
-		data.AccessSessionHostMode.Value = value.String()
-		data.AccessSessionHostMode.Null = false
+		data.AccessSessionHostMode = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "access-session.interface-template.sticky"); value.Exists() {
-		data.AccessSessionInterfaceTemplateSticky.Value = true
-		data.AccessSessionInterfaceTemplateSticky.Null = false
+		data.AccessSessionInterfaceTemplateSticky = types.BoolValue(true)
 	} else {
-		data.AccessSessionInterfaceTemplateSticky.Value = false
-		data.AccessSessionInterfaceTemplateSticky.Null = false
+		data.AccessSessionInterfaceTemplateSticky = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "access-session.interface-template.sticky.timer"); value.Exists() {
-		data.AccessSessionInterfaceTemplateStickyTimer.Value = value.Int()
-		data.AccessSessionInterfaceTemplateStickyTimer.Null = false
+		data.AccessSessionInterfaceTemplateStickyTimer = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "authentication.periodic"); value.Exists() {
-		data.AuthenticationPeriodic.Value = true
-		data.AuthenticationPeriodic.Null = false
+		data.AuthenticationPeriodic = types.BoolValue(true)
 	} else {
-		data.AuthenticationPeriodic.Value = false
-		data.AuthenticationPeriodic.Null = false
+		data.AuthenticationPeriodic = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "authentication.timer.reauthenticate.server"); value.Exists() {
-		data.AuthenticationTimerReauthenticateServer.Value = true
-		data.AuthenticationTimerReauthenticateServer.Null = false
+		data.AuthenticationTimerReauthenticateServer = types.BoolValue(true)
 	} else {
-		data.AuthenticationTimerReauthenticateServer.Value = false
-		data.AuthenticationTimerReauthenticateServer.Null = false
+		data.AuthenticationTimerReauthenticateServer = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "authentication.timer.reauthenticate.range"); value.Exists() {
-		data.AuthenticationTimerReauthenticateRange.Value = value.Int()
-		data.AuthenticationTimerReauthenticateRange.Null = false
+		data.AuthenticationTimerReauthenticateRange = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "spanning-tree.bpduguard.enable"); value.Exists() {
-		data.SpanningTreeBpduguardEnable.Value = true
-		data.SpanningTreeBpduguardEnable.Null = false
+		data.SpanningTreeBpduguardEnable = types.BoolValue(true)
 	} else {
-		data.SpanningTreeBpduguardEnable.Value = false
-		data.SpanningTreeBpduguardEnable.Null = false
+		data.SpanningTreeBpduguardEnable = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.service-policy"); value.Exists() {
-		data.SpanningTreeServicePolicy.Value = true
-		data.SpanningTreeServicePolicy.Null = false
+		data.SpanningTreeServicePolicy = types.BoolValue(true)
 	} else {
-		data.SpanningTreeServicePolicy.Value = false
-		data.SpanningTreeServicePolicy.Null = false
+		data.SpanningTreeServicePolicy = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.portfast"); value.Exists() {
-		data.SpanningTreePortfast.Value = true
-		data.SpanningTreePortfast.Null = false
+		data.SpanningTreePortfast = types.BoolValue(true)
 	} else {
-		data.SpanningTreePortfast.Value = false
-		data.SpanningTreePortfast.Null = false
+		data.SpanningTreePortfast = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.portfast.disable"); value.Exists() {
-		data.SpanningTreePortfastDisable.Value = true
-		data.SpanningTreePortfastDisable.Null = false
+		data.SpanningTreePortfastDisable = types.BoolValue(true)
 	} else {
-		data.SpanningTreePortfastDisable.Value = false
-		data.SpanningTreePortfastDisable.Null = false
+		data.SpanningTreePortfastDisable = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.portfast.edge"); value.Exists() {
-		data.SpanningTreePortfastEdge.Value = true
-		data.SpanningTreePortfastEdge.Null = false
+		data.SpanningTreePortfastEdge = types.BoolValue(true)
 	} else {
-		data.SpanningTreePortfastEdge.Value = false
-		data.SpanningTreePortfastEdge.Null = false
+		data.SpanningTreePortfastEdge = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "spanning-tree.portfast.network"); value.Exists() {
-		data.SpanningTreePortfastNetwork.Value = true
-		data.SpanningTreePortfastNetwork.Null = false
+		data.SpanningTreePortfastNetwork = types.BoolValue(true)
 	} else {
-		data.SpanningTreePortfastNetwork.Value = false
-		data.SpanningTreePortfastNetwork.Null = false
+		data.SpanningTreePortfastNetwork = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "storm-control.broadcast.level.pps.threshold"); value.Exists() {
-		data.StormControlBroadcastLevelPpsThreshold.Value = value.String()
-		data.StormControlBroadcastLevelPpsThreshold.Null = false
+		data.StormControlBroadcastLevelPpsThreshold = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "storm-control.broadcast.level.bps.threshold"); value.Exists() {
-		data.StormControlBroadcastLevelBpsThreshold.Value = value.Float()
-		data.StormControlBroadcastLevelBpsThreshold.Null = false
+		data.StormControlBroadcastLevelBpsThreshold = types.Float64Value(value.Float())
 	}
 	if value := res.Get(prefix + "storm-control.broadcast.level.threshold"); value.Exists() {
-		data.StormControlBroadcastLevelThreshold.Value = value.Float()
-		data.StormControlBroadcastLevelThreshold.Null = false
+		data.StormControlBroadcastLevelThreshold = types.Float64Value(value.Float())
 	}
 	if value := res.Get(prefix + "storm-control.multicast.level.pps.threshold"); value.Exists() {
-		data.StormControlMulticastLevelPpsThreshold.Value = value.String()
-		data.StormControlMulticastLevelPpsThreshold.Null = false
+		data.StormControlMulticastLevelPpsThreshold = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "storm-control.multicast.level.bps.threshold"); value.Exists() {
-		data.StormControlMulticastLevelBpsThreshold.Value = value.Float()
-		data.StormControlMulticastLevelBpsThreshold.Null = false
+		data.StormControlMulticastLevelBpsThreshold = types.Float64Value(value.Float())
 	}
 	if value := res.Get(prefix + "storm-control.multicast.level.threshold"); value.Exists() {
-		data.StormControlMulticastLevelThreshold.Value = value.Float()
-		data.StormControlMulticastLevelThreshold.Null = false
+		data.StormControlMulticastLevelThreshold = types.Float64Value(value.Float())
 	}
 	if value := res.Get(prefix + "storm-control.action.shutdown"); value.Exists() {
-		data.StormControlActionShutdown.Value = true
-		data.StormControlActionShutdown.Null = false
+		data.StormControlActionShutdown = types.BoolValue(true)
 	} else {
-		data.StormControlActionShutdown.Value = false
-		data.StormControlActionShutdown.Null = false
+		data.StormControlActionShutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "storm-control.action.trap"); value.Exists() {
-		data.StormControlActionTrap.Value = true
-		data.StormControlActionTrap.Null = false
+		data.StormControlActionTrap = types.BoolValue(true)
 	} else {
-		data.StormControlActionTrap.Value = false
-		data.StormControlActionTrap.Null = false
+		data.StormControlActionTrap = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "load-interval"); value.Exists() {
-		data.LoadInterval.Value = value.Int()
-		data.LoadInterval.Null = false
+		data.LoadInterval = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "ip.dhcp.snooping.limit.rate"); value.Exists() {
-		data.IpDhcpSnoopingLimitRate.Value = value.Int()
-		data.IpDhcpSnoopingLimitRate.Null = false
+		data.IpDhcpSnoopingLimitRate = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "ip.dhcp.snooping.trust"); value.Exists() {
-		data.IpDhcpSnoopingTrust.Value = true
-		data.IpDhcpSnoopingTrust.Null = false
+		data.IpDhcpSnoopingTrust = types.BoolValue(true)
 	} else {
-		data.IpDhcpSnoopingTrust.Value = false
-		data.IpDhcpSnoopingTrust.Null = false
+		data.IpDhcpSnoopingTrust = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "ip.access-group"); value.Exists() {
 		data.IpAccessGroup = make([]TemplateIpAccessGroup, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := TemplateIpAccessGroup{}
 			if cValue := v.Get("direction"); cValue.Exists() {
-				item.Direction.Value = cValue.String()
-				item.Direction.Null = false
+				item.Direction = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("access-list"); cValue.Exists() {
-				item.AccessList.Value = cValue.String()
-				item.AccessList.Null = false
+				item.AccessList = types.StringValue(cValue.String())
 			}
 			data.IpAccessGroup = append(data.IpAccessGroup, item)
 			return true
 		})
 	}
 	if value := res.Get(prefix + "subscriber.aging.inactivity-timer.value"); value.Exists() {
-		data.SubscriberAgingInactivityTimerValue.Value = value.Int()
-		data.SubscriberAgingInactivityTimerValue.Null = false
+		data.SubscriberAgingInactivityTimerValue = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "subscriber.aging.inactivity-timer.probe"); value.Exists() {
-		data.SubscriberAgingInactivityTimerProbe.Value = true
-		data.SubscriberAgingInactivityTimerProbe.Null = false
+		data.SubscriberAgingInactivityTimerProbe = types.BoolValue(true)
 	} else {
-		data.SubscriberAgingInactivityTimerProbe.Value = false
-		data.SubscriberAgingInactivityTimerProbe.Null = false
+		data.SubscriberAgingInactivityTimerProbe = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "subscriber.aging.probe"); value.Exists() {
-		data.SubscriberAgingProbe.Value = true
-		data.SubscriberAgingProbe.Null = false
+		data.SubscriberAgingProbe = types.BoolValue(true)
 	} else {
-		data.SubscriberAgingProbe.Value = false
-		data.SubscriberAgingProbe.Null = false
+		data.SubscriberAgingProbe = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "device-tracking"); value.Exists() {
-		data.DeviceTracking.Value = true
-		data.DeviceTracking.Null = false
+		data.DeviceTracking = types.BoolValue(true)
 	} else {
-		data.DeviceTracking.Value = false
-		data.DeviceTracking.Null = false
+		data.DeviceTracking = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "device-tracking.attach-policy.policy-name"); value.Exists() {
 		data.DeviceTrackingAttachPolicy = make([]TemplateDeviceTrackingAttachPolicy, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := TemplateDeviceTrackingAttachPolicy{}
 			if cValue := v.Get("policy-name"); cValue.Exists() {
-				item.PolicyName.Value = cValue.String()
-				item.PolicyName.Null = false
+				item.PolicyName = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("vlan.vlan-range"); cValue.Exists() {
-				item.VlanRange.Value = cValue.String()
-				item.VlanRange.Null = false
+				item.VlanRange = types.StringValue(cValue.String())
 			}
 			data.DeviceTrackingAttachPolicy = append(data.DeviceTrackingAttachPolicy, item)
 			return true
 		})
 	}
 	if value := res.Get(prefix + "device-tracking.vlan.vlan-range"); value.Exists() {
-		data.DeviceTrackingVlanRange.Value = value.String()
-		data.DeviceTrackingVlanRange.Null = false
+		data.DeviceTrackingVlanRange = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "cts.manual"); value.Exists() {
-		data.CtsManual.Value = true
-		data.CtsManual.Null = false
+		data.CtsManual = types.BoolValue(true)
 	} else {
-		data.CtsManual.Value = false
-		data.CtsManual.Null = false
+		data.CtsManual = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "cts.manual.policy.static.sgt"); value.Exists() {
-		data.CtsManualPolicyStaticSgt.Value = value.Int()
-		data.CtsManualPolicyStaticSgt.Null = false
+		data.CtsManualPolicyStaticSgt = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "cts.manual.policy.static.trusted"); value.Exists() {
-		data.CtsManualPolicyStaticTrusted.Value = true
-		data.CtsManualPolicyStaticTrusted.Null = false
+		data.CtsManualPolicyStaticTrusted = types.BoolValue(true)
 	} else {
-		data.CtsManualPolicyStaticTrusted.Value = false
-		data.CtsManualPolicyStaticTrusted.Null = false
+		data.CtsManualPolicyStaticTrusted = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "cts.manual.propagate.sgt"); value.Exists() {
-		data.CtsManualPropagateSgt.Value = value.Bool()
-		data.CtsManualPropagateSgt.Null = false
+		data.CtsManualPropagateSgt = types.BoolValue(value.Bool())
 	} else {
-		data.CtsManualPropagateSgt.Value = false
-		data.CtsManualPropagateSgt.Null = false
+		data.CtsManualPropagateSgt = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "cts.role-based.enforcement"); value.Exists() {
-		data.CtsRoleBasedEnforcement.Value = value.Bool()
-		data.CtsRoleBasedEnforcement.Null = false
+		data.CtsRoleBasedEnforcement = types.BoolValue(value.Bool())
 	} else {
-		data.CtsRoleBasedEnforcement.Value = false
-		data.CtsRoleBasedEnforcement.Null = false
+		data.CtsRoleBasedEnforcement = types.BoolValue(false)
 	}
 }
 
 func (data *Template) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.TemplateName.Unknown {
-		data.TemplateName.Unknown = false
-		data.TemplateName.Null = true
+	if data.TemplateName.IsUnknown() {
+		data.TemplateName = types.StringNull()
 	}
-	if data.Dot1xPae.Unknown {
-		data.Dot1xPae.Unknown = false
-		data.Dot1xPae.Null = true
+	if data.Dot1xPae.IsUnknown() {
+		data.Dot1xPae = types.StringNull()
 	}
-	if data.Dot1xMaxReauthReq.Unknown {
-		data.Dot1xMaxReauthReq.Unknown = false
-		data.Dot1xMaxReauthReq.Null = true
+	if data.Dot1xMaxReauthReq.IsUnknown() {
+		data.Dot1xMaxReauthReq = types.Int64Null()
 	}
-	if data.Dot1xMaxReq.Unknown {
-		data.Dot1xMaxReq.Unknown = false
-		data.Dot1xMaxReq.Null = true
+	if data.Dot1xMaxReq.IsUnknown() {
+		data.Dot1xMaxReq = types.Int64Null()
 	}
-	if data.ServicePolicyInput.Unknown {
-		data.ServicePolicyInput.Unknown = false
-		data.ServicePolicyInput.Null = true
+	if data.ServicePolicyInput.IsUnknown() {
+		data.ServicePolicyInput = types.StringNull()
 	}
-	if data.ServicePolicyOutput.Unknown {
-		data.ServicePolicyOutput.Unknown = false
-		data.ServicePolicyOutput.Null = true
+	if data.ServicePolicyOutput.IsUnknown() {
+		data.ServicePolicyOutput = types.StringNull()
 	}
-	if data.SourceTemplate.Unknown {
-		data.SourceTemplate.Unknown = false
-		data.SourceTemplate.Null = true
+	if data.SourceTemplate.IsUnknown() {
+		data.SourceTemplate = types.StringNull()
 	}
-	if data.SwitchportModeTrunk.Unknown {
-		data.SwitchportModeTrunk.Unknown = false
-		data.SwitchportModeTrunk.Null = true
+	if data.SwitchportModeTrunk.IsUnknown() {
+		data.SwitchportModeTrunk = types.BoolNull()
 	}
-	if data.SwitchportModeAccess.Unknown {
-		data.SwitchportModeAccess.Unknown = false
-		data.SwitchportModeAccess.Null = true
+	if data.SwitchportModeAccess.IsUnknown() {
+		data.SwitchportModeAccess = types.BoolNull()
 	}
-	if data.SwitchportNonegotiate.Unknown {
-		data.SwitchportNonegotiate.Unknown = false
-		data.SwitchportNonegotiate.Null = true
+	if data.SwitchportNonegotiate.IsUnknown() {
+		data.SwitchportNonegotiate = types.BoolNull()
 	}
-	if data.SwitchportBlockUnicast.Unknown {
-		data.SwitchportBlockUnicast.Unknown = false
-		data.SwitchportBlockUnicast.Null = true
+	if data.SwitchportBlockUnicast.IsUnknown() {
+		data.SwitchportBlockUnicast = types.BoolNull()
 	}
-	if data.SwitchportPortSecurity.Unknown {
-		data.SwitchportPortSecurity.Unknown = false
-		data.SwitchportPortSecurity.Null = true
+	if data.SwitchportPortSecurity.IsUnknown() {
+		data.SwitchportPortSecurity = types.BoolNull()
 	}
-	if data.SwitchportPortSecurityAgingStatic.Unknown {
-		data.SwitchportPortSecurityAgingStatic.Unknown = false
-		data.SwitchportPortSecurityAgingStatic.Null = true
+	if data.SwitchportPortSecurityAgingStatic.IsUnknown() {
+		data.SwitchportPortSecurityAgingStatic = types.BoolNull()
 	}
-	if data.SwitchportPortSecurityAgingTime.Unknown {
-		data.SwitchportPortSecurityAgingTime.Unknown = false
-		data.SwitchportPortSecurityAgingTime.Null = true
+	if data.SwitchportPortSecurityAgingTime.IsUnknown() {
+		data.SwitchportPortSecurityAgingTime = types.Int64Null()
 	}
-	if data.SwitchportPortSecurityAgingType.Unknown {
-		data.SwitchportPortSecurityAgingType.Unknown = false
-		data.SwitchportPortSecurityAgingType.Null = true
+	if data.SwitchportPortSecurityAgingType.IsUnknown() {
+		data.SwitchportPortSecurityAgingType = types.BoolNull()
 	}
-	if data.SwitchportPortSecurityAgingTypeInactivity.Unknown {
-		data.SwitchportPortSecurityAgingTypeInactivity.Unknown = false
-		data.SwitchportPortSecurityAgingTypeInactivity.Null = true
+	if data.SwitchportPortSecurityAgingTypeInactivity.IsUnknown() {
+		data.SwitchportPortSecurityAgingTypeInactivity = types.BoolNull()
 	}
 	for i := range data.SwitchportPortSecurityMaximumRange {
-		if data.SwitchportPortSecurityMaximumRange[i].Range.Unknown {
-			data.SwitchportPortSecurityMaximumRange[i].Range.Unknown = false
-			data.SwitchportPortSecurityMaximumRange[i].Range.Null = true
+		if data.SwitchportPortSecurityMaximumRange[i].Range.IsUnknown() {
+			data.SwitchportPortSecurityMaximumRange[i].Range = types.Int64Null()
 		}
-		if data.SwitchportPortSecurityMaximumRange[i].Vlan.Unknown {
-			data.SwitchportPortSecurityMaximumRange[i].Vlan.Unknown = false
-			data.SwitchportPortSecurityMaximumRange[i].Vlan.Null = true
+		if data.SwitchportPortSecurityMaximumRange[i].Vlan.IsUnknown() {
+			data.SwitchportPortSecurityMaximumRange[i].Vlan = types.BoolNull()
 		}
-		if data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Unknown {
-			data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Unknown = false
-			data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Null = true
+		if data.SwitchportPortSecurityMaximumRange[i].VlanAccess.IsUnknown() {
+			data.SwitchportPortSecurityMaximumRange[i].VlanAccess = types.BoolNull()
 		}
 	}
-	if data.SwitchportPortSecurityViolationProtect.Unknown {
-		data.SwitchportPortSecurityViolationProtect.Unknown = false
-		data.SwitchportPortSecurityViolationProtect.Null = true
+	if data.SwitchportPortSecurityViolationProtect.IsUnknown() {
+		data.SwitchportPortSecurityViolationProtect = types.BoolNull()
 	}
-	if data.SwitchportPortSecurityViolationRestrict.Unknown {
-		data.SwitchportPortSecurityViolationRestrict.Unknown = false
-		data.SwitchportPortSecurityViolationRestrict.Null = true
+	if data.SwitchportPortSecurityViolationRestrict.IsUnknown() {
+		data.SwitchportPortSecurityViolationRestrict = types.BoolNull()
 	}
-	if data.SwitchportPortSecurityViolationShutdown.Unknown {
-		data.SwitchportPortSecurityViolationShutdown.Unknown = false
-		data.SwitchportPortSecurityViolationShutdown.Null = true
+	if data.SwitchportPortSecurityViolationShutdown.IsUnknown() {
+		data.SwitchportPortSecurityViolationShutdown = types.BoolNull()
 	}
-	if data.SwitchportAccessVlan.Unknown {
-		data.SwitchportAccessVlan.Unknown = false
-		data.SwitchportAccessVlan.Null = true
+	if data.SwitchportAccessVlan.IsUnknown() {
+		data.SwitchportAccessVlan = types.Int64Null()
 	}
-	if data.SwitchportVoiceVlan.Unknown {
-		data.SwitchportVoiceVlan.Unknown = false
-		data.SwitchportVoiceVlan.Null = true
+	if data.SwitchportVoiceVlan.IsUnknown() {
+		data.SwitchportVoiceVlan = types.Int64Null()
 	}
-	if data.SwitchportPrivateVlanHostAssociationPrimaryRange.Unknown {
-		data.SwitchportPrivateVlanHostAssociationPrimaryRange.Unknown = false
-		data.SwitchportPrivateVlanHostAssociationPrimaryRange.Null = true
+	if data.SwitchportPrivateVlanHostAssociationPrimaryRange.IsUnknown() {
+		data.SwitchportPrivateVlanHostAssociationPrimaryRange = types.Int64Null()
 	}
-	if data.SwitchportPrivateVlanHostAssociationSecondaryRange.Unknown {
-		data.SwitchportPrivateVlanHostAssociationSecondaryRange.Unknown = false
-		data.SwitchportPrivateVlanHostAssociationSecondaryRange.Null = true
+	if data.SwitchportPrivateVlanHostAssociationSecondaryRange.IsUnknown() {
+		data.SwitchportPrivateVlanHostAssociationSecondaryRange = types.Int64Null()
 	}
-	if data.SwitchportTrunkAllowedVlans.Unknown {
-		data.SwitchportTrunkAllowedVlans.Unknown = false
-		data.SwitchportTrunkAllowedVlans.Null = true
+	if data.SwitchportTrunkAllowedVlans.IsUnknown() {
+		data.SwitchportTrunkAllowedVlans = types.StringNull()
 	}
-	if data.SwitchportTrunkNativeVlanTag.Unknown {
-		data.SwitchportTrunkNativeVlanTag.Unknown = false
-		data.SwitchportTrunkNativeVlanTag.Null = true
+	if data.SwitchportTrunkNativeVlanTag.IsUnknown() {
+		data.SwitchportTrunkNativeVlanTag = types.BoolNull()
 	}
-	if data.SwitchportTrunkNativeVlanVlanId.Unknown {
-		data.SwitchportTrunkNativeVlanVlanId.Unknown = false
-		data.SwitchportTrunkNativeVlanVlanId.Null = true
+	if data.SwitchportTrunkNativeVlanVlanId.IsUnknown() {
+		data.SwitchportTrunkNativeVlanVlanId = types.Int64Null()
 	}
-	if data.Mab.Unknown {
-		data.Mab.Unknown = false
-		data.Mab.Null = true
+	if data.Mab.IsUnknown() {
+		data.Mab = types.BoolNull()
 	}
-	if data.MabEap.Unknown {
-		data.MabEap.Unknown = false
-		data.MabEap.Null = true
+	if data.MabEap.IsUnknown() {
+		data.MabEap = types.BoolNull()
 	}
-	if data.AccessSessionClosed.Unknown {
-		data.AccessSessionClosed.Unknown = false
-		data.AccessSessionClosed.Null = true
+	if data.AccessSessionClosed.IsUnknown() {
+		data.AccessSessionClosed = types.BoolNull()
 	}
-	if data.AccessSessionMonitor.Unknown {
-		data.AccessSessionMonitor.Unknown = false
-		data.AccessSessionMonitor.Null = true
+	if data.AccessSessionMonitor.IsUnknown() {
+		data.AccessSessionMonitor = types.BoolNull()
 	}
-	if data.AccessSessionPortControl.Unknown {
-		data.AccessSessionPortControl.Unknown = false
-		data.AccessSessionPortControl.Null = true
+	if data.AccessSessionPortControl.IsUnknown() {
+		data.AccessSessionPortControl = types.StringNull()
 	}
-	if data.AccessSessionControlDirection.Unknown {
-		data.AccessSessionControlDirection.Unknown = false
-		data.AccessSessionControlDirection.Null = true
+	if data.AccessSessionControlDirection.IsUnknown() {
+		data.AccessSessionControlDirection = types.StringNull()
 	}
-	if data.AccessSessionHostMode.Unknown {
-		data.AccessSessionHostMode.Unknown = false
-		data.AccessSessionHostMode.Null = true
+	if data.AccessSessionHostMode.IsUnknown() {
+		data.AccessSessionHostMode = types.StringNull()
 	}
-	if data.AccessSessionInterfaceTemplateSticky.Unknown {
-		data.AccessSessionInterfaceTemplateSticky.Unknown = false
-		data.AccessSessionInterfaceTemplateSticky.Null = true
+	if data.AccessSessionInterfaceTemplateSticky.IsUnknown() {
+		data.AccessSessionInterfaceTemplateSticky = types.BoolNull()
 	}
-	if data.AccessSessionInterfaceTemplateStickyTimer.Unknown {
-		data.AccessSessionInterfaceTemplateStickyTimer.Unknown = false
-		data.AccessSessionInterfaceTemplateStickyTimer.Null = true
+	if data.AccessSessionInterfaceTemplateStickyTimer.IsUnknown() {
+		data.AccessSessionInterfaceTemplateStickyTimer = types.Int64Null()
 	}
-	if data.AuthenticationPeriodic.Unknown {
-		data.AuthenticationPeriodic.Unknown = false
-		data.AuthenticationPeriodic.Null = true
+	if data.AuthenticationPeriodic.IsUnknown() {
+		data.AuthenticationPeriodic = types.BoolNull()
 	}
-	if data.AuthenticationTimerReauthenticateServer.Unknown {
-		data.AuthenticationTimerReauthenticateServer.Unknown = false
-		data.AuthenticationTimerReauthenticateServer.Null = true
+	if data.AuthenticationTimerReauthenticateServer.IsUnknown() {
+		data.AuthenticationTimerReauthenticateServer = types.BoolNull()
 	}
-	if data.AuthenticationTimerReauthenticateRange.Unknown {
-		data.AuthenticationTimerReauthenticateRange.Unknown = false
-		data.AuthenticationTimerReauthenticateRange.Null = true
+	if data.AuthenticationTimerReauthenticateRange.IsUnknown() {
+		data.AuthenticationTimerReauthenticateRange = types.Int64Null()
 	}
-	if data.SpanningTreeBpduguardEnable.Unknown {
-		data.SpanningTreeBpduguardEnable.Unknown = false
-		data.SpanningTreeBpduguardEnable.Null = true
+	if data.SpanningTreeBpduguardEnable.IsUnknown() {
+		data.SpanningTreeBpduguardEnable = types.BoolNull()
 	}
-	if data.SpanningTreeServicePolicy.Unknown {
-		data.SpanningTreeServicePolicy.Unknown = false
-		data.SpanningTreeServicePolicy.Null = true
+	if data.SpanningTreeServicePolicy.IsUnknown() {
+		data.SpanningTreeServicePolicy = types.BoolNull()
 	}
-	if data.SpanningTreePortfast.Unknown {
-		data.SpanningTreePortfast.Unknown = false
-		data.SpanningTreePortfast.Null = true
+	if data.SpanningTreePortfast.IsUnknown() {
+		data.SpanningTreePortfast = types.BoolNull()
 	}
-	if data.SpanningTreePortfastDisable.Unknown {
-		data.SpanningTreePortfastDisable.Unknown = false
-		data.SpanningTreePortfastDisable.Null = true
+	if data.SpanningTreePortfastDisable.IsUnknown() {
+		data.SpanningTreePortfastDisable = types.BoolNull()
 	}
-	if data.SpanningTreePortfastEdge.Unknown {
-		data.SpanningTreePortfastEdge.Unknown = false
-		data.SpanningTreePortfastEdge.Null = true
+	if data.SpanningTreePortfastEdge.IsUnknown() {
+		data.SpanningTreePortfastEdge = types.BoolNull()
 	}
-	if data.SpanningTreePortfastNetwork.Unknown {
-		data.SpanningTreePortfastNetwork.Unknown = false
-		data.SpanningTreePortfastNetwork.Null = true
+	if data.SpanningTreePortfastNetwork.IsUnknown() {
+		data.SpanningTreePortfastNetwork = types.BoolNull()
 	}
-	if data.StormControlBroadcastLevelPpsThreshold.Unknown {
-		data.StormControlBroadcastLevelPpsThreshold.Unknown = false
-		data.StormControlBroadcastLevelPpsThreshold.Null = true
+	if data.StormControlBroadcastLevelPpsThreshold.IsUnknown() {
+		data.StormControlBroadcastLevelPpsThreshold = types.StringNull()
 	}
-	if data.StormControlBroadcastLevelBpsThreshold.Unknown {
-		data.StormControlBroadcastLevelBpsThreshold.Unknown = false
-		data.StormControlBroadcastLevelBpsThreshold.Null = true
+	if data.StormControlBroadcastLevelBpsThreshold.IsUnknown() {
+		data.StormControlBroadcastLevelBpsThreshold = types.Float64Null()
 	}
-	if data.StormControlBroadcastLevelThreshold.Unknown {
-		data.StormControlBroadcastLevelThreshold.Unknown = false
-		data.StormControlBroadcastLevelThreshold.Null = true
+	if data.StormControlBroadcastLevelThreshold.IsUnknown() {
+		data.StormControlBroadcastLevelThreshold = types.Float64Null()
 	}
-	if data.StormControlMulticastLevelPpsThreshold.Unknown {
-		data.StormControlMulticastLevelPpsThreshold.Unknown = false
-		data.StormControlMulticastLevelPpsThreshold.Null = true
+	if data.StormControlMulticastLevelPpsThreshold.IsUnknown() {
+		data.StormControlMulticastLevelPpsThreshold = types.StringNull()
 	}
-	if data.StormControlMulticastLevelBpsThreshold.Unknown {
-		data.StormControlMulticastLevelBpsThreshold.Unknown = false
-		data.StormControlMulticastLevelBpsThreshold.Null = true
+	if data.StormControlMulticastLevelBpsThreshold.IsUnknown() {
+		data.StormControlMulticastLevelBpsThreshold = types.Float64Null()
 	}
-	if data.StormControlMulticastLevelThreshold.Unknown {
-		data.StormControlMulticastLevelThreshold.Unknown = false
-		data.StormControlMulticastLevelThreshold.Null = true
+	if data.StormControlMulticastLevelThreshold.IsUnknown() {
+		data.StormControlMulticastLevelThreshold = types.Float64Null()
 	}
-	if data.StormControlActionShutdown.Unknown {
-		data.StormControlActionShutdown.Unknown = false
-		data.StormControlActionShutdown.Null = true
+	if data.StormControlActionShutdown.IsUnknown() {
+		data.StormControlActionShutdown = types.BoolNull()
 	}
-	if data.StormControlActionTrap.Unknown {
-		data.StormControlActionTrap.Unknown = false
-		data.StormControlActionTrap.Null = true
+	if data.StormControlActionTrap.IsUnknown() {
+		data.StormControlActionTrap = types.BoolNull()
 	}
-	if data.LoadInterval.Unknown {
-		data.LoadInterval.Unknown = false
-		data.LoadInterval.Null = true
+	if data.LoadInterval.IsUnknown() {
+		data.LoadInterval = types.Int64Null()
 	}
-	if data.IpDhcpSnoopingLimitRate.Unknown {
-		data.IpDhcpSnoopingLimitRate.Unknown = false
-		data.IpDhcpSnoopingLimitRate.Null = true
+	if data.IpDhcpSnoopingLimitRate.IsUnknown() {
+		data.IpDhcpSnoopingLimitRate = types.Int64Null()
 	}
-	if data.IpDhcpSnoopingTrust.Unknown {
-		data.IpDhcpSnoopingTrust.Unknown = false
-		data.IpDhcpSnoopingTrust.Null = true
+	if data.IpDhcpSnoopingTrust.IsUnknown() {
+		data.IpDhcpSnoopingTrust = types.BoolNull()
 	}
 	for i := range data.IpAccessGroup {
-		if data.IpAccessGroup[i].Direction.Unknown {
-			data.IpAccessGroup[i].Direction.Unknown = false
-			data.IpAccessGroup[i].Direction.Null = true
+		if data.IpAccessGroup[i].Direction.IsUnknown() {
+			data.IpAccessGroup[i].Direction = types.StringNull()
 		}
-		if data.IpAccessGroup[i].AccessList.Unknown {
-			data.IpAccessGroup[i].AccessList.Unknown = false
-			data.IpAccessGroup[i].AccessList.Null = true
+		if data.IpAccessGroup[i].AccessList.IsUnknown() {
+			data.IpAccessGroup[i].AccessList = types.StringNull()
 		}
 	}
-	if data.SubscriberAgingInactivityTimerValue.Unknown {
-		data.SubscriberAgingInactivityTimerValue.Unknown = false
-		data.SubscriberAgingInactivityTimerValue.Null = true
+	if data.SubscriberAgingInactivityTimerValue.IsUnknown() {
+		data.SubscriberAgingInactivityTimerValue = types.Int64Null()
 	}
-	if data.SubscriberAgingInactivityTimerProbe.Unknown {
-		data.SubscriberAgingInactivityTimerProbe.Unknown = false
-		data.SubscriberAgingInactivityTimerProbe.Null = true
+	if data.SubscriberAgingInactivityTimerProbe.IsUnknown() {
+		data.SubscriberAgingInactivityTimerProbe = types.BoolNull()
 	}
-	if data.SubscriberAgingProbe.Unknown {
-		data.SubscriberAgingProbe.Unknown = false
-		data.SubscriberAgingProbe.Null = true
+	if data.SubscriberAgingProbe.IsUnknown() {
+		data.SubscriberAgingProbe = types.BoolNull()
 	}
-	if data.DeviceTracking.Unknown {
-		data.DeviceTracking.Unknown = false
-		data.DeviceTracking.Null = true
+	if data.DeviceTracking.IsUnknown() {
+		data.DeviceTracking = types.BoolNull()
 	}
 	for i := range data.DeviceTrackingAttachPolicy {
-		if data.DeviceTrackingAttachPolicy[i].PolicyName.Unknown {
-			data.DeviceTrackingAttachPolicy[i].PolicyName.Unknown = false
-			data.DeviceTrackingAttachPolicy[i].PolicyName.Null = true
+		if data.DeviceTrackingAttachPolicy[i].PolicyName.IsUnknown() {
+			data.DeviceTrackingAttachPolicy[i].PolicyName = types.StringNull()
 		}
-		if data.DeviceTrackingAttachPolicy[i].VlanRange.Unknown {
-			data.DeviceTrackingAttachPolicy[i].VlanRange.Unknown = false
-			data.DeviceTrackingAttachPolicy[i].VlanRange.Null = true
+		if data.DeviceTrackingAttachPolicy[i].VlanRange.IsUnknown() {
+			data.DeviceTrackingAttachPolicy[i].VlanRange = types.StringNull()
 		}
 	}
-	if data.DeviceTrackingVlanRange.Unknown {
-		data.DeviceTrackingVlanRange.Unknown = false
-		data.DeviceTrackingVlanRange.Null = true
+	if data.DeviceTrackingVlanRange.IsUnknown() {
+		data.DeviceTrackingVlanRange = types.StringNull()
 	}
-	if data.CtsManual.Unknown {
-		data.CtsManual.Unknown = false
-		data.CtsManual.Null = true
+	if data.CtsManual.IsUnknown() {
+		data.CtsManual = types.BoolNull()
 	}
-	if data.CtsManualPolicyStaticSgt.Unknown {
-		data.CtsManualPolicyStaticSgt.Unknown = false
-		data.CtsManualPolicyStaticSgt.Null = true
+	if data.CtsManualPolicyStaticSgt.IsUnknown() {
+		data.CtsManualPolicyStaticSgt = types.Int64Null()
 	}
-	if data.CtsManualPolicyStaticTrusted.Unknown {
-		data.CtsManualPolicyStaticTrusted.Unknown = false
-		data.CtsManualPolicyStaticTrusted.Null = true
+	if data.CtsManualPolicyStaticTrusted.IsUnknown() {
+		data.CtsManualPolicyStaticTrusted = types.BoolNull()
 	}
-	if data.CtsManualPropagateSgt.Unknown {
-		data.CtsManualPropagateSgt.Unknown = false
-		data.CtsManualPropagateSgt.Null = true
+	if data.CtsManualPropagateSgt.IsUnknown() {
+		data.CtsManualPropagateSgt = types.BoolNull()
 	}
-	if data.CtsRoleBasedEnforcement.Unknown {
-		data.CtsRoleBasedEnforcement.Unknown = false
-		data.CtsRoleBasedEnforcement.Null = true
+	if data.CtsRoleBasedEnforcement.IsUnknown() {
+		data.CtsRoleBasedEnforcement = types.BoolNull()
 	}
 }
 
 func (data *Template) getDeletedListItems(ctx context.Context, state Template) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.SwitchportPortSecurityMaximumRange {
-		stateKeyValues := [...]string{strconv.FormatInt(state.SwitchportPortSecurityMaximumRange[i].Range.Value, 10)}
+		stateKeyValues := [...]string{strconv.FormatInt(state.SwitchportPortSecurityMaximumRange[i].Range.ValueInt64(), 10)}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.SwitchportPortSecurityMaximumRange[i].Range.Value).IsZero() {
+		if !reflect.ValueOf(state.SwitchportPortSecurityMaximumRange[i].Range.ValueInt64()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -1600,7 +1424,7 @@ func (data *Template) getDeletedListItems(ctx context.Context, state Template) [
 		found := false
 		for j := range data.SwitchportPortSecurityMaximumRange {
 			found = true
-			if state.SwitchportPortSecurityMaximumRange[i].Range.Value != data.SwitchportPortSecurityMaximumRange[j].Range.Value {
+			if state.SwitchportPortSecurityMaximumRange[i].Range.ValueInt64() != data.SwitchportPortSecurityMaximumRange[j].Range.ValueInt64() {
 				found = false
 			}
 			if found {
@@ -1612,10 +1436,10 @@ func (data *Template) getDeletedListItems(ctx context.Context, state Template) [
 		}
 	}
 	for i := range state.IpAccessGroup {
-		stateKeyValues := [...]string{state.IpAccessGroup[i].Direction.Value}
+		stateKeyValues := [...]string{state.IpAccessGroup[i].Direction.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.IpAccessGroup[i].Direction.Value).IsZero() {
+		if !reflect.ValueOf(state.IpAccessGroup[i].Direction.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -1625,7 +1449,7 @@ func (data *Template) getDeletedListItems(ctx context.Context, state Template) [
 		found := false
 		for j := range data.IpAccessGroup {
 			found = true
-			if state.IpAccessGroup[i].Direction.Value != data.IpAccessGroup[j].Direction.Value {
+			if state.IpAccessGroup[i].Direction.ValueString() != data.IpAccessGroup[j].Direction.ValueString() {
 				found = false
 			}
 			if found {
@@ -1637,10 +1461,10 @@ func (data *Template) getDeletedListItems(ctx context.Context, state Template) [
 		}
 	}
 	for i := range state.DeviceTrackingAttachPolicy {
-		stateKeyValues := [...]string{state.DeviceTrackingAttachPolicy[i].PolicyName.Value}
+		stateKeyValues := [...]string{state.DeviceTrackingAttachPolicy[i].PolicyName.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.DeviceTrackingAttachPolicy[i].PolicyName.Value).IsZero() {
+		if !reflect.ValueOf(state.DeviceTrackingAttachPolicy[i].PolicyName.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -1650,7 +1474,7 @@ func (data *Template) getDeletedListItems(ctx context.Context, state Template) [
 		found := false
 		for j := range data.DeviceTrackingAttachPolicy {
 			found = true
-			if state.DeviceTrackingAttachPolicy[i].PolicyName.Value != data.DeviceTrackingAttachPolicy[j].PolicyName.Value {
+			if state.DeviceTrackingAttachPolicy[i].PolicyName.ValueString() != data.DeviceTrackingAttachPolicy[j].PolicyName.ValueString() {
 				found = false
 			}
 			if found {
@@ -1666,85 +1490,85 @@ func (data *Template) getDeletedListItems(ctx context.Context, state Template) [
 
 func (data *Template) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.SwitchportModeTrunk.Value {
+	if !data.SwitchportModeTrunk.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/mode/trunk", data.getPath()))
 	}
-	if !data.SwitchportModeAccess.Value {
+	if !data.SwitchportModeAccess.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/mode/access", data.getPath()))
 	}
-	if !data.SwitchportNonegotiate.Value {
+	if !data.SwitchportNonegotiate.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/nonegotiate", data.getPath()))
 	}
-	if !data.SwitchportBlockUnicast.Value {
+	if !data.SwitchportBlockUnicast.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/block/unicast", data.getPath()))
 	}
-	if !data.SwitchportPortSecurityAgingStatic.Value {
+	if !data.SwitchportPortSecurityAgingStatic.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/aging/static", data.getPath()))
 	}
-	if !data.SwitchportPortSecurityAgingTypeInactivity.Value {
+	if !data.SwitchportPortSecurityAgingTypeInactivity.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/aging/type/inactivity", data.getPath()))
 	}
 
 	for i := range data.SwitchportPortSecurityMaximumRange {
-		keyValues := [...]string{strconv.FormatInt(data.SwitchportPortSecurityMaximumRange[i].Range.Value, 10)}
-		if !data.SwitchportPortSecurityMaximumRange[i].VlanAccess.Value {
+		keyValues := [...]string{strconv.FormatInt(data.SwitchportPortSecurityMaximumRange[i].Range.ValueInt64(), 10)}
+		if !data.SwitchportPortSecurityMaximumRange[i].VlanAccess.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/maximum/range=%v/vlan/access", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}
-	if !data.SwitchportPortSecurityViolationProtect.Value {
+	if !data.SwitchportPortSecurityViolationProtect.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/violation/protect", data.getPath()))
 	}
-	if !data.SwitchportPortSecurityViolationRestrict.Value {
+	if !data.SwitchportPortSecurityViolationRestrict.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/violation/restrict", data.getPath()))
 	}
-	if !data.SwitchportPortSecurityViolationShutdown.Value {
+	if !data.SwitchportPortSecurityViolationShutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/violation/shutdown", data.getPath()))
 	}
-	if !data.MabEap.Value {
+	if !data.MabEap.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/mab/eap", data.getPath()))
 	}
-	if !data.AccessSessionClosed.Value {
+	if !data.AccessSessionClosed.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-session/closed", data.getPath()))
 	}
-	if !data.AuthenticationPeriodic.Value {
+	if !data.AuthenticationPeriodic.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/authentication/periodic", data.getPath()))
 	}
-	if !data.AuthenticationTimerReauthenticateServer.Value {
+	if !data.AuthenticationTimerReauthenticateServer.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/authentication/timer/reauthenticate/value/server/server", data.getPath()))
 	}
-	if !data.SpanningTreeBpduguardEnable.Value {
+	if !data.SpanningTreeBpduguardEnable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/bpduguard/enable", data.getPath()))
 	}
-	if !data.SpanningTreeServicePolicy.Value {
+	if !data.SpanningTreeServicePolicy.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/service-policy", data.getPath()))
 	}
-	if !data.SpanningTreePortfastDisable.Value {
+	if !data.SpanningTreePortfastDisable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/portfast/disable", data.getPath()))
 	}
-	if !data.SpanningTreePortfastEdge.Value {
+	if !data.SpanningTreePortfastEdge.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/portfast/edge", data.getPath()))
 	}
-	if !data.SpanningTreePortfastNetwork.Value {
+	if !data.SpanningTreePortfastNetwork.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/portfast/network", data.getPath()))
 	}
-	if !data.StormControlActionShutdown.Value {
+	if !data.StormControlActionShutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/storm-control/action/shutdown", data.getPath()))
 	}
-	if !data.StormControlActionTrap.Value {
+	if !data.StormControlActionTrap.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/storm-control/action/trap", data.getPath()))
 	}
-	if !data.IpDhcpSnoopingTrust.Value {
+	if !data.IpDhcpSnoopingTrust.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/dhcp/snooping/trust", data.getPath()))
 	}
 
-	if !data.SubscriberAgingInactivityTimerProbe.Value {
+	if !data.SubscriberAgingInactivityTimerProbe.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/timer-probe/inactivity-timer/inactivity-timer/probe", data.getPath()))
 	}
-	if !data.SubscriberAgingProbe.Value {
+	if !data.SubscriberAgingProbe.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/timer-probe/probe/probe", data.getPath()))
 	}
 
-	if !data.CtsManualPolicyStaticTrusted.Value {
+	if !data.CtsManualPolicyStaticTrusted.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/cts/manual/policy/static/trusted", data.getPath()))
 	}
 	return emptyLeafsDelete

@@ -48,37 +48,37 @@ func (data DHCP) getPathShort() string {
 
 func (data DHCP) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.CompatibilitySuboptionLinkSelection.Null && !data.CompatibilitySuboptionLinkSelection.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:compatibility.suboption.link-selection", data.CompatibilitySuboptionLinkSelection.Value)
+	if !data.CompatibilitySuboptionLinkSelection.IsNull() && !data.CompatibilitySuboptionLinkSelection.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:compatibility.suboption.link-selection", data.CompatibilitySuboptionLinkSelection.ValueString())
 	}
-	if !data.CompatibilitySuboptionServerOverride.Null && !data.CompatibilitySuboptionServerOverride.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:compatibility.suboption.server-override", data.CompatibilitySuboptionServerOverride.Value)
+	if !data.CompatibilitySuboptionServerOverride.IsNull() && !data.CompatibilitySuboptionServerOverride.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:compatibility.suboption.server-override", data.CompatibilitySuboptionServerOverride.ValueString())
 	}
-	if !data.RelayInformationTrustAll.Null && !data.RelayInformationTrustAll.Unknown {
-		if data.RelayInformationTrustAll.Value {
+	if !data.RelayInformationTrustAll.IsNull() && !data.RelayInformationTrustAll.IsUnknown() {
+		if data.RelayInformationTrustAll.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:relay.information.trust-all", map[string]string{})
 		}
 	}
-	if !data.RelayInformationOptionDefault.Null && !data.RelayInformationOptionDefault.Unknown {
-		if data.RelayInformationOptionDefault.Value {
+	if !data.RelayInformationOptionDefault.IsNull() && !data.RelayInformationOptionDefault.IsUnknown() {
+		if data.RelayInformationOptionDefault.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:relay.information.option.option-default", map[string]string{})
 		}
 	}
-	if !data.RelayInformationOptionVpn.Null && !data.RelayInformationOptionVpn.Unknown {
-		if data.RelayInformationOptionVpn.Value {
+	if !data.RelayInformationOptionVpn.IsNull() && !data.RelayInformationOptionVpn.IsUnknown() {
+		if data.RelayInformationOptionVpn.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:relay.information.option.vpn", map[string]string{})
 		}
 	}
-	if !data.Snooping.Null && !data.Snooping.Unknown {
-		if data.Snooping.Value {
+	if !data.Snooping.IsNull() && !data.Snooping.IsUnknown() {
+		if data.Snooping.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:snooping", map[string]string{})
 		}
 	}
 	if len(data.SnoopingVlans) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:snooping-conf.snooping.vlan", []interface{}{})
 		for index, item := range data.SnoopingVlans {
-			if !item.VlanId.Null && !item.VlanId.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:snooping-conf.snooping.vlan"+"."+strconv.Itoa(index)+"."+"id", strconv.FormatInt(item.VlanId.Value, 10))
+			if !item.VlanId.IsNull() && !item.VlanId.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-dhcp:snooping-conf.snooping.vlan"+"."+strconv.Itoa(index)+"."+"id", strconv.FormatInt(item.VlanId.ValueInt64(), 10))
 			}
 		}
 	}
@@ -91,38 +91,38 @@ func (data *DHCP) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:compatibility.suboption.link-selection"); value.Exists() {
-		data.CompatibilitySuboptionLinkSelection.Value = value.String()
+		data.CompatibilitySuboptionLinkSelection = types.StringValue(value.String())
 	} else {
-		data.CompatibilitySuboptionLinkSelection.Null = true
+		data.CompatibilitySuboptionLinkSelection = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:compatibility.suboption.server-override"); value.Exists() {
-		data.CompatibilitySuboptionServerOverride.Value = value.String()
+		data.CompatibilitySuboptionServerOverride = types.StringValue(value.String())
 	} else {
-		data.CompatibilitySuboptionServerOverride.Null = true
+		data.CompatibilitySuboptionServerOverride = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.trust-all"); value.Exists() {
-		data.RelayInformationTrustAll.Value = true
+		data.RelayInformationTrustAll = types.BoolValue(true)
 	} else {
-		data.RelayInformationTrustAll.Value = false
+		data.RelayInformationTrustAll = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.option.option-default"); value.Exists() {
-		data.RelayInformationOptionDefault.Value = true
+		data.RelayInformationOptionDefault = types.BoolValue(true)
 	} else {
-		data.RelayInformationOptionDefault.Value = false
+		data.RelayInformationOptionDefault = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.option.vpn"); value.Exists() {
-		data.RelayInformationOptionVpn.Value = true
+		data.RelayInformationOptionVpn = types.BoolValue(true)
 	} else {
-		data.RelayInformationOptionVpn.Value = false
+		data.RelayInformationOptionVpn = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:snooping"); value.Exists() {
-		data.Snooping.Value = true
+		data.Snooping = types.BoolValue(true)
 	} else {
-		data.Snooping.Value = false
+		data.Snooping = types.BoolValue(false)
 	}
 	for i := range data.SnoopingVlans {
 		keys := [...]string{"id"}
-		keyValues := [...]string{strconv.FormatInt(data.SnoopingVlans[i].VlanId.Value, 10)}
+		keyValues := [...]string{strconv.FormatInt(data.SnoopingVlans[i].VlanId.ValueInt64(), 10)}
 
 		var r gjson.Result
 		res.Get(prefix + "Cisco-IOS-XE-dhcp:snooping-conf.snooping.vlan").ForEach(
@@ -144,9 +144,9 @@ func (data *DHCP) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("id"); value.Exists() {
-			data.SnoopingVlans[i].VlanId.Value = value.Int()
+			data.SnoopingVlans[i].VlanId = types.Int64Value(value.Int())
 		} else {
-			data.SnoopingVlans[i].VlanId.Null = true
+			data.SnoopingVlans[i].VlanId = types.Int64Null()
 		}
 	}
 }
@@ -157,48 +157,37 @@ func (data *DHCP) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:compatibility.suboption.link-selection"); value.Exists() {
-		data.CompatibilitySuboptionLinkSelection.Value = value.String()
-		data.CompatibilitySuboptionLinkSelection.Null = false
+		data.CompatibilitySuboptionLinkSelection = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:compatibility.suboption.server-override"); value.Exists() {
-		data.CompatibilitySuboptionServerOverride.Value = value.String()
-		data.CompatibilitySuboptionServerOverride.Null = false
+		data.CompatibilitySuboptionServerOverride = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.trust-all"); value.Exists() {
-		data.RelayInformationTrustAll.Value = true
-		data.RelayInformationTrustAll.Null = false
+		data.RelayInformationTrustAll = types.BoolValue(true)
 	} else {
-		data.RelayInformationTrustAll.Value = false
-		data.RelayInformationTrustAll.Null = false
+		data.RelayInformationTrustAll = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.option.option-default"); value.Exists() {
-		data.RelayInformationOptionDefault.Value = true
-		data.RelayInformationOptionDefault.Null = false
+		data.RelayInformationOptionDefault = types.BoolValue(true)
 	} else {
-		data.RelayInformationOptionDefault.Value = false
-		data.RelayInformationOptionDefault.Null = false
+		data.RelayInformationOptionDefault = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.option.vpn"); value.Exists() {
-		data.RelayInformationOptionVpn.Value = true
-		data.RelayInformationOptionVpn.Null = false
+		data.RelayInformationOptionVpn = types.BoolValue(true)
 	} else {
-		data.RelayInformationOptionVpn.Value = false
-		data.RelayInformationOptionVpn.Null = false
+		data.RelayInformationOptionVpn = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:snooping"); value.Exists() {
-		data.Snooping.Value = true
-		data.Snooping.Null = false
+		data.Snooping = types.BoolValue(true)
 	} else {
-		data.Snooping.Value = false
-		data.Snooping.Null = false
+		data.Snooping = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:snooping-conf.snooping.vlan"); value.Exists() {
 		data.SnoopingVlans = make([]DHCPSnoopingVlans, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := DHCPSnoopingVlans{}
 			if cValue := v.Get("id"); cValue.Exists() {
-				item.VlanId.Value = cValue.Int()
-				item.VlanId.Null = false
+				item.VlanId = types.Int64Value(cValue.Int())
 			}
 			data.SnoopingVlans = append(data.SnoopingVlans, item)
 			return true
@@ -207,42 +196,33 @@ func (data *DHCP) fromBody(ctx context.Context, res gjson.Result) {
 }
 
 func (data *DHCP) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.CompatibilitySuboptionLinkSelection.Unknown {
-		data.CompatibilitySuboptionLinkSelection.Unknown = false
-		data.CompatibilitySuboptionLinkSelection.Null = true
+	if data.CompatibilitySuboptionLinkSelection.IsUnknown() {
+		data.CompatibilitySuboptionLinkSelection = types.StringNull()
 	}
-	if data.CompatibilitySuboptionServerOverride.Unknown {
-		data.CompatibilitySuboptionServerOverride.Unknown = false
-		data.CompatibilitySuboptionServerOverride.Null = true
+	if data.CompatibilitySuboptionServerOverride.IsUnknown() {
+		data.CompatibilitySuboptionServerOverride = types.StringNull()
 	}
-	if data.RelayInformationTrustAll.Unknown {
-		data.RelayInformationTrustAll.Unknown = false
-		data.RelayInformationTrustAll.Null = true
+	if data.RelayInformationTrustAll.IsUnknown() {
+		data.RelayInformationTrustAll = types.BoolNull()
 	}
-	if data.RelayInformationOptionDefault.Unknown {
-		data.RelayInformationOptionDefault.Unknown = false
-		data.RelayInformationOptionDefault.Null = true
+	if data.RelayInformationOptionDefault.IsUnknown() {
+		data.RelayInformationOptionDefault = types.BoolNull()
 	}
-	if data.RelayInformationOptionVpn.Unknown {
-		data.RelayInformationOptionVpn.Unknown = false
-		data.RelayInformationOptionVpn.Null = true
+	if data.RelayInformationOptionVpn.IsUnknown() {
+		data.RelayInformationOptionVpn = types.BoolNull()
 	}
-	if data.Snooping.Unknown {
-		data.Snooping.Unknown = false
-		data.Snooping.Null = true
+	if data.Snooping.IsUnknown() {
+		data.Snooping = types.BoolNull()
 	}
 	for i := range data.SnoopingVlans {
-		if data.SnoopingVlans[i].VlanId.Unknown {
-			data.SnoopingVlans[i].VlanId.Unknown = false
-			data.SnoopingVlans[i].VlanId.Null = true
+		if data.SnoopingVlans[i].VlanId.IsUnknown() {
+			data.SnoopingVlans[i].VlanId = types.Int64Null()
 		}
 	}
 }
@@ -250,10 +230,10 @@ func (data *DHCP) setUnknownValues(ctx context.Context) {
 func (data *DHCP) getDeletedListItems(ctx context.Context, state DHCP) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.SnoopingVlans {
-		stateKeyValues := [...]string{strconv.FormatInt(state.SnoopingVlans[i].VlanId.Value, 10)}
+		stateKeyValues := [...]string{strconv.FormatInt(state.SnoopingVlans[i].VlanId.ValueInt64(), 10)}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.SnoopingVlans[i].VlanId.Value).IsZero() {
+		if !reflect.ValueOf(state.SnoopingVlans[i].VlanId.ValueInt64()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -263,7 +243,7 @@ func (data *DHCP) getDeletedListItems(ctx context.Context, state DHCP) []string 
 		found := false
 		for j := range data.SnoopingVlans {
 			found = true
-			if state.SnoopingVlans[i].VlanId.Value != data.SnoopingVlans[j].VlanId.Value {
+			if state.SnoopingVlans[i].VlanId.ValueInt64() != data.SnoopingVlans[j].VlanId.ValueInt64() {
 				found = false
 			}
 			if found {
@@ -279,16 +259,16 @@ func (data *DHCP) getDeletedListItems(ctx context.Context, state DHCP) []string 
 
 func (data *DHCP) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.RelayInformationTrustAll.Value {
+	if !data.RelayInformationTrustAll.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/trust-all", data.getPath()))
 	}
-	if !data.RelayInformationOptionDefault.Value {
+	if !data.RelayInformationOptionDefault.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/option/option-default", data.getPath()))
 	}
-	if !data.RelayInformationOptionVpn.Value {
+	if !data.RelayInformationOptionVpn.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/option/vpn", data.getPath()))
 	}
-	if !data.Snooping.Value {
+	if !data.Snooping.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:snooping", data.getPath()))
 	}
 

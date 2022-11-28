@@ -37,7 +37,7 @@ type LoggingIPv6HostTransportTransportTlsPorts struct {
 }
 
 func (data LoggingIPv6HostTransport) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/logging/host/ipv6/ipv6-host-transport-list=%s", url.QueryEscape(fmt.Sprintf("%v", data.Ipv6Host.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/logging/host/ipv6/ipv6-host-transport-list=%s", url.QueryEscape(fmt.Sprintf("%v", data.Ipv6Host.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -53,33 +53,33 @@ func (data LoggingIPv6HostTransport) getPathShort() string {
 
 func (data LoggingIPv6HostTransport) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Ipv6Host.Null && !data.Ipv6Host.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ipv6-host", data.Ipv6Host.Value)
+	if !data.Ipv6Host.IsNull() && !data.Ipv6Host.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ipv6-host", data.Ipv6Host.ValueString())
 	}
 	if len(data.TransportUdpPorts) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.udp.port-config", []interface{}{})
 		for index, item := range data.TransportUdpPorts {
-			if !item.PortNumber.Null && !item.PortNumber.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.udp.port-config"+"."+strconv.Itoa(index)+"."+"port-number", strconv.FormatInt(item.PortNumber.Value, 10))
+			if !item.PortNumber.IsNull() && !item.PortNumber.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.udp.port-config"+"."+strconv.Itoa(index)+"."+"port-number", strconv.FormatInt(item.PortNumber.ValueInt64(), 10))
 			}
 		}
 	}
 	if len(data.TransportTcpPorts) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.tcp.port-config", []interface{}{})
 		for index, item := range data.TransportTcpPorts {
-			if !item.PortNumber.Null && !item.PortNumber.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.tcp.port-config"+"."+strconv.Itoa(index)+"."+"port-number", strconv.FormatInt(item.PortNumber.Value, 10))
+			if !item.PortNumber.IsNull() && !item.PortNumber.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.tcp.port-config"+"."+strconv.Itoa(index)+"."+"port-number", strconv.FormatInt(item.PortNumber.ValueInt64(), 10))
 			}
 		}
 	}
 	if len(data.TransportTlsPorts) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.tls.port", []interface{}{})
 		for index, item := range data.TransportTlsPorts {
-			if !item.PortNumber.Null && !item.PortNumber.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.tls.port"+"."+strconv.Itoa(index)+"."+"port-number", strconv.FormatInt(item.PortNumber.Value, 10))
+			if !item.PortNumber.IsNull() && !item.PortNumber.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.tls.port"+"."+strconv.Itoa(index)+"."+"port-number", strconv.FormatInt(item.PortNumber.ValueInt64(), 10))
 			}
-			if !item.Profile.Null && !item.Profile.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.tls.port"+"."+strconv.Itoa(index)+"."+"profile", item.Profile.Value)
+			if !item.Profile.IsNull() && !item.Profile.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"transport.tls.port"+"."+strconv.Itoa(index)+"."+"profile", item.Profile.ValueString())
 			}
 		}
 	}
@@ -92,13 +92,13 @@ func (data *LoggingIPv6HostTransport) updateFromBody(ctx context.Context, res gj
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "ipv6-host"); value.Exists() {
-		data.Ipv6Host.Value = value.String()
+		data.Ipv6Host = types.StringValue(value.String())
 	} else {
-		data.Ipv6Host.Null = true
+		data.Ipv6Host = types.StringNull()
 	}
 	for i := range data.TransportUdpPorts {
 		keys := [...]string{"port-number"}
-		keyValues := [...]string{strconv.FormatInt(data.TransportUdpPorts[i].PortNumber.Value, 10)}
+		keyValues := [...]string{strconv.FormatInt(data.TransportUdpPorts[i].PortNumber.ValueInt64(), 10)}
 
 		var r gjson.Result
 		res.Get(prefix + "transport.udp.port-config").ForEach(
@@ -120,14 +120,14 @@ func (data *LoggingIPv6HostTransport) updateFromBody(ctx context.Context, res gj
 			},
 		)
 		if value := r.Get("port-number"); value.Exists() {
-			data.TransportUdpPorts[i].PortNumber.Value = value.Int()
+			data.TransportUdpPorts[i].PortNumber = types.Int64Value(value.Int())
 		} else {
-			data.TransportUdpPorts[i].PortNumber.Null = true
+			data.TransportUdpPorts[i].PortNumber = types.Int64Null()
 		}
 	}
 	for i := range data.TransportTcpPorts {
 		keys := [...]string{"port-number"}
-		keyValues := [...]string{strconv.FormatInt(data.TransportTcpPorts[i].PortNumber.Value, 10)}
+		keyValues := [...]string{strconv.FormatInt(data.TransportTcpPorts[i].PortNumber.ValueInt64(), 10)}
 
 		var r gjson.Result
 		res.Get(prefix + "transport.tcp.port-config").ForEach(
@@ -149,14 +149,14 @@ func (data *LoggingIPv6HostTransport) updateFromBody(ctx context.Context, res gj
 			},
 		)
 		if value := r.Get("port-number"); value.Exists() {
-			data.TransportTcpPorts[i].PortNumber.Value = value.Int()
+			data.TransportTcpPorts[i].PortNumber = types.Int64Value(value.Int())
 		} else {
-			data.TransportTcpPorts[i].PortNumber.Null = true
+			data.TransportTcpPorts[i].PortNumber = types.Int64Null()
 		}
 	}
 	for i := range data.TransportTlsPorts {
 		keys := [...]string{"port-number"}
-		keyValues := [...]string{strconv.FormatInt(data.TransportTlsPorts[i].PortNumber.Value, 10)}
+		keyValues := [...]string{strconv.FormatInt(data.TransportTlsPorts[i].PortNumber.ValueInt64(), 10)}
 
 		var r gjson.Result
 		res.Get(prefix + "transport.tls.port").ForEach(
@@ -178,14 +178,14 @@ func (data *LoggingIPv6HostTransport) updateFromBody(ctx context.Context, res gj
 			},
 		)
 		if value := r.Get("port-number"); value.Exists() {
-			data.TransportTlsPorts[i].PortNumber.Value = value.Int()
+			data.TransportTlsPorts[i].PortNumber = types.Int64Value(value.Int())
 		} else {
-			data.TransportTlsPorts[i].PortNumber.Null = true
+			data.TransportTlsPorts[i].PortNumber = types.Int64Null()
 		}
 		if value := r.Get("profile"); value.Exists() {
-			data.TransportTlsPorts[i].Profile.Value = value.String()
+			data.TransportTlsPorts[i].Profile = types.StringValue(value.String())
 		} else {
-			data.TransportTlsPorts[i].Profile.Null = true
+			data.TransportTlsPorts[i].Profile = types.StringNull()
 		}
 	}
 }
@@ -200,8 +200,7 @@ func (data *LoggingIPv6HostTransport) fromBody(ctx context.Context, res gjson.Re
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := LoggingIPv6HostTransportTransportUdpPorts{}
 			if cValue := v.Get("port-number"); cValue.Exists() {
-				item.PortNumber.Value = cValue.Int()
-				item.PortNumber.Null = false
+				item.PortNumber = types.Int64Value(cValue.Int())
 			}
 			data.TransportUdpPorts = append(data.TransportUdpPorts, item)
 			return true
@@ -212,8 +211,7 @@ func (data *LoggingIPv6HostTransport) fromBody(ctx context.Context, res gjson.Re
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := LoggingIPv6HostTransportTransportTcpPorts{}
 			if cValue := v.Get("port-number"); cValue.Exists() {
-				item.PortNumber.Value = cValue.Int()
-				item.PortNumber.Null = false
+				item.PortNumber = types.Int64Value(cValue.Int())
 			}
 			data.TransportTcpPorts = append(data.TransportTcpPorts, item)
 			return true
@@ -224,12 +222,10 @@ func (data *LoggingIPv6HostTransport) fromBody(ctx context.Context, res gjson.Re
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := LoggingIPv6HostTransportTransportTlsPorts{}
 			if cValue := v.Get("port-number"); cValue.Exists() {
-				item.PortNumber.Value = cValue.Int()
-				item.PortNumber.Null = false
+				item.PortNumber = types.Int64Value(cValue.Int())
 			}
 			if cValue := v.Get("profile"); cValue.Exists() {
-				item.Profile.Value = cValue.String()
-				item.Profile.Null = false
+				item.Profile = types.StringValue(cValue.String())
 			}
 			data.TransportTlsPorts = append(data.TransportTlsPorts, item)
 			return true
@@ -238,38 +234,31 @@ func (data *LoggingIPv6HostTransport) fromBody(ctx context.Context, res gjson.Re
 }
 
 func (data *LoggingIPv6HostTransport) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Ipv6Host.Unknown {
-		data.Ipv6Host.Unknown = false
-		data.Ipv6Host.Null = true
+	if data.Ipv6Host.IsUnknown() {
+		data.Ipv6Host = types.StringNull()
 	}
 	for i := range data.TransportUdpPorts {
-		if data.TransportUdpPorts[i].PortNumber.Unknown {
-			data.TransportUdpPorts[i].PortNumber.Unknown = false
-			data.TransportUdpPorts[i].PortNumber.Null = true
+		if data.TransportUdpPorts[i].PortNumber.IsUnknown() {
+			data.TransportUdpPorts[i].PortNumber = types.Int64Null()
 		}
 	}
 	for i := range data.TransportTcpPorts {
-		if data.TransportTcpPorts[i].PortNumber.Unknown {
-			data.TransportTcpPorts[i].PortNumber.Unknown = false
-			data.TransportTcpPorts[i].PortNumber.Null = true
+		if data.TransportTcpPorts[i].PortNumber.IsUnknown() {
+			data.TransportTcpPorts[i].PortNumber = types.Int64Null()
 		}
 	}
 	for i := range data.TransportTlsPorts {
-		if data.TransportTlsPorts[i].PortNumber.Unknown {
-			data.TransportTlsPorts[i].PortNumber.Unknown = false
-			data.TransportTlsPorts[i].PortNumber.Null = true
+		if data.TransportTlsPorts[i].PortNumber.IsUnknown() {
+			data.TransportTlsPorts[i].PortNumber = types.Int64Null()
 		}
-		if data.TransportTlsPorts[i].Profile.Unknown {
-			data.TransportTlsPorts[i].Profile.Unknown = false
-			data.TransportTlsPorts[i].Profile.Null = true
+		if data.TransportTlsPorts[i].Profile.IsUnknown() {
+			data.TransportTlsPorts[i].Profile = types.StringNull()
 		}
 	}
 }
@@ -277,10 +266,10 @@ func (data *LoggingIPv6HostTransport) setUnknownValues(ctx context.Context) {
 func (data *LoggingIPv6HostTransport) getDeletedListItems(ctx context.Context, state LoggingIPv6HostTransport) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.TransportUdpPorts {
-		stateKeyValues := [...]string{strconv.FormatInt(state.TransportUdpPorts[i].PortNumber.Value, 10)}
+		stateKeyValues := [...]string{strconv.FormatInt(state.TransportUdpPorts[i].PortNumber.ValueInt64(), 10)}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.TransportUdpPorts[i].PortNumber.Value).IsZero() {
+		if !reflect.ValueOf(state.TransportUdpPorts[i].PortNumber.ValueInt64()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -290,7 +279,7 @@ func (data *LoggingIPv6HostTransport) getDeletedListItems(ctx context.Context, s
 		found := false
 		for j := range data.TransportUdpPorts {
 			found = true
-			if state.TransportUdpPorts[i].PortNumber.Value != data.TransportUdpPorts[j].PortNumber.Value {
+			if state.TransportUdpPorts[i].PortNumber.ValueInt64() != data.TransportUdpPorts[j].PortNumber.ValueInt64() {
 				found = false
 			}
 			if found {
@@ -302,10 +291,10 @@ func (data *LoggingIPv6HostTransport) getDeletedListItems(ctx context.Context, s
 		}
 	}
 	for i := range state.TransportTcpPorts {
-		stateKeyValues := [...]string{strconv.FormatInt(state.TransportTcpPorts[i].PortNumber.Value, 10)}
+		stateKeyValues := [...]string{strconv.FormatInt(state.TransportTcpPorts[i].PortNumber.ValueInt64(), 10)}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.TransportTcpPorts[i].PortNumber.Value).IsZero() {
+		if !reflect.ValueOf(state.TransportTcpPorts[i].PortNumber.ValueInt64()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -315,7 +304,7 @@ func (data *LoggingIPv6HostTransport) getDeletedListItems(ctx context.Context, s
 		found := false
 		for j := range data.TransportTcpPorts {
 			found = true
-			if state.TransportTcpPorts[i].PortNumber.Value != data.TransportTcpPorts[j].PortNumber.Value {
+			if state.TransportTcpPorts[i].PortNumber.ValueInt64() != data.TransportTcpPorts[j].PortNumber.ValueInt64() {
 				found = false
 			}
 			if found {
@@ -327,10 +316,10 @@ func (data *LoggingIPv6HostTransport) getDeletedListItems(ctx context.Context, s
 		}
 	}
 	for i := range state.TransportTlsPorts {
-		stateKeyValues := [...]string{strconv.FormatInt(state.TransportTlsPorts[i].PortNumber.Value, 10)}
+		stateKeyValues := [...]string{strconv.FormatInt(state.TransportTlsPorts[i].PortNumber.ValueInt64(), 10)}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.TransportTlsPorts[i].PortNumber.Value).IsZero() {
+		if !reflect.ValueOf(state.TransportTlsPorts[i].PortNumber.ValueInt64()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -340,7 +329,7 @@ func (data *LoggingIPv6HostTransport) getDeletedListItems(ctx context.Context, s
 		found := false
 		for j := range data.TransportTlsPorts {
 			found = true
-			if state.TransportTlsPorts[i].PortNumber.Value != data.TransportTlsPorts[j].PortNumber.Value {
+			if state.TransportTlsPorts[i].PortNumber.ValueInt64() != data.TransportTlsPorts[j].PortNumber.ValueInt64() {
 				found = false
 			}
 			if found {

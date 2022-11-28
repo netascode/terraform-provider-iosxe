@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceSNMPServerType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &SNMPServerDataSource{}
+	_ datasource.DataSourceWithConfigure = &SNMPServerDataSource{}
+)
 
-func (t dataSourceSNMPServerType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewSNMPServerDataSource() datasource.DataSource {
+	return &SNMPServerDataSource{}
+}
+
+type SNMPServerDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *SNMPServerDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_snmp_server"
+}
+
+func (d *SNMPServerDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the SNMP Server configuration.",
@@ -294,19 +310,15 @@ func (t dataSourceSNMPServerType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 	}, nil
 }
 
-func (t dataSourceSNMPServerType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *SNMPServerDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceSNMPServer{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceSNMPServer struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceSNMPServer) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *SNMPServerDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config SNMPServer
 
 	// Read config
@@ -318,7 +330,7 @@ func (d dataSourceSNMPServer) Read(ctx context.Context, req datasource.ReadReque
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = SNMPServer{Device: config.Device}
 	} else {
@@ -330,7 +342,7 @@ func (d dataSourceSNMPServer) Read(ctx context.Context, req datasource.ReadReque
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

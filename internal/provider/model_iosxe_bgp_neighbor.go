@@ -26,7 +26,7 @@ type BGPNeighbor struct {
 }
 
 func (data BGPNeighbor) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.Value)), url.QueryEscape(fmt.Sprintf("%v", data.Ip.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -42,22 +42,22 @@ func (data BGPNeighbor) getPathShort() string {
 
 func (data BGPNeighbor) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Ip.Null && !data.Ip.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Ip.Value)
+	if !data.Ip.IsNull() && !data.Ip.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Ip.ValueString())
 	}
-	if !data.RemoteAs.Null && !data.RemoteAs.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"remote-as", data.RemoteAs.Value)
+	if !data.RemoteAs.IsNull() && !data.RemoteAs.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"remote-as", data.RemoteAs.ValueString())
 	}
-	if !data.Description.Null && !data.Description.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.Value)
+	if !data.Description.IsNull() && !data.Description.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"description", data.Description.ValueString())
 	}
-	if !data.Shutdown.Null && !data.Shutdown.Unknown {
-		if data.Shutdown.Value {
+	if !data.Shutdown.IsNull() && !data.Shutdown.IsUnknown() {
+		if data.Shutdown.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"shutdown", map[string]string{})
 		}
 	}
-	if !data.UpdateSourceLoopback.Null && !data.UpdateSourceLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"update-source.interface.Loopback", data.UpdateSourceLoopback.Value)
+	if !data.UpdateSourceLoopback.IsNull() && !data.UpdateSourceLoopback.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"update-source.interface.Loopback", data.UpdateSourceLoopback.ValueString())
 	}
 	return body
 }
@@ -68,29 +68,29 @@ func (data *BGPNeighbor) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "id"); value.Exists() {
-		data.Ip.Value = value.String()
+		data.Ip = types.StringValue(value.String())
 	} else {
-		data.Ip.Null = true
+		data.Ip = types.StringNull()
 	}
 	if value := res.Get(prefix + "remote-as"); value.Exists() {
-		data.RemoteAs.Value = value.String()
+		data.RemoteAs = types.StringValue(value.String())
 	} else {
-		data.RemoteAs.Null = true
+		data.RemoteAs = types.StringNull()
 	}
 	if value := res.Get(prefix + "description"); value.Exists() {
-		data.Description.Value = value.String()
+		data.Description = types.StringValue(value.String())
 	} else {
-		data.Description.Null = true
+		data.Description = types.StringNull()
 	}
 	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown.Value = true
+		data.Shutdown = types.BoolValue(true)
 	} else {
-		data.Shutdown.Value = false
+		data.Shutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
-		data.UpdateSourceLoopback.Value = value.String()
+		data.UpdateSourceLoopback = types.StringValue(value.String())
 	} else {
-		data.UpdateSourceLoopback.Null = true
+		data.UpdateSourceLoopback = types.StringNull()
 	}
 }
 
@@ -100,58 +100,45 @@ func (data *BGPNeighbor) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "remote-as"); value.Exists() {
-		data.RemoteAs.Value = value.String()
-		data.RemoteAs.Null = false
+		data.RemoteAs = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "description"); value.Exists() {
-		data.Description.Value = value.String()
-		data.Description.Null = false
+		data.Description = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown.Value = true
-		data.Shutdown.Null = false
+		data.Shutdown = types.BoolValue(true)
 	} else {
-		data.Shutdown.Value = false
-		data.Shutdown.Null = false
+		data.Shutdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
-		data.UpdateSourceLoopback.Value = value.String()
-		data.UpdateSourceLoopback.Null = false
+		data.UpdateSourceLoopback = types.StringValue(value.String())
 	}
 }
 
 func (data *BGPNeighbor) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Asn.Unknown {
-		data.Asn.Unknown = false
-		data.Asn.Null = true
+	if data.Asn.IsUnknown() {
+		data.Asn = types.StringNull()
 	}
-	if data.Ip.Unknown {
-		data.Ip.Unknown = false
-		data.Ip.Null = true
+	if data.Ip.IsUnknown() {
+		data.Ip = types.StringNull()
 	}
-	if data.RemoteAs.Unknown {
-		data.RemoteAs.Unknown = false
-		data.RemoteAs.Null = true
+	if data.RemoteAs.IsUnknown() {
+		data.RemoteAs = types.StringNull()
 	}
-	if data.Description.Unknown {
-		data.Description.Unknown = false
-		data.Description.Null = true
+	if data.Description.IsUnknown() {
+		data.Description = types.StringNull()
 	}
-	if data.Shutdown.Unknown {
-		data.Shutdown.Unknown = false
-		data.Shutdown.Null = true
+	if data.Shutdown.IsUnknown() {
+		data.Shutdown = types.BoolNull()
 	}
-	if data.UpdateSourceLoopback.Unknown {
-		data.UpdateSourceLoopback.Unknown = false
-		data.UpdateSourceLoopback.Null = true
+	if data.UpdateSourceLoopback.IsUnknown() {
+		data.UpdateSourceLoopback = types.StringNull()
 	}
 }
 
@@ -162,7 +149,7 @@ func (data *BGPNeighbor) getDeletedListItems(ctx context.Context, state BGPNeigh
 
 func (data *BGPNeighbor) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Shutdown.Value {
+	if !data.Shutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	return emptyLeafsDelete

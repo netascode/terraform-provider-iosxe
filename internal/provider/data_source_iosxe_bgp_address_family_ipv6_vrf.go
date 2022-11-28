@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceBGPAddressFamilyIPv6VRFType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &BGPAddressFamilyIPv6VRFDataSource{}
+	_ datasource.DataSourceWithConfigure = &BGPAddressFamilyIPv6VRFDataSource{}
+)
 
-func (t dataSourceBGPAddressFamilyIPv6VRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewBGPAddressFamilyIPv6VRFDataSource() datasource.DataSource {
+	return &BGPAddressFamilyIPv6VRFDataSource{}
+}
+
+type BGPAddressFamilyIPv6VRFDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *BGPAddressFamilyIPv6VRFDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_bgp_address_family_ipv6_vrf"
+}
+
+func (d *BGPAddressFamilyIPv6VRFDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the BGP Address Family IPv6 VRF configuration.",
@@ -72,19 +88,15 @@ func (t dataSourceBGPAddressFamilyIPv6VRFType) GetSchema(ctx context.Context) (t
 	}, nil
 }
 
-func (t dataSourceBGPAddressFamilyIPv6VRFType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *BGPAddressFamilyIPv6VRFDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceBGPAddressFamilyIPv6VRF{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceBGPAddressFamilyIPv6VRF struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceBGPAddressFamilyIPv6VRF) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *BGPAddressFamilyIPv6VRFDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config BGPAddressFamilyIPv6VRF
 
 	// Read config
@@ -96,7 +108,7 @@ func (d dataSourceBGPAddressFamilyIPv6VRF) Read(ctx context.Context, req datasou
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = BGPAddressFamilyIPv6VRF{Device: config.Device}
 	} else {
@@ -108,7 +120,7 @@ func (d dataSourceBGPAddressFamilyIPv6VRF) Read(ctx context.Context, req datasou
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

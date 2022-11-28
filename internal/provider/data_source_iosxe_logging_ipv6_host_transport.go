@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceLoggingIPv6HostTransportType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &LoggingIPv6HostTransportDataSource{}
+	_ datasource.DataSourceWithConfigure = &LoggingIPv6HostTransportDataSource{}
+)
 
-func (t dataSourceLoggingIPv6HostTransportType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewLoggingIPv6HostTransportDataSource() datasource.DataSource {
+	return &LoggingIPv6HostTransportDataSource{}
+}
+
+type LoggingIPv6HostTransportDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *LoggingIPv6HostTransportDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_logging_ipv6_host_transport"
+}
+
+func (d *LoggingIPv6HostTransportDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Logging IPv6 Host Transport configuration.",
@@ -79,19 +95,15 @@ func (t dataSourceLoggingIPv6HostTransportType) GetSchema(ctx context.Context) (
 	}, nil
 }
 
-func (t dataSourceLoggingIPv6HostTransportType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *LoggingIPv6HostTransportDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceLoggingIPv6HostTransport{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceLoggingIPv6HostTransport struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceLoggingIPv6HostTransport) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *LoggingIPv6HostTransportDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config LoggingIPv6HostTransport
 
 	// Read config
@@ -103,7 +115,7 @@ func (d dataSourceLoggingIPv6HostTransport) Read(ctx context.Context, req dataso
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = LoggingIPv6HostTransport{Device: config.Device}
 	} else {
@@ -115,7 +127,7 @@ func (d dataSourceLoggingIPv6HostTransport) Read(ctx context.Context, req dataso
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

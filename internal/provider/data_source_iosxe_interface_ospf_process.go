@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceInterfaceOSPFProcessType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &InterfaceOSPFProcessDataSource{}
+	_ datasource.DataSourceWithConfigure = &InterfaceOSPFProcessDataSource{}
+)
 
-func (t dataSourceInterfaceOSPFProcessType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewInterfaceOSPFProcessDataSource() datasource.DataSource {
+	return &InterfaceOSPFProcessDataSource{}
+}
+
+type InterfaceOSPFProcessDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *InterfaceOSPFProcessDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_interface_ospf_process"
+}
+
+func (d *InterfaceOSPFProcessDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Interface OSPF Process configuration.",
@@ -62,19 +78,15 @@ func (t dataSourceInterfaceOSPFProcessType) GetSchema(ctx context.Context) (tfsd
 	}, nil
 }
 
-func (t dataSourceInterfaceOSPFProcessType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *InterfaceOSPFProcessDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceInterfaceOSPFProcess{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceInterfaceOSPFProcess struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceInterfaceOSPFProcess) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *InterfaceOSPFProcessDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config InterfaceOSPFProcess
 
 	// Read config
@@ -86,7 +98,7 @@ func (d dataSourceInterfaceOSPFProcess) Read(ctx context.Context, req datasource
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = InterfaceOSPFProcess{Device: config.Device}
 	} else {
@@ -98,7 +110,7 @@ func (d dataSourceInterfaceOSPFProcess) Read(ctx context.Context, req datasource
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

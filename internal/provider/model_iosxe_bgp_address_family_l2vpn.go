@@ -22,7 +22,7 @@ type BGPAddressFamilyL2VPN struct {
 }
 
 func (data BGPAddressFamilyL2VPN) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.Value)), url.QueryEscape(fmt.Sprintf("%v", data.AfName.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.AfName.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -38,8 +38,8 @@ func (data BGPAddressFamilyL2VPN) getPathShort() string {
 
 func (data BGPAddressFamilyL2VPN) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.AfName.Null && !data.AfName.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"af-name", data.AfName.Value)
+	if !data.AfName.IsNull() && !data.AfName.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"af-name", data.AfName.ValueString())
 	}
 	return body
 }
@@ -50,9 +50,9 @@ func (data *BGPAddressFamilyL2VPN) updateFromBody(ctx context.Context, res gjson
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "af-name"); value.Exists() {
-		data.AfName.Value = value.String()
+		data.AfName = types.StringValue(value.String())
 	} else {
-		data.AfName.Null = true
+		data.AfName = types.StringNull()
 	}
 }
 
@@ -64,21 +64,17 @@ func (data *BGPAddressFamilyL2VPN) fromBody(ctx context.Context, res gjson.Resul
 }
 
 func (data *BGPAddressFamilyL2VPN) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Asn.Unknown {
-		data.Asn.Unknown = false
-		data.Asn.Null = true
+	if data.Asn.IsUnknown() {
+		data.Asn = types.StringNull()
 	}
-	if data.AfName.Unknown {
-		data.AfName.Unknown = false
-		data.AfName.Null = true
+	if data.AfName.IsUnknown() {
+		data.AfName = types.StringNull()
 	}
 }
 

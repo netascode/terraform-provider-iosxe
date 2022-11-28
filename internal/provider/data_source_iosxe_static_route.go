@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceStaticRouteType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &StaticRouteDataSource{}
+	_ datasource.DataSourceWithConfigure = &StaticRouteDataSource{}
+)
 
-func (t dataSourceStaticRouteType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewStaticRouteDataSource() datasource.DataSource {
+	return &StaticRouteDataSource{}
+}
+
+type StaticRouteDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *StaticRouteDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_static_route"
+}
+
+func (d *StaticRouteDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Static Route configuration.",
@@ -82,19 +98,15 @@ func (t dataSourceStaticRouteType) GetSchema(ctx context.Context) (tfsdk.Schema,
 	}, nil
 }
 
-func (t dataSourceStaticRouteType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *StaticRouteDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceStaticRoute{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceStaticRoute struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceStaticRoute) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *StaticRouteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config StaticRoute
 
 	// Read config
@@ -106,7 +118,7 @@ func (d dataSourceStaticRoute) Read(ctx context.Context, req datasource.ReadRequ
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = StaticRoute{Device: config.Device}
 	} else {
@@ -118,7 +130,7 @@ func (d dataSourceStaticRoute) Read(ctx context.Context, req datasource.ReadRequ
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

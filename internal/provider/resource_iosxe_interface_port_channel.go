@@ -8,17 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceInterfacePortChannelType struct{}
+// Ensure provider defined types fully satisfy framework interfaces
+var _ resource.Resource = &InterfacePortChannelResource{}
+var _ resource.ResourceWithImportState = &InterfacePortChannelResource{}
 
-func (t resourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewInterfacePortChannelResource() resource.Resource {
+	return &InterfacePortChannelResource{}
+}
+
+type InterfacePortChannelResource struct {
+	clients map[string]*restconf.Client
+}
+
+func (r *InterfacePortChannelResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_interface_port_channel"
+}
+
+func (r *InterfacePortChannelResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the Interface Port Channel configuration.",
@@ -160,19 +174,15 @@ func (t resourceInterfacePortChannelType) GetSchema(ctx context.Context) (tfsdk.
 	}, nil
 }
 
-func (t resourceInterfacePortChannelType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (r *InterfacePortChannelResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return resourceInterfacePortChannel{
-		provider: provider,
-	}, diags
+	r.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type resourceInterfacePortChannel struct {
-	provider iosxeProvider
-}
-
-func (r resourceInterfacePortChannel) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+func (r *InterfacePortChannelResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan InterfacePortChannel
 
 	// Read plan
@@ -187,9 +197,9 @@ func (r resourceInterfacePortChannel) Create(ctx context.Context, req resource.C
 	// Create object
 	body := plan.toBody(ctx)
 
-	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	res, err := r.clients[plan.Device.ValueString()].PatchData(plan.getPathShort(), body)
 	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
-		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+		_, err = r.clients[plan.Device.ValueString()].PutData(plan.getPath(), body)
 	}
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
@@ -200,7 +210,7 @@ func (r resourceInterfacePortChannel) Create(ctx context.Context, req resource.C
 	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
 
 	for _, i := range emptyLeafsDelete {
-		res, err := r.provider.clients[plan.Device.Value].DeleteData(i)
+		res, err := r.clients[plan.Device.ValueString()].DeleteData(i)
 		if err != nil && res.StatusCode != 404 {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 			return
@@ -209,7 +219,7 @@ func (r resourceInterfacePortChannel) Create(ctx context.Context, req resource.C
 
 	plan.setUnknownValues(ctx)
 
-	plan.Id = types.String{Value: plan.getPath()}
+	plan.Id = types.StringValue(plan.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.getPath()))
 
@@ -217,7 +227,7 @@ func (r resourceInterfacePortChannel) Create(ctx context.Context, req resource.C
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePortChannel) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *InterfacePortChannelResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state InterfacePortChannel
 
 	// Read state
@@ -227,9 +237,9 @@ func (r resourceInterfacePortChannel) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", state.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", state.Id.ValueString()))
 
-	res, err := r.provider.clients[state.Device.Value].GetData(state.Id.Value)
+	res, err := r.clients[state.Device.ValueString()].GetData(state.Id.ValueString())
 	if res.StatusCode == 404 {
 		state = InterfacePortChannel{Device: state.Device, Id: state.Id}
 	} else {
@@ -241,13 +251,13 @@ func (r resourceInterfacePortChannel) Read(ctx context.Context, req resource.Rea
 		state.updateFromBody(ctx, res.Res)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", state.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", state.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePortChannel) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+func (r *InterfacePortChannelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state InterfacePortChannel
 
 	// Read plan
@@ -264,12 +274,12 @@ func (r resourceInterfacePortChannel) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.Id.ValueString()))
 
 	body := plan.toBody(ctx)
-	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	res, err := r.clients[plan.Device.ValueString()].PatchData(plan.getPathShort(), body)
 	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
-		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+		_, err = r.clients[plan.Device.ValueString()].PutData(plan.getPath(), body)
 	}
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
@@ -282,7 +292,7 @@ func (r resourceInterfacePortChannel) Update(ctx context.Context, req resource.U
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
 
 	for _, i := range deletedListItems {
-		res, err := r.provider.clients[state.Device.Value].DeleteData(i)
+		res, err := r.clients[state.Device.ValueString()].DeleteData(i)
 		if err != nil && res.StatusCode != 404 {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 			return
@@ -293,20 +303,20 @@ func (r resourceInterfacePortChannel) Update(ctx context.Context, req resource.U
 	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
 
 	for _, i := range emptyLeafsDelete {
-		res, err := r.provider.clients[plan.Device.Value].DeleteData(i)
+		res, err := r.clients[plan.Device.ValueString()].DeleteData(i)
 		if err != nil && res.StatusCode != 404 {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 			return
 		}
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Update finished successfully", plan.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Update finished successfully", plan.Id.ValueString()))
 
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceInterfacePortChannel) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *InterfacePortChannelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state InterfacePortChannel
 
 	// Read state
@@ -316,19 +326,19 @@ func (r resourceInterfacePortChannel) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.ValueString()))
 
-	res, err := r.provider.clients[state.Device.Value].DeleteData(state.Id.Value)
+	res, err := r.clients[state.Device.ValueString()].DeleteData(state.Id.ValueString())
 	if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.Id.Value))
+	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.Id.ValueString()))
 
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceInterfacePortChannel) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *InterfacePortChannelResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

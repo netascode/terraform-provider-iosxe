@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceAccessListStandardType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &AccessListStandardDataSource{}
+	_ datasource.DataSourceWithConfigure = &AccessListStandardDataSource{}
+)
 
-func (t dataSourceAccessListStandardType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewAccessListStandardDataSource() datasource.DataSource {
+	return &AccessListStandardDataSource{}
+}
+
+type AccessListStandardDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *AccessListStandardDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_access_list_standard"
+}
+
+func (d *AccessListStandardDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Access List Standard configuration.",
@@ -97,19 +113,15 @@ func (t dataSourceAccessListStandardType) GetSchema(ctx context.Context) (tfsdk.
 	}, nil
 }
 
-func (t dataSourceAccessListStandardType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *AccessListStandardDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceAccessListStandard{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceAccessListStandard struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceAccessListStandard) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *AccessListStandardDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config AccessListStandard
 
 	// Read config
@@ -121,7 +133,7 @@ func (d dataSourceAccessListStandard) Read(ctx context.Context, req datasource.R
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = AccessListStandard{Device: config.Device}
 	} else {
@@ -133,7 +145,7 @@ func (d dataSourceAccessListStandard) Read(ctx context.Context, req datasource.R
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 
