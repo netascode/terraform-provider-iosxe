@@ -4,20 +4,33 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-type resourceRestconfType struct{}
+// Ensure provider defined types fully satisfy framework interfaces
+var _ resource.Resource = &RestconfResource{}
+var _ resource.ResourceWithImportState = &RestconfResource{}
 
-func (t resourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewRestconfResource() resource.Resource {
+	return &RestconfResource{}
+}
+
+type RestconfResource struct {
+	clients map[string]*restconf.Client
+}
+
+func (r *RestconfResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_restconf"
+}
+
+func (r *RestconfResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Manages IOS-XE objects via RESTCONF calls. This resource can only manage a single object. It is able to read the state and therefore reconcile configuration drift.",
@@ -96,19 +109,15 @@ func (t resourceRestconfType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 	}, nil
 }
 
-func (t resourceRestconfType) NewResource(ctx context.Context, in provider.Provider) (resource.Resource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (r *RestconfResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return resourceRestconf{
-		provider: provider,
-	}, diags
+	r.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type resourceRestconf struct {
-	provider iosxeProvider
-}
-
-func (r resourceRestconf) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+func (r *RestconfResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan Restconf
 
 	// Read plan
@@ -121,9 +130,9 @@ func (r resourceRestconf) Create(ctx context.Context, req resource.CreateRequest
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.getPath()))
 
 	body := plan.toBody(ctx)
-	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	res, err := r.clients[plan.Device.ValueString()].PatchData(plan.getPathShort(), body)
 	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
-		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+		_, err = r.clients[plan.Device.ValueString()].PutData(plan.getPath(), body)
 	}
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
@@ -131,7 +140,10 @@ func (r resourceRestconf) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	plan.Id = plan.Path
-	plan.Attributes.Unknown = false
+
+	if plan.Attributes.IsUnknown() {
+		plan.Attributes = types.MapNull(types.StringType)
+	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.getPath()))
 
@@ -139,7 +151,7 @@ func (r resourceRestconf) Create(ctx context.Context, req resource.CreateRequest
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceRestconf) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *RestconfResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state Restconf
 
 	// Read state
@@ -151,9 +163,9 @@ func (r resourceRestconf) Read(ctx context.Context, req resource.ReadRequest, re
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", state.getPath()))
 
-	res, err := r.provider.clients[state.Device.Value].GetData(state.getPath())
+	res, err := r.clients[state.Device.ValueString()].GetData(state.getPath())
 	if res.StatusCode == 404 {
-		state.Attributes.Elems = map[string]attr.Value{}
+		state.Attributes = types.MapNull(types.StringType)
 		state.Lists = make([]RestconfList, 0)
 	} else {
 		if err != nil {
@@ -170,7 +182,7 @@ func (r resourceRestconf) Read(ctx context.Context, req resource.ReadRequest, re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceRestconf) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+func (r *RestconfResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan, state Restconf
 
 	// Read plan
@@ -190,9 +202,9 @@ func (r resourceRestconf) Update(ctx context.Context, req resource.UpdateRequest
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.getPath()))
 
 	body := plan.toBody(ctx)
-	res, err := r.provider.clients[plan.Device.Value].PatchData(plan.getPathShort(), body)
+	res, err := r.clients[plan.Device.ValueString()].PatchData(plan.getPathShort(), body)
 	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
-		_, err = r.provider.clients[plan.Device.Value].PutData(plan.getPath(), body)
+		_, err = r.clients[plan.Device.ValueString()].PutData(plan.getPath(), body)
 	}
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
@@ -203,7 +215,7 @@ func (r resourceRestconf) Update(ctx context.Context, req resource.UpdateRequest
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
 
 	for _, i := range deletedListItems {
-		res, err := r.provider.clients[state.Device.Value].DeleteData(i)
+		res, err := r.clients[state.Device.ValueString()].DeleteData(i)
 		if err != nil && res.StatusCode != 404 {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 			return
@@ -216,7 +228,7 @@ func (r resourceRestconf) Update(ctx context.Context, req resource.UpdateRequest
 	resp.Diagnostics.Append(diags...)
 }
 
-func (r resourceRestconf) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+func (r *RestconfResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state Restconf
 
 	// Read state
@@ -228,8 +240,8 @@ func (r resourceRestconf) Delete(ctx context.Context, req resource.DeleteRequest
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.getPath()))
 
-	if state.Delete.Value {
-		res, err := r.provider.clients[state.Device.Value].DeleteData(state.getPath())
+	if state.Delete.ValueBool() {
+		res, err := r.clients[state.Device.ValueString()].DeleteData(state.getPath())
 		if err != nil && res.StatusCode != 404 {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 			return
@@ -241,7 +253,7 @@ func (r resourceRestconf) Delete(ctx context.Context, req resource.DeleteRequest
 	resp.State.RemoveResource(ctx)
 }
 
-func (r resourceRestconf) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *RestconfResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Import", req.ID))

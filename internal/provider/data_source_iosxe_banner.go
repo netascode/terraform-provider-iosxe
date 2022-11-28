@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceBannerType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &BannerDataSource{}
+	_ datasource.DataSourceWithConfigure = &BannerDataSource{}
+)
 
-func (t dataSourceBannerType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewBannerDataSource() datasource.DataSource {
+	return &BannerDataSource{}
+}
+
+type BannerDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *BannerDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_banner"
+}
+
+func (d *BannerDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Banner configuration.",
@@ -56,19 +72,15 @@ func (t dataSourceBannerType) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 	}, nil
 }
 
-func (t dataSourceBannerType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *BannerDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceBanner{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceBanner struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceBanner) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *BannerDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config Banner
 
 	// Read config
@@ -80,7 +92,7 @@ func (d dataSourceBanner) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = Banner{Device: config.Device}
 	} else {
@@ -92,7 +104,7 @@ func (d dataSourceBanner) Read(ctx context.Context, req datasource.ReadRequest, 
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

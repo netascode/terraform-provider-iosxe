@@ -32,7 +32,7 @@ type RestconfListItem struct {
 	Attributes types.Map `tfsdk:"attributes"`
 }
 
-type RestconfDataSource struct {
+type RestconfDataSourceModel struct {
 	Device     types.String `tfsdk:"device"`
 	Id         types.String `tfsdk:"id"`
 	Path       types.String `tfsdk:"path"`
@@ -40,12 +40,12 @@ type RestconfDataSource struct {
 }
 
 func (data Restconf) getPath() string {
-	return data.Path.Value
+	return data.Path.ValueString()
 }
 
 // if last path element has a key -> remove it
 func (data Restconf) getPathShort() string {
-	path := data.Path.Value
+	path := data.Path.ValueString()
 	re := regexp.MustCompile(`(.*)=[^\/]*$`)
 	matches := re.FindStringSubmatch(path)
 	if len(matches) <= 1 {
@@ -55,19 +55,19 @@ func (data Restconf) getPathShort() string {
 }
 
 func (data Restconf) toBody(ctx context.Context) string {
-	body := `{"` + helpers.LastElement(data.Path.Value) + `":{}}`
+	body := `{"` + helpers.LastElement(data.Path.ValueString()) + `":{}}`
 
 	var attributes map[string]string
 	data.Attributes.ElementsAs(ctx, &attributes, false)
 
 	for attr, value := range attributes {
 		attr = strings.ReplaceAll(attr, "/", ".")
-		body, _ = sjson.Set(body, helpers.LastElement(data.Path.Value)+"."+attr, value)
+		body, _ = sjson.Set(body, helpers.LastElement(data.Path.ValueString())+"."+attr, value)
 	}
 	for i := range data.Lists {
-		listName := strings.ReplaceAll(data.Lists[i].Name.Value, "/", ".")
+		listName := strings.ReplaceAll(data.Lists[i].Name.ValueString(), "/", ".")
 		if len(data.Lists[i].Items) > 0 {
-			body, _ = sjson.Set(body, helpers.LastElement(data.Path.Value)+"."+listName, []interface{}{})
+			body, _ = sjson.Set(body, helpers.LastElement(data.Path.ValueString())+"."+listName, []interface{}{})
 			for ii := range data.Lists[i].Items {
 				var listAttributes map[string]string
 				data.Lists[i].Items[ii].Attributes.ElementsAs(ctx, &listAttributes, false)
@@ -75,12 +75,12 @@ func (data Restconf) toBody(ctx context.Context) string {
 				for attr, value := range listAttributes {
 					attrs = attrs.Set(attr, value)
 				}
-				body, _ = sjson.SetRaw(body, helpers.LastElement(data.Path.Value)+"."+listName+".-1", attrs.Str)
+				body, _ = sjson.SetRaw(body, helpers.LastElement(data.Path.ValueString())+"."+listName+".-1", attrs.Str)
 			}
-		} else if len(data.Lists[i].Values.Elems) > 0 {
+		} else if len(data.Lists[i].Values.Elements()) > 0 {
 			var values []string
 			data.Lists[i].Values.ElementsAs(ctx, &values, false)
-			body, _ = sjson.Set(body, helpers.LastElement(data.Path.Value)+"."+listName, values)
+			body, _ = sjson.Set(body, helpers.LastElement(data.Path.ValueString())+"."+listName, values)
 		}
 	}
 
@@ -92,27 +92,29 @@ func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	for attr := range data.Attributes.Elems {
+	attributes := data.Attributes.Elements()
+	for attr := range attributes {
 		attrPath := strings.ReplaceAll(attr, "/", ".")
 		value := res.Get(prefix + attrPath)
 		if !value.Exists() ||
 			(value.IsObject() && len(value.Map()) == 0) ||
 			value.Raw == "[null]" {
 
-			data.Attributes.Elems[attr] = types.String{Value: ""}
+			attributes[attr] = types.StringValue("")
 		} else {
-			data.Attributes.Elems[attr] = types.String{Value: value.String()}
+			attributes[attr] = types.StringValue(value.String())
 		}
 	}
+	data.Attributes = types.MapValueMust(types.StringType, attributes)
 
 	for i := range data.Lists {
-		keys := strings.Split(data.Lists[i].Key.Value, ",")
-		namePath := strings.ReplaceAll(data.Lists[i].Name.Value, "/", ".")
+		keys := strings.Split(data.Lists[i].Key.ValueString(), ",")
+		namePath := strings.ReplaceAll(data.Lists[i].Name.ValueString(), "/", ".")
 		if len(data.Lists[i].Items) > 0 {
 			for ii := range data.Lists[i].Items {
 				var keyValues []string
 				for _, key := range keys {
-					v, _ := data.Lists[i].Items[ii].Attributes.Elems[key].ToTerraformValue(ctx)
+					v, _ := data.Lists[i].Items[ii].Attributes.Elements()[key].ToTerraformValue(ctx)
 					var keyValue string
 					v.As(&keyValue)
 					keyValues = append(keyValues, keyValue)
@@ -139,23 +141,25 @@ func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
 					},
 				)
 
-				for attr := range data.Lists[i].Items[ii].Attributes.Elems {
+				attributes := data.Lists[i].Items[ii].Attributes.Elements()
+				for attr := range attributes {
 					attrPath := strings.ReplaceAll(attr, "/", ".")
 					value := r.Get(attrPath)
 					if !value.Exists() ||
 						(value.IsObject() && len(value.Map()) == 0) ||
 						value.Raw == "[null]" {
 
-						data.Lists[i].Items[ii].Attributes.Elems[attr] = types.String{Value: ""}
+						attributes[attr] = types.StringValue("")
 					} else {
-						data.Lists[i].Items[ii].Attributes.Elems[attr] = types.String{Value: value.String()}
+						attributes[attr] = types.StringValue(value.String())
 					}
 				}
+				data.Lists[i].Items[ii].Attributes = types.MapValueMust(types.StringType, attributes)
 			}
-		} else if len(data.Lists[i].Values.Elems) > 0 {
+		} else if len(data.Lists[i].Values.Elements()) > 0 {
 			values := res.Get(prefix + namePath)
 			if values.IsArray() {
-				data.Lists[i].Values.Elems = helpers.GetValueSlice(values.Array())
+				data.Lists[i].Values = types.ListValueMust(data.Lists[i].Values.ElementType(ctx), helpers.GetValueSlice(values.Array()))
 			}
 		}
 	}
@@ -164,12 +168,12 @@ func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
 func (data *Restconf) getDeletedListItems(ctx context.Context, state Restconf) []string {
 	deletedListItems := make([]string, 0)
 	for l := range state.Lists {
-		name := state.Lists[l].Name.Value
+		name := state.Lists[l].Name.ValueString()
 		namePath := strings.ReplaceAll(name, "/", ".")
-		keys := strings.Split(state.Lists[l].Key.Value, ",")
+		keys := strings.Split(state.Lists[l].Key.ValueString(), ",")
 		var dataList RestconfList
 		for _, dl := range data.Lists {
-			if dl.Name.Value == name {
+			if dl.Name.ValueString() == name {
 				dataList = dl
 			}
 		}
@@ -218,7 +222,7 @@ func (data *Restconf) getDeletedListItems(ctx context.Context, state Restconf) [
 					deletedListItems = append(deletedListItems, state.getPath()+"/"+namePath+"="+strings.Join(keyValues, ","))
 				}
 			}
-		} else if len(state.Lists[l].Values.Elems) > 0 {
+		} else if len(state.Lists[l].Values.Elements()) > 0 {
 			var slv []string
 			state.Lists[l].Values.ElementsAs(ctx, &slv, false)
 			// check if state value is also included in plan, if not delete value from list

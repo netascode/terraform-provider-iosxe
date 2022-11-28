@@ -95,178 +95,178 @@ func (data SNMPServer) getPathShort() string {
 
 func (data SNMPServer) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.ChassisId.Null && !data.ChassisId.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:chassis-id", data.ChassisId.Value)
+	if !data.ChassisId.IsNull() && !data.ChassisId.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:chassis-id", data.ChassisId.ValueString())
 	}
-	if !data.Contact.Null && !data.Contact.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:contact", data.Contact.Value)
+	if !data.Contact.IsNull() && !data.Contact.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:contact", data.Contact.ValueString())
 	}
-	if !data.IfindexPersist.Null && !data.IfindexPersist.Unknown {
-		if data.IfindexPersist.Value {
+	if !data.IfindexPersist.IsNull() && !data.IfindexPersist.IsUnknown() {
+		if data.IfindexPersist.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:ifindex.persist", map[string]string{})
 		}
 	}
-	if !data.Location.Null && !data.Location.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:location", data.Location.Value)
+	if !data.Location.IsNull() && !data.Location.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:location", data.Location.ValueString())
 	}
-	if !data.Packetsize.Null && !data.Packetsize.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:packetsize", strconv.FormatInt(data.Packetsize.Value, 10))
+	if !data.Packetsize.IsNull() && !data.Packetsize.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:packetsize", strconv.FormatInt(data.Packetsize.ValueInt64(), 10))
 	}
-	if !data.QueueLength.Null && !data.QueueLength.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:queue-length", strconv.FormatInt(data.QueueLength.Value, 10))
+	if !data.QueueLength.IsNull() && !data.QueueLength.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:queue-length", strconv.FormatInt(data.QueueLength.ValueInt64(), 10))
 	}
-	if !data.EnableLoggingGetop.Null && !data.EnableLoggingGetop.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.logging.getop", data.EnableLoggingGetop.Value)
+	if !data.EnableLoggingGetop.IsNull() && !data.EnableLoggingGetop.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.logging.getop", data.EnableLoggingGetop.ValueBool())
 	}
-	if !data.EnableLoggingSetop.Null && !data.EnableLoggingSetop.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.logging.setop", data.EnableLoggingSetop.Value)
+	if !data.EnableLoggingSetop.IsNull() && !data.EnableLoggingSetop.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.logging.setop", data.EnableLoggingSetop.ValueBool())
 	}
-	if !data.EnableInforms.Null && !data.EnableInforms.Unknown {
-		if data.EnableInforms.Value {
+	if !data.EnableInforms.IsNull() && !data.EnableInforms.IsUnknown() {
+		if data.EnableInforms.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.informs", map[string]string{})
 		}
 	}
-	if !data.EnableTraps.Null && !data.EnableTraps.Unknown {
-		if data.EnableTraps.Value {
+	if !data.EnableTraps.IsNull() && !data.EnableTraps.IsUnknown() {
+		if data.EnableTraps.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps", map[string]string{})
 		}
 	}
-	if !data.EnableTrapsSnmpAuthentication.Null && !data.EnableTrapsSnmpAuthentication.Unknown {
-		if data.EnableTrapsSnmpAuthentication.Value {
+	if !data.EnableTrapsSnmpAuthentication.IsNull() && !data.EnableTrapsSnmpAuthentication.IsUnknown() {
+		if data.EnableTrapsSnmpAuthentication.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.authentication", map[string]string{})
 		}
 	}
-	if !data.EnableTrapsSnmpColdstart.Null && !data.EnableTrapsSnmpColdstart.Unknown {
-		if data.EnableTrapsSnmpColdstart.Value {
+	if !data.EnableTrapsSnmpColdstart.IsNull() && !data.EnableTrapsSnmpColdstart.IsUnknown() {
+		if data.EnableTrapsSnmpColdstart.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.coldstart", map[string]string{})
 		}
 	}
-	if !data.EnableTrapsSnmpLinkdown.Null && !data.EnableTrapsSnmpLinkdown.Unknown {
-		if data.EnableTrapsSnmpLinkdown.Value {
+	if !data.EnableTrapsSnmpLinkdown.IsNull() && !data.EnableTrapsSnmpLinkdown.IsUnknown() {
+		if data.EnableTrapsSnmpLinkdown.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkdown", map[string]string{})
 		}
 	}
-	if !data.EnableTrapsSnmpLinkup.Null && !data.EnableTrapsSnmpLinkup.Unknown {
-		if data.EnableTrapsSnmpLinkup.Value {
+	if !data.EnableTrapsSnmpLinkup.IsNull() && !data.EnableTrapsSnmpLinkup.IsUnknown() {
+		if data.EnableTrapsSnmpLinkup.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkup", map[string]string{})
 		}
 	}
-	if !data.EnableTrapsSnmpWarmstart.Null && !data.EnableTrapsSnmpWarmstart.Unknown {
-		if data.EnableTrapsSnmpWarmstart.Value {
+	if !data.EnableTrapsSnmpWarmstart.IsNull() && !data.EnableTrapsSnmpWarmstart.IsUnknown() {
+		if data.EnableTrapsSnmpWarmstart.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.warmstart", map[string]string{})
 		}
 	}
-	if !data.SourceInterfaceInformsGigabitEthernet.Null && !data.SourceInterfaceInformsGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.GigabitEthernet", data.SourceInterfaceInformsGigabitEthernet.Value)
+	if !data.SourceInterfaceInformsGigabitEthernet.IsNull() && !data.SourceInterfaceInformsGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.GigabitEthernet", data.SourceInterfaceInformsGigabitEthernet.ValueString())
 	}
-	if !data.SourceInterfaceInformsTenGigabitEthernet.Null && !data.SourceInterfaceInformsTenGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.TenGigabitEthernet", data.SourceInterfaceInformsTenGigabitEthernet.Value)
+	if !data.SourceInterfaceInformsTenGigabitEthernet.IsNull() && !data.SourceInterfaceInformsTenGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.TenGigabitEthernet", data.SourceInterfaceInformsTenGigabitEthernet.ValueString())
 	}
-	if !data.SourceInterfaceInformsFortyGigabitEthernet.Null && !data.SourceInterfaceInformsFortyGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.FortyGigabitEthernet", data.SourceInterfaceInformsFortyGigabitEthernet.Value)
+	if !data.SourceInterfaceInformsFortyGigabitEthernet.IsNull() && !data.SourceInterfaceInformsFortyGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.FortyGigabitEthernet", data.SourceInterfaceInformsFortyGigabitEthernet.ValueString())
 	}
-	if !data.SourceInterfaceInformsHundredGigE.Null && !data.SourceInterfaceInformsHundredGigE.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.HundredGigE", data.SourceInterfaceInformsHundredGigE.Value)
+	if !data.SourceInterfaceInformsHundredGigE.IsNull() && !data.SourceInterfaceInformsHundredGigE.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.HundredGigE", data.SourceInterfaceInformsHundredGigE.ValueString())
 	}
-	if !data.SourceInterfaceInformsLoopback.Null && !data.SourceInterfaceInformsLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.Loopback", strconv.FormatInt(data.SourceInterfaceInformsLoopback.Value, 10))
+	if !data.SourceInterfaceInformsLoopback.IsNull() && !data.SourceInterfaceInformsLoopback.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.Loopback", strconv.FormatInt(data.SourceInterfaceInformsLoopback.ValueInt64(), 10))
 	}
-	if !data.SourceInterfaceInformsPortChannel.Null && !data.SourceInterfaceInformsPortChannel.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.Port-channel", strconv.FormatInt(data.SourceInterfaceInformsPortChannel.Value, 10))
+	if !data.SourceInterfaceInformsPortChannel.IsNull() && !data.SourceInterfaceInformsPortChannel.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.Port-channel", strconv.FormatInt(data.SourceInterfaceInformsPortChannel.ValueInt64(), 10))
 	}
-	if !data.SourceInterfaceInformsPortChannelSubinterface.Null && !data.SourceInterfaceInformsPortChannelSubinterface.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.Port-channel-subinterface.Port-channel", data.SourceInterfaceInformsPortChannelSubinterface.Value)
+	if !data.SourceInterfaceInformsPortChannelSubinterface.IsNull() && !data.SourceInterfaceInformsPortChannelSubinterface.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.Port-channel-subinterface.Port-channel", data.SourceInterfaceInformsPortChannelSubinterface.ValueString())
 	}
-	if !data.SourceInterfaceInformsVlan.Null && !data.SourceInterfaceInformsVlan.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.Vlan", strconv.FormatInt(data.SourceInterfaceInformsVlan.Value, 10))
+	if !data.SourceInterfaceInformsVlan.IsNull() && !data.SourceInterfaceInformsVlan.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.informs.Vlan", strconv.FormatInt(data.SourceInterfaceInformsVlan.ValueInt64(), 10))
 	}
-	if !data.SourceInterfaceTrapsGigabitEthernet.Null && !data.SourceInterfaceTrapsGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.GigabitEthernet", data.SourceInterfaceTrapsGigabitEthernet.Value)
+	if !data.SourceInterfaceTrapsGigabitEthernet.IsNull() && !data.SourceInterfaceTrapsGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.GigabitEthernet", data.SourceInterfaceTrapsGigabitEthernet.ValueString())
 	}
-	if !data.SourceInterfaceTrapsTenGigabitEthernet.Null && !data.SourceInterfaceTrapsTenGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.TenGigabitEthernet", data.SourceInterfaceTrapsTenGigabitEthernet.Value)
+	if !data.SourceInterfaceTrapsTenGigabitEthernet.IsNull() && !data.SourceInterfaceTrapsTenGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.TenGigabitEthernet", data.SourceInterfaceTrapsTenGigabitEthernet.ValueString())
 	}
-	if !data.SourceInterfaceTrapsFortyGigabitEthernet.Null && !data.SourceInterfaceTrapsFortyGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.FortyGigabitEthernet", data.SourceInterfaceTrapsFortyGigabitEthernet.Value)
+	if !data.SourceInterfaceTrapsFortyGigabitEthernet.IsNull() && !data.SourceInterfaceTrapsFortyGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.FortyGigabitEthernet", data.SourceInterfaceTrapsFortyGigabitEthernet.ValueString())
 	}
-	if !data.SourceInterfaceTrapsHundredGigE.Null && !data.SourceInterfaceTrapsHundredGigE.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.HundredGigE", data.SourceInterfaceTrapsHundredGigE.Value)
+	if !data.SourceInterfaceTrapsHundredGigE.IsNull() && !data.SourceInterfaceTrapsHundredGigE.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.HundredGigE", data.SourceInterfaceTrapsHundredGigE.ValueString())
 	}
-	if !data.SourceInterfaceTrapsLoopback.Null && !data.SourceInterfaceTrapsLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.Loopback", strconv.FormatInt(data.SourceInterfaceTrapsLoopback.Value, 10))
+	if !data.SourceInterfaceTrapsLoopback.IsNull() && !data.SourceInterfaceTrapsLoopback.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.Loopback", strconv.FormatInt(data.SourceInterfaceTrapsLoopback.ValueInt64(), 10))
 	}
-	if !data.SourceInterfaceTrapsPortChannel.Null && !data.SourceInterfaceTrapsPortChannel.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.Port-channel", strconv.FormatInt(data.SourceInterfaceTrapsPortChannel.Value, 10))
+	if !data.SourceInterfaceTrapsPortChannel.IsNull() && !data.SourceInterfaceTrapsPortChannel.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.Port-channel", strconv.FormatInt(data.SourceInterfaceTrapsPortChannel.ValueInt64(), 10))
 	}
-	if !data.SourceInterfaceTrapsPortChannelSubinterface.Null && !data.SourceInterfaceTrapsPortChannelSubinterface.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.Port-channel-subinterface.Port-channel", data.SourceInterfaceTrapsPortChannelSubinterface.Value)
+	if !data.SourceInterfaceTrapsPortChannelSubinterface.IsNull() && !data.SourceInterfaceTrapsPortChannelSubinterface.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.Port-channel-subinterface.Port-channel", data.SourceInterfaceTrapsPortChannelSubinterface.ValueString())
 	}
-	if !data.SourceInterfaceTrapsVlan.Null && !data.SourceInterfaceTrapsVlan.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.Vlan", strconv.FormatInt(data.SourceInterfaceTrapsVlan.Value, 10))
+	if !data.SourceInterfaceTrapsVlan.IsNull() && !data.SourceInterfaceTrapsVlan.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:source-interface.traps.Vlan", strconv.FormatInt(data.SourceInterfaceTrapsVlan.ValueInt64(), 10))
 	}
-	if !data.TrapSourceGigabitEthernet.Null && !data.TrapSourceGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.GigabitEthernet", data.TrapSourceGigabitEthernet.Value)
+	if !data.TrapSourceGigabitEthernet.IsNull() && !data.TrapSourceGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.GigabitEthernet", data.TrapSourceGigabitEthernet.ValueString())
 	}
-	if !data.TrapSourceTenGigabitEthernet.Null && !data.TrapSourceTenGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.TenGigabitEthernet", data.TrapSourceTenGigabitEthernet.Value)
+	if !data.TrapSourceTenGigabitEthernet.IsNull() && !data.TrapSourceTenGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.TenGigabitEthernet", data.TrapSourceTenGigabitEthernet.ValueString())
 	}
-	if !data.TrapSourceFortyGigabitEthernet.Null && !data.TrapSourceFortyGigabitEthernet.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.FortyGigabitEthernet", data.TrapSourceFortyGigabitEthernet.Value)
+	if !data.TrapSourceFortyGigabitEthernet.IsNull() && !data.TrapSourceFortyGigabitEthernet.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.FortyGigabitEthernet", data.TrapSourceFortyGigabitEthernet.ValueString())
 	}
-	if !data.TrapSourceHundredGigE.Null && !data.TrapSourceHundredGigE.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.HundredGigE", data.TrapSourceHundredGigE.Value)
+	if !data.TrapSourceHundredGigE.IsNull() && !data.TrapSourceHundredGigE.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.HundredGigE", data.TrapSourceHundredGigE.ValueString())
 	}
-	if !data.TrapSourceLoopback.Null && !data.TrapSourceLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.Loopback", strconv.FormatInt(data.TrapSourceLoopback.Value, 10))
+	if !data.TrapSourceLoopback.IsNull() && !data.TrapSourceLoopback.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.Loopback", strconv.FormatInt(data.TrapSourceLoopback.ValueInt64(), 10))
 	}
-	if !data.TrapSourcePortChannel.Null && !data.TrapSourcePortChannel.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.Port-channel", strconv.FormatInt(data.TrapSourcePortChannel.Value, 10))
+	if !data.TrapSourcePortChannel.IsNull() && !data.TrapSourcePortChannel.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.Port-channel", strconv.FormatInt(data.TrapSourcePortChannel.ValueInt64(), 10))
 	}
-	if !data.TrapSourcePortChannelSubinterface.Null && !data.TrapSourcePortChannelSubinterface.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.Port-channel-subinterface.Port-channel", data.TrapSourcePortChannelSubinterface.Value)
+	if !data.TrapSourcePortChannelSubinterface.IsNull() && !data.TrapSourcePortChannelSubinterface.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.Port-channel-subinterface.Port-channel", data.TrapSourcePortChannelSubinterface.ValueString())
 	}
-	if !data.TrapSourceVlan.Null && !data.TrapSourceVlan.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.Vlan", strconv.FormatInt(data.TrapSourceVlan.Value, 10))
+	if !data.TrapSourceVlan.IsNull() && !data.TrapSourceVlan.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:trap-source.Vlan", strconv.FormatInt(data.TrapSourceVlan.ValueInt64(), 10))
 	}
 	if len(data.SnmpCommunities) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config", []interface{}{})
 		for index, item := range data.SnmpCommunities {
-			if !item.Name.Null && !item.Name.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"name", item.Name.Value)
+			if !item.Name.IsNull() && !item.Name.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"name", item.Name.ValueString())
 			}
-			if !item.View.Null && !item.View.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"view", item.View.Value)
+			if !item.View.IsNull() && !item.View.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"view", item.View.ValueString())
 			}
-			if !item.Permission.Null && !item.Permission.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"permission", item.Permission.Value)
+			if !item.Permission.IsNull() && !item.Permission.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"permission", item.Permission.ValueString())
 			}
-			if !item.Ipv6.Null && !item.Ipv6.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"ipv6", item.Ipv6.Value)
+			if !item.Ipv6.IsNull() && !item.Ipv6.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"ipv6", item.Ipv6.ValueString())
 			}
-			if !item.AccessListName.Null && !item.AccessListName.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"access-list-name", item.AccessListName.Value)
+			if !item.AccessListName.IsNull() && !item.AccessListName.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:community-config"+"."+strconv.Itoa(index)+"."+"access-list-name", item.AccessListName.ValueString())
 			}
 		}
 	}
 	if len(data.Contexts) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:context", []interface{}{})
 		for index, item := range data.Contexts {
-			if !item.Name.Null && !item.Name.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:context"+"."+strconv.Itoa(index)+"."+"name", item.Name.Value)
+			if !item.Name.IsNull() && !item.Name.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:context"+"."+strconv.Itoa(index)+"."+"name", item.Name.ValueString())
 			}
 		}
 	}
 	if len(data.Views) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:view", []interface{}{})
 		for index, item := range data.Views {
-			if !item.Name.Null && !item.Name.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:view"+"."+strconv.Itoa(index)+"."+"name", item.Name.Value)
+			if !item.Name.IsNull() && !item.Name.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:view"+"."+strconv.Itoa(index)+"."+"name", item.Name.ValueString())
 			}
-			if !item.Mib.Null && !item.Mib.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:view"+"."+strconv.Itoa(index)+"."+"mib", item.Mib.Value)
+			if !item.Mib.IsNull() && !item.Mib.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:view"+"."+strconv.Itoa(index)+"."+"mib", item.Mib.ValueString())
 			}
-			if !item.IncExl.Null && !item.IncExl.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:view"+"."+strconv.Itoa(index)+"."+"inc-exl", item.IncExl.Value)
+			if !item.IncExl.IsNull() && !item.IncExl.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"Cisco-IOS-XE-snmp:view"+"."+strconv.Itoa(index)+"."+"inc-exl", item.IncExl.ValueString())
 			}
 		}
 	}
@@ -279,203 +279,203 @@ func (data *SNMPServer) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:chassis-id"); value.Exists() {
-		data.ChassisId.Value = value.String()
+		data.ChassisId = types.StringValue(value.String())
 	} else {
-		data.ChassisId.Null = true
+		data.ChassisId = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:contact"); value.Exists() {
-		data.Contact.Value = value.String()
+		data.Contact = types.StringValue(value.String())
 	} else {
-		data.Contact.Null = true
+		data.Contact = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:ifindex.persist"); value.Exists() {
-		data.IfindexPersist.Value = true
+		data.IfindexPersist = types.BoolValue(true)
 	} else {
-		data.IfindexPersist.Value = false
+		data.IfindexPersist = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:location"); value.Exists() {
-		data.Location.Value = value.String()
+		data.Location = types.StringValue(value.String())
 	} else {
-		data.Location.Null = true
+		data.Location = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:packetsize"); value.Exists() {
-		data.Packetsize.Value = value.Int()
+		data.Packetsize = types.Int64Value(value.Int())
 	} else {
-		data.Packetsize.Null = true
+		data.Packetsize = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:queue-length"); value.Exists() {
-		data.QueueLength.Value = value.Int()
+		data.QueueLength = types.Int64Value(value.Int())
 	} else {
-		data.QueueLength.Null = true
+		data.QueueLength = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.logging.getop"); value.Exists() {
-		data.EnableLoggingGetop.Value = value.Bool()
+		data.EnableLoggingGetop = types.BoolValue(value.Bool())
 	} else {
-		data.EnableLoggingGetop.Value = false
+		data.EnableLoggingGetop = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.logging.setop"); value.Exists() {
-		data.EnableLoggingSetop.Value = value.Bool()
+		data.EnableLoggingSetop = types.BoolValue(value.Bool())
 	} else {
-		data.EnableLoggingSetop.Value = false
+		data.EnableLoggingSetop = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.informs"); value.Exists() {
-		data.EnableInforms.Value = true
+		data.EnableInforms = types.BoolValue(true)
 	} else {
-		data.EnableInforms.Value = false
+		data.EnableInforms = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps"); value.Exists() {
-		data.EnableTraps.Value = true
+		data.EnableTraps = types.BoolValue(true)
 	} else {
-		data.EnableTraps.Value = false
+		data.EnableTraps = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.authentication"); value.Exists() {
-		data.EnableTrapsSnmpAuthentication.Value = true
+		data.EnableTrapsSnmpAuthentication = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpAuthentication.Value = false
+		data.EnableTrapsSnmpAuthentication = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.coldstart"); value.Exists() {
-		data.EnableTrapsSnmpColdstart.Value = true
+		data.EnableTrapsSnmpColdstart = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpColdstart.Value = false
+		data.EnableTrapsSnmpColdstart = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkdown"); value.Exists() {
-		data.EnableTrapsSnmpLinkdown.Value = true
+		data.EnableTrapsSnmpLinkdown = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpLinkdown.Value = false
+		data.EnableTrapsSnmpLinkdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkup"); value.Exists() {
-		data.EnableTrapsSnmpLinkup.Value = true
+		data.EnableTrapsSnmpLinkup = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpLinkup.Value = false
+		data.EnableTrapsSnmpLinkup = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.warmstart"); value.Exists() {
-		data.EnableTrapsSnmpWarmstart.Value = true
+		data.EnableTrapsSnmpWarmstart = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpWarmstart.Value = false
+		data.EnableTrapsSnmpWarmstart = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.GigabitEthernet"); value.Exists() {
-		data.SourceInterfaceInformsGigabitEthernet.Value = value.String()
+		data.SourceInterfaceInformsGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceInformsGigabitEthernet.Null = true
+		data.SourceInterfaceInformsGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.TenGigabitEthernet"); value.Exists() {
-		data.SourceInterfaceInformsTenGigabitEthernet.Value = value.String()
+		data.SourceInterfaceInformsTenGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceInformsTenGigabitEthernet.Null = true
+		data.SourceInterfaceInformsTenGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.FortyGigabitEthernet"); value.Exists() {
-		data.SourceInterfaceInformsFortyGigabitEthernet.Value = value.String()
+		data.SourceInterfaceInformsFortyGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceInformsFortyGigabitEthernet.Null = true
+		data.SourceInterfaceInformsFortyGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.HundredGigE"); value.Exists() {
-		data.SourceInterfaceInformsHundredGigE.Value = value.String()
+		data.SourceInterfaceInformsHundredGigE = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceInformsHundredGigE.Null = true
+		data.SourceInterfaceInformsHundredGigE = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.Loopback"); value.Exists() {
-		data.SourceInterfaceInformsLoopback.Value = value.Int()
+		data.SourceInterfaceInformsLoopback = types.Int64Value(value.Int())
 	} else {
-		data.SourceInterfaceInformsLoopback.Null = true
+		data.SourceInterfaceInformsLoopback = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.Port-channel"); value.Exists() {
-		data.SourceInterfaceInformsPortChannel.Value = value.Int()
+		data.SourceInterfaceInformsPortChannel = types.Int64Value(value.Int())
 	} else {
-		data.SourceInterfaceInformsPortChannel.Null = true
+		data.SourceInterfaceInformsPortChannel = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.Port-channel-subinterface.Port-channel"); value.Exists() {
-		data.SourceInterfaceInformsPortChannelSubinterface.Value = value.String()
+		data.SourceInterfaceInformsPortChannelSubinterface = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceInformsPortChannelSubinterface.Null = true
+		data.SourceInterfaceInformsPortChannelSubinterface = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.Vlan"); value.Exists() {
-		data.SourceInterfaceInformsVlan.Value = value.Int()
+		data.SourceInterfaceInformsVlan = types.Int64Value(value.Int())
 	} else {
-		data.SourceInterfaceInformsVlan.Null = true
+		data.SourceInterfaceInformsVlan = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.GigabitEthernet"); value.Exists() {
-		data.SourceInterfaceTrapsGigabitEthernet.Value = value.String()
+		data.SourceInterfaceTrapsGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceTrapsGigabitEthernet.Null = true
+		data.SourceInterfaceTrapsGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.TenGigabitEthernet"); value.Exists() {
-		data.SourceInterfaceTrapsTenGigabitEthernet.Value = value.String()
+		data.SourceInterfaceTrapsTenGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceTrapsTenGigabitEthernet.Null = true
+		data.SourceInterfaceTrapsTenGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.FortyGigabitEthernet"); value.Exists() {
-		data.SourceInterfaceTrapsFortyGigabitEthernet.Value = value.String()
+		data.SourceInterfaceTrapsFortyGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceTrapsFortyGigabitEthernet.Null = true
+		data.SourceInterfaceTrapsFortyGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.HundredGigE"); value.Exists() {
-		data.SourceInterfaceTrapsHundredGigE.Value = value.String()
+		data.SourceInterfaceTrapsHundredGigE = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceTrapsHundredGigE.Null = true
+		data.SourceInterfaceTrapsHundredGigE = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.Loopback"); value.Exists() {
-		data.SourceInterfaceTrapsLoopback.Value = value.Int()
+		data.SourceInterfaceTrapsLoopback = types.Int64Value(value.Int())
 	} else {
-		data.SourceInterfaceTrapsLoopback.Null = true
+		data.SourceInterfaceTrapsLoopback = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.Port-channel"); value.Exists() {
-		data.SourceInterfaceTrapsPortChannel.Value = value.Int()
+		data.SourceInterfaceTrapsPortChannel = types.Int64Value(value.Int())
 	} else {
-		data.SourceInterfaceTrapsPortChannel.Null = true
+		data.SourceInterfaceTrapsPortChannel = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.Port-channel-subinterface.Port-channel"); value.Exists() {
-		data.SourceInterfaceTrapsPortChannelSubinterface.Value = value.String()
+		data.SourceInterfaceTrapsPortChannelSubinterface = types.StringValue(value.String())
 	} else {
-		data.SourceInterfaceTrapsPortChannelSubinterface.Null = true
+		data.SourceInterfaceTrapsPortChannelSubinterface = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.Vlan"); value.Exists() {
-		data.SourceInterfaceTrapsVlan.Value = value.Int()
+		data.SourceInterfaceTrapsVlan = types.Int64Value(value.Int())
 	} else {
-		data.SourceInterfaceTrapsVlan.Null = true
+		data.SourceInterfaceTrapsVlan = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.GigabitEthernet"); value.Exists() {
-		data.TrapSourceGigabitEthernet.Value = value.String()
+		data.TrapSourceGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.TrapSourceGigabitEthernet.Null = true
+		data.TrapSourceGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.TenGigabitEthernet"); value.Exists() {
-		data.TrapSourceTenGigabitEthernet.Value = value.String()
+		data.TrapSourceTenGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.TrapSourceTenGigabitEthernet.Null = true
+		data.TrapSourceTenGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.FortyGigabitEthernet"); value.Exists() {
-		data.TrapSourceFortyGigabitEthernet.Value = value.String()
+		data.TrapSourceFortyGigabitEthernet = types.StringValue(value.String())
 	} else {
-		data.TrapSourceFortyGigabitEthernet.Null = true
+		data.TrapSourceFortyGigabitEthernet = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.HundredGigE"); value.Exists() {
-		data.TrapSourceHundredGigE.Value = value.String()
+		data.TrapSourceHundredGigE = types.StringValue(value.String())
 	} else {
-		data.TrapSourceHundredGigE.Null = true
+		data.TrapSourceHundredGigE = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.Loopback"); value.Exists() {
-		data.TrapSourceLoopback.Value = value.Int()
+		data.TrapSourceLoopback = types.Int64Value(value.Int())
 	} else {
-		data.TrapSourceLoopback.Null = true
+		data.TrapSourceLoopback = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.Port-channel"); value.Exists() {
-		data.TrapSourcePortChannel.Value = value.Int()
+		data.TrapSourcePortChannel = types.Int64Value(value.Int())
 	} else {
-		data.TrapSourcePortChannel.Null = true
+		data.TrapSourcePortChannel = types.Int64Null()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.Port-channel-subinterface.Port-channel"); value.Exists() {
-		data.TrapSourcePortChannelSubinterface.Value = value.String()
+		data.TrapSourcePortChannelSubinterface = types.StringValue(value.String())
 	} else {
-		data.TrapSourcePortChannelSubinterface.Null = true
+		data.TrapSourcePortChannelSubinterface = types.StringNull()
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.Vlan"); value.Exists() {
-		data.TrapSourceVlan.Value = value.Int()
+		data.TrapSourceVlan = types.Int64Value(value.Int())
 	} else {
-		data.TrapSourceVlan.Null = true
+		data.TrapSourceVlan = types.Int64Null()
 	}
 	for i := range data.SnmpCommunities {
 		keys := [...]string{"name"}
-		keyValues := [...]string{data.SnmpCommunities[i].Name.Value}
+		keyValues := [...]string{data.SnmpCommunities[i].Name.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "Cisco-IOS-XE-snmp:community-config").ForEach(
@@ -497,34 +497,34 @@ func (data *SNMPServer) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("name"); value.Exists() {
-			data.SnmpCommunities[i].Name.Value = value.String()
+			data.SnmpCommunities[i].Name = types.StringValue(value.String())
 		} else {
-			data.SnmpCommunities[i].Name.Null = true
+			data.SnmpCommunities[i].Name = types.StringNull()
 		}
 		if value := r.Get("view"); value.Exists() {
-			data.SnmpCommunities[i].View.Value = value.String()
+			data.SnmpCommunities[i].View = types.StringValue(value.String())
 		} else {
-			data.SnmpCommunities[i].View.Null = true
+			data.SnmpCommunities[i].View = types.StringNull()
 		}
 		if value := r.Get("permission"); value.Exists() {
-			data.SnmpCommunities[i].Permission.Value = value.String()
+			data.SnmpCommunities[i].Permission = types.StringValue(value.String())
 		} else {
-			data.SnmpCommunities[i].Permission.Null = true
+			data.SnmpCommunities[i].Permission = types.StringNull()
 		}
 		if value := r.Get("ipv6"); value.Exists() {
-			data.SnmpCommunities[i].Ipv6.Value = value.String()
+			data.SnmpCommunities[i].Ipv6 = types.StringValue(value.String())
 		} else {
-			data.SnmpCommunities[i].Ipv6.Null = true
+			data.SnmpCommunities[i].Ipv6 = types.StringNull()
 		}
 		if value := r.Get("access-list-name"); value.Exists() {
-			data.SnmpCommunities[i].AccessListName.Value = value.String()
+			data.SnmpCommunities[i].AccessListName = types.StringValue(value.String())
 		} else {
-			data.SnmpCommunities[i].AccessListName.Null = true
+			data.SnmpCommunities[i].AccessListName = types.StringNull()
 		}
 	}
 	for i := range data.Contexts {
 		keys := [...]string{"name"}
-		keyValues := [...]string{data.Contexts[i].Name.Value}
+		keyValues := [...]string{data.Contexts[i].Name.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "Cisco-IOS-XE-snmp:context").ForEach(
@@ -546,14 +546,14 @@ func (data *SNMPServer) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("name"); value.Exists() {
-			data.Contexts[i].Name.Value = value.String()
+			data.Contexts[i].Name = types.StringValue(value.String())
 		} else {
-			data.Contexts[i].Name.Null = true
+			data.Contexts[i].Name = types.StringNull()
 		}
 	}
 	for i := range data.Views {
 		keys := [...]string{"name", "mib"}
-		keyValues := [...]string{data.Views[i].Name.Value, data.Views[i].Mib.Value}
+		keyValues := [...]string{data.Views[i].Name.ValueString(), data.Views[i].Mib.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "Cisco-IOS-XE-snmp:view").ForEach(
@@ -575,19 +575,19 @@ func (data *SNMPServer) updateFromBody(ctx context.Context, res gjson.Result) {
 			},
 		)
 		if value := r.Get("name"); value.Exists() {
-			data.Views[i].Name.Value = value.String()
+			data.Views[i].Name = types.StringValue(value.String())
 		} else {
-			data.Views[i].Name.Null = true
+			data.Views[i].Name = types.StringNull()
 		}
 		if value := r.Get("mib"); value.Exists() {
-			data.Views[i].Mib.Value = value.String()
+			data.Views[i].Mib = types.StringValue(value.String())
 		} else {
-			data.Views[i].Mib.Null = true
+			data.Views[i].Mib = types.StringNull()
 		}
 		if value := r.Get("inc-exl"); value.Exists() {
-			data.Views[i].IncExl.Value = value.String()
+			data.Views[i].IncExl = types.StringValue(value.String())
 		} else {
-			data.Views[i].IncExl.Null = true
+			data.Views[i].IncExl = types.StringNull()
 		}
 	}
 }
@@ -598,214 +598,160 @@ func (data *SNMPServer) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:chassis-id"); value.Exists() {
-		data.ChassisId.Value = value.String()
-		data.ChassisId.Null = false
+		data.ChassisId = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:contact"); value.Exists() {
-		data.Contact.Value = value.String()
-		data.Contact.Null = false
+		data.Contact = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:ifindex.persist"); value.Exists() {
-		data.IfindexPersist.Value = true
-		data.IfindexPersist.Null = false
+		data.IfindexPersist = types.BoolValue(true)
 	} else {
-		data.IfindexPersist.Value = false
-		data.IfindexPersist.Null = false
+		data.IfindexPersist = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:location"); value.Exists() {
-		data.Location.Value = value.String()
-		data.Location.Null = false
+		data.Location = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:packetsize"); value.Exists() {
-		data.Packetsize.Value = value.Int()
-		data.Packetsize.Null = false
+		data.Packetsize = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:queue-length"); value.Exists() {
-		data.QueueLength.Value = value.Int()
-		data.QueueLength.Null = false
+		data.QueueLength = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.logging.getop"); value.Exists() {
-		data.EnableLoggingGetop.Value = value.Bool()
-		data.EnableLoggingGetop.Null = false
+		data.EnableLoggingGetop = types.BoolValue(value.Bool())
 	} else {
-		data.EnableLoggingGetop.Value = false
-		data.EnableLoggingGetop.Null = false
+		data.EnableLoggingGetop = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.logging.setop"); value.Exists() {
-		data.EnableLoggingSetop.Value = value.Bool()
-		data.EnableLoggingSetop.Null = false
+		data.EnableLoggingSetop = types.BoolValue(value.Bool())
 	} else {
-		data.EnableLoggingSetop.Value = false
-		data.EnableLoggingSetop.Null = false
+		data.EnableLoggingSetop = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.informs"); value.Exists() {
-		data.EnableInforms.Value = true
-		data.EnableInforms.Null = false
+		data.EnableInforms = types.BoolValue(true)
 	} else {
-		data.EnableInforms.Value = false
-		data.EnableInforms.Null = false
+		data.EnableInforms = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps"); value.Exists() {
-		data.EnableTraps.Value = true
-		data.EnableTraps.Null = false
+		data.EnableTraps = types.BoolValue(true)
 	} else {
-		data.EnableTraps.Value = false
-		data.EnableTraps.Null = false
+		data.EnableTraps = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.authentication"); value.Exists() {
-		data.EnableTrapsSnmpAuthentication.Value = true
-		data.EnableTrapsSnmpAuthentication.Null = false
+		data.EnableTrapsSnmpAuthentication = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpAuthentication.Value = false
-		data.EnableTrapsSnmpAuthentication.Null = false
+		data.EnableTrapsSnmpAuthentication = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.coldstart"); value.Exists() {
-		data.EnableTrapsSnmpColdstart.Value = true
-		data.EnableTrapsSnmpColdstart.Null = false
+		data.EnableTrapsSnmpColdstart = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpColdstart.Value = false
-		data.EnableTrapsSnmpColdstart.Null = false
+		data.EnableTrapsSnmpColdstart = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkdown"); value.Exists() {
-		data.EnableTrapsSnmpLinkdown.Value = true
-		data.EnableTrapsSnmpLinkdown.Null = false
+		data.EnableTrapsSnmpLinkdown = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpLinkdown.Value = false
-		data.EnableTrapsSnmpLinkdown.Null = false
+		data.EnableTrapsSnmpLinkdown = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.linkup"); value.Exists() {
-		data.EnableTrapsSnmpLinkup.Value = true
-		data.EnableTrapsSnmpLinkup.Null = false
+		data.EnableTrapsSnmpLinkup = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpLinkup.Value = false
-		data.EnableTrapsSnmpLinkup.Null = false
+		data.EnableTrapsSnmpLinkup = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:enable.enable-choice.traps.snmp.warmstart"); value.Exists() {
-		data.EnableTrapsSnmpWarmstart.Value = true
-		data.EnableTrapsSnmpWarmstart.Null = false
+		data.EnableTrapsSnmpWarmstart = types.BoolValue(true)
 	} else {
-		data.EnableTrapsSnmpWarmstart.Value = false
-		data.EnableTrapsSnmpWarmstart.Null = false
+		data.EnableTrapsSnmpWarmstart = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.GigabitEthernet"); value.Exists() {
-		data.SourceInterfaceInformsGigabitEthernet.Value = value.String()
-		data.SourceInterfaceInformsGigabitEthernet.Null = false
+		data.SourceInterfaceInformsGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.TenGigabitEthernet"); value.Exists() {
-		data.SourceInterfaceInformsTenGigabitEthernet.Value = value.String()
-		data.SourceInterfaceInformsTenGigabitEthernet.Null = false
+		data.SourceInterfaceInformsTenGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.FortyGigabitEthernet"); value.Exists() {
-		data.SourceInterfaceInformsFortyGigabitEthernet.Value = value.String()
-		data.SourceInterfaceInformsFortyGigabitEthernet.Null = false
+		data.SourceInterfaceInformsFortyGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.HundredGigE"); value.Exists() {
-		data.SourceInterfaceInformsHundredGigE.Value = value.String()
-		data.SourceInterfaceInformsHundredGigE.Null = false
+		data.SourceInterfaceInformsHundredGigE = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.Loopback"); value.Exists() {
-		data.SourceInterfaceInformsLoopback.Value = value.Int()
-		data.SourceInterfaceInformsLoopback.Null = false
+		data.SourceInterfaceInformsLoopback = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.Port-channel"); value.Exists() {
-		data.SourceInterfaceInformsPortChannel.Value = value.Int()
-		data.SourceInterfaceInformsPortChannel.Null = false
+		data.SourceInterfaceInformsPortChannel = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.Port-channel-subinterface.Port-channel"); value.Exists() {
-		data.SourceInterfaceInformsPortChannelSubinterface.Value = value.String()
-		data.SourceInterfaceInformsPortChannelSubinterface.Null = false
+		data.SourceInterfaceInformsPortChannelSubinterface = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.informs.Vlan"); value.Exists() {
-		data.SourceInterfaceInformsVlan.Value = value.Int()
-		data.SourceInterfaceInformsVlan.Null = false
+		data.SourceInterfaceInformsVlan = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.GigabitEthernet"); value.Exists() {
-		data.SourceInterfaceTrapsGigabitEthernet.Value = value.String()
-		data.SourceInterfaceTrapsGigabitEthernet.Null = false
+		data.SourceInterfaceTrapsGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.TenGigabitEthernet"); value.Exists() {
-		data.SourceInterfaceTrapsTenGigabitEthernet.Value = value.String()
-		data.SourceInterfaceTrapsTenGigabitEthernet.Null = false
+		data.SourceInterfaceTrapsTenGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.FortyGigabitEthernet"); value.Exists() {
-		data.SourceInterfaceTrapsFortyGigabitEthernet.Value = value.String()
-		data.SourceInterfaceTrapsFortyGigabitEthernet.Null = false
+		data.SourceInterfaceTrapsFortyGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.HundredGigE"); value.Exists() {
-		data.SourceInterfaceTrapsHundredGigE.Value = value.String()
-		data.SourceInterfaceTrapsHundredGigE.Null = false
+		data.SourceInterfaceTrapsHundredGigE = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.Loopback"); value.Exists() {
-		data.SourceInterfaceTrapsLoopback.Value = value.Int()
-		data.SourceInterfaceTrapsLoopback.Null = false
+		data.SourceInterfaceTrapsLoopback = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.Port-channel"); value.Exists() {
-		data.SourceInterfaceTrapsPortChannel.Value = value.Int()
-		data.SourceInterfaceTrapsPortChannel.Null = false
+		data.SourceInterfaceTrapsPortChannel = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.Port-channel-subinterface.Port-channel"); value.Exists() {
-		data.SourceInterfaceTrapsPortChannelSubinterface.Value = value.String()
-		data.SourceInterfaceTrapsPortChannelSubinterface.Null = false
+		data.SourceInterfaceTrapsPortChannelSubinterface = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:source-interface.traps.Vlan"); value.Exists() {
-		data.SourceInterfaceTrapsVlan.Value = value.Int()
-		data.SourceInterfaceTrapsVlan.Null = false
+		data.SourceInterfaceTrapsVlan = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.GigabitEthernet"); value.Exists() {
-		data.TrapSourceGigabitEthernet.Value = value.String()
-		data.TrapSourceGigabitEthernet.Null = false
+		data.TrapSourceGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.TenGigabitEthernet"); value.Exists() {
-		data.TrapSourceTenGigabitEthernet.Value = value.String()
-		data.TrapSourceTenGigabitEthernet.Null = false
+		data.TrapSourceTenGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.FortyGigabitEthernet"); value.Exists() {
-		data.TrapSourceFortyGigabitEthernet.Value = value.String()
-		data.TrapSourceFortyGigabitEthernet.Null = false
+		data.TrapSourceFortyGigabitEthernet = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.HundredGigE"); value.Exists() {
-		data.TrapSourceHundredGigE.Value = value.String()
-		data.TrapSourceHundredGigE.Null = false
+		data.TrapSourceHundredGigE = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.Loopback"); value.Exists() {
-		data.TrapSourceLoopback.Value = value.Int()
-		data.TrapSourceLoopback.Null = false
+		data.TrapSourceLoopback = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.Port-channel"); value.Exists() {
-		data.TrapSourcePortChannel.Value = value.Int()
-		data.TrapSourcePortChannel.Null = false
+		data.TrapSourcePortChannel = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.Port-channel-subinterface.Port-channel"); value.Exists() {
-		data.TrapSourcePortChannelSubinterface.Value = value.String()
-		data.TrapSourcePortChannelSubinterface.Null = false
+		data.TrapSourcePortChannelSubinterface = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:trap-source.Vlan"); value.Exists() {
-		data.TrapSourceVlan.Value = value.Int()
-		data.TrapSourceVlan.Null = false
+		data.TrapSourceVlan = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-snmp:community-config"); value.Exists() {
 		data.SnmpCommunities = make([]SNMPServerSnmpCommunities, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := SNMPServerSnmpCommunities{}
 			if cValue := v.Get("name"); cValue.Exists() {
-				item.Name.Value = cValue.String()
-				item.Name.Null = false
+				item.Name = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("view"); cValue.Exists() {
-				item.View.Value = cValue.String()
-				item.View.Null = false
+				item.View = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("permission"); cValue.Exists() {
-				item.Permission.Value = cValue.String()
-				item.Permission.Null = false
+				item.Permission = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ipv6"); cValue.Exists() {
-				item.Ipv6.Value = cValue.String()
-				item.Ipv6.Null = false
+				item.Ipv6 = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("access-list-name"); cValue.Exists() {
-				item.AccessListName.Value = cValue.String()
-				item.AccessListName.Null = false
+				item.AccessListName = types.StringValue(cValue.String())
 			}
 			data.SnmpCommunities = append(data.SnmpCommunities, item)
 			return true
@@ -816,8 +762,7 @@ func (data *SNMPServer) fromBody(ctx context.Context, res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := SNMPServerContexts{}
 			if cValue := v.Get("name"); cValue.Exists() {
-				item.Name.Value = cValue.String()
-				item.Name.Null = false
+				item.Name = types.StringValue(cValue.String())
 			}
 			data.Contexts = append(data.Contexts, item)
 			return true
@@ -828,16 +773,13 @@ func (data *SNMPServer) fromBody(ctx context.Context, res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := SNMPServerViews{}
 			if cValue := v.Get("name"); cValue.Exists() {
-				item.Name.Value = cValue.String()
-				item.Name.Null = false
+				item.Name = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("mib"); cValue.Exists() {
-				item.Mib.Value = cValue.String()
-				item.Mib.Null = false
+				item.Mib = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("inc-exl"); cValue.Exists() {
-				item.IncExl.Value = cValue.String()
-				item.IncExl.Null = false
+				item.IncExl = types.StringValue(cValue.String())
 			}
 			data.Views = append(data.Views, item)
 			return true
@@ -846,210 +788,160 @@ func (data *SNMPServer) fromBody(ctx context.Context, res gjson.Result) {
 }
 
 func (data *SNMPServer) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.ChassisId.Unknown {
-		data.ChassisId.Unknown = false
-		data.ChassisId.Null = true
+	if data.ChassisId.IsUnknown() {
+		data.ChassisId = types.StringNull()
 	}
-	if data.Contact.Unknown {
-		data.Contact.Unknown = false
-		data.Contact.Null = true
+	if data.Contact.IsUnknown() {
+		data.Contact = types.StringNull()
 	}
-	if data.IfindexPersist.Unknown {
-		data.IfindexPersist.Unknown = false
-		data.IfindexPersist.Null = true
+	if data.IfindexPersist.IsUnknown() {
+		data.IfindexPersist = types.BoolNull()
 	}
-	if data.Location.Unknown {
-		data.Location.Unknown = false
-		data.Location.Null = true
+	if data.Location.IsUnknown() {
+		data.Location = types.StringNull()
 	}
-	if data.Packetsize.Unknown {
-		data.Packetsize.Unknown = false
-		data.Packetsize.Null = true
+	if data.Packetsize.IsUnknown() {
+		data.Packetsize = types.Int64Null()
 	}
-	if data.QueueLength.Unknown {
-		data.QueueLength.Unknown = false
-		data.QueueLength.Null = true
+	if data.QueueLength.IsUnknown() {
+		data.QueueLength = types.Int64Null()
 	}
-	if data.EnableLoggingGetop.Unknown {
-		data.EnableLoggingGetop.Unknown = false
-		data.EnableLoggingGetop.Null = true
+	if data.EnableLoggingGetop.IsUnknown() {
+		data.EnableLoggingGetop = types.BoolNull()
 	}
-	if data.EnableLoggingSetop.Unknown {
-		data.EnableLoggingSetop.Unknown = false
-		data.EnableLoggingSetop.Null = true
+	if data.EnableLoggingSetop.IsUnknown() {
+		data.EnableLoggingSetop = types.BoolNull()
 	}
-	if data.EnableInforms.Unknown {
-		data.EnableInforms.Unknown = false
-		data.EnableInforms.Null = true
+	if data.EnableInforms.IsUnknown() {
+		data.EnableInforms = types.BoolNull()
 	}
-	if data.EnableTraps.Unknown {
-		data.EnableTraps.Unknown = false
-		data.EnableTraps.Null = true
+	if data.EnableTraps.IsUnknown() {
+		data.EnableTraps = types.BoolNull()
 	}
-	if data.EnableTrapsSnmpAuthentication.Unknown {
-		data.EnableTrapsSnmpAuthentication.Unknown = false
-		data.EnableTrapsSnmpAuthentication.Null = true
+	if data.EnableTrapsSnmpAuthentication.IsUnknown() {
+		data.EnableTrapsSnmpAuthentication = types.BoolNull()
 	}
-	if data.EnableTrapsSnmpColdstart.Unknown {
-		data.EnableTrapsSnmpColdstart.Unknown = false
-		data.EnableTrapsSnmpColdstart.Null = true
+	if data.EnableTrapsSnmpColdstart.IsUnknown() {
+		data.EnableTrapsSnmpColdstart = types.BoolNull()
 	}
-	if data.EnableTrapsSnmpLinkdown.Unknown {
-		data.EnableTrapsSnmpLinkdown.Unknown = false
-		data.EnableTrapsSnmpLinkdown.Null = true
+	if data.EnableTrapsSnmpLinkdown.IsUnknown() {
+		data.EnableTrapsSnmpLinkdown = types.BoolNull()
 	}
-	if data.EnableTrapsSnmpLinkup.Unknown {
-		data.EnableTrapsSnmpLinkup.Unknown = false
-		data.EnableTrapsSnmpLinkup.Null = true
+	if data.EnableTrapsSnmpLinkup.IsUnknown() {
+		data.EnableTrapsSnmpLinkup = types.BoolNull()
 	}
-	if data.EnableTrapsSnmpWarmstart.Unknown {
-		data.EnableTrapsSnmpWarmstart.Unknown = false
-		data.EnableTrapsSnmpWarmstart.Null = true
+	if data.EnableTrapsSnmpWarmstart.IsUnknown() {
+		data.EnableTrapsSnmpWarmstart = types.BoolNull()
 	}
-	if data.SourceInterfaceInformsGigabitEthernet.Unknown {
-		data.SourceInterfaceInformsGigabitEthernet.Unknown = false
-		data.SourceInterfaceInformsGigabitEthernet.Null = true
+	if data.SourceInterfaceInformsGigabitEthernet.IsUnknown() {
+		data.SourceInterfaceInformsGigabitEthernet = types.StringNull()
 	}
-	if data.SourceInterfaceInformsTenGigabitEthernet.Unknown {
-		data.SourceInterfaceInformsTenGigabitEthernet.Unknown = false
-		data.SourceInterfaceInformsTenGigabitEthernet.Null = true
+	if data.SourceInterfaceInformsTenGigabitEthernet.IsUnknown() {
+		data.SourceInterfaceInformsTenGigabitEthernet = types.StringNull()
 	}
-	if data.SourceInterfaceInformsFortyGigabitEthernet.Unknown {
-		data.SourceInterfaceInformsFortyGigabitEthernet.Unknown = false
-		data.SourceInterfaceInformsFortyGigabitEthernet.Null = true
+	if data.SourceInterfaceInformsFortyGigabitEthernet.IsUnknown() {
+		data.SourceInterfaceInformsFortyGigabitEthernet = types.StringNull()
 	}
-	if data.SourceInterfaceInformsHundredGigE.Unknown {
-		data.SourceInterfaceInformsHundredGigE.Unknown = false
-		data.SourceInterfaceInformsHundredGigE.Null = true
+	if data.SourceInterfaceInformsHundredGigE.IsUnknown() {
+		data.SourceInterfaceInformsHundredGigE = types.StringNull()
 	}
-	if data.SourceInterfaceInformsLoopback.Unknown {
-		data.SourceInterfaceInformsLoopback.Unknown = false
-		data.SourceInterfaceInformsLoopback.Null = true
+	if data.SourceInterfaceInformsLoopback.IsUnknown() {
+		data.SourceInterfaceInformsLoopback = types.Int64Null()
 	}
-	if data.SourceInterfaceInformsPortChannel.Unknown {
-		data.SourceInterfaceInformsPortChannel.Unknown = false
-		data.SourceInterfaceInformsPortChannel.Null = true
+	if data.SourceInterfaceInformsPortChannel.IsUnknown() {
+		data.SourceInterfaceInformsPortChannel = types.Int64Null()
 	}
-	if data.SourceInterfaceInformsPortChannelSubinterface.Unknown {
-		data.SourceInterfaceInformsPortChannelSubinterface.Unknown = false
-		data.SourceInterfaceInformsPortChannelSubinterface.Null = true
+	if data.SourceInterfaceInformsPortChannelSubinterface.IsUnknown() {
+		data.SourceInterfaceInformsPortChannelSubinterface = types.StringNull()
 	}
-	if data.SourceInterfaceInformsVlan.Unknown {
-		data.SourceInterfaceInformsVlan.Unknown = false
-		data.SourceInterfaceInformsVlan.Null = true
+	if data.SourceInterfaceInformsVlan.IsUnknown() {
+		data.SourceInterfaceInformsVlan = types.Int64Null()
 	}
-	if data.SourceInterfaceTrapsGigabitEthernet.Unknown {
-		data.SourceInterfaceTrapsGigabitEthernet.Unknown = false
-		data.SourceInterfaceTrapsGigabitEthernet.Null = true
+	if data.SourceInterfaceTrapsGigabitEthernet.IsUnknown() {
+		data.SourceInterfaceTrapsGigabitEthernet = types.StringNull()
 	}
-	if data.SourceInterfaceTrapsTenGigabitEthernet.Unknown {
-		data.SourceInterfaceTrapsTenGigabitEthernet.Unknown = false
-		data.SourceInterfaceTrapsTenGigabitEthernet.Null = true
+	if data.SourceInterfaceTrapsTenGigabitEthernet.IsUnknown() {
+		data.SourceInterfaceTrapsTenGigabitEthernet = types.StringNull()
 	}
-	if data.SourceInterfaceTrapsFortyGigabitEthernet.Unknown {
-		data.SourceInterfaceTrapsFortyGigabitEthernet.Unknown = false
-		data.SourceInterfaceTrapsFortyGigabitEthernet.Null = true
+	if data.SourceInterfaceTrapsFortyGigabitEthernet.IsUnknown() {
+		data.SourceInterfaceTrapsFortyGigabitEthernet = types.StringNull()
 	}
-	if data.SourceInterfaceTrapsHundredGigE.Unknown {
-		data.SourceInterfaceTrapsHundredGigE.Unknown = false
-		data.SourceInterfaceTrapsHundredGigE.Null = true
+	if data.SourceInterfaceTrapsHundredGigE.IsUnknown() {
+		data.SourceInterfaceTrapsHundredGigE = types.StringNull()
 	}
-	if data.SourceInterfaceTrapsLoopback.Unknown {
-		data.SourceInterfaceTrapsLoopback.Unknown = false
-		data.SourceInterfaceTrapsLoopback.Null = true
+	if data.SourceInterfaceTrapsLoopback.IsUnknown() {
+		data.SourceInterfaceTrapsLoopback = types.Int64Null()
 	}
-	if data.SourceInterfaceTrapsPortChannel.Unknown {
-		data.SourceInterfaceTrapsPortChannel.Unknown = false
-		data.SourceInterfaceTrapsPortChannel.Null = true
+	if data.SourceInterfaceTrapsPortChannel.IsUnknown() {
+		data.SourceInterfaceTrapsPortChannel = types.Int64Null()
 	}
-	if data.SourceInterfaceTrapsPortChannelSubinterface.Unknown {
-		data.SourceInterfaceTrapsPortChannelSubinterface.Unknown = false
-		data.SourceInterfaceTrapsPortChannelSubinterface.Null = true
+	if data.SourceInterfaceTrapsPortChannelSubinterface.IsUnknown() {
+		data.SourceInterfaceTrapsPortChannelSubinterface = types.StringNull()
 	}
-	if data.SourceInterfaceTrapsVlan.Unknown {
-		data.SourceInterfaceTrapsVlan.Unknown = false
-		data.SourceInterfaceTrapsVlan.Null = true
+	if data.SourceInterfaceTrapsVlan.IsUnknown() {
+		data.SourceInterfaceTrapsVlan = types.Int64Null()
 	}
-	if data.TrapSourceGigabitEthernet.Unknown {
-		data.TrapSourceGigabitEthernet.Unknown = false
-		data.TrapSourceGigabitEthernet.Null = true
+	if data.TrapSourceGigabitEthernet.IsUnknown() {
+		data.TrapSourceGigabitEthernet = types.StringNull()
 	}
-	if data.TrapSourceTenGigabitEthernet.Unknown {
-		data.TrapSourceTenGigabitEthernet.Unknown = false
-		data.TrapSourceTenGigabitEthernet.Null = true
+	if data.TrapSourceTenGigabitEthernet.IsUnknown() {
+		data.TrapSourceTenGigabitEthernet = types.StringNull()
 	}
-	if data.TrapSourceFortyGigabitEthernet.Unknown {
-		data.TrapSourceFortyGigabitEthernet.Unknown = false
-		data.TrapSourceFortyGigabitEthernet.Null = true
+	if data.TrapSourceFortyGigabitEthernet.IsUnknown() {
+		data.TrapSourceFortyGigabitEthernet = types.StringNull()
 	}
-	if data.TrapSourceHundredGigE.Unknown {
-		data.TrapSourceHundredGigE.Unknown = false
-		data.TrapSourceHundredGigE.Null = true
+	if data.TrapSourceHundredGigE.IsUnknown() {
+		data.TrapSourceHundredGigE = types.StringNull()
 	}
-	if data.TrapSourceLoopback.Unknown {
-		data.TrapSourceLoopback.Unknown = false
-		data.TrapSourceLoopback.Null = true
+	if data.TrapSourceLoopback.IsUnknown() {
+		data.TrapSourceLoopback = types.Int64Null()
 	}
-	if data.TrapSourcePortChannel.Unknown {
-		data.TrapSourcePortChannel.Unknown = false
-		data.TrapSourcePortChannel.Null = true
+	if data.TrapSourcePortChannel.IsUnknown() {
+		data.TrapSourcePortChannel = types.Int64Null()
 	}
-	if data.TrapSourcePortChannelSubinterface.Unknown {
-		data.TrapSourcePortChannelSubinterface.Unknown = false
-		data.TrapSourcePortChannelSubinterface.Null = true
+	if data.TrapSourcePortChannelSubinterface.IsUnknown() {
+		data.TrapSourcePortChannelSubinterface = types.StringNull()
 	}
-	if data.TrapSourceVlan.Unknown {
-		data.TrapSourceVlan.Unknown = false
-		data.TrapSourceVlan.Null = true
+	if data.TrapSourceVlan.IsUnknown() {
+		data.TrapSourceVlan = types.Int64Null()
 	}
 	for i := range data.SnmpCommunities {
-		if data.SnmpCommunities[i].Name.Unknown {
-			data.SnmpCommunities[i].Name.Unknown = false
-			data.SnmpCommunities[i].Name.Null = true
+		if data.SnmpCommunities[i].Name.IsUnknown() {
+			data.SnmpCommunities[i].Name = types.StringNull()
 		}
-		if data.SnmpCommunities[i].View.Unknown {
-			data.SnmpCommunities[i].View.Unknown = false
-			data.SnmpCommunities[i].View.Null = true
+		if data.SnmpCommunities[i].View.IsUnknown() {
+			data.SnmpCommunities[i].View = types.StringNull()
 		}
-		if data.SnmpCommunities[i].Permission.Unknown {
-			data.SnmpCommunities[i].Permission.Unknown = false
-			data.SnmpCommunities[i].Permission.Null = true
+		if data.SnmpCommunities[i].Permission.IsUnknown() {
+			data.SnmpCommunities[i].Permission = types.StringNull()
 		}
-		if data.SnmpCommunities[i].Ipv6.Unknown {
-			data.SnmpCommunities[i].Ipv6.Unknown = false
-			data.SnmpCommunities[i].Ipv6.Null = true
+		if data.SnmpCommunities[i].Ipv6.IsUnknown() {
+			data.SnmpCommunities[i].Ipv6 = types.StringNull()
 		}
-		if data.SnmpCommunities[i].AccessListName.Unknown {
-			data.SnmpCommunities[i].AccessListName.Unknown = false
-			data.SnmpCommunities[i].AccessListName.Null = true
+		if data.SnmpCommunities[i].AccessListName.IsUnknown() {
+			data.SnmpCommunities[i].AccessListName = types.StringNull()
 		}
 	}
 	for i := range data.Contexts {
-		if data.Contexts[i].Name.Unknown {
-			data.Contexts[i].Name.Unknown = false
-			data.Contexts[i].Name.Null = true
+		if data.Contexts[i].Name.IsUnknown() {
+			data.Contexts[i].Name = types.StringNull()
 		}
 	}
 	for i := range data.Views {
-		if data.Views[i].Name.Unknown {
-			data.Views[i].Name.Unknown = false
-			data.Views[i].Name.Null = true
+		if data.Views[i].Name.IsUnknown() {
+			data.Views[i].Name = types.StringNull()
 		}
-		if data.Views[i].Mib.Unknown {
-			data.Views[i].Mib.Unknown = false
-			data.Views[i].Mib.Null = true
+		if data.Views[i].Mib.IsUnknown() {
+			data.Views[i].Mib = types.StringNull()
 		}
-		if data.Views[i].IncExl.Unknown {
-			data.Views[i].IncExl.Unknown = false
-			data.Views[i].IncExl.Null = true
+		if data.Views[i].IncExl.IsUnknown() {
+			data.Views[i].IncExl = types.StringNull()
 		}
 	}
 }
@@ -1057,10 +949,10 @@ func (data *SNMPServer) setUnknownValues(ctx context.Context) {
 func (data *SNMPServer) getDeletedListItems(ctx context.Context, state SNMPServer) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.SnmpCommunities {
-		stateKeyValues := [...]string{state.SnmpCommunities[i].Name.Value}
+		stateKeyValues := [...]string{state.SnmpCommunities[i].Name.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.SnmpCommunities[i].Name.Value).IsZero() {
+		if !reflect.ValueOf(state.SnmpCommunities[i].Name.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -1070,7 +962,7 @@ func (data *SNMPServer) getDeletedListItems(ctx context.Context, state SNMPServe
 		found := false
 		for j := range data.SnmpCommunities {
 			found = true
-			if state.SnmpCommunities[i].Name.Value != data.SnmpCommunities[j].Name.Value {
+			if state.SnmpCommunities[i].Name.ValueString() != data.SnmpCommunities[j].Name.ValueString() {
 				found = false
 			}
 			if found {
@@ -1082,10 +974,10 @@ func (data *SNMPServer) getDeletedListItems(ctx context.Context, state SNMPServe
 		}
 	}
 	for i := range state.Contexts {
-		stateKeyValues := [...]string{state.Contexts[i].Name.Value}
+		stateKeyValues := [...]string{state.Contexts[i].Name.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Contexts[i].Name.Value).IsZero() {
+		if !reflect.ValueOf(state.Contexts[i].Name.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -1095,7 +987,7 @@ func (data *SNMPServer) getDeletedListItems(ctx context.Context, state SNMPServe
 		found := false
 		for j := range data.Contexts {
 			found = true
-			if state.Contexts[i].Name.Value != data.Contexts[j].Name.Value {
+			if state.Contexts[i].Name.ValueString() != data.Contexts[j].Name.ValueString() {
 				found = false
 			}
 			if found {
@@ -1107,13 +999,13 @@ func (data *SNMPServer) getDeletedListItems(ctx context.Context, state SNMPServe
 		}
 	}
 	for i := range state.Views {
-		stateKeyValues := [...]string{state.Views[i].Name.Value, state.Views[i].Mib.Value}
+		stateKeyValues := [...]string{state.Views[i].Name.ValueString(), state.Views[i].Mib.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.Views[i].Name.Value).IsZero() {
+		if !reflect.ValueOf(state.Views[i].Name.ValueString()).IsZero() {
 			emptyKeys = false
 		}
-		if !reflect.ValueOf(state.Views[i].Mib.Value).IsZero() {
+		if !reflect.ValueOf(state.Views[i].Mib.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -1123,10 +1015,10 @@ func (data *SNMPServer) getDeletedListItems(ctx context.Context, state SNMPServe
 		found := false
 		for j := range data.Views {
 			found = true
-			if state.Views[i].Name.Value != data.Views[j].Name.Value {
+			if state.Views[i].Name.ValueString() != data.Views[j].Name.ValueString() {
 				found = false
 			}
-			if state.Views[i].Mib.Value != data.Views[j].Mib.Value {
+			if state.Views[i].Mib.ValueString() != data.Views[j].Mib.ValueString() {
 				found = false
 			}
 			if found {
@@ -1142,25 +1034,25 @@ func (data *SNMPServer) getDeletedListItems(ctx context.Context, state SNMPServe
 
 func (data *SNMPServer) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.IfindexPersist.Value {
+	if !data.IfindexPersist.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:ifindex/persist", data.getPath()))
 	}
-	if !data.EnableInforms.Value {
+	if !data.EnableInforms.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/informs", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpAuthentication.Value {
+	if !data.EnableTrapsSnmpAuthentication.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/authentication", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpColdstart.Value {
+	if !data.EnableTrapsSnmpColdstart.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/coldstart", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpLinkdown.Value {
+	if !data.EnableTrapsSnmpLinkdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkdown", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpLinkup.Value {
+	if !data.EnableTrapsSnmpLinkup.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkup", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpWarmstart.Value {
+	if !data.EnableTrapsSnmpWarmstart.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/warmstart", data.getPath()))
 	}
 

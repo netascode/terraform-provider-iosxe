@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceEVPNType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &EVPNDataSource{}
+	_ datasource.DataSourceWithConfigure = &EVPNDataSource{}
+)
 
-func (t dataSourceEVPNType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewEVPNDataSource() datasource.DataSource {
+	return &EVPNDataSource{}
+}
+
+type EVPNDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *EVPNDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_evpn"
+}
+
+func (d *EVPNDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the EVPN configuration.",
@@ -96,19 +112,15 @@ func (t dataSourceEVPNType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.D
 	}, nil
 }
 
-func (t dataSourceEVPNType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *EVPNDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceEVPN{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceEVPN struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceEVPN) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *EVPNDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config EVPN
 
 	// Read config
@@ -120,7 +132,7 @@ func (d dataSourceEVPN) Read(ctx context.Context, req datasource.ReadRequest, re
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = EVPN{Device: config.Device}
 	} else {
@@ -132,7 +144,7 @@ func (d dataSourceEVPN) Read(ctx context.Context, req datasource.ReadRequest, re
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

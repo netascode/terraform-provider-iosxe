@@ -36,7 +36,7 @@ type SNMPServerGroupV3Security struct {
 }
 
 func (data SNMPServerGroup) getPath() string {
-	return fmt.Sprintf("Cisco-IOS-XE-native:native/snmp-server/Cisco-IOS-XE-snmp:group=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.Value)))
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/snmp-server/Cisco-IOS-XE-snmp:group=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
 // if last path element has a key -> remove it
@@ -52,38 +52,38 @@ func (data SNMPServerGroup) getPathShort() string {
 
 func (data SNMPServerGroup) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.Name.Null && !data.Name.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Name.Value)
+	if !data.Name.IsNull() && !data.Name.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"id", data.Name.ValueString())
 	}
 	if len(data.V3Security) > 0 {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list", []interface{}{})
 		for index, item := range data.V3Security {
-			if !item.SecurityLevel.Null && !item.SecurityLevel.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"security-level", item.SecurityLevel.Value)
+			if !item.SecurityLevel.IsNull() && !item.SecurityLevel.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"security-level", item.SecurityLevel.ValueString())
 			}
-			if !item.ContextNode.Null && !item.ContextNode.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"context-node", item.ContextNode.Value)
+			if !item.ContextNode.IsNull() && !item.ContextNode.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"context-node", item.ContextNode.ValueString())
 			}
-			if !item.MatchNode.Null && !item.MatchNode.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"match-node", item.MatchNode.Value)
+			if !item.MatchNode.IsNull() && !item.MatchNode.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"match-node", item.MatchNode.ValueString())
 			}
-			if !item.ReadNode.Null && !item.ReadNode.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"read-node", item.ReadNode.Value)
+			if !item.ReadNode.IsNull() && !item.ReadNode.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"read-node", item.ReadNode.ValueString())
 			}
-			if !item.WriteNode.Null && !item.WriteNode.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"write-node", item.WriteNode.Value)
+			if !item.WriteNode.IsNull() && !item.WriteNode.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"write-node", item.WriteNode.ValueString())
 			}
-			if !item.NotifyNode.Null && !item.NotifyNode.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"notify-node", item.NotifyNode.Value)
+			if !item.NotifyNode.IsNull() && !item.NotifyNode.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"notify-node", item.NotifyNode.ValueString())
 			}
-			if !item.AccessIpv6Acl.Null && !item.AccessIpv6Acl.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.ipv6-acl", item.AccessIpv6Acl.Value)
+			if !item.AccessIpv6Acl.IsNull() && !item.AccessIpv6Acl.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.ipv6-acl", item.AccessIpv6Acl.ValueString())
 			}
-			if !item.AccessStandardAcl.Null && !item.AccessStandardAcl.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.standard-acl", strconv.FormatInt(item.AccessStandardAcl.Value, 10))
+			if !item.AccessStandardAcl.IsNull() && !item.AccessStandardAcl.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.standard-acl", strconv.FormatInt(item.AccessStandardAcl.ValueInt64(), 10))
 			}
-			if !item.AccessAclName.Null && !item.AccessAclName.Unknown {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.acl-name", item.AccessAclName.Value)
+			if !item.AccessAclName.IsNull() && !item.AccessAclName.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"v3.security-level-list"+"."+strconv.Itoa(index)+"."+"access-config.acl-name", item.AccessAclName.ValueString())
 			}
 		}
 	}
@@ -96,13 +96,13 @@ func (data *SNMPServerGroup) updateFromBody(ctx context.Context, res gjson.Resul
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "id"); value.Exists() {
-		data.Name.Value = value.String()
+		data.Name = types.StringValue(value.String())
 	} else {
-		data.Name.Null = true
+		data.Name = types.StringNull()
 	}
 	for i := range data.V3Security {
 		keys := [...]string{"security-level"}
-		keyValues := [...]string{data.V3Security[i].SecurityLevel.Value}
+		keyValues := [...]string{data.V3Security[i].SecurityLevel.ValueString()}
 
 		var r gjson.Result
 		res.Get(prefix + "v3.security-level-list").ForEach(
@@ -124,49 +124,49 @@ func (data *SNMPServerGroup) updateFromBody(ctx context.Context, res gjson.Resul
 			},
 		)
 		if value := r.Get("security-level"); value.Exists() {
-			data.V3Security[i].SecurityLevel.Value = value.String()
+			data.V3Security[i].SecurityLevel = types.StringValue(value.String())
 		} else {
-			data.V3Security[i].SecurityLevel.Null = true
+			data.V3Security[i].SecurityLevel = types.StringNull()
 		}
 		if value := r.Get("context-node"); value.Exists() {
-			data.V3Security[i].ContextNode.Value = value.String()
+			data.V3Security[i].ContextNode = types.StringValue(value.String())
 		} else {
-			data.V3Security[i].ContextNode.Null = true
+			data.V3Security[i].ContextNode = types.StringNull()
 		}
 		if value := r.Get("match-node"); value.Exists() {
-			data.V3Security[i].MatchNode.Value = value.String()
+			data.V3Security[i].MatchNode = types.StringValue(value.String())
 		} else {
-			data.V3Security[i].MatchNode.Null = true
+			data.V3Security[i].MatchNode = types.StringNull()
 		}
 		if value := r.Get("read-node"); value.Exists() {
-			data.V3Security[i].ReadNode.Value = value.String()
+			data.V3Security[i].ReadNode = types.StringValue(value.String())
 		} else {
-			data.V3Security[i].ReadNode.Null = true
+			data.V3Security[i].ReadNode = types.StringNull()
 		}
 		if value := r.Get("write-node"); value.Exists() {
-			data.V3Security[i].WriteNode.Value = value.String()
+			data.V3Security[i].WriteNode = types.StringValue(value.String())
 		} else {
-			data.V3Security[i].WriteNode.Null = true
+			data.V3Security[i].WriteNode = types.StringNull()
 		}
 		if value := r.Get("notify-node"); value.Exists() {
-			data.V3Security[i].NotifyNode.Value = value.String()
+			data.V3Security[i].NotifyNode = types.StringValue(value.String())
 		} else {
-			data.V3Security[i].NotifyNode.Null = true
+			data.V3Security[i].NotifyNode = types.StringNull()
 		}
 		if value := r.Get("access-config.ipv6-acl"); value.Exists() {
-			data.V3Security[i].AccessIpv6Acl.Value = value.String()
+			data.V3Security[i].AccessIpv6Acl = types.StringValue(value.String())
 		} else {
-			data.V3Security[i].AccessIpv6Acl.Null = true
+			data.V3Security[i].AccessIpv6Acl = types.StringNull()
 		}
 		if value := r.Get("access-config.standard-acl"); value.Exists() {
-			data.V3Security[i].AccessStandardAcl.Value = value.Int()
+			data.V3Security[i].AccessStandardAcl = types.Int64Value(value.Int())
 		} else {
-			data.V3Security[i].AccessStandardAcl.Null = true
+			data.V3Security[i].AccessStandardAcl = types.Int64Null()
 		}
 		if value := r.Get("access-config.acl-name"); value.Exists() {
-			data.V3Security[i].AccessAclName.Value = value.String()
+			data.V3Security[i].AccessAclName = types.StringValue(value.String())
 		} else {
-			data.V3Security[i].AccessAclName.Null = true
+			data.V3Security[i].AccessAclName = types.StringNull()
 		}
 	}
 }
@@ -181,40 +181,31 @@ func (data *SNMPServerGroup) fromBody(ctx context.Context, res gjson.Result) {
 		value.ForEach(func(k, v gjson.Result) bool {
 			item := SNMPServerGroupV3Security{}
 			if cValue := v.Get("security-level"); cValue.Exists() {
-				item.SecurityLevel.Value = cValue.String()
-				item.SecurityLevel.Null = false
+				item.SecurityLevel = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("context-node"); cValue.Exists() {
-				item.ContextNode.Value = cValue.String()
-				item.ContextNode.Null = false
+				item.ContextNode = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("match-node"); cValue.Exists() {
-				item.MatchNode.Value = cValue.String()
-				item.MatchNode.Null = false
+				item.MatchNode = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("read-node"); cValue.Exists() {
-				item.ReadNode.Value = cValue.String()
-				item.ReadNode.Null = false
+				item.ReadNode = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("write-node"); cValue.Exists() {
-				item.WriteNode.Value = cValue.String()
-				item.WriteNode.Null = false
+				item.WriteNode = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("notify-node"); cValue.Exists() {
-				item.NotifyNode.Value = cValue.String()
-				item.NotifyNode.Null = false
+				item.NotifyNode = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("access-config.ipv6-acl"); cValue.Exists() {
-				item.AccessIpv6Acl.Value = cValue.String()
-				item.AccessIpv6Acl.Null = false
+				item.AccessIpv6Acl = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("access-config.standard-acl"); cValue.Exists() {
-				item.AccessStandardAcl.Value = cValue.Int()
-				item.AccessStandardAcl.Null = false
+				item.AccessStandardAcl = types.Int64Value(cValue.Int())
 			}
 			if cValue := v.Get("access-config.acl-name"); cValue.Exists() {
-				item.AccessAclName.Value = cValue.String()
-				item.AccessAclName.Null = false
+				item.AccessAclName = types.StringValue(cValue.String())
 			}
 			data.V3Security = append(data.V3Security, item)
 			return true
@@ -223,54 +214,42 @@ func (data *SNMPServerGroup) fromBody(ctx context.Context, res gjson.Result) {
 }
 
 func (data *SNMPServerGroup) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.Name.Unknown {
-		data.Name.Unknown = false
-		data.Name.Null = true
+	if data.Name.IsUnknown() {
+		data.Name = types.StringNull()
 	}
 	for i := range data.V3Security {
-		if data.V3Security[i].SecurityLevel.Unknown {
-			data.V3Security[i].SecurityLevel.Unknown = false
-			data.V3Security[i].SecurityLevel.Null = true
+		if data.V3Security[i].SecurityLevel.IsUnknown() {
+			data.V3Security[i].SecurityLevel = types.StringNull()
 		}
-		if data.V3Security[i].ContextNode.Unknown {
-			data.V3Security[i].ContextNode.Unknown = false
-			data.V3Security[i].ContextNode.Null = true
+		if data.V3Security[i].ContextNode.IsUnknown() {
+			data.V3Security[i].ContextNode = types.StringNull()
 		}
-		if data.V3Security[i].MatchNode.Unknown {
-			data.V3Security[i].MatchNode.Unknown = false
-			data.V3Security[i].MatchNode.Null = true
+		if data.V3Security[i].MatchNode.IsUnknown() {
+			data.V3Security[i].MatchNode = types.StringNull()
 		}
-		if data.V3Security[i].ReadNode.Unknown {
-			data.V3Security[i].ReadNode.Unknown = false
-			data.V3Security[i].ReadNode.Null = true
+		if data.V3Security[i].ReadNode.IsUnknown() {
+			data.V3Security[i].ReadNode = types.StringNull()
 		}
-		if data.V3Security[i].WriteNode.Unknown {
-			data.V3Security[i].WriteNode.Unknown = false
-			data.V3Security[i].WriteNode.Null = true
+		if data.V3Security[i].WriteNode.IsUnknown() {
+			data.V3Security[i].WriteNode = types.StringNull()
 		}
-		if data.V3Security[i].NotifyNode.Unknown {
-			data.V3Security[i].NotifyNode.Unknown = false
-			data.V3Security[i].NotifyNode.Null = true
+		if data.V3Security[i].NotifyNode.IsUnknown() {
+			data.V3Security[i].NotifyNode = types.StringNull()
 		}
-		if data.V3Security[i].AccessIpv6Acl.Unknown {
-			data.V3Security[i].AccessIpv6Acl.Unknown = false
-			data.V3Security[i].AccessIpv6Acl.Null = true
+		if data.V3Security[i].AccessIpv6Acl.IsUnknown() {
+			data.V3Security[i].AccessIpv6Acl = types.StringNull()
 		}
-		if data.V3Security[i].AccessStandardAcl.Unknown {
-			data.V3Security[i].AccessStandardAcl.Unknown = false
-			data.V3Security[i].AccessStandardAcl.Null = true
+		if data.V3Security[i].AccessStandardAcl.IsUnknown() {
+			data.V3Security[i].AccessStandardAcl = types.Int64Null()
 		}
-		if data.V3Security[i].AccessAclName.Unknown {
-			data.V3Security[i].AccessAclName.Unknown = false
-			data.V3Security[i].AccessAclName.Null = true
+		if data.V3Security[i].AccessAclName.IsUnknown() {
+			data.V3Security[i].AccessAclName = types.StringNull()
 		}
 	}
 }
@@ -278,10 +257,10 @@ func (data *SNMPServerGroup) setUnknownValues(ctx context.Context) {
 func (data *SNMPServerGroup) getDeletedListItems(ctx context.Context, state SNMPServerGroup) []string {
 	deletedListItems := make([]string, 0)
 	for i := range state.V3Security {
-		stateKeyValues := [...]string{state.V3Security[i].SecurityLevel.Value}
+		stateKeyValues := [...]string{state.V3Security[i].SecurityLevel.ValueString()}
 
 		emptyKeys := true
-		if !reflect.ValueOf(state.V3Security[i].SecurityLevel.Value).IsZero() {
+		if !reflect.ValueOf(state.V3Security[i].SecurityLevel.ValueString()).IsZero() {
 			emptyKeys = false
 		}
 		if emptyKeys {
@@ -291,7 +270,7 @@ func (data *SNMPServerGroup) getDeletedListItems(ctx context.Context, state SNMP
 		found := false
 		for j := range data.V3Security {
 			found = true
-			if state.V3Security[i].SecurityLevel.Value != data.V3Security[j].SecurityLevel.Value {
+			if state.V3Security[i].SecurityLevel.ValueString() != data.V3Security[j].SecurityLevel.ValueString() {
 				found = false
 			}
 			if found {

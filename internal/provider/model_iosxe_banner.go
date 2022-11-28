@@ -38,17 +38,17 @@ func (data Banner) getPathShort() string {
 
 func (data Banner) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.ExecBanner.Null && !data.ExecBanner.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"exec.banner", data.ExecBanner.Value)
+	if !data.ExecBanner.IsNull() && !data.ExecBanner.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"exec.banner", data.ExecBanner.ValueString())
 	}
-	if !data.LoginBanner.Null && !data.LoginBanner.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"login.banner", data.LoginBanner.Value)
+	if !data.LoginBanner.IsNull() && !data.LoginBanner.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"login.banner", data.LoginBanner.ValueString())
 	}
-	if !data.PromptTimeoutBanner.Null && !data.PromptTimeoutBanner.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"prompt-timeout.banner", data.PromptTimeoutBanner.Value)
+	if !data.PromptTimeoutBanner.IsNull() && !data.PromptTimeoutBanner.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"prompt-timeout.banner", data.PromptTimeoutBanner.ValueString())
 	}
-	if !data.MotdBanner.Null && !data.MotdBanner.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"motd.banner", data.MotdBanner.Value)
+	if !data.MotdBanner.IsNull() && !data.MotdBanner.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"motd.banner", data.MotdBanner.ValueString())
 	}
 	return body
 }
@@ -59,24 +59,24 @@ func (data *Banner) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "exec.banner"); value.Exists() {
-		data.ExecBanner.Value = value.String()
+		data.ExecBanner = types.StringValue(value.String())
 	} else {
-		data.ExecBanner.Null = true
+		data.ExecBanner = types.StringNull()
 	}
 	if value := res.Get(prefix + "login.banner"); value.Exists() {
-		data.LoginBanner.Value = value.String()
+		data.LoginBanner = types.StringValue(value.String())
 	} else {
-		data.LoginBanner.Null = true
+		data.LoginBanner = types.StringNull()
 	}
 	if value := res.Get(prefix + "prompt-timeout.banner"); value.Exists() {
-		data.PromptTimeoutBanner.Value = value.String()
+		data.PromptTimeoutBanner = types.StringValue(value.String())
 	} else {
-		data.PromptTimeoutBanner.Null = true
+		data.PromptTimeoutBanner = types.StringNull()
 	}
 	if value := res.Get(prefix + "motd.banner"); value.Exists() {
-		data.MotdBanner.Value = value.String()
+		data.MotdBanner = types.StringValue(value.String())
 	} else {
-		data.MotdBanner.Null = true
+		data.MotdBanner = types.StringNull()
 	}
 }
 
@@ -86,47 +86,37 @@ func (data *Banner) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "exec.banner"); value.Exists() {
-		data.ExecBanner.Value = value.String()
-		data.ExecBanner.Null = false
+		data.ExecBanner = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "login.banner"); value.Exists() {
-		data.LoginBanner.Value = value.String()
-		data.LoginBanner.Null = false
+		data.LoginBanner = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "prompt-timeout.banner"); value.Exists() {
-		data.PromptTimeoutBanner.Value = value.String()
-		data.PromptTimeoutBanner.Null = false
+		data.PromptTimeoutBanner = types.StringValue(value.String())
 	}
 	if value := res.Get(prefix + "motd.banner"); value.Exists() {
-		data.MotdBanner.Value = value.String()
-		data.MotdBanner.Null = false
+		data.MotdBanner = types.StringValue(value.String())
 	}
 }
 
 func (data *Banner) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.ExecBanner.Unknown {
-		data.ExecBanner.Unknown = false
-		data.ExecBanner.Null = true
+	if data.ExecBanner.IsUnknown() {
+		data.ExecBanner = types.StringNull()
 	}
-	if data.LoginBanner.Unknown {
-		data.LoginBanner.Unknown = false
-		data.LoginBanner.Null = true
+	if data.LoginBanner.IsUnknown() {
+		data.LoginBanner = types.StringNull()
 	}
-	if data.PromptTimeoutBanner.Unknown {
-		data.PromptTimeoutBanner.Unknown = false
-		data.PromptTimeoutBanner.Null = true
+	if data.PromptTimeoutBanner.IsUnknown() {
+		data.PromptTimeoutBanner = types.StringNull()
 	}
-	if data.MotdBanner.Unknown {
-		data.MotdBanner.Unknown = false
-		data.MotdBanner.Null = true
+	if data.MotdBanner.IsUnknown() {
+		data.MotdBanner = types.StringNull()
 	}
 }
 

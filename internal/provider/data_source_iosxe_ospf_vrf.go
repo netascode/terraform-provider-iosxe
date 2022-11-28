@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceOSPFVRFType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &OSPFVRFDataSource{}
+	_ datasource.DataSourceWithConfigure = &OSPFVRFDataSource{}
+)
 
-func (t dataSourceOSPFVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewOSPFVRFDataSource() datasource.DataSource {
+	return &OSPFVRFDataSource{}
+}
+
+type OSPFVRFDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *OSPFVRFDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_ospf_vrf"
+}
+
+func (d *OSPFVRFDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the OSPF VRF configuration.",
@@ -159,19 +175,15 @@ func (t dataSourceOSPFVRFType) GetSchema(ctx context.Context) (tfsdk.Schema, dia
 	}, nil
 }
 
-func (t dataSourceOSPFVRFType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *OSPFVRFDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceOSPFVRF{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceOSPFVRF struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceOSPFVRF) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *OSPFVRFDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config OSPFVRF
 
 	// Read config
@@ -183,7 +195,7 @@ func (d dataSourceOSPFVRF) Read(ctx context.Context, req datasource.ReadRequest,
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = OSPFVRF{Device: config.Device}
 	} else {
@@ -195,7 +207,7 @@ func (d dataSourceOSPFVRF) Read(ctx context.Context, req datasource.ReadRequest,
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

@@ -48,53 +48,53 @@ func (data EVPN) getPathShort() string {
 
 func (data EVPN) toBody(ctx context.Context) string {
 	body := `{"` + helpers.LastElement(data.getPath()) + `":{}}`
-	if !data.ReplicationTypeIngress.Null && !data.ReplicationTypeIngress.Unknown {
-		if data.ReplicationTypeIngress.Value {
+	if !data.ReplicationTypeIngress.IsNull() && !data.ReplicationTypeIngress.IsUnknown() {
+		if data.ReplicationTypeIngress.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"replication-type.ingress", map[string]string{})
 		}
 	}
-	if !data.ReplicationTypeStatic.Null && !data.ReplicationTypeStatic.Unknown {
-		if data.ReplicationTypeStatic.Value {
+	if !data.ReplicationTypeStatic.IsNull() && !data.ReplicationTypeStatic.IsUnknown() {
+		if data.ReplicationTypeStatic.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"replication-type.static", map[string]string{})
 		}
 	}
-	if !data.ReplicationTypeP2mp.Null && !data.ReplicationTypeP2mp.Unknown {
-		if data.ReplicationTypeP2mp.Value {
+	if !data.ReplicationTypeP2mp.IsNull() && !data.ReplicationTypeP2mp.IsUnknown() {
+		if data.ReplicationTypeP2mp.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"replication-type.p2mp", map[string]string{})
 		}
 	}
-	if !data.ReplicationTypeMp2mp.Null && !data.ReplicationTypeMp2mp.Unknown {
-		if data.ReplicationTypeMp2mp.Value {
+	if !data.ReplicationTypeMp2mp.IsNull() && !data.ReplicationTypeMp2mp.IsUnknown() {
+		if data.ReplicationTypeMp2mp.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"replication-type.mp2mp", map[string]string{})
 		}
 	}
-	if !data.MacDuplicationLimit.Null && !data.MacDuplicationLimit.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"mac.duplication.limit", strconv.FormatInt(data.MacDuplicationLimit.Value, 10))
+	if !data.MacDuplicationLimit.IsNull() && !data.MacDuplicationLimit.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"mac.duplication.limit", strconv.FormatInt(data.MacDuplicationLimit.ValueInt64(), 10))
 	}
-	if !data.MacDuplicationTime.Null && !data.MacDuplicationTime.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"mac.duplication.time", strconv.FormatInt(data.MacDuplicationTime.Value, 10))
+	if !data.MacDuplicationTime.IsNull() && !data.MacDuplicationTime.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"mac.duplication.time", strconv.FormatInt(data.MacDuplicationTime.ValueInt64(), 10))
 	}
-	if !data.IpDuplicationLimit.Null && !data.IpDuplicationLimit.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.duplication.limit", strconv.FormatInt(data.IpDuplicationLimit.Value, 10))
+	if !data.IpDuplicationLimit.IsNull() && !data.IpDuplicationLimit.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.duplication.limit", strconv.FormatInt(data.IpDuplicationLimit.ValueInt64(), 10))
 	}
-	if !data.IpDuplicationTime.Null && !data.IpDuplicationTime.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.duplication.time", strconv.FormatInt(data.IpDuplicationTime.Value, 10))
+	if !data.IpDuplicationTime.IsNull() && !data.IpDuplicationTime.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.duplication.time", strconv.FormatInt(data.IpDuplicationTime.ValueInt64(), 10))
 	}
-	if !data.RouterIdLoopback.Null && !data.RouterIdLoopback.Unknown {
-		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"router-id.interface.Loopback", strconv.FormatInt(data.RouterIdLoopback.Value, 10))
+	if !data.RouterIdLoopback.IsNull() && !data.RouterIdLoopback.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"router-id.interface.Loopback", strconv.FormatInt(data.RouterIdLoopback.ValueInt64(), 10))
 	}
-	if !data.DefaultGatewayAdvertise.Null && !data.DefaultGatewayAdvertise.Unknown {
-		if data.DefaultGatewayAdvertise.Value {
+	if !data.DefaultGatewayAdvertise.IsNull() && !data.DefaultGatewayAdvertise.IsUnknown() {
+		if data.DefaultGatewayAdvertise.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"default-gateway.advertise", map[string]string{})
 		}
 	}
-	if !data.LoggingPeerState.Null && !data.LoggingPeerState.Unknown {
-		if data.LoggingPeerState.Value {
+	if !data.LoggingPeerState.IsNull() && !data.LoggingPeerState.IsUnknown() {
+		if data.LoggingPeerState.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"logging.peer.state", map[string]string{})
 		}
 	}
-	if !data.RouteTargetAutoVni.Null && !data.RouteTargetAutoVni.Unknown {
-		if data.RouteTargetAutoVni.Value {
+	if !data.RouteTargetAutoVni.IsNull() && !data.RouteTargetAutoVni.IsUnknown() {
+		if data.RouteTargetAutoVni.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-target.auto.vni", map[string]string{})
 		}
 	}
@@ -107,64 +107,64 @@ func (data *EVPN) updateFromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "replication-type.ingress"); value.Exists() {
-		data.ReplicationTypeIngress.Value = true
+		data.ReplicationTypeIngress = types.BoolValue(true)
 	} else {
-		data.ReplicationTypeIngress.Value = false
+		data.ReplicationTypeIngress = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "replication-type.static"); value.Exists() {
-		data.ReplicationTypeStatic.Value = true
+		data.ReplicationTypeStatic = types.BoolValue(true)
 	} else {
-		data.ReplicationTypeStatic.Value = false
+		data.ReplicationTypeStatic = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "replication-type.p2mp"); value.Exists() {
-		data.ReplicationTypeP2mp.Value = true
+		data.ReplicationTypeP2mp = types.BoolValue(true)
 	} else {
-		data.ReplicationTypeP2mp.Value = false
+		data.ReplicationTypeP2mp = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "replication-type.mp2mp"); value.Exists() {
-		data.ReplicationTypeMp2mp.Value = true
+		data.ReplicationTypeMp2mp = types.BoolValue(true)
 	} else {
-		data.ReplicationTypeMp2mp.Value = false
+		data.ReplicationTypeMp2mp = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "mac.duplication.limit"); value.Exists() {
-		data.MacDuplicationLimit.Value = value.Int()
+		data.MacDuplicationLimit = types.Int64Value(value.Int())
 	} else {
-		data.MacDuplicationLimit.Null = true
+		data.MacDuplicationLimit = types.Int64Null()
 	}
 	if value := res.Get(prefix + "mac.duplication.time"); value.Exists() {
-		data.MacDuplicationTime.Value = value.Int()
+		data.MacDuplicationTime = types.Int64Value(value.Int())
 	} else {
-		data.MacDuplicationTime.Null = true
+		data.MacDuplicationTime = types.Int64Null()
 	}
 	if value := res.Get(prefix + "ip.duplication.limit"); value.Exists() {
-		data.IpDuplicationLimit.Value = value.Int()
+		data.IpDuplicationLimit = types.Int64Value(value.Int())
 	} else {
-		data.IpDuplicationLimit.Null = true
+		data.IpDuplicationLimit = types.Int64Null()
 	}
 	if value := res.Get(prefix + "ip.duplication.time"); value.Exists() {
-		data.IpDuplicationTime.Value = value.Int()
+		data.IpDuplicationTime = types.Int64Value(value.Int())
 	} else {
-		data.IpDuplicationTime.Null = true
+		data.IpDuplicationTime = types.Int64Null()
 	}
 	if value := res.Get(prefix + "router-id.interface.Loopback"); value.Exists() {
-		data.RouterIdLoopback.Value = value.Int()
+		data.RouterIdLoopback = types.Int64Value(value.Int())
 	} else {
-		data.RouterIdLoopback.Null = true
+		data.RouterIdLoopback = types.Int64Null()
 	}
 	if value := res.Get(prefix + "default-gateway.advertise"); value.Exists() {
-		data.DefaultGatewayAdvertise.Value = true
+		data.DefaultGatewayAdvertise = types.BoolValue(true)
 	} else {
-		data.DefaultGatewayAdvertise.Value = false
+		data.DefaultGatewayAdvertise = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "logging.peer.state"); value.Exists() {
-		data.LoggingPeerState.Value = true
+		data.LoggingPeerState = types.BoolValue(true)
 	} else {
-		data.LoggingPeerState.Value = false
+		data.LoggingPeerState = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "route-target.auto.vni"); value.Exists() {
-		data.RouteTargetAutoVni.Value = true
+		data.RouteTargetAutoVni = types.BoolValue(true)
 	} else {
-		data.RouteTargetAutoVni.Value = false
+		data.RouteTargetAutoVni = types.BoolValue(false)
 	}
 }
 
@@ -174,132 +174,99 @@ func (data *EVPN) fromBody(ctx context.Context, res gjson.Result) {
 		prefix += "0."
 	}
 	if value := res.Get(prefix + "replication-type.ingress"); value.Exists() {
-		data.ReplicationTypeIngress.Value = true
-		data.ReplicationTypeIngress.Null = false
+		data.ReplicationTypeIngress = types.BoolValue(true)
 	} else {
-		data.ReplicationTypeIngress.Value = false
-		data.ReplicationTypeIngress.Null = false
+		data.ReplicationTypeIngress = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "replication-type.static"); value.Exists() {
-		data.ReplicationTypeStatic.Value = true
-		data.ReplicationTypeStatic.Null = false
+		data.ReplicationTypeStatic = types.BoolValue(true)
 	} else {
-		data.ReplicationTypeStatic.Value = false
-		data.ReplicationTypeStatic.Null = false
+		data.ReplicationTypeStatic = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "replication-type.p2mp"); value.Exists() {
-		data.ReplicationTypeP2mp.Value = true
-		data.ReplicationTypeP2mp.Null = false
+		data.ReplicationTypeP2mp = types.BoolValue(true)
 	} else {
-		data.ReplicationTypeP2mp.Value = false
-		data.ReplicationTypeP2mp.Null = false
+		data.ReplicationTypeP2mp = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "replication-type.mp2mp"); value.Exists() {
-		data.ReplicationTypeMp2mp.Value = true
-		data.ReplicationTypeMp2mp.Null = false
+		data.ReplicationTypeMp2mp = types.BoolValue(true)
 	} else {
-		data.ReplicationTypeMp2mp.Value = false
-		data.ReplicationTypeMp2mp.Null = false
+		data.ReplicationTypeMp2mp = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "mac.duplication.limit"); value.Exists() {
-		data.MacDuplicationLimit.Value = value.Int()
-		data.MacDuplicationLimit.Null = false
+		data.MacDuplicationLimit = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "mac.duplication.time"); value.Exists() {
-		data.MacDuplicationTime.Value = value.Int()
-		data.MacDuplicationTime.Null = false
+		data.MacDuplicationTime = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "ip.duplication.limit"); value.Exists() {
-		data.IpDuplicationLimit.Value = value.Int()
-		data.IpDuplicationLimit.Null = false
+		data.IpDuplicationLimit = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "ip.duplication.time"); value.Exists() {
-		data.IpDuplicationTime.Value = value.Int()
-		data.IpDuplicationTime.Null = false
+		data.IpDuplicationTime = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "router-id.interface.Loopback"); value.Exists() {
-		data.RouterIdLoopback.Value = value.Int()
-		data.RouterIdLoopback.Null = false
+		data.RouterIdLoopback = types.Int64Value(value.Int())
 	}
 	if value := res.Get(prefix + "default-gateway.advertise"); value.Exists() {
-		data.DefaultGatewayAdvertise.Value = true
-		data.DefaultGatewayAdvertise.Null = false
+		data.DefaultGatewayAdvertise = types.BoolValue(true)
 	} else {
-		data.DefaultGatewayAdvertise.Value = false
-		data.DefaultGatewayAdvertise.Null = false
+		data.DefaultGatewayAdvertise = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "logging.peer.state"); value.Exists() {
-		data.LoggingPeerState.Value = true
-		data.LoggingPeerState.Null = false
+		data.LoggingPeerState = types.BoolValue(true)
 	} else {
-		data.LoggingPeerState.Value = false
-		data.LoggingPeerState.Null = false
+		data.LoggingPeerState = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "route-target.auto.vni"); value.Exists() {
-		data.RouteTargetAutoVni.Value = true
-		data.RouteTargetAutoVni.Null = false
+		data.RouteTargetAutoVni = types.BoolValue(true)
 	} else {
-		data.RouteTargetAutoVni.Value = false
-		data.RouteTargetAutoVni.Null = false
+		data.RouteTargetAutoVni = types.BoolValue(false)
 	}
 }
 
 func (data *EVPN) setUnknownValues(ctx context.Context) {
-	if data.Device.Unknown {
-		data.Device.Unknown = false
-		data.Device.Null = true
+	if data.Device.IsUnknown() {
+		data.Device = types.StringNull()
 	}
-	if data.Id.Unknown {
-		data.Id.Unknown = false
-		data.Id.Null = true
+	if data.Id.IsUnknown() {
+		data.Id = types.StringNull()
 	}
-	if data.ReplicationTypeIngress.Unknown {
-		data.ReplicationTypeIngress.Unknown = false
-		data.ReplicationTypeIngress.Null = true
+	if data.ReplicationTypeIngress.IsUnknown() {
+		data.ReplicationTypeIngress = types.BoolNull()
 	}
-	if data.ReplicationTypeStatic.Unknown {
-		data.ReplicationTypeStatic.Unknown = false
-		data.ReplicationTypeStatic.Null = true
+	if data.ReplicationTypeStatic.IsUnknown() {
+		data.ReplicationTypeStatic = types.BoolNull()
 	}
-	if data.ReplicationTypeP2mp.Unknown {
-		data.ReplicationTypeP2mp.Unknown = false
-		data.ReplicationTypeP2mp.Null = true
+	if data.ReplicationTypeP2mp.IsUnknown() {
+		data.ReplicationTypeP2mp = types.BoolNull()
 	}
-	if data.ReplicationTypeMp2mp.Unknown {
-		data.ReplicationTypeMp2mp.Unknown = false
-		data.ReplicationTypeMp2mp.Null = true
+	if data.ReplicationTypeMp2mp.IsUnknown() {
+		data.ReplicationTypeMp2mp = types.BoolNull()
 	}
-	if data.MacDuplicationLimit.Unknown {
-		data.MacDuplicationLimit.Unknown = false
-		data.MacDuplicationLimit.Null = true
+	if data.MacDuplicationLimit.IsUnknown() {
+		data.MacDuplicationLimit = types.Int64Null()
 	}
-	if data.MacDuplicationTime.Unknown {
-		data.MacDuplicationTime.Unknown = false
-		data.MacDuplicationTime.Null = true
+	if data.MacDuplicationTime.IsUnknown() {
+		data.MacDuplicationTime = types.Int64Null()
 	}
-	if data.IpDuplicationLimit.Unknown {
-		data.IpDuplicationLimit.Unknown = false
-		data.IpDuplicationLimit.Null = true
+	if data.IpDuplicationLimit.IsUnknown() {
+		data.IpDuplicationLimit = types.Int64Null()
 	}
-	if data.IpDuplicationTime.Unknown {
-		data.IpDuplicationTime.Unknown = false
-		data.IpDuplicationTime.Null = true
+	if data.IpDuplicationTime.IsUnknown() {
+		data.IpDuplicationTime = types.Int64Null()
 	}
-	if data.RouterIdLoopback.Unknown {
-		data.RouterIdLoopback.Unknown = false
-		data.RouterIdLoopback.Null = true
+	if data.RouterIdLoopback.IsUnknown() {
+		data.RouterIdLoopback = types.Int64Null()
 	}
-	if data.DefaultGatewayAdvertise.Unknown {
-		data.DefaultGatewayAdvertise.Unknown = false
-		data.DefaultGatewayAdvertise.Null = true
+	if data.DefaultGatewayAdvertise.IsUnknown() {
+		data.DefaultGatewayAdvertise = types.BoolNull()
 	}
-	if data.LoggingPeerState.Unknown {
-		data.LoggingPeerState.Unknown = false
-		data.LoggingPeerState.Null = true
+	if data.LoggingPeerState.IsUnknown() {
+		data.LoggingPeerState = types.BoolNull()
 	}
-	if data.RouteTargetAutoVni.Unknown {
-		data.RouteTargetAutoVni.Unknown = false
-		data.RouteTargetAutoVni.Null = true
+	if data.RouteTargetAutoVni.IsUnknown() {
+		data.RouteTargetAutoVni = types.BoolNull()
 	}
 }
 
@@ -310,25 +277,25 @@ func (data *EVPN) getDeletedListItems(ctx context.Context, state EVPN) []string 
 
 func (data *EVPN) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.ReplicationTypeIngress.Value {
+	if !data.ReplicationTypeIngress.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/ingress/ingress", data.getPath()))
 	}
-	if !data.ReplicationTypeStatic.Value {
+	if !data.ReplicationTypeStatic.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/static/static", data.getPath()))
 	}
-	if !data.ReplicationTypeP2mp.Value {
+	if !data.ReplicationTypeP2mp.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/p2mp/p2mp", data.getPath()))
 	}
-	if !data.ReplicationTypeMp2mp.Value {
+	if !data.ReplicationTypeMp2mp.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/mp2mp/mp2mp", data.getPath()))
 	}
-	if !data.DefaultGatewayAdvertise.Value {
+	if !data.DefaultGatewayAdvertise.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/default-gateway/advertise", data.getPath()))
 	}
-	if !data.LoggingPeerState.Value {
+	if !data.LoggingPeerState.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/logging/peer/state", data.getPath()))
 	}
-	if !data.RouteTargetAutoVni.Value {
+	if !data.RouteTargetAutoVni.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-target/auto/vni", data.getPath()))
 	}
 	return emptyLeafsDelete

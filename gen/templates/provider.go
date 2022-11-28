@@ -5,50 +5,52 @@ package provider
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/go-restconf"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-// provider satisfies the tfsdk.Provider interface and usually is included
-// with all Resource and DataSource implementations.
-type iosxeProvider struct {
-	clients  map[string]*restconf.Client
+// Ensure NxosProvider satisfies various provider interfaces.
+var _ provider.Provider = &IosxeProvider{}
+var _ provider.ProviderWithMetadata = &IosxeProvider{}
 
-	// configured is set to true at the end of the Configure method.
-	// This can be used in Resource and DataSource implementations to verify
-	// that the provider was previously configured.
-	configured bool
-
+// IosxeProvider defines the provider implementation.
+type IosxeProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-// providerData can be used to store data from the Terraform configuration.
-type providerData struct {
+// IosxeProviderModel describes the provider data model.
+type IosxeProviderModel struct {
 	Username types.String         `tfsdk:"username"`
 	Password types.String         `tfsdk:"password"`
 	URL      types.String         `tfsdk:"url"`
 	Insecure types.Bool           `tfsdk:"insecure"`
 	Retries  types.Int64          `tfsdk:"retries"`
-	Devices  []providerDataDevice `tfsdk:"devices"`
+	Devices  []IosxeProviderModelDevice `tfsdk:"devices"`
 }
 
-type providerDataDevice struct {
+type IosxeProviderModelDevice struct {
 	Name types.String `tfsdk:"name"`
 	URL  types.String `tfsdk:"url"`
 }
 
-func (p *iosxeProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (p *IosxeProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "iosxe"
+	resp.Version = p.version
+}
+
+func (p *IosxeProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		Attributes: map[string]tfsdk.Attribute{
 			"username": {
@@ -100,9 +102,9 @@ func (p *iosxeProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagn
 	}, nil
 }
 
-func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *IosxeProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	// Retrieve provider data from configuration
-	var config providerData
+	var config IosxeProviderModel
 	diags := req.Config.Get(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -111,7 +113,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 
 	// User must provide a username to the provider
 	var username string
-	if config.Username.Unknown {
+	if config.Username.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -120,10 +122,10 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.Username.Null {
+	if config.Username.IsNull() {
 		username = os.Getenv("IOSXE_USERNAME")
 	} else {
-		username = config.Username.Value
+		username = config.Username.ValueString()
 	}
 
 	if username == "" {
@@ -137,7 +139,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 
 	// User must provide a password to the provider
 	var password string
-	if config.Password.Unknown {
+	if config.Password.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -146,10 +148,10 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.Password.Null {
+	if config.Password.IsNull() {
 		password = os.Getenv("IOSXE_PASSWORD")
 	} else {
-		password = config.Password.Value
+		password = config.Password.ValueString()
 	}
 
 	if password == "" {
@@ -163,7 +165,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 
 	// User must provide a username to the provider
 	var url string
-	if config.URL.Unknown {
+	if config.URL.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -172,13 +174,13 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.URL.Null {
+	if config.URL.IsNull() {
 		url = os.Getenv("IOSXE_URL")
 		if url == "" && len(config.Devices) > 0 {
-			url = config.Devices[0].URL.Value
+			url = config.Devices[0].URL.ValueString()
 		}
 	} else {
-		url = config.URL.Value
+		url = config.URL.ValueString()
 	}
 
 	if url == "" {
@@ -191,7 +193,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	}
 
 	var insecure bool
-	if config.Insecure.Unknown {
+	if config.Insecure.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -200,7 +202,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.Insecure.Null {
+	if config.Insecure.IsNull() {
 		insecureStr := os.Getenv("IOSXE_INSECURE")
 		if insecureStr == "" {
 			insecure = true
@@ -208,11 +210,11 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 			insecure, _ = strconv.ParseBool(insecureStr)
 		}
 	} else {
-		insecure = config.Insecure.Value
+		insecure = config.Insecure.ValueBool()
 	}
 
 	var retries int64
-	if config.Retries.Unknown {
+	if config.Retries.IsUnknown() {
 		// Cannot connect to client with an unknown value
 		resp.Diagnostics.AddWarning(
 			"Unable to create client",
@@ -221,7 +223,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	if config.Retries.Null {
+	if config.Retries.IsNull() {
 		retriesStr := os.Getenv("IOSXE_RETRIES")
 		if retriesStr == "" {
 			retries = 10
@@ -229,7 +231,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 			retries, _ = strconv.ParseInt(retriesStr, 0, 64)
 		}
 	} else {
-		retries = config.Retries.Value
+		retries = config.Retries.ValueInt64()
 	}
 
 	clients := make(map[string]*restconf.Client)
@@ -245,7 +247,7 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	clients[""] = &c
 
 	for _, device := range config.Devices {
-		c, err := restconf.NewClient(device.URL.Value, username, password, insecure, restconf.MaxRetries(int(retries)))
+		c, err := restconf.NewClient(device.URL.ValueString(), username, password, insecure, restconf.MaxRetries(int(retries)))
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Unable to create client",
@@ -254,64 +256,35 @@ func (p *iosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 			return
 		}
 		c.Discovery()
-		clients[device.Name.Value] = &c
+		clients[device.Name.ValueString()] = &c
 	}
 
-	p.clients = clients
-	p.configured = true
+	resp.DataSourceData = clients
+	resp.ResourceData = clients
 }
 
-func (p *iosxeProvider) GetResources(ctx context.Context) (map[string]provider.ResourceType, diag.Diagnostics) {
-	return map[string]provider.ResourceType{
-		"iosxe_restconf":                                            resourceRestconfType{},
+func (p *IosxeProvider) Resources(ctx context.Context) []func() resource.Resource {
+	return []func() resource.Resource{
+		NewRestconfResource,
 		{{- range .}}
-		"iosxe_{{snakeCase .Name}}":     resource{{camelCase .Name}}Type{},
+		New{{camelCase .Name}}Resource,
 		{{- end}}
-	}, nil
+	}
 }
 
-func (p *iosxeProvider) GetDataSources(ctx context.Context) (map[string]provider.DataSourceType, diag.Diagnostics) {
-	return map[string]provider.DataSourceType{
-		"iosxe_restconf":                                            dataSourceRestconfType{},
+func (p *IosxeProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+	return []func() datasource.DataSource{
+		NewRestconfDataSource,
 		{{- range .}}
-		"iosxe_{{snakeCase .Name}}":     dataSource{{camelCase .Name}}Type{},
+		New{{camelCase .Name}}DataSource,
 		{{- end}}
-	}, nil
+	}
 }
 
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &iosxeProvider{
+		return &IosxeProvider{
 			version: version,
 		}
 	}
-}
-
-// convertProviderType is a helper function for NewResource and NewDataSource
-// implementations to associate the concrete provider type. Alternatively,
-// this helper can be skipped and the provider type can be directly type
-// asserted (e.g. provider: in.(*provider)), however using this can prevent
-// potential panics.
-func convertProviderType(in provider.Provider) (iosxeProvider, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	p, ok := in.(*iosxeProvider)
-
-	if !ok {
-		diags.AddError(
-			"Unexpected Provider Instance Type",
-			fmt.Sprintf("While creating the data source or resource, an unexpected provider type (%T) was received. This is always a bug in the provider code and should be reported to the provider developers.", p),
-		)
-		return iosxeProvider{}, diags
-	}
-
-	if p == nil {
-		diags.AddError(
-			"Unexpected Provider Instance Type",
-			"While creating the data source or resource, an unexpected empty provider instance was received. This is always a bug in the provider code and should be reported to the provider developers.",
-		)
-		return iosxeProvider{}, diags
-	}
-
-	return *p, diags
 }

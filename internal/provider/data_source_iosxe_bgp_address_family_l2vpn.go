@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceBGPAddressFamilyL2VPNType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &BGPAddressFamilyL2VPNDataSource{}
+	_ datasource.DataSourceWithConfigure = &BGPAddressFamilyL2VPNDataSource{}
+)
 
-func (t dataSourceBGPAddressFamilyL2VPNType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewBGPAddressFamilyL2VPNDataSource() datasource.DataSource {
+	return &BGPAddressFamilyL2VPNDataSource{}
+}
+
+type BGPAddressFamilyL2VPNDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *BGPAddressFamilyL2VPNDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_bgp_address_family_l2vpn"
+}
+
+func (d *BGPAddressFamilyL2VPNDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the BGP Address Family L2VPN configuration.",
@@ -46,19 +62,15 @@ func (t dataSourceBGPAddressFamilyL2VPNType) GetSchema(ctx context.Context) (tfs
 	}, nil
 }
 
-func (t dataSourceBGPAddressFamilyL2VPNType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *BGPAddressFamilyL2VPNDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceBGPAddressFamilyL2VPN{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceBGPAddressFamilyL2VPN struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *BGPAddressFamilyL2VPNDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config BGPAddressFamilyL2VPN
 
 	// Read config
@@ -70,7 +82,7 @@ func (d dataSourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req datasourc
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = BGPAddressFamilyL2VPN{Device: config.Device}
 	} else {
@@ -82,7 +94,7 @@ func (d dataSourceBGPAddressFamilyL2VPN) Read(ctx context.Context, req datasourc
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

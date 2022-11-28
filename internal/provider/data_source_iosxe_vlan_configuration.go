@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceVLANConfigurationType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &VLANConfigurationDataSource{}
+	_ datasource.DataSourceWithConfigure = &VLANConfigurationDataSource{}
+)
 
-func (t dataSourceVLANConfigurationType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewVLANConfigurationDataSource() datasource.DataSource {
+	return &VLANConfigurationDataSource{}
+}
+
+type VLANConfigurationDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *VLANConfigurationDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_vlan_configuration"
+}
+
+func (d *VLANConfigurationDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the VLAN Configuration configuration.",
@@ -61,19 +77,15 @@ func (t dataSourceVLANConfigurationType) GetSchema(ctx context.Context) (tfsdk.S
 	}, nil
 }
 
-func (t dataSourceVLANConfigurationType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *VLANConfigurationDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceVLANConfiguration{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceVLANConfiguration struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceVLANConfiguration) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *VLANConfigurationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config VLANConfiguration
 
 	// Read config
@@ -85,7 +97,7 @@ func (d dataSourceVLANConfiguration) Read(ctx context.Context, req datasource.Re
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = VLANConfiguration{Device: config.Device}
 	} else {
@@ -97,7 +109,7 @@ func (d dataSourceVLANConfiguration) Read(ctx context.Context, req datasource.Re
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

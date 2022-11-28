@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceBGPIPv4UnicastVRFNeighborType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &BGPIPv4UnicastVRFNeighborDataSource{}
+	_ datasource.DataSourceWithConfigure = &BGPIPv4UnicastVRFNeighborDataSource{}
+)
 
-func (t dataSourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewBGPIPv4UnicastVRFNeighborDataSource() datasource.DataSource {
+	return &BGPIPv4UnicastVRFNeighborDataSource{}
+}
+
+type BGPIPv4UnicastVRFNeighborDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *BGPIPv4UnicastVRFNeighborDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_bgp_ipv4_unicast_vrf_neighbor"
+}
+
+func (d *BGPIPv4UnicastVRFNeighborDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the BGP IPv4 Unicast VRF Neighbor configuration.",
@@ -86,19 +102,15 @@ func (t dataSourceBGPIPv4UnicastVRFNeighborType) GetSchema(ctx context.Context) 
 	}, nil
 }
 
-func (t dataSourceBGPIPv4UnicastVRFNeighborType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *BGPIPv4UnicastVRFNeighborDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceBGPIPv4UnicastVRFNeighbor{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceBGPIPv4UnicastVRFNeighbor struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *BGPIPv4UnicastVRFNeighborDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config BGPIPv4UnicastVRFNeighbor
 
 	// Read config
@@ -110,7 +122,7 @@ func (d dataSourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req datas
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = BGPIPv4UnicastVRFNeighbor{Device: config.Device}
 	} else {
@@ -122,7 +134,7 @@ func (d dataSourceBGPIPv4UnicastVRFNeighbor) Read(ctx context.Context, req datas
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 

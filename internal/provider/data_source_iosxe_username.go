@@ -8,15 +8,31 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/netascode/go-restconf"
 )
 
-type dataSourceUsernameType struct{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &UsernameDataSource{}
+	_ datasource.DataSourceWithConfigure = &UsernameDataSource{}
+)
 
-func (t dataSourceUsernameType) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func NewUsernameDataSource() datasource.DataSource {
+	return &UsernameDataSource{}
+}
+
+type UsernameDataSource struct {
+	clients map[string]*restconf.Client
+}
+
+func (d *UsernameDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_username"
+}
+
+func (d *UsernameDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Username configuration.",
@@ -71,19 +87,15 @@ func (t dataSourceUsernameType) GetSchema(ctx context.Context) (tfsdk.Schema, di
 	}, nil
 }
 
-func (t dataSourceUsernameType) NewDataSource(ctx context.Context, in provider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
+func (d *UsernameDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
 
-	return dataSourceUsername{
-		provider: provider,
-	}, diags
+	d.clients = req.ProviderData.(map[string]*restconf.Client)
 }
 
-type dataSourceUsername struct {
-	provider iosxeProvider
-}
-
-func (d dataSourceUsername) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *UsernameDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var config Username
 
 	// Read config
@@ -95,7 +107,7 @@ func (d dataSourceUsername) Read(ctx context.Context, req datasource.ReadRequest
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", config.getPath()))
 
-	res, err := d.provider.clients[config.Device.Value].GetData(config.getPath())
+	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
 		config = Username{Device: config.Device}
 	} else {
@@ -107,7 +119,7 @@ func (d dataSourceUsername) Read(ctx context.Context, req datasource.ReadRequest
 		config.fromBody(ctx, res.Res)
 	}
 
-	config.Id = types.String{Value: config.getPath()}
+	config.Id = types.StringValue(config.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Read finished successfully", config.getPath()))
 
