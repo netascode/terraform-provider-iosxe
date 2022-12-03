@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/terraform-plugin-log v0.7.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.1
 	github.com/netascode/go-restconf v0.1.7
-	github.com/openconfig/goyang v1.1.0
+	github.com/openconfig/goyang v1.2.0
 	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/sjson v1.2.5
 	gopkg.in/yaml.v3 v3.0.1
