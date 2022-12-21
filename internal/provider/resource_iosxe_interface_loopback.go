@@ -5,11 +5,17 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,107 +38,96 @@ func (r *InterfaceLoopbackResource) Metadata(ctx context.Context, req resource.M
 	resp.TypeName = req.ProviderTypeName + "_interface_loopback"
 }
 
-func (r *InterfaceLoopbackResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *InterfaceLoopbackResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the Interface Loopback configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"name": {
+			"name": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 2147483647).String,
-				Type:                types.Int64Type,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 2147483647),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 2147483647),
 				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.RequiresReplace(),
 				},
 			},
-			"description": {
+			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 200, `.*`),
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(0, 200),
+					stringvalidator.RegexMatches(regexp.MustCompile(`.*`), ""),
 				},
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vrf_forwarding": {
+			"vrf_forwarding": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure forwarding table").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ipv4_address": {
+			"ipv4_address": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
 			},
-			"ipv4_address_mask": {
+			"ipv4_address_mask": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
 			},
-			"ip_access_group_in": {
+			"ip_access_group_in": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ip_access_group_in_enable": {
+			"ip_access_group_in_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").AddDefaultValueDescription("true").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
+				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},
 			},
-			"ip_access_group_out": {
+			"ip_access_group_out": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ip_access_group_out_enable": {
+			"ip_access_group_out_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").AddDefaultValueDescription("true").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
+				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *InterfaceLoopbackResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

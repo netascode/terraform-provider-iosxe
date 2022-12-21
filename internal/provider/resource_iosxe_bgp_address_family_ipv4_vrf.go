@@ -6,10 +6,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,76 +35,70 @@ func (r *BGPAddressFamilyIPv4VRFResource) Metadata(ctx context.Context, req reso
 	resp.TypeName = req.ProviderTypeName + "_bgp_address_family_ipv4_vrf"
 }
 
-func (r *BGPAddressFamilyIPv4VRFResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *BGPAddressFamilyIPv4VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the BGP Address Family IPv4 VRF configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"asn": {
+			"asn": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"af_name": {
+			"af_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("flowspec", "labeled-unicast", "mdt", "multicast", "mvpn", "sr-policy", "tunnel", "unicast").String,
-				Type:                types.StringType,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("flowspec", "labeled-unicast", "mdt", "multicast", "mvpn", "sr-policy", "tunnel", "unicast"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("flowspec", "labeled-unicast", "mdt", "multicast", "mvpn", "sr-policy", "tunnel", "unicast"),
 				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"vrfs": {
+			"vrfs": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"advertise_l2vpn_evpn": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Advertise/export prefixes to l2vpn evpn table").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"redistribute_connected": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Connected").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"redistribute_static": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Static routes").String,
+							Optional:            true,
+							Computed:            true,
+						},
 					},
-					"advertise_l2vpn_evpn": {
-						MarkdownDescription: helpers.NewAttributeDescription("Advertise/export prefixes to l2vpn evpn table").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"redistribute_connected": {
-						MarkdownDescription: helpers.NewAttributeDescription("Connected").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"redistribute_static": {
-						MarkdownDescription: helpers.NewAttributeDescription("Static routes").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *BGPAddressFamilyIPv4VRFResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

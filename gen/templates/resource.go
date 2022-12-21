@@ -7,14 +7,20 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 	"github.com/netascode/go-restconf"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces
@@ -33,27 +39,25 @@ func (r *{{camelCase .Name}}Resource) Metadata(ctx context.Context, req resource
 	resp.TypeName = req.ProviderTypeName + "_{{snakeCase .Name}}"
 }
 
-func (r *{{camelCase .Name}}Resource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "{{.ResDescription}}",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 			{{- range  .Attributes}}
-			"{{.TfName}}": {
+			"{{.TfName}}": schema.{{if eq .Type "List"}}ListNested{{else}}{{.Type}}{{end}}Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("{{.Description}}")
 					{{- if len .EnumValues -}}
 					.AddStringEnumDescription({{range .EnumValues}}"{{.}}", {{end}})
@@ -65,9 +69,6 @@ func (r *{{camelCase .Name}}Resource) GetSchema(ctx context.Context) (tfsdk.Sche
 					.AddDefaultValueDescription("{{.DefaultValue}}")
 					{{- end -}}
 					.String,
-				{{- if ne .Type "List"}}
-				Type:                types.{{.Type}}Type,
-				{{- end}}
 				{{- if or (eq .Id true) (eq .Reference true) (eq .Mandatory true)}}
 				Required:            true,
 				{{- else}}
@@ -77,26 +78,31 @@ func (r *{{camelCase .Name}}Resource) GetSchema(ctx context.Context) (tfsdk.Sche
 				{{- end}}
 				{{- end}}
 				{{- if len .EnumValues}}
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator({{range .EnumValues}}"{{.}}", {{end}}),
+				Validators: []validator.String{
+					stringvalidator.OneOf({{range .EnumValues}}"{{.}}", {{end}}),
 				},
-				{{- else if len .StringPatterns}}
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator({{.StringMinLength}}, {{.StringMaxLength}}, {{range .StringPatterns}}`{{.}}`, {{end}}),
+				{{- else if or (len .StringPatterns) (ne .StringMinLength 0) (ne .StringMaxLength 0) }}
+				Validators: []validator.String{
+					{{- if or (ne .StringMinLength 0) (ne .StringMaxLength 0)}}
+					stringvalidator.LengthBetween({{.StringMinLength}}, {{.StringMaxLength}}),
+					{{- end}}
+					{{- range .StringPatterns}}
+					stringvalidator.RegexMatches(regexp.MustCompile(`{{.}}`), ""),
+					{{- end}}
 				},
 				{{- else if or (ne .MinInt 0) (ne .MaxInt 0)}}
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator({{.MinInt}}, {{.MaxInt}}),
+				Validators: []validator.Int64{
+					int64validator.Between({{.MinInt}}, {{.MaxInt}}),
 				},
 				{{- else if or (ne .MinFloat 0.0) (ne .MaxFloat 0.0)}}
-				Validators: []tfsdk.AttributeValidator{
-					helpers.FloatRangeValidator({{.MinFloat}}, {{.MaxFloat}}),
+				Validators: []validator.Float64{
+					float64validator.Between({{.MinFloat}}, {{.MaxFloat}}),
 				},
 				{{- end}}
 				{{- if or (len .DefaultValue) (eq .Id true) (eq .Reference true) (eq .RequiresReplace true)}}
-				PlanModifiers: tfsdk.AttributePlanModifiers{
+				PlanModifiers: []planmodifier.{{.Type}}{
 					{{- if or (eq .Id true) (eq .Reference true) (eq .RequiresReplace true)}}
-					resource.RequiresReplace(),
+					{{snakeCase .Type}}planmodifier.RequiresReplace(),
 					{{- else if eq .Type "Int64"}}
 					helpers.IntegerDefaultModifier({{.DefaultValue}}),
 					{{- else if eq .Type "Bool"}}
@@ -107,62 +113,68 @@ func (r *{{camelCase .Name}}Resource) GetSchema(ctx context.Context) (tfsdk.Sche
 				},
 				{{- end}}
 				{{- if eq .Type "List"}}
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					{{- range  .Attributes}}
-					"{{.TfName}}": {
-						MarkdownDescription: helpers.NewAttributeDescription("{{.Description}}")
-							{{- if len .EnumValues -}}
-							.AddStringEnumDescription({{range .EnumValues}}"{{.}}", {{end}})
-							{{- end -}}
-							{{- if or (ne .MinInt 0) (ne .MaxInt 0) -}}
-							.AddIntegerRangeDescription({{.MinInt}}, {{.MaxInt}})
-							{{- end -}}
-							{{- if or (ne .MinFloat 0.0) (ne .MaxFloat 0.0) -}}
-							.AddFloatRangeDescription({{.MinFloat}}, {{.MaxFloat}})
-							{{- end -}}
-							{{- if len .DefaultValue -}}
-							.AddDefaultValueDescription("{{.DefaultValue}}")
-							{{- end -}}
-							.String,
-						Type:                types.{{.Type}}Type,
-						{{- if eq .Mandatory true}}
-						Required:            true,
-						{{- else}}
-						Optional:            true,
-						Computed:            true,
-						{{- end}}
-						{{- if len .EnumValues}}
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringEnumValidator({{range .EnumValues}}"{{.}}", {{end}}),
-						},
-						{{- else if len .StringPatterns}}
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator({{.StringMinLength}}, {{.StringMaxLength}}, {{range .StringPatterns}}`{{.}}`, {{end}}),
-						},
-						{{- else if or (ne .MinInt 0) (ne .MaxInt 0)}}
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator({{.MinInt}}, {{.MaxInt}}),
-						},
-						{{- end}}
-						{{- if len .DefaultValue}}
-						PlanModifiers: tfsdk.AttributePlanModifiers{
-							{{- if eq .Type "Int64"}}
-							helpers.IntegerDefaultModifier({{.DefaultValue}}),
-							{{- else if eq .Type "Bool"}}
-							helpers.BooleanDefaultModifier({{.DefaultValue}}),
-							{{- else if eq .Type "String"}}
-							helpers.StringDefaultModifier("{{.DefaultValue}}"),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						{{- range  .Attributes}}
+						"{{.TfName}}": schema.{{.Type}}Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("{{.Description}}")
+								{{- if len .EnumValues -}}
+								.AddStringEnumDescription({{range .EnumValues}}"{{.}}", {{end}})
+								{{- end -}}
+								{{- if or (ne .MinInt 0) (ne .MaxInt 0) -}}
+								.AddIntegerRangeDescription({{.MinInt}}, {{.MaxInt}})
+								{{- end -}}
+								{{- if or (ne .MinFloat 0.0) (ne .MaxFloat 0.0) -}}
+								.AddFloatRangeDescription({{.MinFloat}}, {{.MaxFloat}})
+								{{- end -}}
+								{{- if len .DefaultValue -}}
+								.AddDefaultValueDescription("{{.DefaultValue}}")
+								{{- end -}}
+								.String,
+							{{- if eq .Mandatory true}}
+							Required:            true,
+							{{- else}}
+							Optional:            true,
+							Computed:            true,
+							{{- end}}
+							{{- if len .EnumValues}}
+							Validators: []validator.String{
+								stringvalidator.OneOf({{range .EnumValues}}"{{.}}", {{end}}),
+							},
+							{{- else if or (len .StringPatterns) (ne .StringMinLength 0) (ne .StringMaxLength 0) }}
+							Validators: []validator.String{
+								{{- if or (ne .StringMinLength 0) (ne .StringMaxLength 0)}}
+								stringvalidator.LengthBetween({{.StringMinLength}}, {{.StringMaxLength}}),
+								{{- end}}
+								{{- range .StringPatterns}}
+								stringvalidator.RegexMatches(regexp.MustCompile(`{{.}}`), ""),
+								{{- end}}
+							},
+							{{- else if or (ne .MinInt 0) (ne .MaxInt 0)}}
+							Validators: []validator.Int64{
+								int64validator.Between({{.MinInt}}, {{.MaxInt}}),
+							},
+							{{- end}}
+							{{- if len .DefaultValue}}
+							PlanModifiers: []planmodifier.{{.Type}}{
+								{{- if eq .Type "Int64"}}
+								helpers.IntegerDefaultModifier({{.DefaultValue}}),
+								{{- else if eq .Type "Bool"}}
+								helpers.BooleanDefaultModifier({{.DefaultValue}}),
+								{{- else if eq .Type "String"}}
+								helpers.StringDefaultModifier("{{.DefaultValue}}"),
+								{{- end}}
+							},
 							{{- end}}
 						},
 						{{- end}}
 					},
-					{{- end}}
-				}),
+				},
 				{{- end}}
 			},
 			{{- end}}
 		},
-	}, nil
+	}
 }
 
 func (r *{{camelCase .Name}}Resource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

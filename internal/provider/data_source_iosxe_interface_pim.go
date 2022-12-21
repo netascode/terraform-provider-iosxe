@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,74 +31,62 @@ func (d *InterfacePIMDataSource) Metadata(_ context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_interface_pim"
 }
 
-func (d *InterfacePIMDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *InterfacePIMDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Interface PIM configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"type": {
+			"type": schema.StringAttribute{
 				MarkdownDescription: "Interface type",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"passive": {
+			"passive": schema.BoolAttribute{
 				MarkdownDescription: "Enable PIM passive interface operation",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"dense_mode": {
+			"dense_mode": schema.BoolAttribute{
 				MarkdownDescription: "Enable PIM dense-mode operation",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"sparse_mode": {
+			"sparse_mode": schema.BoolAttribute{
 				MarkdownDescription: "Enable PIM sparse-mode operation",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"sparse_dense_mode": {
+			"sparse_dense_mode": schema.BoolAttribute{
 				MarkdownDescription: "Enable PIM sparse-dense-mode operation",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"bfd": {
+			"bfd": schema.BoolAttribute{
 				MarkdownDescription: "Configure BFD",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"border": {
+			"border": schema.BoolAttribute{
 				MarkdownDescription: "Border of PIM domain",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"bsr_border": {
+			"bsr_border": schema.BoolAttribute{
 				MarkdownDescription: "Border of PIM domain",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"dr_priority": {
+			"dr_priority": schema.Int64Attribute{
 				MarkdownDescription: "PIM router DR priority",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *InterfacePIMDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

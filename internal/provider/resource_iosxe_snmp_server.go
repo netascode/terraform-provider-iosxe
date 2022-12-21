@@ -6,10 +6,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,372 +36,334 @@ func (r *SNMPServerResource) Metadata(ctx context.Context, req resource.Metadata
 	resp.TypeName = req.ProviderTypeName + "_snmp_server"
 }
 
-func (r *SNMPServerResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the SNMP Server configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"chassis_id": {
+			"chassis_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("String to uniquely identify this chassis").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"contact": {
+			"contact": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Text for mib object sysContact").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ifindex_persist": {
+			"ifindex_persist": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Persist interface indices").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"location": {
+			"location": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Text for mib object sysLocation").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"packetsize": {
+			"packetsize": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Largest SNMP packet size").AddIntegerRangeDescription(484, 17892).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(484, 17892),
+				Validators: []validator.Int64{
+					int64validator.Between(484, 17892),
 				},
 			},
-			"queue_length": {
+			"queue_length": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Message queue length for each TRAP host").AddIntegerRangeDescription(1, 5000).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 5000),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 5000),
 				},
 			},
-			"enable_logging_getop": {
+			"enable_logging_getop": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP GET Operation logging").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"enable_logging_setop": {
+			"enable_logging_setop": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP SET Operation logging").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"enable_informs": {
+			"enable_informs": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP Informs").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"enable_traps": {
+			"enable_traps": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP Traps").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"enable_traps_snmp_authentication": {
+			"enable_traps_snmp_authentication": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable authentication trap").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"enable_traps_snmp_coldstart": {
+			"enable_traps_snmp_coldstart": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable coldStart trap").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"enable_traps_snmp_linkdown": {
+			"enable_traps_snmp_linkdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable linkDown trap").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"enable_traps_snmp_linkup": {
+			"enable_traps_snmp_linkup": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable linkUp trap").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"enable_traps_snmp_warmstart": {
+			"enable_traps_snmp_warmstart": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable warmStart trap").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_informs_gigabit_ethernet": {
+			"source_interface_informs_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("GigabitEthernet IEEE 802.3z").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_informs_ten_gigabit_ethernet": {
+			"source_interface_informs_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ten Gigabit Ethernet").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_informs_forty_gigabit_ethernet": {
+			"source_interface_informs_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Forty GigabitEthernet ").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_informs_hundred_gig_e": {
+			"source_interface_informs_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Hundred GigabitEthernet").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_informs_loopback": {
+			"source_interface_informs_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 2147483647),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 2147483647),
 				},
 			},
-			"source_interface_informs_port_channel": {
+			"source_interface_informs_port_channel": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ethernet Channel of interfaces").AddIntegerRangeDescription(0, 4294967295).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 4294967295),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 4294967295),
 				},
 			},
-			"source_interface_informs_port_channel_subinterface": {
+			"source_interface_informs_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_informs_vlan": {
+			"source_interface_informs_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Iosxr Vlans").AddIntegerRangeDescription(0, 65535).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 65535),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 65535),
 				},
 			},
-			"source_interface_traps_gigabit_ethernet": {
+			"source_interface_traps_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("GigabitEthernet IEEE 802.3z").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_traps_ten_gigabit_ethernet": {
+			"source_interface_traps_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ten Gigabit Ethernet").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_traps_forty_gigabit_ethernet": {
+			"source_interface_traps_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Forty GigabitEthernet ").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_traps_hundred_gig_e": {
+			"source_interface_traps_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Hundred GigabitEthernet").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_traps_loopback": {
+			"source_interface_traps_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 2147483647),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 2147483647),
 				},
 			},
-			"source_interface_traps_port_channel": {
+			"source_interface_traps_port_channel": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ethernet Channel of interfaces").AddIntegerRangeDescription(0, 4294967295).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 4294967295),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 4294967295),
 				},
 			},
-			"source_interface_traps_port_channel_subinterface": {
+			"source_interface_traps_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_traps_vlan": {
+			"source_interface_traps_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Iosxr Vlans").AddIntegerRangeDescription(0, 65535).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 65535),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 65535),
 				},
 			},
-			"trap_source_gigabit_ethernet": {
+			"trap_source_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("GigabitEthernet IEEE 802.3z").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"trap_source_ten_gigabit_ethernet": {
+			"trap_source_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ten Gigabit Ethernet").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"trap_source_forty_gigabit_ethernet": {
+			"trap_source_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Forty GigabitEthernet ").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"trap_source_hundred_gig_e": {
+			"trap_source_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Hundred GigabitEthernet").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"trap_source_loopback": {
+			"trap_source_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 2147483647),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 2147483647),
 				},
 			},
-			"trap_source_port_channel": {
+			"trap_source_port_channel": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ethernet Channel of interfaces").AddIntegerRangeDescription(0, 4294967295).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 4294967295),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 4294967295),
 				},
 			},
-			"trap_source_port_channel_subinterface": {
+			"trap_source_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"trap_source_vlan": {
+			"trap_source_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Iosxr Vlans").AddIntegerRangeDescription(0, 65535).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 65535),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 65535),
 				},
 			},
-			"snmp_communities": {
+			"snmp_communities": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP; set community string and access privs").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"view": {
-						MarkdownDescription: helpers.NewAttributeDescription("Restrict this community to a named MIB view").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"permission": {
-						MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("ro", "rw").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringEnumValidator("ro", "rw"),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"view": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Restrict this community to a named MIB view").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.LengthBetween(1, 214),
+							},
+						},
+						"permission": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("ro", "rw").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.OneOf("ro", "rw"),
+							},
+						},
+						"ipv6": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.LengthBetween(1, 219),
+							},
+						},
+						"access_list_name": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"ipv6": {
-						MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"access_list_name": {
-						MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"contexts": {
+			"contexts": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Create/Delete a context apart from default").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
-			},
-			"views": {
-				MarkdownDescription: helpers.NewAttributeDescription("Define an SNMPv2 MIB view").String,
-				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"mib": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"inc_exl": {
-						MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("excluded", "included").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringEnumValidator("excluded", "included"),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-				}),
+				},
+			},
+			"views": schema.ListNestedAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Define an SNMPv2 MIB view").String,
+				Optional:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"mib": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"inc_exl": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("excluded", "included").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.OneOf("excluded", "included"),
+							},
+						},
+					},
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *SNMPServerResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

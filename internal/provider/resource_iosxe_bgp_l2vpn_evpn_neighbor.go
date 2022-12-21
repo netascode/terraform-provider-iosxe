@@ -6,10 +6,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,64 +35,57 @@ func (r *BGPL2VPNEVPNNeighborResource) Metadata(ctx context.Context, req resourc
 	resp.TypeName = req.ProviderTypeName + "_bgp_l2vpn_evpn_neighbor"
 }
 
-func (r *BGPL2VPNEVPNNeighborResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *BGPL2VPNEVPNNeighborResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the BGP L2VPN EVPN Neighbor configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"asn": {
+			"asn": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"ip": {
+			"ip": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"activate": {
+			"activate": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable the address family for this neighbor").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"send_community": {
+			"send_community": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("both", "extended", "standard").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("both", "extended", "standard"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("both", "extended", "standard"),
 				},
 			},
-			"route_reflector_client": {
+			"route_reflector_client": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure a neighbor as Route Reflector client").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *BGPL2VPNEVPNNeighborResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

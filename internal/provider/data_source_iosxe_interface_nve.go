@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,86 +31,78 @@ func (d *InterfaceNVEDataSource) Metadata(_ context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_interface_nve"
 }
 
-func (d *InterfaceNVEDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *InterfaceNVEDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Interface NVE configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.Int64Attribute{
 				MarkdownDescription: "",
-				Type:                types.Int64Type,
 				Required:            true,
 			},
-			"description": {
+			"description": schema.StringAttribute{
 				MarkdownDescription: "Interface specific description",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: "Shutdown the selected interface",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"host_reachability_protocol_bgp": {
+			"host_reachability_protocol_bgp": schema.BoolAttribute{
 				MarkdownDescription: "",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"source_interface_loopback": {
+			"source_interface_loopback": schema.Int64Attribute{
 				MarkdownDescription: "Loopback interface",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"vni_vrfs": {
+			"vni_vrfs": schema.ListNestedAttribute{
 				MarkdownDescription: "Configure VNI information",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vni_range": {
-						MarkdownDescription: "VNI range or instance between 4096-16777215, example: 6010-6030 or 7115",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vni_range": schema.StringAttribute{
+							MarkdownDescription: "VNI range or instance between 4096-16777215, example: 6010-6030 or 7115",
+							Computed:            true,
+						},
+						"vrf": schema.StringAttribute{
+							MarkdownDescription: "Specify a particular VRF",
+							Computed:            true,
+						},
 					},
-					"vrf": {
-						MarkdownDescription: "Specify a particular VRF",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"vnis": {
+			"vnis": schema.ListNestedAttribute{
 				MarkdownDescription: "Configure VNI information",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vni_range": {
-						MarkdownDescription: "VNI range or instance between 4096-16777215, example: 6010-6030 or 7115",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vni_range": schema.StringAttribute{
+							MarkdownDescription: "VNI range or instance between 4096-16777215, example: 6010-6030 or 7115",
+							Computed:            true,
+						},
+						"ipv4_multicast_group": schema.StringAttribute{
+							MarkdownDescription: "Starting Multicast Group IPv4 Address",
+							Computed:            true,
+						},
+						"ingress_replication": schema.BoolAttribute{
+							MarkdownDescription: "Ingress Replication control-plane (BGP) signaling",
+							Computed:            true,
+						},
 					},
-					"ipv4_multicast_group": {
-						MarkdownDescription: "Starting Multicast Group IPv4 Address",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"ingress_replication": {
-						MarkdownDescription: "Ingress Replication control-plane (BGP) signaling",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *InterfaceNVEDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

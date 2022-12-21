@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,74 +31,62 @@ func (d *BGPIPv4UnicastVRFNeighborDataSource) Metadata(_ context.Context, req da
 	resp.TypeName = req.ProviderTypeName + "_bgp_ipv4_unicast_vrf_neighbor"
 }
 
-func (d *BGPIPv4UnicastVRFNeighborDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *BGPIPv4UnicastVRFNeighborDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the BGP IPv4 Unicast VRF Neighbor configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"asn": {
+			"asn": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"vrf": {
+			"vrf": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"ip": {
+			"ip": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"remote_as": {
+			"remote_as": schema.StringAttribute{
 				MarkdownDescription: "Specify a BGP peer-group remote-as",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"description": {
+			"description": schema.StringAttribute{
 				MarkdownDescription: "Neighbor specific description",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: "Administratively shut down this neighbor",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"update_source_loopback": {
+			"update_source_loopback": schema.StringAttribute{
 				MarkdownDescription: "Loopback interface",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"activate": {
+			"activate": schema.BoolAttribute{
 				MarkdownDescription: "Enable the address family for this neighbor",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"send_community": {
+			"send_community": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"route_reflector_client": {
+			"route_reflector_client": schema.BoolAttribute{
 				MarkdownDescription: "Configure a neighbor as Route Reflector client",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *BGPIPv4UnicastVRFNeighborDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

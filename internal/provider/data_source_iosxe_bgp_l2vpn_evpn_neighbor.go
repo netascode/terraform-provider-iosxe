@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,49 +31,42 @@ func (d *BGPL2VPNEVPNNeighborDataSource) Metadata(_ context.Context, req datasou
 	resp.TypeName = req.ProviderTypeName + "_bgp_l2vpn_evpn_neighbor"
 }
 
-func (d *BGPL2VPNEVPNNeighborDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *BGPL2VPNEVPNNeighborDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the BGP L2VPN EVPN Neighbor configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"asn": {
+			"asn": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"ip": {
+			"ip": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"activate": {
+			"activate": schema.BoolAttribute{
 				MarkdownDescription: "Enable the address family for this neighbor",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"send_community": {
+			"send_community": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"route_reflector_client": {
+			"route_reflector_client": schema.BoolAttribute{
 				MarkdownDescription: "Configure a neighbor as Route Reflector client",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *BGPL2VPNEVPNNeighborDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

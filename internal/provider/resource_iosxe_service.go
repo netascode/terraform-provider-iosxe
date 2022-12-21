@@ -6,10 +6,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,153 +33,130 @@ func (r *ServiceResource) Metadata(ctx context.Context, req resource.MetadataReq
 	resp.TypeName = req.ProviderTypeName + "_service"
 }
 
-func (r *ServiceResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *ServiceResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the Service configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"pad": {
+			"pad": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable PAD commands").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"password_encryption": {
+			"password_encryption": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Encrypt system passwords").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"password_recovery": {
+			"password_recovery": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable password recovery").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps": {
+			"timestamps": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp debug/log messages").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_debug": {
+			"timestamps_debug": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp debug messages").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime": {
+			"timestamps_debug_datetime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp with date and time").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime_msec": {
+			"timestamps_debug_datetime_msec": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Include milliseconds in timestamp").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime_localtime": {
+			"timestamps_debug_datetime_localtime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use local time zone for timestamps").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime_show_timezone": {
+			"timestamps_debug_datetime_show_timezone": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Add time zone information to timestamp").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime_year": {
+			"timestamps_debug_datetime_year": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Include year in timestamp").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_debug_uptime": {
+			"timestamps_debug_uptime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp with system uptime").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_log": {
+			"timestamps_log": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp log messages").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_log_datetime": {
+			"timestamps_log_datetime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp with date and time").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_log_datetime_msec": {
+			"timestamps_log_datetime_msec": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Include milliseconds in timestamp").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_log_datetime_localtime": {
+			"timestamps_log_datetime_localtime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use local time zone for timestamps").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_log_datetime_show_timezone": {
+			"timestamps_log_datetime_show_timezone": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Add time zone information to timestamp").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_log_datetime_year": {
+			"timestamps_log_datetime_year": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Include year in timestamp").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"timestamps_log_uptime": {
+			"timestamps_log_uptime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp with system uptime").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"dhcp": {
+			"dhcp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable DHCP server and relay agent").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"tcp_keepalives_in": {
+			"tcp_keepalives_in": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Generate keepalives on idle incoming network connections").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"tcp_keepalives_out": {
+			"tcp_keepalives_out": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Generate keepalives on idle outgoing network connections").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *ServiceResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

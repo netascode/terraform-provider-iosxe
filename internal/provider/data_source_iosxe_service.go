@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,129 +31,106 @@ func (d *ServiceDataSource) Metadata(_ context.Context, req datasource.MetadataR
 	resp.TypeName = req.ProviderTypeName + "_service"
 }
 
-func (d *ServiceDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *ServiceDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Service configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"pad": {
+			"pad": schema.BoolAttribute{
 				MarkdownDescription: "Enable PAD commands",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"password_encryption": {
+			"password_encryption": schema.BoolAttribute{
 				MarkdownDescription: "Encrypt system passwords",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"password_recovery": {
+			"password_recovery": schema.BoolAttribute{
 				MarkdownDescription: "Enable password recovery",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps": {
+			"timestamps": schema.BoolAttribute{
 				MarkdownDescription: "Timestamp debug/log messages",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_debug": {
+			"timestamps_debug": schema.BoolAttribute{
 				MarkdownDescription: "Timestamp debug messages",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime": {
+			"timestamps_debug_datetime": schema.BoolAttribute{
 				MarkdownDescription: "Timestamp with date and time",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime_msec": {
+			"timestamps_debug_datetime_msec": schema.BoolAttribute{
 				MarkdownDescription: "Include milliseconds in timestamp",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime_localtime": {
+			"timestamps_debug_datetime_localtime": schema.BoolAttribute{
 				MarkdownDescription: "Use local time zone for timestamps",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime_show_timezone": {
+			"timestamps_debug_datetime_show_timezone": schema.BoolAttribute{
 				MarkdownDescription: "Add time zone information to timestamp",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_debug_datetime_year": {
+			"timestamps_debug_datetime_year": schema.BoolAttribute{
 				MarkdownDescription: "Include year in timestamp",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_debug_uptime": {
+			"timestamps_debug_uptime": schema.BoolAttribute{
 				MarkdownDescription: "Timestamp with system uptime",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_log": {
+			"timestamps_log": schema.BoolAttribute{
 				MarkdownDescription: "Timestamp log messages",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_log_datetime": {
+			"timestamps_log_datetime": schema.BoolAttribute{
 				MarkdownDescription: "Timestamp with date and time",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_log_datetime_msec": {
+			"timestamps_log_datetime_msec": schema.BoolAttribute{
 				MarkdownDescription: "Include milliseconds in timestamp",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_log_datetime_localtime": {
+			"timestamps_log_datetime_localtime": schema.BoolAttribute{
 				MarkdownDescription: "Use local time zone for timestamps",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_log_datetime_show_timezone": {
+			"timestamps_log_datetime_show_timezone": schema.BoolAttribute{
 				MarkdownDescription: "Add time zone information to timestamp",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_log_datetime_year": {
+			"timestamps_log_datetime_year": schema.BoolAttribute{
 				MarkdownDescription: "Include year in timestamp",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"timestamps_log_uptime": {
+			"timestamps_log_uptime": schema.BoolAttribute{
 				MarkdownDescription: "Timestamp with system uptime",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"dhcp": {
+			"dhcp": schema.BoolAttribute{
 				MarkdownDescription: "Enable DHCP server and relay agent",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"tcp_keepalives_in": {
+			"tcp_keepalives_in": schema.BoolAttribute{
 				MarkdownDescription: "Generate keepalives on idle incoming network connections",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"tcp_keepalives_out": {
+			"tcp_keepalives_out": schema.BoolAttribute{
 				MarkdownDescription: "Generate keepalives on idle outgoing network connections",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *ServiceDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

@@ -6,10 +6,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,134 +37,116 @@ func (r *EVPNInstanceResource) Metadata(ctx context.Context, req resource.Metada
 	resp.TypeName = req.ProviderTypeName + "_evpn_instance"
 }
 
-func (r *EVPNInstanceResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *EVPNInstanceResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the EVPN Instance configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"evpn_instance_num": {
+			"evpn_instance_num": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("evpn instance number").AddIntegerRangeDescription(1, 65535).String,
-				Type:                types.Int64Type,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 65535),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 65535),
 				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.RequiresReplace(),
 				},
 			},
-			"vlan_based_replication_type_ingress": {
+			"vlan_based_replication_type_ingress": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ingress replication").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_replication_type_static": {
+			"vlan_based_replication_type_static": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Static replication").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_replication_type_p2mp": {
+			"vlan_based_replication_type_p2mp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("p2mp replication").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_replication_type_mp2mp": {
+			"vlan_based_replication_type_mp2mp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("mp2mp replication").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_encapsulation": {
+			"vlan_based_encapsulation": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Data encapsulation method").AddStringEnumDescription("mpls", "vxlan").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("mpls", "vxlan"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("mpls", "vxlan"),
 				},
 			},
-			"vlan_based_auto_route_target": {
+			"vlan_based_auto_route_target": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Automatically set a route-target").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_rd": {
+			"vlan_based_rd": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_route_target": {
+			"vlan_based_route_target": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_route_target_both": {
+			"vlan_based_route_target_both": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_route_target_import": {
+			"vlan_based_route_target_import": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_route_target_export": {
+			"vlan_based_route_target_export": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_ip_local_learning_disable": {
+			"vlan_based_ip_local_learning_disable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Disable IP local learning from dataplane").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_ip_local_learning_enable": {
+			"vlan_based_ip_local_learning_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP local learning from dataplane").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vlan_based_default_gateway_advertise": {
+			"vlan_based_default_gateway_advertise": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Advertise Default Gateway MAC/IP routes").AddStringEnumDescription("disable", "enable").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("disable", "enable"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("disable", "enable"),
 				},
 			},
-			"vlan_based_re_originate_route_type5": {
+			"vlan_based_re_originate_route_type5": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Re-originate route-type 5").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *EVPNInstanceResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

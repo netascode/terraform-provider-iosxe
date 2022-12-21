@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,94 +31,78 @@ func (d *InterfaceSwitchportDataSource) Metadata(_ context.Context, req datasour
 	resp.TypeName = req.ProviderTypeName + "_interface_switchport"
 }
 
-func (d *InterfaceSwitchportDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *InterfaceSwitchportDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Interface Switchport configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"type": {
+			"type": schema.StringAttribute{
 				MarkdownDescription: "Interface type",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"mode_access": {
+			"mode_access": schema.BoolAttribute{
 				MarkdownDescription: "Set trunking mode to ACCESS unconditionally",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"mode_dot1q_tunnel": {
+			"mode_dot1q_tunnel": schema.BoolAttribute{
 				MarkdownDescription: "set trunking mode to TUNNEL unconditionally",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"mode_private_vlan_trunk": {
+			"mode_private_vlan_trunk": schema.BoolAttribute{
 				MarkdownDescription: "Set the mode to private-vlan trunk",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"mode_private_vlan_host": {
+			"mode_private_vlan_host": schema.BoolAttribute{
 				MarkdownDescription: "Set the mode to private-vlan host",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"mode_private_vlan_promiscuous": {
+			"mode_private_vlan_promiscuous": schema.BoolAttribute{
 				MarkdownDescription: "Set the mode to private-vlan promiscuous",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"mode_trunk": {
+			"mode_trunk": schema.BoolAttribute{
 				MarkdownDescription: "Set trunking mode to TRUNK unconditionally",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"nonegotiate": {
+			"nonegotiate": schema.BoolAttribute{
 				MarkdownDescription: "Device will not engage in negotiation protocol on this interface",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"access_vlan": {
+			"access_vlan": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"trunk_allowed_vlans": {
+			"trunk_allowed_vlans": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"trunk_native_vlan_tag": {
+			"trunk_native_vlan_tag": schema.BoolAttribute{
 				MarkdownDescription: "",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"trunk_native_vlan": {
+			"trunk_native_vlan": schema.Int64Attribute{
 				MarkdownDescription: "",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"host": {
+			"host": schema.BoolAttribute{
 				MarkdownDescription: "Set port host",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *InterfaceSwitchportDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,67 +31,66 @@ func (d *LoggingIPv4HostTransportDataSource) Metadata(_ context.Context, req dat
 	resp.TypeName = req.ProviderTypeName + "_logging_ipv4_host_transport"
 }
 
-func (d *LoggingIPv4HostTransportDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *LoggingIPv4HostTransportDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Logging IPv4 Host Transport configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ipv4_host": {
+			"ipv4_host": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"transport_udp_ports": {
+			"transport_udp_ports": schema.ListNestedAttribute{
 				MarkdownDescription: "Port Number List",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"port_number": {
-						MarkdownDescription: "Specify the UDP port number (default=514)",
-						Type:                types.Int64Type,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"port_number": schema.Int64Attribute{
+							MarkdownDescription: "Specify the UDP port number (default=514)",
+							Computed:            true,
+						},
 					},
-				}),
+				},
 			},
-			"transport_tcp_ports": {
+			"transport_tcp_ports": schema.ListNestedAttribute{
 				MarkdownDescription: "Port Number List",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"port_number": {
-						MarkdownDescription: "Specify the TCP port number (default=601)",
-						Type:                types.Int64Type,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"port_number": schema.Int64Attribute{
+							MarkdownDescription: "Specify the TCP port number (default=601)",
+							Computed:            true,
+						},
 					},
-				}),
+				},
 			},
-			"transport_tls_ports": {
+			"transport_tls_ports": schema.ListNestedAttribute{
 				MarkdownDescription: "Port Number List",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"port_number": {
-						MarkdownDescription: "Specify the TLS port number (default=6514)",
-						Type:                types.Int64Type,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"port_number": schema.Int64Attribute{
+							MarkdownDescription: "Specify the TLS port number (default=6514)",
+							Computed:            true,
+						},
+						"profile": schema.StringAttribute{
+							MarkdownDescription: "Specify the TLS profile",
+							Computed:            true,
+						},
 					},
-					"profile": {
-						MarkdownDescription: "Specify the TLS profile",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *LoggingIPv4HostTransportDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

@@ -5,11 +5,17 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,214 +38,197 @@ func (r *OSPFVRFResource) Metadata(ctx context.Context, req resource.MetadataReq
 	resp.TypeName = req.ProviderTypeName + "_ospf_vrf"
 }
 
-func (r *OSPFVRFResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *OSPFVRFResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the OSPF VRF configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"process_id": {
+			"process_id": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Process ID").AddIntegerRangeDescription(1, 65535).String,
-				Type:                types.Int64Type,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 65535),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 65535),
 				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.RequiresReplace(),
 				},
 			},
-			"vrf": {
+			"vrf": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VPN Routing/Forwarding Instance").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"bfd_all_interfaces": {
+			"bfd_all_interfaces": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable BFD on all interfaces").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"default_information_originate": {
+			"default_information_originate": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Distribute a default route").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"default_information_originate_always": {
+			"default_information_originate_always": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Always advertise default route").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"default_metric": {
+			"default_metric": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set metric of redistributed routes").AddIntegerRangeDescription(1, 16777214).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 16777214),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 16777214),
 				},
 			},
-			"distance": {
+			"distance": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Administrative distance").AddIntegerRangeDescription(1, 255).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 255),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 255),
 				},
 			},
-			"domain_tag": {
+			"domain_tag": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("OSPF domain-tag").AddIntegerRangeDescription(1, 4294967295).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4294967295),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4294967295),
 				},
 			},
-			"mpls_ldp_autoconfig": {
+			"mpls_ldp_autoconfig": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure LDP automatic configuration").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"mpls_ldp_sync": {
+			"mpls_ldp_sync": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure LDP-IGP Synchronization").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"neighbor": {
+			"neighbor": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify a neighbor router").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ip": {
-						MarkdownDescription: helpers.NewAttributeDescription("Neighbor address").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ip": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Neighbor address").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"priority": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("OSPF priority of non-broadcast neighbor").AddIntegerRangeDescription(0, 255).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(0, 255),
+							},
+						},
+						"cost": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("OSPF cost for point-to-multipoint neighbor").AddIntegerRangeDescription(1, 65535).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 65535),
+							},
 						},
 					},
-					"priority": {
-						MarkdownDescription: helpers.NewAttributeDescription("OSPF priority of non-broadcast neighbor").AddIntegerRangeDescription(0, 255).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(0, 255),
-						},
-					},
-					"cost": {
-						MarkdownDescription: helpers.NewAttributeDescription("OSPF cost for point-to-multipoint neighbor").AddIntegerRangeDescription(1, 65535).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1, 65535),
-						},
-					},
-				}),
+				},
 			},
-			"network": {
+			"network": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable routing on an IP network").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ip": {
-						MarkdownDescription: helpers.NewAttributeDescription("Network number").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ip": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Network number").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"wildcard": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("OSPF wild card bits").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"area": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Set the OSPF area ID").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"wildcard": {
-						MarkdownDescription: helpers.NewAttributeDescription("OSPF wild card bits").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-						},
-					},
-					"area": {
-						MarkdownDescription: helpers.NewAttributeDescription("Set the OSPF area ID").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"priority": {
+			"priority": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("OSPF topology priority").AddIntegerRangeDescription(0, 127).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 127),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 127),
 				},
 			},
-			"router_id": {
+			"router_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Override configured router identifier (peers will reset)").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the OSPF protocol under the current instance").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"summary_address": {
+			"summary_address": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure IP address summaries").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ip": {
-						MarkdownDescription: helpers.NewAttributeDescription("IP summary address").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ip": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("IP summary address").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"mask": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Summary mask").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
 						},
 					},
-					"mask": {
-						MarkdownDescription: helpers.NewAttributeDescription("Summary mask").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-						},
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *OSPFVRFResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

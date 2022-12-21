@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,174 +31,158 @@ func (d *LoggingDataSource) Metadata(_ context.Context, req datasource.MetadataR
 	resp.TypeName = req.ProviderTypeName + "_logging"
 }
 
-func (d *LoggingDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *LoggingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Logging configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"monitor_severity": {
+			"monitor_severity": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"buffered_size": {
+			"buffered_size": schema.Int64Attribute{
 				MarkdownDescription: "Logging buffer size",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"buffered_severity": {
+			"buffered_severity": schema.StringAttribute{
 				MarkdownDescription: "Logging severity level",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"console_severity": {
+			"console_severity": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"facility": {
+			"facility": schema.StringAttribute{
 				MarkdownDescription: "Facility parameter for syslog messages",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"history_size": {
+			"history_size": schema.Int64Attribute{
 				MarkdownDescription: "Set history table size",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"history_severity": {
+			"history_severity": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"trap": {
+			"trap": schema.BoolAttribute{
 				MarkdownDescription: "Set trap server logging level",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"trap_severity": {
+			"trap_severity": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"origin_id_type": {
+			"origin_id_type": schema.StringAttribute{
 				MarkdownDescription: "Use origin hostname/ip/ipv6 as ID",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"origin_id_name": {
+			"origin_id_name": schema.StringAttribute{
 				MarkdownDescription: "Define a unique text string as ID",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"file_name": {
+			"file_name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"file_max_size": {
+			"file_max_size": schema.Int64Attribute{
 				MarkdownDescription: "",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"file_min_size": {
+			"file_min_size": schema.Int64Attribute{
 				MarkdownDescription: "",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"file_severity": {
+			"file_severity": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface": {
+			"source_interface": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interfaces_vrf": {
+			"source_interfaces_vrf": schema.ListNestedAttribute{
 				MarkdownDescription: "Specify interface and vrf for source address in logging transactions",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vrf": {
-						MarkdownDescription: "Specify the vrf of source interface for logging transactions",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vrf": schema.StringAttribute{
+							MarkdownDescription: "Specify the vrf of source interface for logging transactions",
+							Computed:            true,
+						},
+						"interface_name": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
 					},
-					"interface_name": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"ipv4_hosts": {
+			"ipv4_hosts": schema.ListNestedAttribute{
 				MarkdownDescription: "",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ipv4_host": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ipv4_host": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
 					},
-				}),
+				},
 			},
-			"ipv4_vrf_hosts": {
+			"ipv4_vrf_hosts": schema.ListNestedAttribute{
 				MarkdownDescription: "",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ipv4_host": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ipv4_host": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"vrf": schema.StringAttribute{
+							MarkdownDescription: "Set VRF option",
+							Computed:            true,
+						},
 					},
-					"vrf": {
-						MarkdownDescription: "Set VRF option",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"ipv6_hosts": {
+			"ipv6_hosts": schema.ListNestedAttribute{
 				MarkdownDescription: "",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ipv6_host": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ipv6_host": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
 					},
-				}),
+				},
 			},
-			"ipv6_vrf_hosts": {
+			"ipv6_vrf_hosts": schema.ListNestedAttribute{
 				MarkdownDescription: "",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ipv6_host": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ipv6_host": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"vrf": schema.StringAttribute{
+							MarkdownDescription: "Set VRF option",
+							Computed:            true,
+						},
 					},
-					"vrf": {
-						MarkdownDescription: "Set VRF option",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *LoggingDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

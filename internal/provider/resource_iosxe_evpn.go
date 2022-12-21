@@ -6,10 +6,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,114 +35,100 @@ func (r *EVPNResource) Metadata(ctx context.Context, req resource.MetadataReques
 	resp.TypeName = req.ProviderTypeName + "_evpn"
 }
 
-func (r *EVPNResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *EVPNResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the EVPN configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"replication_type_ingress": {
+			"replication_type_ingress": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ingress replication").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"replication_type_static": {
+			"replication_type_static": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Static replication").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"replication_type_p2mp": {
+			"replication_type_p2mp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("p2mp replication").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"replication_type_mp2mp": {
+			"replication_type_mp2mp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("mp2mp replication").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"mac_duplication_limit": {
+			"mac_duplication_limit": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Number of MAC moves within specified time interval").AddIntegerRangeDescription(2, 1000).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(2, 1000),
+				Validators: []validator.Int64{
+					int64validator.Between(2, 1000),
 				},
 			},
-			"mac_duplication_time": {
+			"mac_duplication_time": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("MAC duplication timer").AddIntegerRangeDescription(10, 36000).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(10, 36000),
+				Validators: []validator.Int64{
+					int64validator.Between(10, 36000),
 				},
 			},
-			"ip_duplication_limit": {
+			"ip_duplication_limit": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Number of IP moves within specified time interval").AddIntegerRangeDescription(2, 1000).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(2, 1000),
+				Validators: []validator.Int64{
+					int64validator.Between(2, 1000),
 				},
 			},
-			"ip_duplication_time": {
+			"ip_duplication_time": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("IP duplication timer").AddIntegerRangeDescription(10, 36000).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(10, 36000),
+				Validators: []validator.Int64{
+					int64validator.Between(10, 36000),
 				},
 			},
-			"router_id_loopback": {
+			"router_id_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 2147483647),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 2147483647),
 				},
 			},
-			"default_gateway_advertise": {
+			"default_gateway_advertise": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Advertise Default Gateway MAC/IP routes").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"logging_peer_state": {
+			"logging_peer_state": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Peer state transition logging").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"route_target_auto_vni": {
+			"route_target_auto_vni": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set vni-based route-target").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *EVPNResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

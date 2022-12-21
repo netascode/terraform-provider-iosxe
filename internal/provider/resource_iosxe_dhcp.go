@@ -6,10 +6,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,84 +36,77 @@ func (r *DHCPResource) Metadata(ctx context.Context, req resource.MetadataReques
 	resp.TypeName = req.ProviderTypeName + "_dhcp"
 }
 
-func (r *DHCPResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *DHCPResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the DHCP configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"compatibility_suboption_link_selection": {
+			"compatibility_suboption_link_selection": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("cisco", "standard").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("cisco", "standard"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("cisco", "standard"),
 				},
 			},
-			"compatibility_suboption_server_override": {
+			"compatibility_suboption_server_override": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("cisco", "standard").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("cisco", "standard"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("cisco", "standard"),
 				},
 			},
-			"relay_information_trust_all": {
+			"relay_information_trust_all": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Received DHCP packets may contain relay info option with zero giaddr").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"relay_information_option_default": {
+			"relay_information_option_default": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Default option, no vpn").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"relay_information_option_vpn": {
+			"relay_information_option_vpn": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Insert VPN sub-options and change the giaddr to the outgoing interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"snooping": {
+			"snooping": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("DHCP Snooping").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"snooping_vlans": {
+			"snooping_vlans": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("DHCP Snooping vlan (Deprecated, use vlan-list)").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vlan_id": {
-						MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1, 4094),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vlan_id": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 4094),
+							},
 						},
 					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *DHCPResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

@@ -6,34 +6,16 @@ package provider
 import (
 	"context"
 	"regexp"
-	{{- $fmt := false }}{{ range .Attributes}}{{ if or (eq .Id true) (eq .Reference true) (eq .Type "List") (and (eq .Type "Bool") (eq .TypeYangBool "empty")) }}{{ $fmt = true }}{{ end}}{{ end}}
-	{{- if $fmt }}
 	"fmt"
-	{{- end}}
-	{{- $neturl := false }}{{ range .Attributes}}{{ if or (eq .Id true) (eq .Reference true) }}{{ $neturl = true }}{{ end}}{{ end}}
-	{{- if $neturl }}
 	"net/url"
-	{{- end}}
-	{{- $strconv := false }}{{ range .Attributes}}{{ if or (and (eq .Type "Int64") (ne .Reference true)) (eq .Type "List") }}{{ $strconv = true }}{{ end}}{{ end}}
-	{{- if $strconv }}
 	"strconv"
-	{{- end}}
-	{{- $reflect := false }}{{ range .Attributes}}{{ if eq .Type "List" }}{{ $reflect = true }}{{ end}}{{ end}}
-	{{- if $reflect }}
 	"reflect"
 	"strings"
-	{{- end}}
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
-	{{- $sjson := false }}{{ range .Attributes}}{{ if ne .Reference true}}{{ $sjson = true }}{{ end}}{{ end}}
-	{{- if $sjson }}
 	"github.com/tidwall/sjson"
-	{{- end}}
-	{{- $gjson := false }}{{ range .Attributes}}{{ if and (ne .Reference true) (ne .WriteOnly true)}}{{ $gjson = true }}{{ end}}{{ end}}
-	{{- if $gjson }}
 	"github.com/tidwall/gjson"
-	{{- end}}
 )
 
 {{- $name := camelCase .Name}}

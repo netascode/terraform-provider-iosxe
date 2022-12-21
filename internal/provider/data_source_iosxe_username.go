@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,59 +31,50 @@ func (d *UsernameDataSource) Metadata(_ context.Context, req datasource.Metadata
 	resp.TypeName = req.ProviderTypeName + "_username"
 }
 
-func (d *UsernameDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *UsernameDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Username configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"privilege": {
+			"privilege": schema.Int64Attribute{
 				MarkdownDescription: "Set user privilege level",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"description": {
+			"description": schema.StringAttribute{
 				MarkdownDescription: "description string with max 128 characters",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"password_encryption": {
+			"password_encryption": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"password": {
+			"password": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"secret_encryption": {
+			"secret_encryption": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"secret": {
+			"secret": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *UsernameDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

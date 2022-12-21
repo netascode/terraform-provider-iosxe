@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,70 +31,62 @@ func (d *StaticRouteDataSource) Metadata(_ context.Context, req datasource.Metad
 	resp.TypeName = req.ProviderTypeName + "_static_route"
 }
 
-func (d *StaticRouteDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *StaticRouteDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Static Route configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"prefix": {
+			"prefix": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"mask": {
+			"mask": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"next_hops": {
+			"next_hops": schema.ListNestedAttribute{
 				MarkdownDescription: "",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"next_hop": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"next_hop": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"metric": schema.Int64Attribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"global": schema.BoolAttribute{
+							MarkdownDescription: "Next hop address is global",
+							Computed:            true,
+						},
+						"name": schema.StringAttribute{
+							MarkdownDescription: "Specify name of the next hop",
+							Computed:            true,
+						},
+						"permanent": schema.BoolAttribute{
+							MarkdownDescription: "permanent route",
+							Computed:            true,
+						},
+						"tag": schema.Int64Attribute{
+							MarkdownDescription: "Set tag for this route",
+							Computed:            true,
+						},
 					},
-					"metric": {
-						MarkdownDescription: "",
-						Type:                types.Int64Type,
-						Computed:            true,
-					},
-					"global": {
-						MarkdownDescription: "Next hop address is global",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"name": {
-						MarkdownDescription: "Specify name of the next hop",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"permanent": {
-						MarkdownDescription: "permanent route",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"tag": {
-						MarkdownDescription: "Set tag for this route",
-						Type:                types.Int64Type,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *StaticRouteDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

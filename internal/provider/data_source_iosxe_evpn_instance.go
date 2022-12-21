@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,104 +31,86 @@ func (d *EVPNInstanceDataSource) Metadata(_ context.Context, req datasource.Meta
 	resp.TypeName = req.ProviderTypeName + "_evpn_instance"
 }
 
-func (d *EVPNInstanceDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *EVPNInstanceDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the EVPN Instance configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"evpn_instance_num": {
+			"evpn_instance_num": schema.Int64Attribute{
 				MarkdownDescription: "evpn instance number",
-				Type:                types.Int64Type,
 				Required:            true,
 			},
-			"vlan_based_replication_type_ingress": {
+			"vlan_based_replication_type_ingress": schema.BoolAttribute{
 				MarkdownDescription: "Ingress replication",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vlan_based_replication_type_static": {
+			"vlan_based_replication_type_static": schema.BoolAttribute{
 				MarkdownDescription: "Static replication",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vlan_based_replication_type_p2mp": {
+			"vlan_based_replication_type_p2mp": schema.BoolAttribute{
 				MarkdownDescription: "p2mp replication",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vlan_based_replication_type_mp2mp": {
+			"vlan_based_replication_type_mp2mp": schema.BoolAttribute{
 				MarkdownDescription: "mp2mp replication",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vlan_based_encapsulation": {
+			"vlan_based_encapsulation": schema.StringAttribute{
 				MarkdownDescription: "Data encapsulation method",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vlan_based_auto_route_target": {
+			"vlan_based_auto_route_target": schema.BoolAttribute{
 				MarkdownDescription: "Automatically set a route-target",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vlan_based_rd": {
+			"vlan_based_rd": schema.StringAttribute{
 				MarkdownDescription: "ASN:nn or IP-address:nn",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vlan_based_route_target": {
+			"vlan_based_route_target": schema.StringAttribute{
 				MarkdownDescription: "ASN:nn or IP-address:nn",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vlan_based_route_target_both": {
+			"vlan_based_route_target_both": schema.StringAttribute{
 				MarkdownDescription: "ASN:nn or IP-address:nn",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vlan_based_route_target_import": {
+			"vlan_based_route_target_import": schema.StringAttribute{
 				MarkdownDescription: "ASN:nn or IP-address:nn",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vlan_based_route_target_export": {
+			"vlan_based_route_target_export": schema.StringAttribute{
 				MarkdownDescription: "ASN:nn or IP-address:nn",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vlan_based_ip_local_learning_disable": {
+			"vlan_based_ip_local_learning_disable": schema.BoolAttribute{
 				MarkdownDescription: "Disable IP local learning from dataplane",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vlan_based_ip_local_learning_enable": {
+			"vlan_based_ip_local_learning_enable": schema.BoolAttribute{
 				MarkdownDescription: "Enable IP local learning from dataplane",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vlan_based_default_gateway_advertise": {
+			"vlan_based_default_gateway_advertise": schema.StringAttribute{
 				MarkdownDescription: "Advertise Default Gateway MAC/IP routes",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vlan_based_re_originate_route_type5": {
+			"vlan_based_re_originate_route_type5": schema.BoolAttribute{
 				MarkdownDescription: "Re-originate route-type 5",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *EVPNInstanceDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

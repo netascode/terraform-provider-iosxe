@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,215 +31,178 @@ func (d *AccessListExtendedDataSource) Metadata(_ context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_access_list_extended"
 }
 
-func (d *AccessListExtendedDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *AccessListExtendedDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Access List Extended configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"entries": {
+			"entries": schema.ListNestedAttribute{
 				MarkdownDescription: "",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"sequence": {
-						MarkdownDescription: "",
-						Type:                types.Int64Type,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"sequence": schema.Int64Attribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"remark": schema.StringAttribute{
+							MarkdownDescription: "Access list entry comment",
+							Computed:            true,
+						},
+						"ace_rule_action": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"ace_rule_protocol": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"service_object_group": schema.StringAttribute{
+							MarkdownDescription: "Service object group name",
+							Computed:            true,
+						},
+						"source_prefix": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"source_prefix_mask": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"source_any": schema.BoolAttribute{
+							MarkdownDescription: "Any source host",
+							Computed:            true,
+						},
+						"source_host": schema.StringAttribute{
+							MarkdownDescription: "A single source host(DEPRECATED - use host-address)",
+							Computed:            true,
+						},
+						"source_object_group": schema.StringAttribute{
+							MarkdownDescription: "Source network object group",
+							Computed:            true,
+						},
+						"source_port_equal": schema.StringAttribute{
+							MarkdownDescription: "Match only packets on a given port number up to 10 ports",
+							Computed:            true,
+						},
+						"source_port_greater_than": schema.StringAttribute{
+							MarkdownDescription: "Match only packets with a greater port number",
+							Computed:            true,
+						},
+						"source_port_lesser_than": schema.StringAttribute{
+							MarkdownDescription: "Match only packets with a lower port number",
+							Computed:            true,
+						},
+						"source_port_range_from": schema.StringAttribute{
+							MarkdownDescription: "Match only packets in the range of port numbers",
+							Computed:            true,
+						},
+						"source_port_range_to": schema.StringAttribute{
+							MarkdownDescription: "Match only packets in the range of port numbers",
+							Computed:            true,
+						},
+						"destination_prefix": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"destination_prefix_mask": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"destination_any": schema.BoolAttribute{
+							MarkdownDescription: "Any destination host",
+							Computed:            true,
+						},
+						"destination_host": schema.StringAttribute{
+							MarkdownDescription: "A single destination host(DEPRECATED - use dst-host-address)",
+							Computed:            true,
+						},
+						"destination_object_group": schema.StringAttribute{
+							MarkdownDescription: "Destination network object group",
+							Computed:            true,
+						},
+						"destination_port_equal": schema.StringAttribute{
+							MarkdownDescription: "Match only packets on a given port number up to 10 ports",
+							Computed:            true,
+						},
+						"destination_port_greater_than": schema.StringAttribute{
+							MarkdownDescription: "Match only packets with a greater port number",
+							Computed:            true,
+						},
+						"destination_port_lesser_than": schema.StringAttribute{
+							MarkdownDescription: "Match only packets with a lower port number",
+							Computed:            true,
+						},
+						"destination_port_range_from": schema.StringAttribute{
+							MarkdownDescription: "Match only packets in the range of port numbers",
+							Computed:            true,
+						},
+						"destination_port_range_to": schema.StringAttribute{
+							MarkdownDescription: "Match only packets in the range of port numbers",
+							Computed:            true,
+						},
+						"ack": schema.BoolAttribute{
+							MarkdownDescription: "Match on the ACK bit",
+							Computed:            true,
+						},
+						"fin": schema.BoolAttribute{
+							MarkdownDescription: "Match on the FIN bit",
+							Computed:            true,
+						},
+						"psh": schema.BoolAttribute{
+							MarkdownDescription: "Match on the PSH bit",
+							Computed:            true,
+						},
+						"rst": schema.BoolAttribute{
+							MarkdownDescription: "Match on the RST bit",
+							Computed:            true,
+						},
+						"syn": schema.BoolAttribute{
+							MarkdownDescription: "Match on the SYN bit",
+							Computed:            true,
+						},
+						"urg": schema.BoolAttribute{
+							MarkdownDescription: "Match on the URG bit",
+							Computed:            true,
+						},
+						"established": schema.BoolAttribute{
+							MarkdownDescription: "Match established connections",
+							Computed:            true,
+						},
+						"dscp": schema.StringAttribute{
+							MarkdownDescription: "Match packets with given dscp value",
+							Computed:            true,
+						},
+						"fragments": schema.BoolAttribute{
+							MarkdownDescription: "Check non-initial fragments",
+							Computed:            true,
+						},
+						"precedence": schema.StringAttribute{
+							MarkdownDescription: "Match packets with given precedence value",
+							Computed:            true,
+						},
+						"tos": schema.StringAttribute{
+							MarkdownDescription: "Match packets with given TOS value",
+							Computed:            true,
+						},
 					},
-					"remark": {
-						MarkdownDescription: "Access list entry comment",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"ace_rule_action": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"ace_rule_protocol": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"service_object_group": {
-						MarkdownDescription: "Service object group name",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_prefix": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_prefix_mask": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_any": {
-						MarkdownDescription: "Any source host",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"source_host": {
-						MarkdownDescription: "A single source host(DEPRECATED - use host-address)",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_object_group": {
-						MarkdownDescription: "Source network object group",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_port_equal": {
-						MarkdownDescription: "Match only packets on a given port number up to 10 ports",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_port_greater_than": {
-						MarkdownDescription: "Match only packets with a greater port number",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_port_lesser_than": {
-						MarkdownDescription: "Match only packets with a lower port number",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_port_range_from": {
-						MarkdownDescription: "Match only packets in the range of port numbers",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"source_port_range_to": {
-						MarkdownDescription: "Match only packets in the range of port numbers",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_prefix": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_prefix_mask": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_any": {
-						MarkdownDescription: "Any destination host",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"destination_host": {
-						MarkdownDescription: "A single destination host(DEPRECATED - use dst-host-address)",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_object_group": {
-						MarkdownDescription: "Destination network object group",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_port_equal": {
-						MarkdownDescription: "Match only packets on a given port number up to 10 ports",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_port_greater_than": {
-						MarkdownDescription: "Match only packets with a greater port number",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_port_lesser_than": {
-						MarkdownDescription: "Match only packets with a lower port number",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_port_range_from": {
-						MarkdownDescription: "Match only packets in the range of port numbers",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"destination_port_range_to": {
-						MarkdownDescription: "Match only packets in the range of port numbers",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"ack": {
-						MarkdownDescription: "Match on the ACK bit",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"fin": {
-						MarkdownDescription: "Match on the FIN bit",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"psh": {
-						MarkdownDescription: "Match on the PSH bit",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"rst": {
-						MarkdownDescription: "Match on the RST bit",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"syn": {
-						MarkdownDescription: "Match on the SYN bit",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"urg": {
-						MarkdownDescription: "Match on the URG bit",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"established": {
-						MarkdownDescription: "Match established connections",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"dscp": {
-						MarkdownDescription: "Match packets with given dscp value",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"fragments": {
-						MarkdownDescription: "Check non-initial fragments",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"precedence": {
-						MarkdownDescription: "Match packets with given precedence value",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"tos": {
-						MarkdownDescription: "Match packets with given TOS value",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *AccessListExtendedDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

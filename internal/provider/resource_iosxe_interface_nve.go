@@ -5,11 +5,17 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,113 +38,106 @@ func (r *InterfaceNVEResource) Metadata(ctx context.Context, req resource.Metada
 	resp.TypeName = req.ProviderTypeName + "_interface_nve"
 }
 
-func (r *InterfaceNVEResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *InterfaceNVEResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the Interface NVE configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"name": {
+			"name": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4096).String,
-				Type:                types.Int64Type,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4096),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4096),
 				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.RequiresReplace(),
 				},
 			},
-			"description": {
+			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 200, `.*`),
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(0, 200),
+					stringvalidator.RegexMatches(regexp.MustCompile(`.*`), ""),
 				},
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"host_reachability_protocol_bgp": {
+			"host_reachability_protocol_bgp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_interface_loopback": {
+			"source_interface_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 2147483647),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 2147483647),
 				},
 			},
-			"vni_vrfs": {
+			"vni_vrfs": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure VNI information").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vni_range": {
-						MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"vrf": {
-						MarkdownDescription: helpers.NewAttributeDescription("Specify a particular VRF").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
-			},
-			"vnis": {
-				MarkdownDescription: helpers.NewAttributeDescription("Configure VNI information").String,
-				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vni_range": {
-						MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"ipv4_multicast_group": {
-						MarkdownDescription: helpers.NewAttributeDescription("Starting Multicast Group IPv4 Address").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vni_range": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"vrf": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Specify a particular VRF").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"ingress_replication": {
-						MarkdownDescription: helpers.NewAttributeDescription("Ingress Replication control-plane (BGP) signaling").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
+				},
+			},
+			"vnis": schema.ListNestedAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Configure VNI information").String,
+				Optional:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vni_range": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"ipv4_multicast_group": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Starting Multicast Group IPv4 Address").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"ingress_replication": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Ingress Replication control-plane (BGP) signaling").String,
+							Optional:            true,
+							Computed:            true,
+						},
 					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *InterfaceNVEResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

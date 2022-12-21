@@ -6,10 +6,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,80 +37,73 @@ func (r *VLANResource) Metadata(ctx context.Context, req resource.MetadataReques
 	resp.TypeName = req.ProviderTypeName + "_vlan"
 }
 
-func (r *VLANResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *VLANResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the VLAN configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"vlan_id": {
+			"vlan_id": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("a single VLAN id (allowed value range 1-4094)or Comma-separated VLAN id range.e.g. 99 or 1-30 or  1-20,30,40-50").AddIntegerRangeDescription(1, 4094).String,
-				Type:                types.Int64Type,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4094),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4094),
 				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.RequiresReplace(),
 				},
 			},
-			"remote_span": {
+			"remote_span": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure as Remote SPAN VLAN").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"private_vlan_primary": {
+			"private_vlan_primary": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure the VLAN as a primary private VLAN").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"private_vlan_association": {
+			"private_vlan_association": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure association between private VLANs").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"private_vlan_community": {
+			"private_vlan_community": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure the VLAN as a community private VLAN").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"private_vlan_isolated": {
+			"private_vlan_isolated": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure the VLAN as an isolated private VLAN").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ascii name of the VLAN").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 128),
+				},
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown VLAN switching").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *VLANResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

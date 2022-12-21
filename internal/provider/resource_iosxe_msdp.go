@@ -6,10 +6,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,89 +35,84 @@ func (r *MSDPResource) Metadata(ctx context.Context, req resource.MetadataReques
 	resp.TypeName = req.ProviderTypeName + "_msdp"
 }
 
-func (r *MSDPResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *MSDPResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the MSDP configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"originator_id": {
+			"originator_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure MSDP Originator ID").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"peers": {
+			"peers": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure an MSDP peer").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"addr": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"remote_as": {
-						MarkdownDescription: helpers.NewAttributeDescription("Configured AS number").AddIntegerRangeDescription(1, 65535).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1, 65535),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"addr": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"remote_as": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Configured AS number").AddIntegerRangeDescription(1, 65535).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 65535),
+							},
+						},
+						"connect_source_loopback": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(0, 2147483647),
+							},
 						},
 					},
-					"connect_source_loopback": {
-						MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(0, 2147483647),
-						},
-					},
-				}),
+				},
 			},
-			"passwords": {
+			"passwords": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("MSDP peer on which the password is to be set").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"addr": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"encryption": {
-						MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 7).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(0, 7),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"addr": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"encryption": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 7).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(0, 7),
+							},
+						},
+						"password": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Required:            true,
 						},
 					},
-					"password": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Required:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *MSDPResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,65 +31,58 @@ func (d *DHCPDataSource) Metadata(_ context.Context, req datasource.MetadataRequ
 	resp.TypeName = req.ProviderTypeName + "_dhcp"
 }
 
-func (d *DHCPDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *DHCPDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the DHCP configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"compatibility_suboption_link_selection": {
+			"compatibility_suboption_link_selection": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"compatibility_suboption_server_override": {
+			"compatibility_suboption_server_override": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"relay_information_trust_all": {
+			"relay_information_trust_all": schema.BoolAttribute{
 				MarkdownDescription: "Received DHCP packets may contain relay info option with zero giaddr",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"relay_information_option_default": {
+			"relay_information_option_default": schema.BoolAttribute{
 				MarkdownDescription: "Default option, no vpn",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"relay_information_option_vpn": {
+			"relay_information_option_vpn": schema.BoolAttribute{
 				MarkdownDescription: "Insert VPN sub-options and change the giaddr to the outgoing interface",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"snooping": {
+			"snooping": schema.BoolAttribute{
 				MarkdownDescription: "DHCP Snooping",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"snooping_vlans": {
+			"snooping_vlans": schema.ListNestedAttribute{
 				MarkdownDescription: "DHCP Snooping vlan (Deprecated, use vlan-list)",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vlan_id": {
-						MarkdownDescription: "",
-						Type:                types.Int64Type,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vlan_id": schema.Int64Attribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
 					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *DHCPDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

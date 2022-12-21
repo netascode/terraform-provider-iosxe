@@ -6,10 +6,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,551 +37,486 @@ func (r *TemplateResource) Metadata(ctx context.Context, req resource.MetadataRe
 	resp.TypeName = req.ProviderTypeName + "_template"
 }
 
-func (r *TemplateResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the Template configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"template_name": {
+			"template_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Template name").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"dot1x_pae": {
+			"dot1x_pae": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set 802.1x interface pae type").AddStringEnumDescription("authenticator", "both", "supplicant").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("authenticator", "both", "supplicant"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("authenticator", "both", "supplicant"),
 				},
 			},
-			"dot1x_max_reauth_req": {
+			"dot1x_max_reauth_req": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Max No. of Reauthentication Attempts").AddIntegerRangeDescription(1, 10).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 10),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 10),
 				},
 			},
-			"dot1x_max_req": {
+			"dot1x_max_req": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Max No. of Retries").AddIntegerRangeDescription(1, 10).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 10),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 10),
 				},
 			},
-			"service_policy_input": {
+			"service_policy_input": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("policy-map name").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"service_policy_output": {
+			"service_policy_output": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("policy-map name").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"source_template": {
+			"source_template": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Get config from a template").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-			},
-			"switchport_mode_trunk": {
-				MarkdownDescription: helpers.NewAttributeDescription("Set trunking mode to TRUNK unconditionally").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"switchport_mode_access": {
-				MarkdownDescription: helpers.NewAttributeDescription("Set trunking mode to ACCESS unconditionally").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"switchport_nonegotiate": {
-				MarkdownDescription: helpers.NewAttributeDescription("Device will not engage in negotiation protocol on this interface").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"switchport_block_unicast": {
-				MarkdownDescription: helpers.NewAttributeDescription("Block unknown unicast addresses").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"switchport_port_security": {
-				MarkdownDescription: helpers.NewAttributeDescription("Security related command").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"switchport_port_security_aging_static": {
-				MarkdownDescription: helpers.NewAttributeDescription("Enable aging for configured secure addresses").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"switchport_port_security_aging_time": {
-				MarkdownDescription: helpers.NewAttributeDescription("Port-security aging time").AddIntegerRangeDescription(1, 1440).String,
-				Type:                types.Int64Type,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 1440),
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, -1),
 				},
 			},
-			"switchport_port_security_aging_type": {
+			"switchport_mode_trunk": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Set trunking mode to TRUNK unconditionally").String,
+				Optional:            true,
+				Computed:            true,
+			},
+			"switchport_mode_access": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Set trunking mode to ACCESS unconditionally").String,
+				Optional:            true,
+				Computed:            true,
+			},
+			"switchport_nonegotiate": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Device will not engage in negotiation protocol on this interface").String,
+				Optional:            true,
+				Computed:            true,
+			},
+			"switchport_block_unicast": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Block unknown unicast addresses").String,
+				Optional:            true,
+				Computed:            true,
+			},
+			"switchport_port_security": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Security related command").String,
+				Optional:            true,
+				Computed:            true,
+			},
+			"switchport_port_security_aging_static": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Enable aging for configured secure addresses").String,
+				Optional:            true,
+				Computed:            true,
+			},
+			"switchport_port_security_aging_time": schema.Int64Attribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Port-security aging time").AddIntegerRangeDescription(1, 1440).String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 1440),
+				},
+			},
+			"switchport_port_security_aging_type": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Port-security aging type").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"switchport_port_security_aging_type_inactivity": {
+			"switchport_port_security_aging_type_inactivity": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Aging based on inactivity time period").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"switchport_port_security_maximum_range": {
+			"switchport_port_security_maximum_range": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"range": {
-						MarkdownDescription: helpers.NewAttributeDescription("Maximum addresses").AddIntegerRangeDescription(1, 3072).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1, 3072),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"range": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Maximum addresses").AddIntegerRangeDescription(1, 3072).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 3072),
+							},
+						},
+						"vlan": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Max secure addresses per vlan").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"vlan_access": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("access vlan").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"vlan": {
-						MarkdownDescription: helpers.NewAttributeDescription("Max secure addresses per vlan").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"vlan_access": {
-						MarkdownDescription: helpers.NewAttributeDescription("access vlan").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"switchport_port_security_violation_protect": {
+			"switchport_port_security_violation_protect": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Security violation protect mode").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"switchport_port_security_violation_restrict": {
+			"switchport_port_security_violation_restrict": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Security violation restrict mode").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"switchport_port_security_violation_shutdown": {
+			"switchport_port_security_violation_shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Security violation shutdown mode").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"switchport_access_vlan": {
+			"switchport_access_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VLAN ID of the VLAN when this port is in access mode").AddIntegerRangeDescription(1, 4094).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4094),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4094),
 				},
 			},
-			"switchport_voice_vlan": {
+			"switchport_voice_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Vlan for voice traffic").AddIntegerRangeDescription(1, 4094).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4094),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4094),
 				},
 			},
-			"switchport_private_vlan_host_association_primary_range": {
+			"switchport_private_vlan_host_association_primary_range": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Primary normal range VLAN ID of the private VLAN port association").AddIntegerRangeDescription(2, 1001).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(2, 1001),
+				Validators: []validator.Int64{
+					int64validator.Between(2, 1001),
 				},
 			},
-			"switchport_private_vlan_host_association_secondary_range": {
+			"switchport_private_vlan_host_association_secondary_range": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Secondary normal range VLAN ID of the private VLAN host port association").AddIntegerRangeDescription(2, 1001).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(2, 1001),
+				Validators: []validator.Int64{
+					int64validator.Between(2, 1001),
 				},
 			},
-			"switchport_trunk_allowed_vlans": {
+			"switchport_trunk_allowed_vlans": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VLAN IDs of the allowed VLANs when this port is in trunking mode").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"switchport_trunk_native_vlan_tag": {
+			"switchport_trunk_native_vlan_tag": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set native VLAN tagging state").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"switchport_trunk_native_vlan_vlan_id": {
+			"switchport_trunk_native_vlan_vlan_id": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VLAN ID of the native VLAN when this port is in trunking mode").AddIntegerRangeDescription(1, 4094).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4094),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4094),
 				},
 			},
-			"mab": {
+			"mab": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("MAC Authentication Bypass Interface Config Commands").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"mab_eap": {
+			"mab_eap": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use EAP authentication for MAC Auth Bypass").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"access_session_closed": {
+			"access_session_closed": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable closed access on port (disabled by default, i.e. open access)").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"access_session_monitor": {
+			"access_session_monitor": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Apply template to monitor access sessions on the port").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"access_session_port_control": {
+			"access_session_port_control": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set the port-control value").AddStringEnumDescription("auto", "force-authorized", "force-unauthorized").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("auto", "force-authorized", "force-unauthorized"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("auto", "force-authorized", "force-unauthorized"),
 				},
 			},
-			"access_session_control_direction": {
+			"access_session_control_direction": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set the control-direction on the interface").AddStringEnumDescription("both", "in").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("both", "in"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("both", "in"),
 				},
 			},
-			"access_session_host_mode": {
+			"access_session_host_mode": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set the Host mode for authentication on this interface").AddStringEnumDescription("multi-auth", "multi-domain", "multi-host", "single-host").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("multi-auth", "multi-domain", "multi-host", "single-host"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("multi-auth", "multi-domain", "multi-host", "single-host"),
 				},
 			},
-			"access_session_interface_template_sticky": {
+			"access_session_interface_template_sticky": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Interface templates set to sticky").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"access_session_interface_template_sticky_timer": {
+			"access_session_interface_template_sticky_timer": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Sticky timer value").AddIntegerRangeDescription(1, 65535).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 65535),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 65535),
 				},
 			},
-			"authentication_periodic": {
+			"authentication_periodic": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable or Disable Reauthentication for this port").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"authentication_timer_reauthenticate_server": {
+			"authentication_timer_reauthenticate_server": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Obtain re-authentication timeout value from the server").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"authentication_timer_reauthenticate_range": {
+			"authentication_timer_reauthenticate_range": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter a value between 1 and 65535").AddIntegerRangeDescription(1, 65535).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 65535),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 65535),
 				},
 			},
-			"spanning_tree_bpduguard_enable": {
+			"spanning_tree_bpduguard_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable BPDU guard for this interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"spanning_tree_service_policy": {
+			"spanning_tree_service_policy": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("help").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"spanning_tree_portfast": {
+			"spanning_tree_portfast": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Portfast options for the interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"spanning_tree_portfast_disable": {
+			"spanning_tree_portfast_disable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Disable portfast for this interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"spanning_tree_portfast_edge": {
+			"spanning_tree_portfast_edge": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable portfast edge on the interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"spanning_tree_portfast_network": {
+			"spanning_tree_portfast_network": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable portfast network on the interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"storm_control_broadcast_level_pps_threshold": {
+			"storm_control_broadcast_level_pps_threshold": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter threshold").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"storm_control_broadcast_level_bps_threshold": {
+			"storm_control_broadcast_level_bps_threshold": schema.Float64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter threshold").String,
-				Type:                types.Float64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.FloatRangeValidator(0, 1e+11),
+				Validators: []validator.Float64{
+					float64validator.Between(0, 1e+11),
 				},
 			},
-			"storm_control_broadcast_level_threshold": {
+			"storm_control_broadcast_level_threshold": schema.Float64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter threshold").String,
-				Type:                types.Float64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.FloatRangeValidator(0, 10000),
+				Validators: []validator.Float64{
+					float64validator.Between(0, 10000),
 				},
 			},
-			"storm_control_multicast_level_pps_threshold": {
+			"storm_control_multicast_level_pps_threshold": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter threshold").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"storm_control_multicast_level_bps_threshold": {
+			"storm_control_multicast_level_bps_threshold": schema.Float64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter threshold").String,
-				Type:                types.Float64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.FloatRangeValidator(0, 1e+11),
+				Validators: []validator.Float64{
+					float64validator.Between(0, 1e+11),
 				},
 			},
-			"storm_control_multicast_level_threshold": {
+			"storm_control_multicast_level_threshold": schema.Float64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter threshold").String,
-				Type:                types.Float64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.FloatRangeValidator(0, 10000),
+				Validators: []validator.Float64{
+					float64validator.Between(0, 10000),
 				},
 			},
-			"storm_control_action_shutdown": {
+			"storm_control_action_shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown this interface if a storm occurs").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"storm_control_action_trap": {
+			"storm_control_action_trap": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Send SNMP trap if a storm occurs").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"load_interval": {
+			"load_interval": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Load interval delay in seconds").AddIntegerRangeDescription(30, 600).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(30, 600),
+				Validators: []validator.Int64{
+					int64validator.Between(30, 600),
 				},
 			},
-			"ip_dhcp_snooping_limit_rate": {
+			"ip_dhcp_snooping_limit_rate": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("DHCP snooping rate limit").AddIntegerRangeDescription(1, 2048).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 2048),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 2048),
 				},
 			},
-			"ip_dhcp_snooping_trust": {
+			"ip_dhcp_snooping_trust": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("DHCP Snooping trust config").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ip_access_group": {
+			"ip_access_group": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Access control list for IP packets").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"direction": {
-						MarkdownDescription: helpers.NewAttributeDescription("packet flow direction").AddStringEnumDescription("in", "out").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringEnumValidator("in", "out"),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"direction": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("packet flow direction").AddStringEnumDescription("in", "out").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.OneOf("in", "out"),
+							},
+						},
+						"access_list": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Access control list name").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"access_list": {
-						MarkdownDescription: helpers.NewAttributeDescription("Access control list name").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
-			},
-			"subscriber_aging_inactivity_timer_value": {
-				MarkdownDescription: helpers.NewAttributeDescription("Enter a value between 1 and 65535 in seconds").AddIntegerRangeDescription(1, 65535).String,
-				Type:                types.Int64Type,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 65535),
 				},
 			},
-			"subscriber_aging_inactivity_timer_probe": {
+			"subscriber_aging_inactivity_timer_value": schema.Int64Attribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Enter a value between 1 and 65535 in seconds").AddIntegerRangeDescription(1, 65535).String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 65535),
+				},
+			},
+			"subscriber_aging_inactivity_timer_probe": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ARP probe").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"subscriber_aging_probe": {
+			"subscriber_aging_probe": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ARP probe").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"device_tracking": {
+			"device_tracking": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure device-tracking on the interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"device_tracking_attach_policy": {
+			"device_tracking_attach_policy": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("policy name for device tracking").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"policy_name": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"policy_name": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"vlan_range": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VLAN IDs of the VLANs for which this policy applies").String,
+							Optional:            true,
+							Computed:            true,
+						},
 					},
-					"vlan_range": {
-						MarkdownDescription: helpers.NewAttributeDescription("VLAN IDs of the VLANs for which this policy applies").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
-			},
-			"device_tracking_vlan_range": {
-				MarkdownDescription: helpers.NewAttributeDescription("VLAN IDs of the VLANs for which this policy applies").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"cts_manual": {
-				MarkdownDescription: helpers.NewAttributeDescription("Supply local configuration for CTS parameters").String,
-				Type:                types.BoolType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"cts_manual_policy_static_sgt": {
-				MarkdownDescription: helpers.NewAttributeDescription("Source Security Group Tag to apply to untagged or non-trusted incoming traffic").AddIntegerRangeDescription(2, 65519).String,
-				Type:                types.Int64Type,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(2, 65519),
 				},
 			},
-			"cts_manual_policy_static_trusted": {
+			"device_tracking_vlan_range": schema.StringAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("VLAN IDs of the VLANs for which this policy applies").String,
+				Optional:            true,
+				Computed:            true,
+			},
+			"cts_manual": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Supply local configuration for CTS parameters").String,
+				Optional:            true,
+				Computed:            true,
+			},
+			"cts_manual_policy_static_sgt": schema.Int64Attribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Source Security Group Tag to apply to untagged or non-trusted incoming traffic").AddIntegerRangeDescription(2, 65519).String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.Int64{
+					int64validator.Between(2, 65519),
+				},
+			},
+			"cts_manual_policy_static_trusted": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Trust the Source Group Tags (SGT) that the peer uses for sending").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"cts_manual_propagate_sgt": {
+			"cts_manual_propagate_sgt": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("CTS SGT Propagation configuration").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"cts_role_based_enforcement": {
+			"cts_role_based_enforcement": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable Role-based Access Control enforcement").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *TemplateResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

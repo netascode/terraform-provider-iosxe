@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,64 +31,54 @@ func (d *VLANDataSource) Metadata(_ context.Context, req datasource.MetadataRequ
 	resp.TypeName = req.ProviderTypeName + "_vlan"
 }
 
-func (d *VLANDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *VLANDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the VLAN configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vlan_id": {
+			"vlan_id": schema.Int64Attribute{
 				MarkdownDescription: "a single VLAN id (allowed value range 1-4094)or Comma-separated VLAN id range.e.g. 99 or 1-30 or  1-20,30,40-50",
-				Type:                types.Int64Type,
 				Required:            true,
 			},
-			"remote_span": {
+			"remote_span": schema.BoolAttribute{
 				MarkdownDescription: "Configure as Remote SPAN VLAN",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"private_vlan_primary": {
+			"private_vlan_primary": schema.BoolAttribute{
 				MarkdownDescription: "Configure the VLAN as a primary private VLAN",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"private_vlan_association": {
+			"private_vlan_association": schema.StringAttribute{
 				MarkdownDescription: "Configure association between private VLANs",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"private_vlan_community": {
+			"private_vlan_community": schema.BoolAttribute{
 				MarkdownDescription: "Configure the VLAN as a community private VLAN",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"private_vlan_isolated": {
+			"private_vlan_isolated": schema.BoolAttribute{
 				MarkdownDescription: "Configure the VLAN as an isolated private VLAN",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "Ascii name of the VLAN",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: "Shutdown VLAN switching",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *VLANDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

@@ -5,11 +5,15 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,272 +36,271 @@ func (r *VRFResource) Metadata(ctx context.Context, req resource.MetadataRequest
 	resp.TypeName = req.ProviderTypeName + "_vrf"
 }
 
-func (r *VRFResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the VRF configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("WORD;;VRF name").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"description": {
+			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VRF specific description").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 244),
+				},
 			},
-			"rd": {
+			"rd": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify Route Distinguisher").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"address_family_ipv4": {
+			"address_family_ipv4": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Address family").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"address_family_ipv6": {
+			"address_family_ipv6": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Address family").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"vpn_id": {
+			"vpn_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure VPN ID in rfc2685 format").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `[0-9a-fA-F][0-9a-fA-F]?[0-9a-fA-F]?:[0-9a-fA-F][0-9a-fA-F]?[0-9a-fA-F]?[0-9a-fA-F]?`),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(regexp.MustCompile(`[0-9a-fA-F][0-9a-fA-F]?[0-9a-fA-F]?:[0-9a-fA-F][0-9a-fA-F]?[0-9a-fA-F]?[0-9a-fA-F]?`), ""),
 				},
 			},
-			"route_target_import": {
+			"route_target_import": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
+						},
+						"stitching": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"stitching": {
-						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"route_target_export": {
+			"route_target_export": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
+						},
+						"stitching": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"stitching": {
-						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"ipv4_route_target_import": {
+			"ipv4_route_target_import": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
 						},
 					},
-				}),
+				},
 			},
-			"ipv4_route_target_import_stitching": {
+			"ipv4_route_target_import_stitching": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
+						},
+						"stitching": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
+							Optional:            true,
+							Computed:            true,
+							PlanModifiers: []planmodifier.Bool{
+								helpers.BooleanDefaultModifier(true),
+							},
 						},
 					},
-					"stitching": {
-						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-						PlanModifiers: tfsdk.AttributePlanModifiers{
-							helpers.BooleanDefaultModifier(true),
-						},
-					},
-				}),
+				},
 			},
-			"ipv4_route_target_export": {
+			"ipv4_route_target_export": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
 						},
 					},
-				}),
+				},
 			},
-			"ipv4_route_target_export_stitching": {
+			"ipv4_route_target_export_stitching": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
+						},
+						"stitching": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
+							Optional:            true,
+							Computed:            true,
+							PlanModifiers: []planmodifier.Bool{
+								helpers.BooleanDefaultModifier(true),
+							},
 						},
 					},
-					"stitching": {
-						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-						PlanModifiers: tfsdk.AttributePlanModifiers{
-							helpers.BooleanDefaultModifier(true),
-						},
-					},
-				}),
+				},
 			},
-			"ipv6_route_target_import": {
+			"ipv6_route_target_import": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
 						},
 					},
-				}),
+				},
 			},
-			"ipv6_route_target_import_stitching": {
+			"ipv6_route_target_import_stitching": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Import Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
+						},
+						"stitching": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
+							Optional:            true,
+							Computed:            true,
+							PlanModifiers: []planmodifier.Bool{
+								helpers.BooleanDefaultModifier(true),
+							},
 						},
 					},
-					"stitching": {
-						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-						PlanModifiers: tfsdk.AttributePlanModifiers{
-							helpers.BooleanDefaultModifier(true),
-						},
-					},
-				}),
+				},
 			},
-			"ipv6_route_target_export": {
+			"ipv6_route_target_export": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
 						},
 					},
-				}),
+				},
 			},
-			"ipv6_route_target_export_stitching": {
+			"ipv6_route_target_export_stitching": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Export Target-VPN community").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"value": {
-						MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"value": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
+						},
+						"stitching": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
+							Optional:            true,
+							Computed:            true,
+							PlanModifiers: []planmodifier.Bool{
+								helpers.BooleanDefaultModifier(true),
+							},
 						},
 					},
-					"stitching": {
-						MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-						PlanModifiers: tfsdk.AttributePlanModifiers{
-							helpers.BooleanDefaultModifier(true),
-						},
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *VRFResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

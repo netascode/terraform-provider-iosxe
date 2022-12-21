@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,85 +31,74 @@ func (d *AccessListStandardDataSource) Metadata(_ context.Context, req datasourc
 	resp.TypeName = req.ProviderTypeName + "_access_list_standard"
 }
 
-func (d *AccessListStandardDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *AccessListStandardDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Access List Standard configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"entries": {
+			"entries": schema.ListNestedAttribute{
 				MarkdownDescription: "",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"sequence": {
-						MarkdownDescription: "",
-						Type:                types.Int64Type,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"sequence": schema.Int64Attribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"remark": schema.StringAttribute{
+							MarkdownDescription: "Access list entry comment",
+							Computed:            true,
+						},
+						"deny_prefix": schema.StringAttribute{
+							MarkdownDescription: "Network address prefix (DEPRECATED - use ipv4-address-prefix)",
+							Computed:            true,
+						},
+						"deny_prefix_mask": schema.StringAttribute{
+							MarkdownDescription: "Wildcard bits",
+							Computed:            true,
+						},
+						"deny_any": schema.BoolAttribute{
+							MarkdownDescription: "Any source prefix",
+							Computed:            true,
+						},
+						"deny_host": schema.StringAttribute{
+							MarkdownDescription: "A single source host (DEPRECATED - use host-address)",
+							Computed:            true,
+						},
+						"permit_prefix": schema.StringAttribute{
+							MarkdownDescription: "Network address prefix (DEPRECATED - use ipv4-address-prefix)",
+							Computed:            true,
+						},
+						"permit_prefix_mask": schema.StringAttribute{
+							MarkdownDescription: "Wildcard bits",
+							Computed:            true,
+						},
+						"permit_any": schema.BoolAttribute{
+							MarkdownDescription: "Any source prefix",
+							Computed:            true,
+						},
+						"permit_host": schema.StringAttribute{
+							MarkdownDescription: "A single source host (DEPRECATED - use host-address)",
+							Computed:            true,
+						},
 					},
-					"remark": {
-						MarkdownDescription: "Access list entry comment",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"deny_prefix": {
-						MarkdownDescription: "Network address prefix (DEPRECATED - use ipv4-address-prefix)",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"deny_prefix_mask": {
-						MarkdownDescription: "Wildcard bits",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"deny_any": {
-						MarkdownDescription: "Any source prefix",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"deny_host": {
-						MarkdownDescription: "A single source host (DEPRECATED - use host-address)",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"permit_prefix": {
-						MarkdownDescription: "Network address prefix (DEPRECATED - use ipv4-address-prefix)",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"permit_prefix_mask": {
-						MarkdownDescription: "Wildcard bits",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"permit_any": {
-						MarkdownDescription: "Any source prefix",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"permit_host": {
-						MarkdownDescription: "A single source host (DEPRECATED - use host-address)",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *AccessListStandardDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

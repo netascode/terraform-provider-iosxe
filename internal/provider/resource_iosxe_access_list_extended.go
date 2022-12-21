@@ -5,11 +5,16 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,275 +37,241 @@ func (r *AccessListExtendedResource) Metadata(ctx context.Context, req resource.
 	resp.TypeName = req.ProviderTypeName + "_access_list_extended"
 }
 
-func (r *AccessListExtendedResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the Access List Extended configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"entries": {
+			"entries": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"sequence": {
-						MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 2147483647).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1, 2147483647),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"sequence": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 2147483647).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 2147483647),
+							},
+						},
+						"remark": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Access list entry comment").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.LengthBetween(1, 100),
+							},
+						},
+						"ace_rule_action": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("deny", "permit").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.OneOf("deny", "permit"),
+							},
+						},
+						"ace_rule_protocol": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"service_object_group": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Service object group name").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"source_prefix": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"source_prefix_mask": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"source_any": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Any source host").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"source_host": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("A single source host(DEPRECATED - use host-address)").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"source_object_group": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Source network object group").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"source_port_equal": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets on a given port number up to 10 ports").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"source_port_greater_than": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a greater port number").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"source_port_lesser_than": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a lower port number").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"source_port_range_from": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"source_port_range_to": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"destination_prefix": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"destination_prefix_mask": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"destination_any": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Any destination host").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"destination_host": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("A single destination host(DEPRECATED - use dst-host-address)").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"destination_object_group": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Destination network object group").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"destination_port_equal": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets on a given port number up to 10 ports").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"destination_port_greater_than": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a greater port number").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"destination_port_lesser_than": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a lower port number").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"destination_port_range_from": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"destination_port_range_to": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"ack": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match on the ACK bit").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"fin": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match on the FIN bit").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"psh": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match on the PSH bit").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"rst": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match on the RST bit").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"syn": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match on the SYN bit").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"urg": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match on the URG bit").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"established": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match established connections").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"dscp": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match packets with given dscp value").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"fragments": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Check non-initial fragments").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"precedence": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match packets with given precedence value").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"tos": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Match packets with given TOS value").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"remark": {
-						MarkdownDescription: helpers.NewAttributeDescription("Access list entry comment").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"ace_rule_action": {
-						MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("deny", "permit").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringEnumValidator("deny", "permit"),
-						},
-					},
-					"ace_rule_protocol": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"service_object_group": {
-						MarkdownDescription: helpers.NewAttributeDescription("Service object group name").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"source_prefix": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-						},
-					},
-					"source_prefix_mask": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-						},
-					},
-					"source_any": {
-						MarkdownDescription: helpers.NewAttributeDescription("Any source host").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"source_host": {
-						MarkdownDescription: helpers.NewAttributeDescription("A single source host(DEPRECATED - use host-address)").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"source_object_group": {
-						MarkdownDescription: helpers.NewAttributeDescription("Source network object group").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"source_port_equal": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets on a given port number up to 10 ports").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"source_port_greater_than": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a greater port number").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"source_port_lesser_than": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a lower port number").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"source_port_range_from": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"source_port_range_to": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"destination_prefix": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-						},
-					},
-					"destination_prefix_mask": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
-						},
-					},
-					"destination_any": {
-						MarkdownDescription: helpers.NewAttributeDescription("Any destination host").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"destination_host": {
-						MarkdownDescription: helpers.NewAttributeDescription("A single destination host(DEPRECATED - use dst-host-address)").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"destination_object_group": {
-						MarkdownDescription: helpers.NewAttributeDescription("Destination network object group").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"destination_port_equal": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets on a given port number up to 10 ports").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"destination_port_greater_than": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a greater port number").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"destination_port_lesser_than": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a lower port number").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"destination_port_range_from": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"destination_port_range_to": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"ack": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match on the ACK bit").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"fin": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match on the FIN bit").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"psh": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match on the PSH bit").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"rst": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match on the RST bit").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"syn": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match on the SYN bit").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"urg": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match on the URG bit").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"established": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match established connections").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"dscp": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match packets with given dscp value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"fragments": {
-						MarkdownDescription: helpers.NewAttributeDescription("Check non-initial fragments").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"precedence": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match packets with given precedence value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"tos": {
-						MarkdownDescription: helpers.NewAttributeDescription("Match packets with given TOS value").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *AccessListExtendedResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -30,83 +31,81 @@ func (r *RestconfResource) Metadata(ctx context.Context, req resource.MetadataRe
 	resp.TypeName = req.ProviderTypeName + "_restconf"
 }
 
-func (r *RestconfResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *RestconfResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Manages IOS-XE objects via RESTCONF calls. This resource can only manage a single object. It is able to read the state and therefore reconcile configuration drift.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"path": {
+			"path": schema.StringAttribute{
 				MarkdownDescription: "A RESTCONF path, e.g. `openconfig-interfaces:interfaces`.",
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"delete": {
+			"delete": schema.BoolAttribute{
 				MarkdownDescription: "Delete object during destroy operation. Default value is `true`.",
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
+				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},
 			},
-			"attributes": {
-				Type:                types.MapType{ElemType: types.StringType},
+			"attributes": schema.MapAttribute{
 				MarkdownDescription: "Map of key-value pairs which represents the attributes and its values.",
 				Optional:            true,
 				Computed:            true,
+				ElementType:         types.StringType,
 			},
-			"lists": {
+			"lists": schema.ListNestedAttribute{
 				MarkdownDescription: "YANG lists.",
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: "YANG list name.",
-						Type:                types.StringType,
-						Required:            true,
-					},
-					"key": {
-						MarkdownDescription: "YANG list key attribute. In case of multiple keys, those should be separated by a comma (`,`).",
-						Type:                types.StringType,
-						Optional:            true,
-					},
-					"items": {
-						MarkdownDescription: "Items of YANG lists.",
-						Optional:            true,
-						Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-							"attributes": {
-								Type:                types.MapType{ElemType: types.StringType},
-								MarkdownDescription: "Map of key-value pairs which represents the attributes and its values.",
-								Optional:            true,
-								Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: "YANG list name.",
+							Required:            true,
+						},
+						"key": schema.StringAttribute{
+							MarkdownDescription: "YANG list key attribute. In case of multiple keys, those should be separated by a comma (`,`).",
+							Optional:            true,
+						},
+						"items": schema.ListNestedAttribute{
+							MarkdownDescription: "Items of YANG lists.",
+							Optional:            true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"attributes": schema.MapAttribute{
+										MarkdownDescription: "Map of key-value pairs which represents the attributes and its values.",
+										Optional:            true,
+										Computed:            true,
+										ElementType:         types.StringType,
+									},
+								},
 							},
-						}),
+						},
+						"values": schema.ListAttribute{
+							MarkdownDescription: "YANG leaf-list values.",
+							Optional:            true,
+							ElementType:         types.StringType,
+						},
 					},
-					"values": {
-						MarkdownDescription: "YANG leaf-list values.",
-						Type:                types.ListType{ElemType: types.StringType},
-						Optional:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *RestconfResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

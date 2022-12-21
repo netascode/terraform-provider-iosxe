@@ -5,11 +5,16 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,144 +37,131 @@ func (r *SystemResource) Metadata(ctx context.Context, req resource.MetadataRequ
 	resp.TypeName = req.ProviderTypeName + "_system"
 }
 
-func (r *SystemResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *SystemResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the System configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"hostname": {
+			"hostname": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set system's network name").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(1, 246, `([0-9.]*[A-Za-z\-_]+[A-Za-z0-9.\-_]*)`),
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 246),
+					stringvalidator.RegexMatches(regexp.MustCompile(`([0-9.]*[A-Za-z\-_]+[A-Za-z0-9.\-_]*)`), ""),
 				},
 			},
-			"ip_routing": {
+			"ip_routing": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable or disable IP routing").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ipv6_unicast_routing": {
+			"ipv6_unicast_routing": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable unicast routing").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"mtu": {
+			"mtu": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1500, 9198).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1500, 9198),
+				Validators: []validator.Int64{
+					int64validator.Between(1500, 9198),
 				},
 			},
-			"ip_source_route": {
+			"ip_source_route": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Process packets with source routing header options").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ip_domain_lookup": {
+			"ip_domain_lookup": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP Domain Name System hostname translation").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ip_domain_name": {
+			"ip_domain_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Define the default domain name").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-			},
-			"login_delay": {
-				MarkdownDescription: helpers.NewAttributeDescription("Set delay between successive fail login").AddIntegerRangeDescription(1, 10).String,
-				Type:                types.Int64Type,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 10),
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 236),
 				},
 			},
-			"login_on_failure": {
+			"login_delay": schema.Int64Attribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Set delay between successive fail login").AddIntegerRangeDescription(1, 10).String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 10),
+				},
+			},
+			"login_on_failure": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set options for failed login attempt").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"login_on_failure_log": {
+			"login_on_failure_log": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Generate syslogs on failure logins").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"login_on_success": {
+			"login_on_success": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set options for successful login attempt").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"login_on_success_log": {
+			"login_on_success_log": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Generate syslogs on successful logins").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"multicast_routing": {
+			"multicast_routing": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP multicast forwarding").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"multicast_routing_switch": {
+			"multicast_routing_switch": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP multicast forwarding, some XE devices use this option instead of `multicast_routing`.").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"multicast_routing_distributed": {
+			"multicast_routing_distributed": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"multicast_routing_vrfs": {
+			"multicast_routing_vrfs": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Select VPN Routing/Forwarding instance").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vrf": {
-						MarkdownDescription: helpers.NewAttributeDescription("").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vrf": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"distributed": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,
+							Optional:            true,
+							Computed:            true,
+						},
 					},
-					"distributed": {
-						MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *SystemResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

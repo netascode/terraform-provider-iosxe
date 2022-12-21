@@ -6,10 +6,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,71 +36,64 @@ func (r *VLANConfigurationResource) Metadata(ctx context.Context, req resource.M
 	resp.TypeName = req.ProviderTypeName + "_vlan_configuration"
 }
 
-func (r *VLANConfigurationResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *VLANConfigurationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the VLAN Configuration configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"vlan_id": {
+			"vlan_id": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VLAN ID List Eg. 1-10,15").AddIntegerRangeDescription(1, 4094).String,
-				Type:                types.Int64Type,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 4094),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 4094),
 				},
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.RequiresReplace(),
 				},
 			},
-			"vni": {
+			"vni": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VxLAN VNI value").AddIntegerRangeDescription(4096, 16777215).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(4096, 16777215),
+				Validators: []validator.Int64{
+					int64validator.Between(4096, 16777215),
 				},
 			},
-			"access_vfi": {
+			"access_vfi": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter VFI name").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"evpn_instance": {
+			"evpn_instance": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 65535).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 65535),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 65535),
 				},
 			},
-			"evpn_instance_vni": {
+			"evpn_instance_vni": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VxLAN VNI value").AddIntegerRangeDescription(4096, 16777215).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(4096, 16777215),
+				Validators: []validator.Int64{
+					int64validator.Between(4096, 16777215),
 				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *VLANConfigurationResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

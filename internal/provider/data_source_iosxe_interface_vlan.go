@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,110 +31,94 @@ func (d *InterfaceVLANDataSource) Metadata(_ context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_interface_vlan"
 }
 
-func (d *InterfaceVLANDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *InterfaceVLANDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Interface VLAN configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.Int64Attribute{
 				MarkdownDescription: "",
-				Type:                types.Int64Type,
 				Required:            true,
 			},
-			"autostate": {
+			"autostate": schema.BoolAttribute{
 				MarkdownDescription: "Enable auto-state determination for VLAN",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"description": {
+			"description": schema.StringAttribute{
 				MarkdownDescription: "Interface specific description",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: "Shutdown the selected interface",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vrf_forwarding": {
+			"vrf_forwarding": schema.StringAttribute{
 				MarkdownDescription: "Configure forwarding table",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ipv4_address": {
+			"ipv4_address": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ipv4_address_mask": {
+			"ipv4_address_mask": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"unnumbered": {
+			"unnumbered": schema.StringAttribute{
 				MarkdownDescription: "Enable IP processing without an explicit address",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ip_dhcp_relay_source_interface": {
+			"ip_dhcp_relay_source_interface": schema.StringAttribute{
 				MarkdownDescription: "Set source interface for relayed messages",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ip_access_group_in": {
+			"ip_access_group_in": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ip_access_group_in_enable": {
+			"ip_access_group_in_enable": schema.BoolAttribute{
 				MarkdownDescription: "inbound packets",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"ip_access_group_out": {
+			"ip_access_group_out": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ip_access_group_out_enable": {
+			"ip_access_group_out_enable": schema.BoolAttribute{
 				MarkdownDescription: "outbound packets",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"helper_addresses": {
+			"helper_addresses": schema.ListNestedAttribute{
 				MarkdownDescription: "Specify a destination address for UDP broadcasts",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"address": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"address": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"global": schema.BoolAttribute{
+							MarkdownDescription: "Helper-address is global",
+							Computed:            true,
+						},
+						"vrf": schema.StringAttribute{
+							MarkdownDescription: "VRF name for helper-address (if different from interface VRF)",
+							Computed:            true,
+						},
 					},
-					"global": {
-						MarkdownDescription: "Helper-address is global",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"vrf": {
-						MarkdownDescription: "VRF name for helper-address (if different from interface VRF)",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *InterfaceVLANDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

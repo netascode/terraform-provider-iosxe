@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,84 +31,70 @@ func (d *EVPNDataSource) Metadata(_ context.Context, req datasource.MetadataRequ
 	resp.TypeName = req.ProviderTypeName + "_evpn"
 }
 
-func (d *EVPNDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *EVPNDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the EVPN configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"replication_type_ingress": {
+			"replication_type_ingress": schema.BoolAttribute{
 				MarkdownDescription: "Ingress replication",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"replication_type_static": {
+			"replication_type_static": schema.BoolAttribute{
 				MarkdownDescription: "Static replication",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"replication_type_p2mp": {
+			"replication_type_p2mp": schema.BoolAttribute{
 				MarkdownDescription: "p2mp replication",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"replication_type_mp2mp": {
+			"replication_type_mp2mp": schema.BoolAttribute{
 				MarkdownDescription: "mp2mp replication",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"mac_duplication_limit": {
+			"mac_duplication_limit": schema.Int64Attribute{
 				MarkdownDescription: "Number of MAC moves within specified time interval",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"mac_duplication_time": {
+			"mac_duplication_time": schema.Int64Attribute{
 				MarkdownDescription: "MAC duplication timer",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"ip_duplication_limit": {
+			"ip_duplication_limit": schema.Int64Attribute{
 				MarkdownDescription: "Number of IP moves within specified time interval",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"ip_duplication_time": {
+			"ip_duplication_time": schema.Int64Attribute{
 				MarkdownDescription: "IP duplication timer",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"router_id_loopback": {
+			"router_id_loopback": schema.Int64Attribute{
 				MarkdownDescription: "Loopback interface",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"default_gateway_advertise": {
+			"default_gateway_advertise": schema.BoolAttribute{
 				MarkdownDescription: "Advertise Default Gateway MAC/IP routes",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"logging_peer_state": {
+			"logging_peer_state": schema.BoolAttribute{
 				MarkdownDescription: "Peer state transition logging",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"route_target_auto_vni": {
+			"route_target_auto_vni": schema.BoolAttribute{
 				MarkdownDescription: "Set vni-based route-target",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *EVPNDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

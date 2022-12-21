@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,142 +31,126 @@ func (d *OSPFDataSource) Metadata(_ context.Context, req datasource.MetadataRequ
 	resp.TypeName = req.ProviderTypeName + "_ospf"
 }
 
-func (d *OSPFDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *OSPFDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the OSPF configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"process_id": {
+			"process_id": schema.Int64Attribute{
 				MarkdownDescription: "Process ID",
-				Type:                types.Int64Type,
 				Required:            true,
 			},
-			"bfd_all_interfaces": {
+			"bfd_all_interfaces": schema.BoolAttribute{
 				MarkdownDescription: "Enable BFD on all interfaces",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"default_information_originate": {
+			"default_information_originate": schema.BoolAttribute{
 				MarkdownDescription: "Distribute a default route",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"default_information_originate_always": {
+			"default_information_originate_always": schema.BoolAttribute{
 				MarkdownDescription: "Always advertise default route",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"default_metric": {
+			"default_metric": schema.Int64Attribute{
 				MarkdownDescription: "Set metric of redistributed routes",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"distance": {
+			"distance": schema.Int64Attribute{
 				MarkdownDescription: "Administrative distance",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"domain_tag": {
+			"domain_tag": schema.Int64Attribute{
 				MarkdownDescription: "OSPF domain-tag",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"mpls_ldp_autoconfig": {
+			"mpls_ldp_autoconfig": schema.BoolAttribute{
 				MarkdownDescription: "Configure LDP automatic configuration",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"mpls_ldp_sync": {
+			"mpls_ldp_sync": schema.BoolAttribute{
 				MarkdownDescription: "Configure LDP-IGP Synchronization",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"neighbor": {
+			"neighbor": schema.ListNestedAttribute{
 				MarkdownDescription: "Specify a neighbor router",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ip": {
-						MarkdownDescription: "Neighbor address",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ip": schema.StringAttribute{
+							MarkdownDescription: "Neighbor address",
+							Computed:            true,
+						},
+						"priority": schema.Int64Attribute{
+							MarkdownDescription: "OSPF priority of non-broadcast neighbor",
+							Computed:            true,
+						},
+						"cost": schema.Int64Attribute{
+							MarkdownDescription: "OSPF cost for point-to-multipoint neighbor",
+							Computed:            true,
+						},
 					},
-					"priority": {
-						MarkdownDescription: "OSPF priority of non-broadcast neighbor",
-						Type:                types.Int64Type,
-						Computed:            true,
-					},
-					"cost": {
-						MarkdownDescription: "OSPF cost for point-to-multipoint neighbor",
-						Type:                types.Int64Type,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"network": {
+			"network": schema.ListNestedAttribute{
 				MarkdownDescription: "Enable routing on an IP network",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ip": {
-						MarkdownDescription: "Network number",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ip": schema.StringAttribute{
+							MarkdownDescription: "Network number",
+							Computed:            true,
+						},
+						"wildcard": schema.StringAttribute{
+							MarkdownDescription: "OSPF wild card bits",
+							Computed:            true,
+						},
+						"area": schema.StringAttribute{
+							MarkdownDescription: "Set the OSPF area ID",
+							Computed:            true,
+						},
 					},
-					"wildcard": {
-						MarkdownDescription: "OSPF wild card bits",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"area": {
-						MarkdownDescription: "Set the OSPF area ID",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"priority": {
+			"priority": schema.Int64Attribute{
 				MarkdownDescription: "OSPF topology priority",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"router_id": {
+			"router_id": schema.StringAttribute{
 				MarkdownDescription: "Override configured router identifier (peers will reset)",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: "Shutdown the OSPF protocol under the current instance",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"summary_address": {
+			"summary_address": schema.ListNestedAttribute{
 				MarkdownDescription: "Configure IP address summaries",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"ip": {
-						MarkdownDescription: "IP summary address",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"ip": schema.StringAttribute{
+							MarkdownDescription: "IP summary address",
+							Computed:            true,
+						},
+						"mask": schema.StringAttribute{
+							MarkdownDescription: "Summary mask",
+							Computed:            true,
+						},
 					},
-					"mask": {
-						MarkdownDescription: "Summary mask",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *OSPFDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

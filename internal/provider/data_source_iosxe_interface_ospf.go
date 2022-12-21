@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,79 +31,66 @@ func (d *InterfaceOSPFDataSource) Metadata(_ context.Context, req datasource.Met
 	resp.TypeName = req.ProviderTypeName + "_interface_ospf"
 }
 
-func (d *InterfaceOSPFDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *InterfaceOSPFDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Interface OSPF configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"type": {
+			"type": schema.StringAttribute{
 				MarkdownDescription: "Interface type",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"cost": {
+			"cost": schema.Int64Attribute{
 				MarkdownDescription: "Route cost of this interface",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"dead_interval": {
+			"dead_interval": schema.Int64Attribute{
 				MarkdownDescription: "Interval after which a neighbor is declared dead",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"hello_interval": {
+			"hello_interval": schema.Int64Attribute{
 				MarkdownDescription: "Time between HELLO packets",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"mtu_ignore": {
+			"mtu_ignore": schema.BoolAttribute{
 				MarkdownDescription: "Ignores the MTU in DBD packets",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"network_type_broadcast": {
+			"network_type_broadcast": schema.BoolAttribute{
 				MarkdownDescription: "Specify OSPF broadcast multi-access network",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"network_type_non_broadcast": {
+			"network_type_non_broadcast": schema.BoolAttribute{
 				MarkdownDescription: "Specify OSPF NBMA network",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"network_type_point_to_multipoint": {
+			"network_type_point_to_multipoint": schema.BoolAttribute{
 				MarkdownDescription: "Specify OSPF point-to-multipoint network",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"network_type_point_to_point": {
+			"network_type_point_to_point": schema.BoolAttribute{
 				MarkdownDescription: "Specify OSPF point-to-point network",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"priority": {
+			"priority": schema.Int64Attribute{
 				MarkdownDescription: "Router priority",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *InterfaceOSPFDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

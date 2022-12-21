@@ -6,10 +6,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,86 +35,85 @@ func (r *LoggingIPv6HostTransportResource) Metadata(ctx context.Context, req res
 	resp.TypeName = req.ProviderTypeName + "_logging_ipv6_host_transport"
 }
 
-func (r *LoggingIPv6HostTransportResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *LoggingIPv6HostTransportResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the Logging IPv6 Host Transport configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"ipv6_host": {
+			"ipv6_host": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"transport_udp_ports": {
+			"transport_udp_ports": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Port Number List").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"port_number": {
-						MarkdownDescription: helpers.NewAttributeDescription("Specify the UDP port number (default=514)").AddIntegerRangeDescription(1, 65535).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1, 65535),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"port_number": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Specify the UDP port number (default=514)").AddIntegerRangeDescription(1, 65535).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 65535),
+							},
 						},
 					},
-				}),
+				},
 			},
-			"transport_tcp_ports": {
+			"transport_tcp_ports": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Port Number List").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"port_number": {
-						MarkdownDescription: helpers.NewAttributeDescription("Specify the TCP port number (default=601)").AddIntegerRangeDescription(1, 65535).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1, 65535),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"port_number": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Specify the TCP port number (default=601)").AddIntegerRangeDescription(1, 65535).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 65535),
+							},
 						},
 					},
-				}),
+				},
 			},
-			"transport_tls_ports": {
+			"transport_tls_ports": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Port Number List").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"port_number": {
-						MarkdownDescription: helpers.NewAttributeDescription("Specify the TLS port number (default=6514)").AddIntegerRangeDescription(1025, 65535).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1025, 65535),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"port_number": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Specify the TLS port number (default=6514)").AddIntegerRangeDescription(1025, 65535).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1025, 65535),
+							},
+						},
+						"profile": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Specify the TLS profile").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"profile": {
-						MarkdownDescription: helpers.NewAttributeDescription("Specify the TLS profile").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *LoggingIPv6HostTransportResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

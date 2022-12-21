@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,60 +31,54 @@ func (d *BGPAddressFamilyIPv6VRFDataSource) Metadata(_ context.Context, req data
 	resp.TypeName = req.ProviderTypeName + "_bgp_address_family_ipv6_vrf"
 }
 
-func (d *BGPAddressFamilyIPv6VRFDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *BGPAddressFamilyIPv6VRFDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the BGP Address Family IPv6 VRF configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"asn": {
+			"asn": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"af_name": {
+			"af_name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"vrfs": {
+			"vrfs": schema.ListNestedAttribute{
 				MarkdownDescription: "",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"advertise_l2vpn_evpn": schema.BoolAttribute{
+							MarkdownDescription: "Advertise/export prefixes to l2vpn evpn table",
+							Computed:            true,
+						},
+						"redistribute_connected": schema.BoolAttribute{
+							MarkdownDescription: "Connected",
+							Computed:            true,
+						},
+						"redistribute_static": schema.BoolAttribute{
+							MarkdownDescription: "Static routes",
+							Computed:            true,
+						},
 					},
-					"advertise_l2vpn_evpn": {
-						MarkdownDescription: "Advertise/export prefixes to l2vpn evpn table",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"redistribute_connected": {
-						MarkdownDescription: "Connected",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"redistribute_static": {
-						MarkdownDescription: "Static routes",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *BGPAddressFamilyIPv6VRFDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,80 +31,70 @@ func (d *SNMPServerGroupDataSource) Metadata(_ context.Context, req datasource.M
 	resp.TypeName = req.ProviderTypeName + "_snmp_server_group"
 }
 
-func (d *SNMPServerGroupDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *SNMPServerGroupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the SNMP Server Group configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"v3_security": {
+			"v3_security": schema.ListNestedAttribute{
 				MarkdownDescription: "group using security Level",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"security_level": {
-						MarkdownDescription: "security level type",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"security_level": schema.StringAttribute{
+							MarkdownDescription: "security level type",
+							Computed:            true,
+						},
+						"context_node": schema.StringAttribute{
+							MarkdownDescription: "specify a context to associate these views for the group",
+							Computed:            true,
+						},
+						"match_node": schema.StringAttribute{
+							MarkdownDescription: "context name match criteria",
+							Computed:            true,
+						},
+						"read_node": schema.StringAttribute{
+							MarkdownDescription: "specify a read view for the group",
+							Computed:            true,
+						},
+						"write_node": schema.StringAttribute{
+							MarkdownDescription: "specify a write view for the group",
+							Computed:            true,
+						},
+						"notify_node": schema.StringAttribute{
+							MarkdownDescription: "specify a notify view for the group",
+							Computed:            true,
+						},
+						"access_ipv6_acl": schema.StringAttribute{
+							MarkdownDescription: "Specify IPv6 Named Access-List",
+							Computed:            true,
+						},
+						"access_standard_acl": schema.Int64Attribute{
+							MarkdownDescription: "Standard IP Access-list allowing access with this community string",
+							Computed:            true,
+						},
+						"access_acl_name": schema.StringAttribute{
+							MarkdownDescription: "Access-list name",
+							Computed:            true,
+						},
 					},
-					"context_node": {
-						MarkdownDescription: "specify a context to associate these views for the group",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"match_node": {
-						MarkdownDescription: "context name match criteria",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"read_node": {
-						MarkdownDescription: "specify a read view for the group",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"write_node": {
-						MarkdownDescription: "specify a write view for the group",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"notify_node": {
-						MarkdownDescription: "specify a notify view for the group",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"access_ipv6_acl": {
-						MarkdownDescription: "Specify IPv6 Named Access-List",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"access_standard_acl": {
-						MarkdownDescription: "Standard IP Access-list allowing access with this community string",
-						Type:                types.Int64Type,
-						Computed:            true,
-					},
-					"access_acl_name": {
-						MarkdownDescription: "Access-list name",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *SNMPServerGroupDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

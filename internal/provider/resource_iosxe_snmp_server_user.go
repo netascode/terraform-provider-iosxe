@@ -6,10 +6,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,167 +36,169 @@ func (r *SNMPServerUserResource) Metadata(ctx context.Context, req resource.Meta
 	resp.TypeName = req.ProviderTypeName + "_snmp_server_user"
 }
 
-func (r *SNMPServerUserResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the SNMP Server User configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"username": {
+			"username": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Name of the user").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"grpname": {
+			"grpname": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Group to which the user belongs").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"v3_auth_algorithm": {
+			"v3_auth_algorithm": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use HMAC SHA/MD5 algorithm for authentication").AddStringEnumDescription("md5", "sha").String,
-				Type:                types.StringType,
 				Required:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("md5", "sha"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("md5", "sha"),
 				},
 			},
-			"v3_auth_password": {
+			"v3_auth_password": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Authentication password for user").String,
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"v3_auth_priv_aes_algorithm": {
+			"v3_auth_priv_aes_algorithm": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("128", "192", "256").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringEnumValidator("128", "192", "256"),
+				Validators: []validator.String{
+					stringvalidator.OneOf("128", "192", "256"),
 				},
 			},
-			"v3_auth_priv_aes_password": {
+			"v3_auth_priv_aes_password": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Authentication password for user").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"v3_auth_priv_aes_access_ipv6_acl": {
+			"v3_auth_priv_aes_access_ipv6_acl": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-			},
-			"v3_auth_priv_aes_access_standard_acl": {
-				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
-				Type:                types.Int64Type,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 99),
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 194),
 				},
 			},
-			"v3_auth_priv_aes_access_acl_name": {
-				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
-				Type:                types.StringType,
+			"v3_auth_priv_aes_access_standard_acl": schema.Int64Attribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
 				Optional:            true,
 				Computed:            true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 99),
+				},
 			},
-			"v3_auth_priv_des_password": {
+			"v3_auth_priv_aes_access_acl_name": schema.StringAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 183),
+				},
+			},
+			"v3_auth_priv_des_password": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Authentication password for user").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"v3_auth_priv_des_access_ipv6_acl": {
+			"v3_auth_priv_des_access_ipv6_acl": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-			},
-			"v3_auth_priv_des_access_standard_acl": {
-				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
-				Type:                types.Int64Type,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 99),
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 194),
 				},
 			},
-			"v3_auth_priv_des_access_acl_name": {
-				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
-				Type:                types.StringType,
+			"v3_auth_priv_des_access_standard_acl": schema.Int64Attribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
 				Optional:            true,
 				Computed:            true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 99),
+				},
 			},
-			"v3_auth_priv_des3_password": {
+			"v3_auth_priv_des_access_acl_name": schema.StringAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 183),
+				},
+			},
+			"v3_auth_priv_des3_password": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Authentication password for user").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"v3_auth_priv_des3_access_ipv6_acl": {
+			"v3_auth_priv_des3_access_ipv6_acl": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-			},
-			"v3_auth_priv_des3_access_standard_acl": {
-				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
-				Type:                types.Int64Type,
-				Optional:            true,
-				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 99),
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 194),
 				},
 			},
-			"v3_auth_priv_des3_access_acl_name": {
-				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"v3_auth_access_ipv6_acl": {
-				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
-				Type:                types.StringType,
-				Optional:            true,
-				Computed:            true,
-			},
-			"v3_auth_access_standard_acl": {
+			"v3_auth_priv_des3_access_standard_acl": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(1, 99),
+				Validators: []validator.Int64{
+					int64validator.Between(1, 99),
 				},
 			},
-			"v3_auth_access_acl_name": {
+			"v3_auth_priv_des3_access_acl_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 183),
+				},
+			},
+			"v3_auth_access_ipv6_acl": schema.StringAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 194),
+				},
+			},
+			"v3_auth_access_standard_acl": schema.Int64Attribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 99),
+				},
+			},
+			"v3_auth_access_acl_name": schema.StringAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
+				Optional:            true,
+				Computed:            true,
+				Validators: []validator.String{
+					stringvalidator.LengthBetween(1, 183),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *SNMPServerUserResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

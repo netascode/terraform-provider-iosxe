@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,74 +31,62 @@ func (d *InterfaceLoopbackDataSource) Metadata(_ context.Context, req datasource
 	resp.TypeName = req.ProviderTypeName + "_interface_loopback"
 }
 
-func (d *InterfaceLoopbackDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *InterfaceLoopbackDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the Interface Loopback configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"name": {
+			"name": schema.Int64Attribute{
 				MarkdownDescription: "",
-				Type:                types.Int64Type,
 				Required:            true,
 			},
-			"description": {
+			"description": schema.StringAttribute{
 				MarkdownDescription: "Interface specific description",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"shutdown": {
+			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: "Shutdown the selected interface",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"vrf_forwarding": {
+			"vrf_forwarding": schema.StringAttribute{
 				MarkdownDescription: "Configure forwarding table",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ipv4_address": {
+			"ipv4_address": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ipv4_address_mask": {
+			"ipv4_address_mask": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ip_access_group_in": {
+			"ip_access_group_in": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ip_access_group_in_enable": {
+			"ip_access_group_in_enable": schema.BoolAttribute{
 				MarkdownDescription: "inbound packets",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"ip_access_group_out": {
+			"ip_access_group_out": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ip_access_group_out_enable": {
+			"ip_access_group_out_enable": schema.BoolAttribute{
 				MarkdownDescription: "outbound packets",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *InterfaceLoopbackDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

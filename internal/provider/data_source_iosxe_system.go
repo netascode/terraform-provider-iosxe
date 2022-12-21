@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,115 +31,98 @@ func (d *SystemDataSource) Metadata(_ context.Context, req datasource.MetadataRe
 	resp.TypeName = req.ProviderTypeName + "_system"
 }
 
-func (d *SystemDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *SystemDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the System configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"hostname": {
+			"hostname": schema.StringAttribute{
 				MarkdownDescription: "Set system's network name",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ip_routing": {
+			"ip_routing": schema.BoolAttribute{
 				MarkdownDescription: "Enable or disable IP routing",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"ipv6_unicast_routing": {
+			"ipv6_unicast_routing": schema.BoolAttribute{
 				MarkdownDescription: "Enable unicast routing",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"mtu": {
+			"mtu": schema.Int64Attribute{
 				MarkdownDescription: "",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"ip_source_route": {
+			"ip_source_route": schema.BoolAttribute{
 				MarkdownDescription: "Process packets with source routing header options",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"ip_domain_lookup": {
+			"ip_domain_lookup": schema.BoolAttribute{
 				MarkdownDescription: "Enable IP Domain Name System hostname translation",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"ip_domain_name": {
+			"ip_domain_name": schema.StringAttribute{
 				MarkdownDescription: "Define the default domain name",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"login_delay": {
+			"login_delay": schema.Int64Attribute{
 				MarkdownDescription: "Set delay between successive fail login",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"login_on_failure": {
+			"login_on_failure": schema.BoolAttribute{
 				MarkdownDescription: "Set options for failed login attempt",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"login_on_failure_log": {
+			"login_on_failure_log": schema.BoolAttribute{
 				MarkdownDescription: "Generate syslogs on failure logins",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"login_on_success": {
+			"login_on_success": schema.BoolAttribute{
 				MarkdownDescription: "Set options for successful login attempt",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"login_on_success_log": {
+			"login_on_success_log": schema.BoolAttribute{
 				MarkdownDescription: "Generate syslogs on successful logins",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"multicast_routing": {
+			"multicast_routing": schema.BoolAttribute{
 				MarkdownDescription: "Enable IP multicast forwarding",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"multicast_routing_switch": {
+			"multicast_routing_switch": schema.BoolAttribute{
 				MarkdownDescription: "Enable IP multicast forwarding, some XE devices use this option instead of `multicast_routing`.",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"multicast_routing_distributed": {
+			"multicast_routing_distributed": schema.BoolAttribute{
 				MarkdownDescription: "Distributed multicast switching",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"multicast_routing_vrfs": {
+			"multicast_routing_vrfs": schema.ListNestedAttribute{
 				MarkdownDescription: "Select VPN Routing/Forwarding instance",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"vrf": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"vrf": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"distributed": schema.BoolAttribute{
+							MarkdownDescription: "Distributed multicast switching",
+							Computed:            true,
+						},
 					},
-					"distributed": {
-						MarkdownDescription: "Distributed multicast switching",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *SystemDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

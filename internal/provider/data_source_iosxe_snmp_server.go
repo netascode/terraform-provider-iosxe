@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,282 +31,238 @@ func (d *SNMPServerDataSource) Metadata(_ context.Context, req datasource.Metada
 	resp.TypeName = req.ProviderTypeName + "_snmp_server"
 }
 
-func (d *SNMPServerDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *SNMPServerDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the SNMP Server configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"chassis_id": {
+			"chassis_id": schema.StringAttribute{
 				MarkdownDescription: "String to uniquely identify this chassis",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"contact": {
+			"contact": schema.StringAttribute{
 				MarkdownDescription: "Text for mib object sysContact",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ifindex_persist": {
+			"ifindex_persist": schema.BoolAttribute{
 				MarkdownDescription: "Persist interface indices",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"location": {
+			"location": schema.StringAttribute{
 				MarkdownDescription: "Text for mib object sysLocation",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"packetsize": {
+			"packetsize": schema.Int64Attribute{
 				MarkdownDescription: "Largest SNMP packet size",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"queue_length": {
+			"queue_length": schema.Int64Attribute{
 				MarkdownDescription: "Message queue length for each TRAP host",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"enable_logging_getop": {
+			"enable_logging_getop": schema.BoolAttribute{
 				MarkdownDescription: "Enable SNMP GET Operation logging",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"enable_logging_setop": {
+			"enable_logging_setop": schema.BoolAttribute{
 				MarkdownDescription: "Enable SNMP SET Operation logging",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"enable_informs": {
+			"enable_informs": schema.BoolAttribute{
 				MarkdownDescription: "Enable SNMP Informs",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"enable_traps": {
+			"enable_traps": schema.BoolAttribute{
 				MarkdownDescription: "Enable SNMP Traps",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"enable_traps_snmp_authentication": {
+			"enable_traps_snmp_authentication": schema.BoolAttribute{
 				MarkdownDescription: "Enable authentication trap",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"enable_traps_snmp_coldstart": {
+			"enable_traps_snmp_coldstart": schema.BoolAttribute{
 				MarkdownDescription: "Enable coldStart trap",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"enable_traps_snmp_linkdown": {
+			"enable_traps_snmp_linkdown": schema.BoolAttribute{
 				MarkdownDescription: "Enable linkDown trap",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"enable_traps_snmp_linkup": {
+			"enable_traps_snmp_linkup": schema.BoolAttribute{
 				MarkdownDescription: "Enable linkUp trap",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"enable_traps_snmp_warmstart": {
+			"enable_traps_snmp_warmstart": schema.BoolAttribute{
 				MarkdownDescription: "Enable warmStart trap",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"source_interface_informs_gigabit_ethernet": {
+			"source_interface_informs_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "GigabitEthernet IEEE 802.3z",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_informs_ten_gigabit_ethernet": {
+			"source_interface_informs_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "Ten Gigabit Ethernet",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_informs_forty_gigabit_ethernet": {
+			"source_interface_informs_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "Forty GigabitEthernet ",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_informs_hundred_gig_e": {
+			"source_interface_informs_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: "Hundred GigabitEthernet",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_informs_loopback": {
+			"source_interface_informs_loopback": schema.Int64Attribute{
 				MarkdownDescription: "Loopback interface",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"source_interface_informs_port_channel": {
+			"source_interface_informs_port_channel": schema.Int64Attribute{
 				MarkdownDescription: "Ethernet Channel of interfaces",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"source_interface_informs_port_channel_subinterface": {
+			"source_interface_informs_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_informs_vlan": {
+			"source_interface_informs_vlan": schema.Int64Attribute{
 				MarkdownDescription: "Iosxr Vlans",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"source_interface_traps_gigabit_ethernet": {
+			"source_interface_traps_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "GigabitEthernet IEEE 802.3z",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_traps_ten_gigabit_ethernet": {
+			"source_interface_traps_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "Ten Gigabit Ethernet",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_traps_forty_gigabit_ethernet": {
+			"source_interface_traps_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "Forty GigabitEthernet ",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_traps_hundred_gig_e": {
+			"source_interface_traps_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: "Hundred GigabitEthernet",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_traps_loopback": {
+			"source_interface_traps_loopback": schema.Int64Attribute{
 				MarkdownDescription: "Loopback interface",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"source_interface_traps_port_channel": {
+			"source_interface_traps_port_channel": schema.Int64Attribute{
 				MarkdownDescription: "Ethernet Channel of interfaces",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"source_interface_traps_port_channel_subinterface": {
+			"source_interface_traps_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"source_interface_traps_vlan": {
+			"source_interface_traps_vlan": schema.Int64Attribute{
 				MarkdownDescription: "Iosxr Vlans",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"trap_source_gigabit_ethernet": {
+			"trap_source_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "GigabitEthernet IEEE 802.3z",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"trap_source_ten_gigabit_ethernet": {
+			"trap_source_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "Ten Gigabit Ethernet",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"trap_source_forty_gigabit_ethernet": {
+			"trap_source_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: "Forty GigabitEthernet ",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"trap_source_hundred_gig_e": {
+			"trap_source_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: "Hundred GigabitEthernet",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"trap_source_loopback": {
+			"trap_source_loopback": schema.Int64Attribute{
 				MarkdownDescription: "Loopback interface",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"trap_source_port_channel": {
+			"trap_source_port_channel": schema.Int64Attribute{
 				MarkdownDescription: "Ethernet Channel of interfaces",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"trap_source_port_channel_subinterface": {
+			"trap_source_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"trap_source_vlan": {
+			"trap_source_vlan": schema.Int64Attribute{
 				MarkdownDescription: "Iosxr Vlans",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"snmp_communities": {
+			"snmp_communities": schema.ListNestedAttribute{
 				MarkdownDescription: "Enable SNMP; set community string and access privs",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"view": schema.StringAttribute{
+							MarkdownDescription: "Restrict this community to a named MIB view",
+							Computed:            true,
+						},
+						"permission": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"ipv6": schema.StringAttribute{
+							MarkdownDescription: "Specify IPv6 Named Access-List",
+							Computed:            true,
+						},
+						"access_list_name": schema.StringAttribute{
+							MarkdownDescription: "Access-list name",
+							Computed:            true,
+						},
 					},
-					"view": {
-						MarkdownDescription: "Restrict this community to a named MIB view",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"permission": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"ipv6": {
-						MarkdownDescription: "Specify IPv6 Named Access-List",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"access_list_name": {
-						MarkdownDescription: "Access-list name",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"contexts": {
+			"contexts": schema.ListNestedAttribute{
 				MarkdownDescription: "Create/Delete a context apart from default",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
 					},
-				}),
+				},
 			},
-			"views": {
+			"views": schema.ListNestedAttribute{
 				MarkdownDescription: "Define an SNMPv2 MIB view",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"name": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"mib": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"inc_exl": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
 					},
-					"mib": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"inc_exl": {
-						MarkdownDescription: "",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *SNMPServerDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

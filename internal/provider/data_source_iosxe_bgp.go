@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,44 +31,38 @@ func (d *BGPDataSource) Metadata(_ context.Context, req datasource.MetadataReque
 	resp.TypeName = req.ProviderTypeName + "_bgp"
 }
 
-func (d *BGPDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *BGPDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the BGP configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"asn": {
+			"asn": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"default_ipv4_unicast": {
+			"default_ipv4_unicast": schema.BoolAttribute{
 				MarkdownDescription: "Activate ipv4-unicast for a peer by default",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"log_neighbor_changes": {
+			"log_neighbor_changes": schema.BoolAttribute{
 				MarkdownDescription: "Log neighbor up/down and reset reason",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"router_id_loopback": {
+			"router_id_loopback": schema.Int64Attribute{
 				MarkdownDescription: "Loopback interface",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *BGPDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {

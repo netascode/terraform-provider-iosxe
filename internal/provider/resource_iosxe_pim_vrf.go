@@ -5,11 +5,16 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,188 +37,169 @@ func (r *PIMVRFResource) Metadata(ctx context.Context, req resource.MetadataRequ
 	resp.TypeName = req.ProviderTypeName + "_pim_vrf"
 }
 
-func (r *PIMVRFResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This resource can manage the PIM VRF configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the object.",
-				Type:                types.StringType,
 				Computed:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.UseStateForUnknown(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"vrf": {
+			"vrf": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
-				Type:                types.StringType,
 				Required:            true,
-				PlanModifiers: tfsdk.AttributePlanModifiers{
-					resource.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
-			"autorp": {
+			"autorp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure AutoRP global operations").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"autorp_listener": {
+			"autorp_listener": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Allow AutoRP packets across sparse mode interface").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"bsr_candidate_loopback": {
+			"bsr_candidate_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 2147483647),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 2147483647),
 				},
 			},
-			"bsr_candidate_mask": {
+			"bsr_candidate_mask": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Hash Mask length for RP selection").AddIntegerRangeDescription(0, 32).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 32),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 32),
 				},
 			},
-			"bsr_candidate_priority": {
+			"bsr_candidate_priority": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Priority value for candidate bootstrap router").AddIntegerRangeDescription(0, 255).String,
-				Type:                types.Int64Type,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.IntegerRangeValidator(0, 255),
+				Validators: []validator.Int64{
+					int64validator.Between(0, 255),
 				},
 			},
-			"bsr_candidate_accept_rp_candidate": {
+			"bsr_candidate_accept_rp_candidate": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("BSR RP candidate filter").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ssm_range": {
+			"ssm_range": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ACL for group range to be used for SSM").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"ssm_default": {
+			"ssm_default": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use 232/8 group range for SSM").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"rp_address": {
+			"rp_address": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("IP address of Rendezvous-point for group").String,
-				Type:                types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Validators: []tfsdk.AttributeValidator{
-					helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
 			},
-			"rp_address_override": {
+			"rp_address_override": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Overrides dynamically learnt RP mappings").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"rp_address_bidir": {
+			"rp_address_bidir": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
-				Type:                types.BoolType,
 				Optional:            true,
 				Computed:            true,
 			},
-			"rp_addresses": {
+			"rp_addresses": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("PIM RP-address (Rendezvous Point)").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"access_list": {
-						MarkdownDescription: helpers.NewAttributeDescription("IP Access-list").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"rp_address": {
-						MarkdownDescription: helpers.NewAttributeDescription("IP address of Rendezvous-point for group").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.StringPatternValidator(0, 0, `(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"access_list": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("IP Access-list").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"rp_address": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("IP address of Rendezvous-point for group").String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
+						},
+						"override": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Overrides dynamically learnt RP mappings").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"bidir": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"override": {
-						MarkdownDescription: helpers.NewAttributeDescription("Overrides dynamically learnt RP mappings").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"bidir": {
-						MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"rp_candidates": {
+			"rp_candidates": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("To be a PIM version 2 RP candidate").String,
 				Optional:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"interface": {
-						MarkdownDescription: helpers.NewAttributeDescription("Autonomic-Networking virtual interface").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"group_list": {
-						MarkdownDescription: helpers.NewAttributeDescription("IP Access list").String,
-						Type:                types.StringType,
-						Optional:            true,
-						Computed:            true,
-					},
-					"interval": {
-						MarkdownDescription: helpers.NewAttributeDescription("RP candidate advertisement interval").AddIntegerRangeDescription(1, 16383).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(1, 16383),
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"interface": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Autonomic-Networking virtual interface").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"group_list": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("IP Access list").String,
+							Optional:            true,
+							Computed:            true,
+						},
+						"interval": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("RP candidate advertisement interval").AddIntegerRangeDescription(1, 16383).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 16383),
+							},
+						},
+						"priority": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("RP candidate priority").AddIntegerRangeDescription(0, 255).String,
+							Optional:            true,
+							Computed:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(0, 255),
+							},
+						},
+						"bidir": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
+							Optional:            true,
+							Computed:            true,
 						},
 					},
-					"priority": {
-						MarkdownDescription: helpers.NewAttributeDescription("RP candidate priority").AddIntegerRangeDescription(0, 255).String,
-						Type:                types.Int64Type,
-						Optional:            true,
-						Computed:            true,
-						Validators: []tfsdk.AttributeValidator{
-							helpers.IntegerRangeValidator(0, 255),
-						},
-					},
-					"bidir": {
-						MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
-						Type:                types.BoolType,
-						Optional:            true,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (r *PIMVRFResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {

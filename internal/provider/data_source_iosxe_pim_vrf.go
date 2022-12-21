@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -32,141 +31,122 @@ func (d *PIMVRFDataSource) Metadata(_ context.Context, req datasource.MetadataRe
 	resp.TypeName = req.ProviderTypeName + "_pim_vrf"
 }
 
-func (d *PIMVRFDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
-	return tfsdk.Schema{
+func (d *PIMVRFDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "This data source can read the PIM VRF configuration.",
 
-		Attributes: map[string]tfsdk.Attribute{
-			"device": {
+		Attributes: map[string]schema.Attribute{
+			"device": schema.StringAttribute{
 				MarkdownDescription: "A device name from the provider configuration.",
-				Type:                types.StringType,
 				Optional:            true,
 			},
-			"id": {
+			"id": schema.StringAttribute{
 				MarkdownDescription: "The path of the retrieved object.",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"vrf": {
+			"vrf": schema.StringAttribute{
 				MarkdownDescription: "",
-				Type:                types.StringType,
 				Required:            true,
 			},
-			"autorp": {
+			"autorp": schema.BoolAttribute{
 				MarkdownDescription: "Configure AutoRP global operations",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"autorp_listener": {
+			"autorp_listener": schema.BoolAttribute{
 				MarkdownDescription: "Allow AutoRP packets across sparse mode interface",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"bsr_candidate_loopback": {
+			"bsr_candidate_loopback": schema.Int64Attribute{
 				MarkdownDescription: "Loopback interface",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"bsr_candidate_mask": {
+			"bsr_candidate_mask": schema.Int64Attribute{
 				MarkdownDescription: "Hash Mask length for RP selection",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"bsr_candidate_priority": {
+			"bsr_candidate_priority": schema.Int64Attribute{
 				MarkdownDescription: "Priority value for candidate bootstrap router",
-				Type:                types.Int64Type,
 				Computed:            true,
 			},
-			"bsr_candidate_accept_rp_candidate": {
+			"bsr_candidate_accept_rp_candidate": schema.StringAttribute{
 				MarkdownDescription: "BSR RP candidate filter",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ssm_range": {
+			"ssm_range": schema.StringAttribute{
 				MarkdownDescription: "ACL for group range to be used for SSM",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"ssm_default": {
+			"ssm_default": schema.BoolAttribute{
 				MarkdownDescription: "Use 232/8 group range for SSM",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"rp_address": {
+			"rp_address": schema.StringAttribute{
 				MarkdownDescription: "IP address of Rendezvous-point for group",
-				Type:                types.StringType,
 				Computed:            true,
 			},
-			"rp_address_override": {
+			"rp_address_override": schema.BoolAttribute{
 				MarkdownDescription: "Overrides dynamically learnt RP mappings",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"rp_address_bidir": {
+			"rp_address_bidir": schema.BoolAttribute{
 				MarkdownDescription: "Group range treated in bidirectional shared-tree mode",
-				Type:                types.BoolType,
 				Computed:            true,
 			},
-			"rp_addresses": {
+			"rp_addresses": schema.ListNestedAttribute{
 				MarkdownDescription: "PIM RP-address (Rendezvous Point)",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"access_list": {
-						MarkdownDescription: "IP Access-list",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"access_list": schema.StringAttribute{
+							MarkdownDescription: "IP Access-list",
+							Computed:            true,
+						},
+						"rp_address": schema.StringAttribute{
+							MarkdownDescription: "IP address of Rendezvous-point for group",
+							Computed:            true,
+						},
+						"override": schema.BoolAttribute{
+							MarkdownDescription: "Overrides dynamically learnt RP mappings",
+							Computed:            true,
+						},
+						"bidir": schema.BoolAttribute{
+							MarkdownDescription: "Group range treated in bidirectional shared-tree mode",
+							Computed:            true,
+						},
 					},
-					"rp_address": {
-						MarkdownDescription: "IP address of Rendezvous-point for group",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"override": {
-						MarkdownDescription: "Overrides dynamically learnt RP mappings",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-					"bidir": {
-						MarkdownDescription: "Group range treated in bidirectional shared-tree mode",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
-			"rp_candidates": {
+			"rp_candidates": schema.ListNestedAttribute{
 				MarkdownDescription: "To be a PIM version 2 RP candidate",
 				Computed:            true,
-				Attributes: tfsdk.ListNestedAttributes(map[string]tfsdk.Attribute{
-					"interface": {
-						MarkdownDescription: "Autonomic-Networking virtual interface",
-						Type:                types.StringType,
-						Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"interface": schema.StringAttribute{
+							MarkdownDescription: "Autonomic-Networking virtual interface",
+							Computed:            true,
+						},
+						"group_list": schema.StringAttribute{
+							MarkdownDescription: "IP Access list",
+							Computed:            true,
+						},
+						"interval": schema.Int64Attribute{
+							MarkdownDescription: "RP candidate advertisement interval",
+							Computed:            true,
+						},
+						"priority": schema.Int64Attribute{
+							MarkdownDescription: "RP candidate priority",
+							Computed:            true,
+						},
+						"bidir": schema.BoolAttribute{
+							MarkdownDescription: "Group range treated in bidirectional shared-tree mode",
+							Computed:            true,
+						},
 					},
-					"group_list": {
-						MarkdownDescription: "IP Access list",
-						Type:                types.StringType,
-						Computed:            true,
-					},
-					"interval": {
-						MarkdownDescription: "RP candidate advertisement interval",
-						Type:                types.Int64Type,
-						Computed:            true,
-					},
-					"priority": {
-						MarkdownDescription: "RP candidate priority",
-						Type:                types.Int64Type,
-						Computed:            true,
-					},
-					"bidir": {
-						MarkdownDescription: "Group range treated in bidirectional shared-tree mode",
-						Type:                types.BoolType,
-						Computed:            true,
-					},
-				}),
+				},
 			},
 		},
-	}, nil
+	}
 }
 
 func (d *PIMVRFDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
