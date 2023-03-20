@@ -151,6 +151,7 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"ip_access_group_in_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").AddDefaultValueDescription("true").String,
 				Optional:            true,
+				Computed:            true,
 				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},
@@ -162,6 +163,7 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"ip_access_group_out_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").AddDefaultValueDescription("true").String,
 				Optional:            true,
+				Computed:            true,
 				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},

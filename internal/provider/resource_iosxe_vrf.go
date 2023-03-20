@@ -160,6 +160,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"stitching": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
 							Optional:            true,
+							Computed:            true,
 							PlanModifiers: []planmodifier.Bool{
 								helpers.BooleanDefaultModifier(true),
 							},
@@ -197,6 +198,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"stitching": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
 							Optional:            true,
+							Computed:            true,
 							PlanModifiers: []planmodifier.Bool{
 								helpers.BooleanDefaultModifier(true),
 							},
@@ -234,6 +236,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"stitching": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
 							Optional:            true,
+							Computed:            true,
 							PlanModifiers: []planmodifier.Bool{
 								helpers.BooleanDefaultModifier(true),
 							},
@@ -271,6 +274,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"stitching": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
 							Optional:            true,
+							Computed:            true,
 							PlanModifiers: []planmodifier.Bool{
 								helpers.BooleanDefaultModifier(true),
 							},
