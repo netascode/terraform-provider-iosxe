@@ -112,24 +112,16 @@ func (r *InterfaceVLANResource) Schema(ctx context.Context, req resource.SchemaR
 				Optional:            true,
 			},
 			"ip_access_group_in_enable": schema.BoolAttribute{
-				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").AddDefaultValueDescription("true").String,
+				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").String,
 				Optional:            true,
-				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					helpers.BooleanDefaultModifier(true),
-				},
 			},
 			"ip_access_group_out": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
 			},
 			"ip_access_group_out_enable": schema.BoolAttribute{
-				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").AddDefaultValueDescription("true").String,
+				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").String,
 				Optional:            true,
-				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					helpers.BooleanDefaultModifier(true),
-				},
 			},
 			"helper_addresses": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify a destination address for UDP broadcasts").String,

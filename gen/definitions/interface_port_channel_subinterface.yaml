@@ -4,7 +4,7 @@ path: Cisco-IOS-XE-native:native/interface/Port-channel-subinterface/Port-channe
 doc_category: Interface
 attributes:
   - yang_name: name
-    example: '10.666'
+    example: "10.666"
   - yang_name: description
     example: My Interface Description
   - yang_name: shutdown
@@ -32,7 +32,6 @@ attributes:
   - yang_name: ip/access-group/in/apply-type/apply-intf/acl/in
     xpath: ip/access-group/in/acl/in
     tf_name: ip_access_group_in_enable
-    default_value: true
     example: true
   - yang_name: ip/access-group/out/apply-type/apply-intf/acl/acl-name
     xpath: ip/access-group/out/acl/acl-name
@@ -41,7 +40,6 @@ attributes:
   - yang_name: ip/access-group/out/apply-type/apply-intf/acl/out
     xpath: ip/access-group/out/acl/out
     tf_name: ip_access_group_out_enable
-    default_value: true
     example: true
   - yang_name: ip/helper-address
     tf_name: helper_addresses
@@ -69,7 +67,7 @@ test_prerequisites:
     no_delete: true
     attributes:
       - name: ipv4
-        value: ''
+        value: ""
     dependencies: [0]
   - path: Cisco-IOS-XE-native:native/interface/Port-channel=10
     attributes:

@@ -104,24 +104,16 @@ func (r *InterfacePortChannelResource) Schema(ctx context.Context, req resource.
 				Optional:            true,
 			},
 			"ip_access_group_in_enable": schema.BoolAttribute{
-				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").AddDefaultValueDescription("true").String,
+				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").String,
 				Optional:            true,
-				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					helpers.BooleanDefaultModifier(true),
-				},
 			},
 			"ip_access_group_out": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
 			},
 			"ip_access_group_out_enable": schema.BoolAttribute{
-				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").AddDefaultValueDescription("true").String,
+				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").String,
 				Optional:            true,
-				Computed:            true,
-				PlanModifiers: []planmodifier.Bool{
-					helpers.BooleanDefaultModifier(true),
-				},
 			},
 			"ip_dhcp_relay_source_interface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set source interface for relayed messages").String,
