@@ -91,47 +91,65 @@ func (data *InterfaceOSPF) updateFromBody(ctx context.Context, res gjson.Result)
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "cost"); value.Exists() {
+	if value := res.Get(prefix + "cost"); value.Exists() && !data.Cost.IsNull() {
 		data.Cost = types.Int64Value(value.Int())
 	} else {
 		data.Cost = types.Int64Null()
 	}
-	if value := res.Get(prefix + "dead-interval"); value.Exists() {
+	if value := res.Get(prefix + "dead-interval"); value.Exists() && !data.DeadInterval.IsNull() {
 		data.DeadInterval = types.Int64Value(value.Int())
 	} else {
 		data.DeadInterval = types.Int64Null()
 	}
-	if value := res.Get(prefix + "hello-interval"); value.Exists() {
+	if value := res.Get(prefix + "hello-interval"); value.Exists() && !data.HelloInterval.IsNull() {
 		data.HelloInterval = types.Int64Value(value.Int())
 	} else {
 		data.HelloInterval = types.Int64Null()
 	}
-	if value := res.Get(prefix + "mtu-ignore"); value.Exists() {
-		data.MtuIgnore = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "mtu-ignore"); !data.MtuIgnore.IsNull() {
+		if value.Exists() {
+			data.MtuIgnore = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.MtuIgnore = types.BoolValue(false)
+		data.MtuIgnore = types.BoolNull()
 	}
-	if value := res.Get(prefix + "network.broadcast"); value.Exists() {
-		data.NetworkTypeBroadcast = types.BoolValue(true)
+	if value := res.Get(prefix + "network.broadcast"); !data.NetworkTypeBroadcast.IsNull() {
+		if value.Exists() {
+			data.NetworkTypeBroadcast = types.BoolValue(true)
+		} else {
+			data.NetworkTypeBroadcast = types.BoolValue(false)
+		}
 	} else {
-		data.NetworkTypeBroadcast = types.BoolValue(false)
+		data.NetworkTypeBroadcast = types.BoolNull()
 	}
-	if value := res.Get(prefix + "network.non-broadcast"); value.Exists() {
-		data.NetworkTypeNonBroadcast = types.BoolValue(true)
+	if value := res.Get(prefix + "network.non-broadcast"); !data.NetworkTypeNonBroadcast.IsNull() {
+		if value.Exists() {
+			data.NetworkTypeNonBroadcast = types.BoolValue(true)
+		} else {
+			data.NetworkTypeNonBroadcast = types.BoolValue(false)
+		}
 	} else {
-		data.NetworkTypeNonBroadcast = types.BoolValue(false)
+		data.NetworkTypeNonBroadcast = types.BoolNull()
 	}
-	if value := res.Get(prefix + "network.point-to-multipoint"); value.Exists() {
-		data.NetworkTypePointToMultipoint = types.BoolValue(true)
+	if value := res.Get(prefix + "network.point-to-multipoint"); !data.NetworkTypePointToMultipoint.IsNull() {
+		if value.Exists() {
+			data.NetworkTypePointToMultipoint = types.BoolValue(true)
+		} else {
+			data.NetworkTypePointToMultipoint = types.BoolValue(false)
+		}
 	} else {
-		data.NetworkTypePointToMultipoint = types.BoolValue(false)
+		data.NetworkTypePointToMultipoint = types.BoolNull()
 	}
-	if value := res.Get(prefix + "network.point-to-point"); value.Exists() {
-		data.NetworkTypePointToPoint = types.BoolValue(true)
+	if value := res.Get(prefix + "network.point-to-point"); !data.NetworkTypePointToPoint.IsNull() {
+		if value.Exists() {
+			data.NetworkTypePointToPoint = types.BoolValue(true)
+		} else {
+			data.NetworkTypePointToPoint = types.BoolValue(false)
+		}
 	} else {
-		data.NetworkTypePointToPoint = types.BoolValue(false)
+		data.NetworkTypePointToPoint = types.BoolNull()
 	}
-	if value := res.Get(prefix + "priority"); value.Exists() {
+	if value := res.Get(prefix + "priority"); value.Exists() && !data.Priority.IsNull() {
 		data.Priority = types.Int64Value(value.Int())
 	} else {
 		data.Priority = types.Int64Null()
@@ -179,48 +197,6 @@ func (data *InterfaceOSPF) fromBody(ctx context.Context, res gjson.Result) {
 	}
 	if value := res.Get(prefix + "priority"); value.Exists() {
 		data.Priority = types.Int64Value(value.Int())
-	}
-}
-
-func (data *InterfaceOSPF) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Type.IsUnknown() {
-		data.Type = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	if data.Cost.IsUnknown() {
-		data.Cost = types.Int64Null()
-	}
-	if data.DeadInterval.IsUnknown() {
-		data.DeadInterval = types.Int64Null()
-	}
-	if data.HelloInterval.IsUnknown() {
-		data.HelloInterval = types.Int64Null()
-	}
-	if data.MtuIgnore.IsUnknown() {
-		data.MtuIgnore = types.BoolNull()
-	}
-	if data.NetworkTypeBroadcast.IsUnknown() {
-		data.NetworkTypeBroadcast = types.BoolNull()
-	}
-	if data.NetworkTypeNonBroadcast.IsUnknown() {
-		data.NetworkTypeNonBroadcast = types.BoolNull()
-	}
-	if data.NetworkTypePointToMultipoint.IsUnknown() {
-		data.NetworkTypePointToMultipoint = types.BoolNull()
-	}
-	if data.NetworkTypePointToPoint.IsUnknown() {
-		data.NetworkTypePointToPoint = types.BoolNull()
-	}
-	if data.Priority.IsUnknown() {
-		data.Priority = types.Int64Null()
 	}
 }
 

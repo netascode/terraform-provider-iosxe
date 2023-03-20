@@ -56,7 +56,6 @@ func (r *DHCPResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"compatibility_suboption_link_selection": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("cisco", "standard").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("cisco", "standard"),
 				},
@@ -64,7 +63,6 @@ func (r *DHCPResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"compatibility_suboption_server_override": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("cisco", "standard").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("cisco", "standard"),
 				},
@@ -72,22 +70,18 @@ func (r *DHCPResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"relay_information_trust_all": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Received DHCP packets may contain relay info option with zero giaddr").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"relay_information_option_default": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Default option, no vpn").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"relay_information_option_vpn": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Insert VPN sub-options and change the giaddr to the outgoing interface").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"snooping": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("DHCP Snooping").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"snooping_vlans": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("DHCP Snooping vlan (Deprecated, use vlan-list)").String,
@@ -97,7 +91,6 @@ func (r *DHCPResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"vlan_id": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 4094),
 							},
@@ -151,8 +144,6 @@ func (r *DHCPResource) Create(ctx context.Context, req resource.CreateRequest, r
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -220,8 +211,6 @@ func (r *DHCPResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

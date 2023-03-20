@@ -77,57 +77,46 @@ func (r *InterfaceSwitchportResource) Schema(ctx context.Context, req resource.S
 			"mode_access": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set trunking mode to ACCESS unconditionally").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"mode_dot1q_tunnel": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("set trunking mode to TUNNEL unconditionally").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"mode_private_vlan_trunk": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set the mode to private-vlan trunk").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"mode_private_vlan_host": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set the mode to private-vlan host").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"mode_private_vlan_promiscuous": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set the mode to private-vlan promiscuous").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"mode_trunk": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set trunking mode to TRUNK unconditionally").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"nonegotiate": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Device will not engage in negotiation protocol on this interface").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"access_vlan": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trunk_allowed_vlans": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trunk_native_vlan_tag": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trunk_native_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 4094),
 				},
@@ -135,7 +124,6 @@ func (r *InterfaceSwitchportResource) Schema(ctx context.Context, req resource.S
 			"host": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set port host").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -183,8 +171,6 @@ func (r *InterfaceSwitchportResource) Create(ctx context.Context, req resource.C
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -252,8 +238,6 @@ func (r *InterfaceSwitchportResource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

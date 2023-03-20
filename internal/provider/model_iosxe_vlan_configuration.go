@@ -65,27 +65,27 @@ func (data *VLANConfiguration) updateFromBody(ctx context.Context, res gjson.Res
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "vlan-id"); value.Exists() {
+	if value := res.Get(prefix + "vlan-id"); value.Exists() && !data.VlanId.IsNull() {
 		data.VlanId = types.Int64Value(value.Int())
 	} else {
 		data.VlanId = types.Int64Null()
 	}
-	if value := res.Get(prefix + "member.vni"); value.Exists() {
+	if value := res.Get(prefix + "member.vni"); value.Exists() && !data.Vni.IsNull() {
 		data.Vni = types.Int64Value(value.Int())
 	} else {
 		data.Vni = types.Int64Null()
 	}
-	if value := res.Get(prefix + "member.access-vfi"); value.Exists() {
+	if value := res.Get(prefix + "member.access-vfi"); value.Exists() && !data.AccessVfi.IsNull() {
 		data.AccessVfi = types.StringValue(value.String())
 	} else {
 		data.AccessVfi = types.StringNull()
 	}
-	if value := res.Get(prefix + "member.evpn-instance.evpn-instance"); value.Exists() {
+	if value := res.Get(prefix + "member.evpn-instance.evpn-instance"); value.Exists() && !data.EvpnInstance.IsNull() {
 		data.EvpnInstance = types.Int64Value(value.Int())
 	} else {
 		data.EvpnInstance = types.Int64Null()
 	}
-	if value := res.Get(prefix + "member.evpn-instance.vni"); value.Exists() {
+	if value := res.Get(prefix + "member.evpn-instance.vni"); value.Exists() && !data.EvpnInstanceVni.IsNull() {
 		data.EvpnInstanceVni = types.Int64Value(value.Int())
 	} else {
 		data.EvpnInstanceVni = types.Int64Null()
@@ -108,30 +108,6 @@ func (data *VLANConfiguration) fromBody(ctx context.Context, res gjson.Result) {
 	}
 	if value := res.Get(prefix + "member.evpn-instance.vni"); value.Exists() {
 		data.EvpnInstanceVni = types.Int64Value(value.Int())
-	}
-}
-
-func (data *VLANConfiguration) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.VlanId.IsUnknown() {
-		data.VlanId = types.Int64Null()
-	}
-	if data.Vni.IsUnknown() {
-		data.Vni = types.Int64Null()
-	}
-	if data.AccessVfi.IsUnknown() {
-		data.AccessVfi = types.StringNull()
-	}
-	if data.EvpnInstance.IsUnknown() {
-		data.EvpnInstance = types.Int64Null()
-	}
-	if data.EvpnInstanceVni.IsUnknown() {
-		data.EvpnInstanceVni = types.Int64Null()
 	}
 }
 

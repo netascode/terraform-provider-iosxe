@@ -165,110 +165,190 @@ func (data *Service) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "pad-conf.pad"); value.Exists() {
-		data.Pad = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "pad-conf.pad"); !data.Pad.IsNull() {
+		if value.Exists() {
+			data.Pad = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.Pad = types.BoolValue(false)
+		data.Pad = types.BoolNull()
 	}
-	if value := res.Get(prefix + "password-encryption"); value.Exists() {
-		data.PasswordEncryption = types.BoolValue(true)
+	if value := res.Get(prefix + "password-encryption"); !data.PasswordEncryption.IsNull() {
+		if value.Exists() {
+			data.PasswordEncryption = types.BoolValue(true)
+		} else {
+			data.PasswordEncryption = types.BoolValue(false)
+		}
 	} else {
-		data.PasswordEncryption = types.BoolValue(false)
+		data.PasswordEncryption = types.BoolNull()
 	}
-	if value := res.Get(prefix + "password-recovery"); value.Exists() {
-		data.PasswordRecovery = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "password-recovery"); !data.PasswordRecovery.IsNull() {
+		if value.Exists() {
+			data.PasswordRecovery = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.PasswordRecovery = types.BoolValue(false)
+		data.PasswordRecovery = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps"); value.Exists() {
-		data.Timestamps = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps"); !data.Timestamps.IsNull() {
+		if value.Exists() {
+			data.Timestamps = types.BoolValue(true)
+		} else {
+			data.Timestamps = types.BoolValue(false)
+		}
 	} else {
-		data.Timestamps = types.BoolValue(false)
+		data.Timestamps = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.debug-config"); value.Exists() {
-		data.TimestampsDebug = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.debug-config"); !data.TimestampsDebug.IsNull() {
+		if value.Exists() {
+			data.TimestampsDebug = types.BoolValue(true)
+		} else {
+			data.TimestampsDebug = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsDebug = types.BoolValue(false)
+		data.TimestampsDebug = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.debug-config.datetime"); value.Exists() {
-		data.TimestampsDebugDatetime = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.debug-config.datetime"); !data.TimestampsDebugDatetime.IsNull() {
+		if value.Exists() {
+			data.TimestampsDebugDatetime = types.BoolValue(true)
+		} else {
+			data.TimestampsDebugDatetime = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsDebugDatetime = types.BoolValue(false)
+		data.TimestampsDebugDatetime = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.debug-config.datetime.msec"); value.Exists() {
-		data.TimestampsDebugDatetimeMsec = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.debug-config.datetime.msec"); !data.TimestampsDebugDatetimeMsec.IsNull() {
+		if value.Exists() {
+			data.TimestampsDebugDatetimeMsec = types.BoolValue(true)
+		} else {
+			data.TimestampsDebugDatetimeMsec = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsDebugDatetimeMsec = types.BoolValue(false)
+		data.TimestampsDebugDatetimeMsec = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.debug-config.datetime.localtime"); value.Exists() {
-		data.TimestampsDebugDatetimeLocaltime = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.debug-config.datetime.localtime"); !data.TimestampsDebugDatetimeLocaltime.IsNull() {
+		if value.Exists() {
+			data.TimestampsDebugDatetimeLocaltime = types.BoolValue(true)
+		} else {
+			data.TimestampsDebugDatetimeLocaltime = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsDebugDatetimeLocaltime = types.BoolValue(false)
+		data.TimestampsDebugDatetimeLocaltime = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.debug-config.datetime.show-timezone"); value.Exists() {
-		data.TimestampsDebugDatetimeShowTimezone = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.debug-config.datetime.show-timezone"); !data.TimestampsDebugDatetimeShowTimezone.IsNull() {
+		if value.Exists() {
+			data.TimestampsDebugDatetimeShowTimezone = types.BoolValue(true)
+		} else {
+			data.TimestampsDebugDatetimeShowTimezone = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsDebugDatetimeShowTimezone = types.BoolValue(false)
+		data.TimestampsDebugDatetimeShowTimezone = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.debug-config.datetime.year"); value.Exists() {
-		data.TimestampsDebugDatetimeYear = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.debug-config.datetime.year"); !data.TimestampsDebugDatetimeYear.IsNull() {
+		if value.Exists() {
+			data.TimestampsDebugDatetimeYear = types.BoolValue(true)
+		} else {
+			data.TimestampsDebugDatetimeYear = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsDebugDatetimeYear = types.BoolValue(false)
+		data.TimestampsDebugDatetimeYear = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.debug-config.uptime"); value.Exists() {
-		data.TimestampsDebugUptime = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.debug-config.uptime"); !data.TimestampsDebugUptime.IsNull() {
+		if value.Exists() {
+			data.TimestampsDebugUptime = types.BoolValue(true)
+		} else {
+			data.TimestampsDebugUptime = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsDebugUptime = types.BoolValue(false)
+		data.TimestampsDebugUptime = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.log-config"); value.Exists() {
-		data.TimestampsLog = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.log-config"); !data.TimestampsLog.IsNull() {
+		if value.Exists() {
+			data.TimestampsLog = types.BoolValue(true)
+		} else {
+			data.TimestampsLog = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsLog = types.BoolValue(false)
+		data.TimestampsLog = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.log-config.datetime"); value.Exists() {
-		data.TimestampsLogDatetime = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.log-config.datetime"); !data.TimestampsLogDatetime.IsNull() {
+		if value.Exists() {
+			data.TimestampsLogDatetime = types.BoolValue(true)
+		} else {
+			data.TimestampsLogDatetime = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsLogDatetime = types.BoolValue(false)
+		data.TimestampsLogDatetime = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.log-config.datetime.msec"); value.Exists() {
-		data.TimestampsLogDatetimeMsec = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.log-config.datetime.msec"); !data.TimestampsLogDatetimeMsec.IsNull() {
+		if value.Exists() {
+			data.TimestampsLogDatetimeMsec = types.BoolValue(true)
+		} else {
+			data.TimestampsLogDatetimeMsec = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsLogDatetimeMsec = types.BoolValue(false)
+		data.TimestampsLogDatetimeMsec = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.log-config.datetime.localtime"); value.Exists() {
-		data.TimestampsLogDatetimeLocaltime = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.log-config.datetime.localtime"); !data.TimestampsLogDatetimeLocaltime.IsNull() {
+		if value.Exists() {
+			data.TimestampsLogDatetimeLocaltime = types.BoolValue(true)
+		} else {
+			data.TimestampsLogDatetimeLocaltime = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsLogDatetimeLocaltime = types.BoolValue(false)
+		data.TimestampsLogDatetimeLocaltime = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.log-config.datetime.show-timezone"); value.Exists() {
-		data.TimestampsLogDatetimeShowTimezone = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.log-config.datetime.show-timezone"); !data.TimestampsLogDatetimeShowTimezone.IsNull() {
+		if value.Exists() {
+			data.TimestampsLogDatetimeShowTimezone = types.BoolValue(true)
+		} else {
+			data.TimestampsLogDatetimeShowTimezone = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsLogDatetimeShowTimezone = types.BoolValue(false)
+		data.TimestampsLogDatetimeShowTimezone = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.log-config.datetime.year"); value.Exists() {
-		data.TimestampsLogDatetimeYear = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.log-config.datetime.year"); !data.TimestampsLogDatetimeYear.IsNull() {
+		if value.Exists() {
+			data.TimestampsLogDatetimeYear = types.BoolValue(true)
+		} else {
+			data.TimestampsLogDatetimeYear = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsLogDatetimeYear = types.BoolValue(false)
+		data.TimestampsLogDatetimeYear = types.BoolNull()
 	}
-	if value := res.Get(prefix + "timestamps.log-config.uptime"); value.Exists() {
-		data.TimestampsLogUptime = types.BoolValue(true)
+	if value := res.Get(prefix + "timestamps.log-config.uptime"); !data.TimestampsLogUptime.IsNull() {
+		if value.Exists() {
+			data.TimestampsLogUptime = types.BoolValue(true)
+		} else {
+			data.TimestampsLogUptime = types.BoolValue(false)
+		}
 	} else {
-		data.TimestampsLogUptime = types.BoolValue(false)
+		data.TimestampsLogUptime = types.BoolNull()
 	}
-	if value := res.Get(prefix + "dhcp"); value.Exists() {
-		data.Dhcp = types.BoolValue(true)
+	if value := res.Get(prefix + "dhcp"); !data.Dhcp.IsNull() {
+		if value.Exists() {
+			data.Dhcp = types.BoolValue(true)
+		} else {
+			data.Dhcp = types.BoolValue(false)
+		}
 	} else {
-		data.Dhcp = types.BoolValue(false)
+		data.Dhcp = types.BoolNull()
 	}
-	if value := res.Get(prefix + "tcp-keepalives-in"); value.Exists() {
-		data.TcpKeepalivesIn = types.BoolValue(true)
+	if value := res.Get(prefix + "tcp-keepalives-in"); !data.TcpKeepalivesIn.IsNull() {
+		if value.Exists() {
+			data.TcpKeepalivesIn = types.BoolValue(true)
+		} else {
+			data.TcpKeepalivesIn = types.BoolValue(false)
+		}
 	} else {
-		data.TcpKeepalivesIn = types.BoolValue(false)
+		data.TcpKeepalivesIn = types.BoolNull()
 	}
-	if value := res.Get(prefix + "tcp-keepalives-out"); value.Exists() {
-		data.TcpKeepalivesOut = types.BoolValue(true)
+	if value := res.Get(prefix + "tcp-keepalives-out"); !data.TcpKeepalivesOut.IsNull() {
+		if value.Exists() {
+			data.TcpKeepalivesOut = types.BoolValue(true)
+		} else {
+			data.TcpKeepalivesOut = types.BoolValue(false)
+		}
 	} else {
-		data.TcpKeepalivesOut = types.BoolValue(false)
+		data.TcpKeepalivesOut = types.BoolNull()
 	}
 }
 
@@ -381,78 +461,6 @@ func (data *Service) fromBody(ctx context.Context, res gjson.Result) {
 		data.TcpKeepalivesOut = types.BoolValue(true)
 	} else {
 		data.TcpKeepalivesOut = types.BoolValue(false)
-	}
-}
-
-func (data *Service) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Pad.IsUnknown() {
-		data.Pad = types.BoolNull()
-	}
-	if data.PasswordEncryption.IsUnknown() {
-		data.PasswordEncryption = types.BoolNull()
-	}
-	if data.PasswordRecovery.IsUnknown() {
-		data.PasswordRecovery = types.BoolNull()
-	}
-	if data.Timestamps.IsUnknown() {
-		data.Timestamps = types.BoolNull()
-	}
-	if data.TimestampsDebug.IsUnknown() {
-		data.TimestampsDebug = types.BoolNull()
-	}
-	if data.TimestampsDebugDatetime.IsUnknown() {
-		data.TimestampsDebugDatetime = types.BoolNull()
-	}
-	if data.TimestampsDebugDatetimeMsec.IsUnknown() {
-		data.TimestampsDebugDatetimeMsec = types.BoolNull()
-	}
-	if data.TimestampsDebugDatetimeLocaltime.IsUnknown() {
-		data.TimestampsDebugDatetimeLocaltime = types.BoolNull()
-	}
-	if data.TimestampsDebugDatetimeShowTimezone.IsUnknown() {
-		data.TimestampsDebugDatetimeShowTimezone = types.BoolNull()
-	}
-	if data.TimestampsDebugDatetimeYear.IsUnknown() {
-		data.TimestampsDebugDatetimeYear = types.BoolNull()
-	}
-	if data.TimestampsDebugUptime.IsUnknown() {
-		data.TimestampsDebugUptime = types.BoolNull()
-	}
-	if data.TimestampsLog.IsUnknown() {
-		data.TimestampsLog = types.BoolNull()
-	}
-	if data.TimestampsLogDatetime.IsUnknown() {
-		data.TimestampsLogDatetime = types.BoolNull()
-	}
-	if data.TimestampsLogDatetimeMsec.IsUnknown() {
-		data.TimestampsLogDatetimeMsec = types.BoolNull()
-	}
-	if data.TimestampsLogDatetimeLocaltime.IsUnknown() {
-		data.TimestampsLogDatetimeLocaltime = types.BoolNull()
-	}
-	if data.TimestampsLogDatetimeShowTimezone.IsUnknown() {
-		data.TimestampsLogDatetimeShowTimezone = types.BoolNull()
-	}
-	if data.TimestampsLogDatetimeYear.IsUnknown() {
-		data.TimestampsLogDatetimeYear = types.BoolNull()
-	}
-	if data.TimestampsLogUptime.IsUnknown() {
-		data.TimestampsLogUptime = types.BoolNull()
-	}
-	if data.Dhcp.IsUnknown() {
-		data.Dhcp = types.BoolNull()
-	}
-	if data.TcpKeepalivesIn.IsUnknown() {
-		data.TcpKeepalivesIn = types.BoolNull()
-	}
-	if data.TcpKeepalivesOut.IsUnknown() {
-		data.TcpKeepalivesOut = types.BoolNull()
 	}
 }
 

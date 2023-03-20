@@ -91,12 +91,12 @@ func (data *StaticRoute) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "prefix"); value.Exists() {
+	if value := res.Get(prefix + "prefix"); value.Exists() && !data.Prefix.IsNull() {
 		data.Prefix = types.StringValue(value.String())
 	} else {
 		data.Prefix = types.StringNull()
 	}
-	if value := res.Get(prefix + "mask"); value.Exists() {
+	if value := res.Get(prefix + "mask"); value.Exists() && !data.Mask.IsNull() {
 		data.Mask = types.StringValue(value.String())
 	} else {
 		data.Mask = types.StringNull()
@@ -124,32 +124,40 @@ func (data *StaticRoute) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("fwd"); value.Exists() {
+		if value := r.Get("fwd"); value.Exists() && !data.NextHops[i].NextHop.IsNull() {
 			data.NextHops[i].NextHop = types.StringValue(value.String())
 		} else {
 			data.NextHops[i].NextHop = types.StringNull()
 		}
-		if value := r.Get("metric"); value.Exists() {
+		if value := r.Get("metric"); value.Exists() && !data.NextHops[i].Metric.IsNull() {
 			data.NextHops[i].Metric = types.Int64Value(value.Int())
 		} else {
 			data.NextHops[i].Metric = types.Int64Null()
 		}
-		if value := r.Get("global"); value.Exists() {
-			data.NextHops[i].Global = types.BoolValue(true)
+		if value := r.Get("global"); !data.NextHops[i].Global.IsNull() {
+			if value.Exists() {
+				data.NextHops[i].Global = types.BoolValue(true)
+			} else {
+				data.NextHops[i].Global = types.BoolValue(false)
+			}
 		} else {
-			data.NextHops[i].Global = types.BoolValue(false)
+			data.NextHops[i].Global = types.BoolNull()
 		}
-		if value := r.Get("name"); value.Exists() {
+		if value := r.Get("name"); value.Exists() && !data.NextHops[i].Name.IsNull() {
 			data.NextHops[i].Name = types.StringValue(value.String())
 		} else {
 			data.NextHops[i].Name = types.StringNull()
 		}
-		if value := r.Get("permanent"); value.Exists() {
-			data.NextHops[i].Permanent = types.BoolValue(true)
+		if value := r.Get("permanent"); !data.NextHops[i].Permanent.IsNull() {
+			if value.Exists() {
+				data.NextHops[i].Permanent = types.BoolValue(true)
+			} else {
+				data.NextHops[i].Permanent = types.BoolValue(false)
+			}
 		} else {
-			data.NextHops[i].Permanent = types.BoolValue(false)
+			data.NextHops[i].Permanent = types.BoolNull()
 		}
-		if value := r.Get("tag"); value.Exists() {
+		if value := r.Get("tag"); value.Exists() && !data.NextHops[i].Tag.IsNull() {
 			data.NextHops[i].Tag = types.Int64Value(value.Int())
 		} else {
 			data.NextHops[i].Tag = types.Int64Null()
@@ -191,41 +199,6 @@ func (data *StaticRoute) fromBody(ctx context.Context, res gjson.Result) {
 			data.NextHops = append(data.NextHops, item)
 			return true
 		})
-	}
-}
-
-func (data *StaticRoute) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Prefix.IsUnknown() {
-		data.Prefix = types.StringNull()
-	}
-	if data.Mask.IsUnknown() {
-		data.Mask = types.StringNull()
-	}
-	for i := range data.NextHops {
-		if data.NextHops[i].NextHop.IsUnknown() {
-			data.NextHops[i].NextHop = types.StringNull()
-		}
-		if data.NextHops[i].Metric.IsUnknown() {
-			data.NextHops[i].Metric = types.Int64Null()
-		}
-		if data.NextHops[i].Global.IsUnknown() {
-			data.NextHops[i].Global = types.BoolNull()
-		}
-		if data.NextHops[i].Name.IsUnknown() {
-			data.NextHops[i].Name = types.StringNull()
-		}
-		if data.NextHops[i].Permanent.IsUnknown() {
-			data.NextHops[i].Permanent = types.BoolNull()
-		}
-		if data.NextHops[i].Tag.IsUnknown() {
-			data.NextHops[i].Tag = types.Int64Null()
-		}
 	}
 }
 

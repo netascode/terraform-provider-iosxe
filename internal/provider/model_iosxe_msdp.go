@@ -90,7 +90,7 @@ func (data *MSDP) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "originator-id"); value.Exists() {
+	if value := res.Get(prefix + "originator-id"); value.Exists() && !data.OriginatorId.IsNull() {
 		data.OriginatorId = types.StringValue(value.String())
 	} else {
 		data.OriginatorId = types.StringNull()
@@ -118,17 +118,17 @@ func (data *MSDP) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("addr"); value.Exists() {
+		if value := r.Get("addr"); value.Exists() && !data.Peers[i].Addr.IsNull() {
 			data.Peers[i].Addr = types.StringValue(value.String())
 		} else {
 			data.Peers[i].Addr = types.StringNull()
 		}
-		if value := r.Get("remote-as"); value.Exists() {
+		if value := r.Get("remote-as"); value.Exists() && !data.Peers[i].RemoteAs.IsNull() {
 			data.Peers[i].RemoteAs = types.Int64Value(value.Int())
 		} else {
 			data.Peers[i].RemoteAs = types.Int64Null()
 		}
-		if value := r.Get("connect-source.Loopback"); value.Exists() {
+		if value := r.Get("connect-source.Loopback"); value.Exists() && !data.Peers[i].ConnectSourceLoopback.IsNull() {
 			data.Peers[i].ConnectSourceLoopback = types.Int64Value(value.Int())
 		} else {
 			data.Peers[i].ConnectSourceLoopback = types.Int64Null()
@@ -157,17 +157,17 @@ func (data *MSDP) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("addr"); value.Exists() {
+		if value := r.Get("addr"); value.Exists() && !data.Passwords[i].Addr.IsNull() {
 			data.Passwords[i].Addr = types.StringValue(value.String())
 		} else {
 			data.Passwords[i].Addr = types.StringNull()
 		}
-		if value := r.Get("encryption"); value.Exists() {
+		if value := r.Get("encryption"); value.Exists() && !data.Passwords[i].Encryption.IsNull() {
 			data.Passwords[i].Encryption = types.Int64Value(value.Int())
 		} else {
 			data.Passwords[i].Encryption = types.Int64Null()
 		}
-		if value := r.Get("password"); value.Exists() {
+		if value := r.Get("password"); value.Exists() && !data.Passwords[i].Password.IsNull() {
 			data.Passwords[i].Password = types.StringValue(value.String())
 		} else {
 			data.Passwords[i].Password = types.StringNull()
@@ -216,40 +216,6 @@ func (data *MSDP) fromBody(ctx context.Context, res gjson.Result) {
 			data.Passwords = append(data.Passwords, item)
 			return true
 		})
-	}
-}
-
-func (data *MSDP) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.OriginatorId.IsUnknown() {
-		data.OriginatorId = types.StringNull()
-	}
-	for i := range data.Peers {
-		if data.Peers[i].Addr.IsUnknown() {
-			data.Peers[i].Addr = types.StringNull()
-		}
-		if data.Peers[i].RemoteAs.IsUnknown() {
-			data.Peers[i].RemoteAs = types.Int64Null()
-		}
-		if data.Peers[i].ConnectSourceLoopback.IsUnknown() {
-			data.Peers[i].ConnectSourceLoopback = types.Int64Null()
-		}
-	}
-	for i := range data.Passwords {
-		if data.Passwords[i].Addr.IsUnknown() {
-			data.Passwords[i].Addr = types.StringNull()
-		}
-		if data.Passwords[i].Encryption.IsUnknown() {
-			data.Passwords[i].Encryption = types.Int64Null()
-		}
-		if data.Passwords[i].Password.IsUnknown() {
-			data.Passwords[i].Password = types.StringNull()
-		}
 	}
 }
 

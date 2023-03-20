@@ -56,27 +56,22 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"chassis_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("String to uniquely identify this chassis").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"contact": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Text for mib object sysContact").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ifindex_persist": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Persist interface indices").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"location": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Text for mib object sysLocation").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"packetsize": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Largest SNMP packet size").AddIntegerRangeDescription(484, 17892).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(484, 17892),
 				},
@@ -84,7 +79,6 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"queue_length": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Message queue length for each TRAP host").AddIntegerRangeDescription(1, 5000).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 5000),
 				},
@@ -92,72 +86,58 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"enable_logging_getop": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP GET Operation logging").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"enable_logging_setop": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP SET Operation logging").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"enable_informs": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP Informs").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"enable_traps": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable SNMP Traps").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"enable_traps_snmp_authentication": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable authentication trap").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"enable_traps_snmp_coldstart": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable coldStart trap").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"enable_traps_snmp_linkdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable linkDown trap").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"enable_traps_snmp_linkup": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable linkUp trap").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"enable_traps_snmp_warmstart": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable warmStart trap").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_informs_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("GigabitEthernet IEEE 802.3z").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_informs_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ten Gigabit Ethernet").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_informs_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Forty GigabitEthernet ").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_informs_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Hundred GigabitEthernet").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_informs_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 2147483647),
 				},
@@ -165,7 +145,6 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"source_interface_informs_port_channel": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ethernet Channel of interfaces").AddIntegerRangeDescription(0, 4294967295).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 4294967295),
 				},
@@ -173,12 +152,10 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"source_interface_informs_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_informs_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Iosxr Vlans").AddIntegerRangeDescription(0, 65535).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 65535),
 				},
@@ -186,27 +163,22 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"source_interface_traps_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("GigabitEthernet IEEE 802.3z").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_traps_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ten Gigabit Ethernet").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_traps_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Forty GigabitEthernet ").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_traps_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Hundred GigabitEthernet").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_traps_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 2147483647),
 				},
@@ -214,7 +186,6 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"source_interface_traps_port_channel": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ethernet Channel of interfaces").AddIntegerRangeDescription(0, 4294967295).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 4294967295),
 				},
@@ -222,12 +193,10 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"source_interface_traps_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_traps_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Iosxr Vlans").AddIntegerRangeDescription(0, 65535).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 65535),
 				},
@@ -235,27 +204,22 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"trap_source_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("GigabitEthernet IEEE 802.3z").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trap_source_ten_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ten Gigabit Ethernet").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trap_source_forty_gigabit_ethernet": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Forty GigabitEthernet ").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trap_source_hundred_gig_e": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Hundred GigabitEthernet").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trap_source_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 2147483647),
 				},
@@ -263,7 +227,6 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"trap_source_port_channel": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ethernet Channel of interfaces").AddIntegerRangeDescription(0, 4294967295).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 4294967295),
 				},
@@ -271,12 +234,10 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 			"trap_source_port_channel_subinterface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trap_source_vlan": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Iosxr Vlans").AddIntegerRangeDescription(0, 65535).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 65535),
 				},
@@ -289,12 +250,10 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"view": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Restrict this community to a named MIB view").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.LengthBetween(1, 214),
 							},
@@ -302,7 +261,6 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"permission": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("ro", "rw").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf("ro", "rw"),
 							},
@@ -310,7 +268,6 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"ipv6": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.LengthBetween(1, 219),
 							},
@@ -318,7 +275,6 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"access_list_name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -331,7 +287,6 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -344,17 +299,14 @@ func (r *SNMPServerResource) Schema(ctx context.Context, req resource.SchemaRequ
 						"name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"mib": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"inc_exl": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("excluded", "included").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf("excluded", "included"),
 							},
@@ -408,8 +360,6 @@ func (r *SNMPServerResource) Create(ctx context.Context, req resource.CreateRequ
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -477,8 +427,6 @@ func (r *SNMPServerResource) Update(ctx context.Context, req resource.UpdateRequ
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

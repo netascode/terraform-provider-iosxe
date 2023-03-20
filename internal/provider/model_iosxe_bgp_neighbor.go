@@ -67,27 +67,31 @@ func (data *BGPNeighbor) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "id"); value.Exists() {
+	if value := res.Get(prefix + "id"); value.Exists() && !data.Ip.IsNull() {
 		data.Ip = types.StringValue(value.String())
 	} else {
 		data.Ip = types.StringNull()
 	}
-	if value := res.Get(prefix + "remote-as"); value.Exists() {
+	if value := res.Get(prefix + "remote-as"); value.Exists() && !data.RemoteAs.IsNull() {
 		data.RemoteAs = types.StringValue(value.String())
 	} else {
 		data.RemoteAs = types.StringNull()
 	}
-	if value := res.Get(prefix + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() && !data.Description.IsNull() {
 		data.Description = types.StringValue(value.String())
 	} else {
 		data.Description = types.StringNull()
 	}
-	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown = types.BoolValue(true)
+	if value := res.Get(prefix + "shutdown"); !data.Shutdown.IsNull() {
+		if value.Exists() {
+			data.Shutdown = types.BoolValue(true)
+		} else {
+			data.Shutdown = types.BoolValue(false)
+		}
 	} else {
-		data.Shutdown = types.BoolValue(false)
+		data.Shutdown = types.BoolNull()
 	}
-	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() && !data.UpdateSourceLoopback.IsNull() {
 		data.UpdateSourceLoopback = types.StringValue(value.String())
 	} else {
 		data.UpdateSourceLoopback = types.StringNull()
@@ -112,33 +116,6 @@ func (data *BGPNeighbor) fromBody(ctx context.Context, res gjson.Result) {
 	}
 	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
 		data.UpdateSourceLoopback = types.StringValue(value.String())
-	}
-}
-
-func (data *BGPNeighbor) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Asn.IsUnknown() {
-		data.Asn = types.StringNull()
-	}
-	if data.Ip.IsUnknown() {
-		data.Ip = types.StringNull()
-	}
-	if data.RemoteAs.IsUnknown() {
-		data.RemoteAs = types.StringNull()
-	}
-	if data.Description.IsUnknown() {
-		data.Description = types.StringNull()
-	}
-	if data.Shutdown.IsUnknown() {
-		data.Shutdown = types.BoolNull()
-	}
-	if data.UpdateSourceLoopback.IsUnknown() {
-		data.UpdateSourceLoopback = types.StringNull()
 	}
 }
 

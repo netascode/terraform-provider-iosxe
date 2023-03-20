@@ -91,7 +91,7 @@ func (data *LoggingIPv6HostTransport) updateFromBody(ctx context.Context, res gj
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "ipv6-host"); value.Exists() {
+	if value := res.Get(prefix + "ipv6-host"); value.Exists() && !data.Ipv6Host.IsNull() {
 		data.Ipv6Host = types.StringValue(value.String())
 	} else {
 		data.Ipv6Host = types.StringNull()
@@ -119,7 +119,7 @@ func (data *LoggingIPv6HostTransport) updateFromBody(ctx context.Context, res gj
 				return true
 			},
 		)
-		if value := r.Get("port-number"); value.Exists() {
+		if value := r.Get("port-number"); value.Exists() && !data.TransportUdpPorts[i].PortNumber.IsNull() {
 			data.TransportUdpPorts[i].PortNumber = types.Int64Value(value.Int())
 		} else {
 			data.TransportUdpPorts[i].PortNumber = types.Int64Null()
@@ -148,7 +148,7 @@ func (data *LoggingIPv6HostTransport) updateFromBody(ctx context.Context, res gj
 				return true
 			},
 		)
-		if value := r.Get("port-number"); value.Exists() {
+		if value := r.Get("port-number"); value.Exists() && !data.TransportTcpPorts[i].PortNumber.IsNull() {
 			data.TransportTcpPorts[i].PortNumber = types.Int64Value(value.Int())
 		} else {
 			data.TransportTcpPorts[i].PortNumber = types.Int64Null()
@@ -177,12 +177,12 @@ func (data *LoggingIPv6HostTransport) updateFromBody(ctx context.Context, res gj
 				return true
 			},
 		)
-		if value := r.Get("port-number"); value.Exists() {
+		if value := r.Get("port-number"); value.Exists() && !data.TransportTlsPorts[i].PortNumber.IsNull() {
 			data.TransportTlsPorts[i].PortNumber = types.Int64Value(value.Int())
 		} else {
 			data.TransportTlsPorts[i].PortNumber = types.Int64Null()
 		}
-		if value := r.Get("profile"); value.Exists() {
+		if value := r.Get("profile"); value.Exists() && !data.TransportTlsPorts[i].Profile.IsNull() {
 			data.TransportTlsPorts[i].Profile = types.StringValue(value.String())
 		} else {
 			data.TransportTlsPorts[i].Profile = types.StringNull()
@@ -230,36 +230,6 @@ func (data *LoggingIPv6HostTransport) fromBody(ctx context.Context, res gjson.Re
 			data.TransportTlsPorts = append(data.TransportTlsPorts, item)
 			return true
 		})
-	}
-}
-
-func (data *LoggingIPv6HostTransport) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Ipv6Host.IsUnknown() {
-		data.Ipv6Host = types.StringNull()
-	}
-	for i := range data.TransportUdpPorts {
-		if data.TransportUdpPorts[i].PortNumber.IsUnknown() {
-			data.TransportUdpPorts[i].PortNumber = types.Int64Null()
-		}
-	}
-	for i := range data.TransportTcpPorts {
-		if data.TransportTcpPorts[i].PortNumber.IsUnknown() {
-			data.TransportTcpPorts[i].PortNumber = types.Int64Null()
-		}
-	}
-	for i := range data.TransportTlsPorts {
-		if data.TransportTlsPorts[i].PortNumber.IsUnknown() {
-			data.TransportTlsPorts[i].PortNumber = types.Int64Null()
-		}
-		if data.TransportTlsPorts[i].Profile.IsUnknown() {
-			data.TransportTlsPorts[i].Profile = types.StringNull()
-		}
 	}
 }
 

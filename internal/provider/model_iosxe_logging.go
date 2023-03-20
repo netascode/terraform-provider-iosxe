@@ -184,82 +184,86 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "monitor-config.common-config.monitor.severity"); value.Exists() {
+	if value := res.Get(prefix + "monitor-config.common-config.monitor.severity"); value.Exists() && !data.MonitorSeverity.IsNull() {
 		data.MonitorSeverity = types.StringValue(value.String())
 	} else {
 		data.MonitorSeverity = types.StringNull()
 	}
-	if value := res.Get(prefix + "buffered.size-value"); value.Exists() {
+	if value := res.Get(prefix + "buffered.size-value"); value.Exists() && !data.BufferedSize.IsNull() {
 		data.BufferedSize = types.Int64Value(value.Int())
 	} else {
 		data.BufferedSize = types.Int64Null()
 	}
-	if value := res.Get(prefix + "buffered.severity-level"); value.Exists() {
+	if value := res.Get(prefix + "buffered.severity-level"); value.Exists() && !data.BufferedSeverity.IsNull() {
 		data.BufferedSeverity = types.StringValue(value.String())
 	} else {
 		data.BufferedSeverity = types.StringNull()
 	}
-	if value := res.Get(prefix + "console-config.common-config.console.severity"); value.Exists() {
+	if value := res.Get(prefix + "console-config.common-config.console.severity"); value.Exists() && !data.ConsoleSeverity.IsNull() {
 		data.ConsoleSeverity = types.StringValue(value.String())
 	} else {
 		data.ConsoleSeverity = types.StringNull()
 	}
-	if value := res.Get(prefix + "facility"); value.Exists() {
+	if value := res.Get(prefix + "facility"); value.Exists() && !data.Facility.IsNull() {
 		data.Facility = types.StringValue(value.String())
 	} else {
 		data.Facility = types.StringNull()
 	}
-	if value := res.Get(prefix + "history.size"); value.Exists() {
+	if value := res.Get(prefix + "history.size"); value.Exists() && !data.HistorySize.IsNull() {
 		data.HistorySize = types.Int64Value(value.Int())
 	} else {
 		data.HistorySize = types.Int64Null()
 	}
-	if value := res.Get(prefix + "history.severity-level"); value.Exists() {
+	if value := res.Get(prefix + "history.severity-level"); value.Exists() && !data.HistorySeverity.IsNull() {
 		data.HistorySeverity = types.StringValue(value.String())
 	} else {
 		data.HistorySeverity = types.StringNull()
 	}
-	if value := res.Get(prefix + "trap"); value.Exists() {
-		data.Trap = types.BoolValue(true)
+	if value := res.Get(prefix + "trap"); !data.Trap.IsNull() {
+		if value.Exists() {
+			data.Trap = types.BoolValue(true)
+		} else {
+			data.Trap = types.BoolValue(false)
+		}
 	} else {
-		data.Trap = types.BoolValue(false)
+		data.Trap = types.BoolNull()
 	}
-	if value := res.Get(prefix + "trap.severity"); value.Exists() {
+	if value := res.Get(prefix + "trap.severity"); value.Exists() && !data.TrapSeverity.IsNull() {
 		data.TrapSeverity = types.StringValue(value.String())
 	} else {
 		data.TrapSeverity = types.StringNull()
 	}
-	if value := res.Get(prefix + "origin-id.type-value"); value.Exists() {
+	if value := res.Get(prefix + "origin-id.type-value"); value.Exists() && !data.OriginIdType.IsNull() {
 		data.OriginIdType = types.StringValue(value.String())
 	} else {
 		data.OriginIdType = types.StringNull()
 	}
-	if value := res.Get(prefix + "origin-id.string"); value.Exists() {
+	if value := res.Get(prefix + "origin-id.string"); value.Exists() && !data.OriginIdName.IsNull() {
 		data.OriginIdName = types.StringValue(value.String())
 	} else {
 		data.OriginIdName = types.StringNull()
 	}
-	if value := res.Get(prefix + "file.name"); value.Exists() {
+	if value := res.Get(prefix + "file.name"); value.Exists() && !data.FileName.IsNull() {
 		data.FileName = types.StringValue(value.String())
 	} else {
 		data.FileName = types.StringNull()
 	}
-	if value := res.Get(prefix + "file.max-size"); value.Exists() {
+	if value := res.Get(prefix + "file.max-size"); value.Exists() && !data.FileMaxSize.IsNull() {
 		data.FileMaxSize = types.Int64Value(value.Int())
 	} else {
 		data.FileMaxSize = types.Int64Null()
 	}
-	if value := res.Get(prefix + "file.min-size"); value.Exists() {
+	if value := res.Get(prefix + "file.min-size"); value.Exists() && !data.FileMinSize.IsNull() {
 		data.FileMinSize = types.Int64Value(value.Int())
 	} else {
 		data.FileMinSize = types.Int64Null()
 	}
-	if value := res.Get(prefix + "file.severity"); value.Exists() {
+	if value := res.Get(prefix + "file.severity"); value.Exists() && !data.FileSeverity.IsNull() {
 		data.FileSeverity = types.StringValue(value.String())
 	} else {
 		data.FileSeverity = types.StringNull()
 	}
-	if value := res.Get(prefix + "source-interface-conf.interface-name-non-vrf"); value.Exists() {
+	if value := res.Get(prefix + "source-interface-conf.interface-name-non-vrf"); value.Exists() && !data.SourceInterface.IsNull() {
 		data.SourceInterface = types.StringValue(value.String())
 	} else {
 		data.SourceInterface = types.StringNull()
@@ -287,12 +291,12 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("vrf"); value.Exists() {
+		if value := r.Get("vrf"); value.Exists() && !data.SourceInterfacesVrf[i].Vrf.IsNull() {
 			data.SourceInterfacesVrf[i].Vrf = types.StringValue(value.String())
 		} else {
 			data.SourceInterfacesVrf[i].Vrf = types.StringNull()
 		}
-		if value := r.Get("interface-name"); value.Exists() {
+		if value := r.Get("interface-name"); value.Exists() && !data.SourceInterfacesVrf[i].InterfaceName.IsNull() {
 			data.SourceInterfacesVrf[i].InterfaceName = types.StringValue(value.String())
 		} else {
 			data.SourceInterfacesVrf[i].InterfaceName = types.StringNull()
@@ -321,7 +325,7 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("ipv4-host"); value.Exists() {
+		if value := r.Get("ipv4-host"); value.Exists() && !data.Ipv4Hosts[i].Ipv4Host.IsNull() {
 			data.Ipv4Hosts[i].Ipv4Host = types.StringValue(value.String())
 		} else {
 			data.Ipv4Hosts[i].Ipv4Host = types.StringNull()
@@ -350,12 +354,12 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("ipv4-host"); value.Exists() {
+		if value := r.Get("ipv4-host"); value.Exists() && !data.Ipv4VrfHosts[i].Ipv4Host.IsNull() {
 			data.Ipv4VrfHosts[i].Ipv4Host = types.StringValue(value.String())
 		} else {
 			data.Ipv4VrfHosts[i].Ipv4Host = types.StringNull()
 		}
-		if value := r.Get("vrf"); value.Exists() {
+		if value := r.Get("vrf"); value.Exists() && !data.Ipv4VrfHosts[i].Vrf.IsNull() {
 			data.Ipv4VrfHosts[i].Vrf = types.StringValue(value.String())
 		} else {
 			data.Ipv4VrfHosts[i].Vrf = types.StringNull()
@@ -384,7 +388,7 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("ipv6-host"); value.Exists() {
+		if value := r.Get("ipv6-host"); value.Exists() && !data.Ipv6Hosts[i].Ipv6Host.IsNull() {
 			data.Ipv6Hosts[i].Ipv6Host = types.StringValue(value.String())
 		} else {
 			data.Ipv6Hosts[i].Ipv6Host = types.StringNull()
@@ -413,12 +417,12 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("ipv6-host"); value.Exists() {
+		if value := r.Get("ipv6-host"); value.Exists() && !data.Ipv6VrfHosts[i].Ipv6Host.IsNull() {
 			data.Ipv6VrfHosts[i].Ipv6Host = types.StringValue(value.String())
 		} else {
 			data.Ipv6VrfHosts[i].Ipv6Host = types.StringNull()
 		}
-		if value := r.Get("vrf"); value.Exists() {
+		if value := r.Get("vrf"); value.Exists() && !data.Ipv6VrfHosts[i].Vrf.IsNull() {
 			data.Ipv6VrfHosts[i].Vrf = types.StringValue(value.String())
 		} else {
 			data.Ipv6VrfHosts[i].Vrf = types.StringNull()
@@ -544,97 +548,6 @@ func (data *Logging) fromBody(ctx context.Context, res gjson.Result) {
 			data.Ipv6VrfHosts = append(data.Ipv6VrfHosts, item)
 			return true
 		})
-	}
-}
-
-func (data *Logging) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.MonitorSeverity.IsUnknown() {
-		data.MonitorSeverity = types.StringNull()
-	}
-	if data.BufferedSize.IsUnknown() {
-		data.BufferedSize = types.Int64Null()
-	}
-	if data.BufferedSeverity.IsUnknown() {
-		data.BufferedSeverity = types.StringNull()
-	}
-	if data.ConsoleSeverity.IsUnknown() {
-		data.ConsoleSeverity = types.StringNull()
-	}
-	if data.Facility.IsUnknown() {
-		data.Facility = types.StringNull()
-	}
-	if data.HistorySize.IsUnknown() {
-		data.HistorySize = types.Int64Null()
-	}
-	if data.HistorySeverity.IsUnknown() {
-		data.HistorySeverity = types.StringNull()
-	}
-	if data.Trap.IsUnknown() {
-		data.Trap = types.BoolNull()
-	}
-	if data.TrapSeverity.IsUnknown() {
-		data.TrapSeverity = types.StringNull()
-	}
-	if data.OriginIdType.IsUnknown() {
-		data.OriginIdType = types.StringNull()
-	}
-	if data.OriginIdName.IsUnknown() {
-		data.OriginIdName = types.StringNull()
-	}
-	if data.FileName.IsUnknown() {
-		data.FileName = types.StringNull()
-	}
-	if data.FileMaxSize.IsUnknown() {
-		data.FileMaxSize = types.Int64Null()
-	}
-	if data.FileMinSize.IsUnknown() {
-		data.FileMinSize = types.Int64Null()
-	}
-	if data.FileSeverity.IsUnknown() {
-		data.FileSeverity = types.StringNull()
-	}
-	if data.SourceInterface.IsUnknown() {
-		data.SourceInterface = types.StringNull()
-	}
-	for i := range data.SourceInterfacesVrf {
-		if data.SourceInterfacesVrf[i].Vrf.IsUnknown() {
-			data.SourceInterfacesVrf[i].Vrf = types.StringNull()
-		}
-		if data.SourceInterfacesVrf[i].InterfaceName.IsUnknown() {
-			data.SourceInterfacesVrf[i].InterfaceName = types.StringNull()
-		}
-	}
-	for i := range data.Ipv4Hosts {
-		if data.Ipv4Hosts[i].Ipv4Host.IsUnknown() {
-			data.Ipv4Hosts[i].Ipv4Host = types.StringNull()
-		}
-	}
-	for i := range data.Ipv4VrfHosts {
-		if data.Ipv4VrfHosts[i].Ipv4Host.IsUnknown() {
-			data.Ipv4VrfHosts[i].Ipv4Host = types.StringNull()
-		}
-		if data.Ipv4VrfHosts[i].Vrf.IsUnknown() {
-			data.Ipv4VrfHosts[i].Vrf = types.StringNull()
-		}
-	}
-	for i := range data.Ipv6Hosts {
-		if data.Ipv6Hosts[i].Ipv6Host.IsUnknown() {
-			data.Ipv6Hosts[i].Ipv6Host = types.StringNull()
-		}
-	}
-	for i := range data.Ipv6VrfHosts {
-		if data.Ipv6VrfHosts[i].Ipv6Host.IsUnknown() {
-			data.Ipv6VrfHosts[i].Ipv6Host = types.StringNull()
-		}
-		if data.Ipv6VrfHosts[i].Vrf.IsUnknown() {
-			data.Ipv6VrfHosts[i].Vrf = types.StringNull()
-		}
 	}
 }
 

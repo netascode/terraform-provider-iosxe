@@ -49,7 +49,7 @@ func (data *BGPAddressFamilyL2VPN) updateFromBody(ctx context.Context, res gjson
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "af-name"); value.Exists() {
+	if value := res.Get(prefix + "af-name"); value.Exists() && !data.AfName.IsNull() {
 		data.AfName = types.StringValue(value.String())
 	} else {
 		data.AfName = types.StringNull()
@@ -60,21 +60,6 @@ func (data *BGPAddressFamilyL2VPN) fromBody(ctx context.Context, res gjson.Resul
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
-	}
-}
-
-func (data *BGPAddressFamilyL2VPN) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Asn.IsUnknown() {
-		data.Asn = types.StringNull()
-	}
-	if data.AfName.IsUnknown() {
-		data.AfName = types.StringNull()
 	}
 }
 

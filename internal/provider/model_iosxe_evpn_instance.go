@@ -125,85 +125,117 @@ func (data *EVPNInstance) updateFromBody(ctx context.Context, res gjson.Result) 
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "evpn-instance-num"); value.Exists() {
+	if value := res.Get(prefix + "evpn-instance-num"); value.Exists() && !data.EvpnInstanceNum.IsNull() {
 		data.EvpnInstanceNum = types.Int64Value(value.Int())
 	} else {
 		data.EvpnInstanceNum = types.Int64Null()
 	}
-	if value := res.Get(prefix + "vlan-based.replication-type.ingress"); value.Exists() {
-		data.VlanBasedReplicationTypeIngress = types.BoolValue(true)
+	if value := res.Get(prefix + "vlan-based.replication-type.ingress"); !data.VlanBasedReplicationTypeIngress.IsNull() {
+		if value.Exists() {
+			data.VlanBasedReplicationTypeIngress = types.BoolValue(true)
+		} else {
+			data.VlanBasedReplicationTypeIngress = types.BoolValue(false)
+		}
 	} else {
-		data.VlanBasedReplicationTypeIngress = types.BoolValue(false)
+		data.VlanBasedReplicationTypeIngress = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vlan-based.replication-type.static"); value.Exists() {
-		data.VlanBasedReplicationTypeStatic = types.BoolValue(true)
+	if value := res.Get(prefix + "vlan-based.replication-type.static"); !data.VlanBasedReplicationTypeStatic.IsNull() {
+		if value.Exists() {
+			data.VlanBasedReplicationTypeStatic = types.BoolValue(true)
+		} else {
+			data.VlanBasedReplicationTypeStatic = types.BoolValue(false)
+		}
 	} else {
-		data.VlanBasedReplicationTypeStatic = types.BoolValue(false)
+		data.VlanBasedReplicationTypeStatic = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vlan-based.replication-type.p2mp"); value.Exists() {
-		data.VlanBasedReplicationTypeP2mp = types.BoolValue(true)
+	if value := res.Get(prefix + "vlan-based.replication-type.p2mp"); !data.VlanBasedReplicationTypeP2mp.IsNull() {
+		if value.Exists() {
+			data.VlanBasedReplicationTypeP2mp = types.BoolValue(true)
+		} else {
+			data.VlanBasedReplicationTypeP2mp = types.BoolValue(false)
+		}
 	} else {
-		data.VlanBasedReplicationTypeP2mp = types.BoolValue(false)
+		data.VlanBasedReplicationTypeP2mp = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vlan-based.replication-type.mp2mp"); value.Exists() {
-		data.VlanBasedReplicationTypeMp2mp = types.BoolValue(true)
+	if value := res.Get(prefix + "vlan-based.replication-type.mp2mp"); !data.VlanBasedReplicationTypeMp2mp.IsNull() {
+		if value.Exists() {
+			data.VlanBasedReplicationTypeMp2mp = types.BoolValue(true)
+		} else {
+			data.VlanBasedReplicationTypeMp2mp = types.BoolValue(false)
+		}
 	} else {
-		data.VlanBasedReplicationTypeMp2mp = types.BoolValue(false)
+		data.VlanBasedReplicationTypeMp2mp = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vlan-based.encapsulation"); value.Exists() {
+	if value := res.Get(prefix + "vlan-based.encapsulation"); value.Exists() && !data.VlanBasedEncapsulation.IsNull() {
 		data.VlanBasedEncapsulation = types.StringValue(value.String())
 	} else {
 		data.VlanBasedEncapsulation = types.StringNull()
 	}
-	if value := res.Get(prefix + "vlan-based.auto-route-target_cont.auto-route-target"); value.Exists() {
-		data.VlanBasedAutoRouteTarget = types.BoolValue(true)
+	if value := res.Get(prefix + "vlan-based.auto-route-target_cont.auto-route-target"); !data.VlanBasedAutoRouteTarget.IsNull() {
+		if value.Exists() {
+			data.VlanBasedAutoRouteTarget = types.BoolValue(true)
+		} else {
+			data.VlanBasedAutoRouteTarget = types.BoolValue(false)
+		}
 	} else {
-		data.VlanBasedAutoRouteTarget = types.BoolValue(false)
+		data.VlanBasedAutoRouteTarget = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vlan-based.rd.rd-value"); value.Exists() {
+	if value := res.Get(prefix + "vlan-based.rd.rd-value"); value.Exists() && !data.VlanBasedRd.IsNull() {
 		data.VlanBasedRd = types.StringValue(value.String())
 	} else {
 		data.VlanBasedRd = types.StringNull()
 	}
-	if value := res.Get(prefix + "vlan-based.route-target.rt-value"); value.Exists() {
+	if value := res.Get(prefix + "vlan-based.route-target.rt-value"); value.Exists() && !data.VlanBasedRouteTarget.IsNull() {
 		data.VlanBasedRouteTarget = types.StringValue(value.String())
 	} else {
 		data.VlanBasedRouteTarget = types.StringNull()
 	}
-	if value := res.Get(prefix + "vlan-based.route-target.both.rt-value"); value.Exists() {
+	if value := res.Get(prefix + "vlan-based.route-target.both.rt-value"); value.Exists() && !data.VlanBasedRouteTargetBoth.IsNull() {
 		data.VlanBasedRouteTargetBoth = types.StringValue(value.String())
 	} else {
 		data.VlanBasedRouteTargetBoth = types.StringNull()
 	}
-	if value := res.Get(prefix + "vlan-based.route-target.import.rt-value"); value.Exists() {
+	if value := res.Get(prefix + "vlan-based.route-target.import.rt-value"); value.Exists() && !data.VlanBasedRouteTargetImport.IsNull() {
 		data.VlanBasedRouteTargetImport = types.StringValue(value.String())
 	} else {
 		data.VlanBasedRouteTargetImport = types.StringNull()
 	}
-	if value := res.Get(prefix + "vlan-based.route-target.export.rt-value"); value.Exists() {
+	if value := res.Get(prefix + "vlan-based.route-target.export.rt-value"); value.Exists() && !data.VlanBasedRouteTargetExport.IsNull() {
 		data.VlanBasedRouteTargetExport = types.StringValue(value.String())
 	} else {
 		data.VlanBasedRouteTargetExport = types.StringNull()
 	}
-	if value := res.Get(prefix + "vlan-based.ip.local-learning.disable"); value.Exists() {
-		data.VlanBasedIpLocalLearningDisable = types.BoolValue(true)
+	if value := res.Get(prefix + "vlan-based.ip.local-learning.disable"); !data.VlanBasedIpLocalLearningDisable.IsNull() {
+		if value.Exists() {
+			data.VlanBasedIpLocalLearningDisable = types.BoolValue(true)
+		} else {
+			data.VlanBasedIpLocalLearningDisable = types.BoolValue(false)
+		}
 	} else {
-		data.VlanBasedIpLocalLearningDisable = types.BoolValue(false)
+		data.VlanBasedIpLocalLearningDisable = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vlan-based.ip.local-learning.enable"); value.Exists() {
-		data.VlanBasedIpLocalLearningEnable = types.BoolValue(true)
+	if value := res.Get(prefix + "vlan-based.ip.local-learning.enable"); !data.VlanBasedIpLocalLearningEnable.IsNull() {
+		if value.Exists() {
+			data.VlanBasedIpLocalLearningEnable = types.BoolValue(true)
+		} else {
+			data.VlanBasedIpLocalLearningEnable = types.BoolValue(false)
+		}
 	} else {
-		data.VlanBasedIpLocalLearningEnable = types.BoolValue(false)
+		data.VlanBasedIpLocalLearningEnable = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vlan-based.default-gateway.advertise"); value.Exists() {
+	if value := res.Get(prefix + "vlan-based.default-gateway.advertise"); value.Exists() && !data.VlanBasedDefaultGatewayAdvertise.IsNull() {
 		data.VlanBasedDefaultGatewayAdvertise = types.StringValue(value.String())
 	} else {
 		data.VlanBasedDefaultGatewayAdvertise = types.StringNull()
 	}
-	if value := res.Get(prefix + "vlan-based.re-originate.route-type5"); value.Exists() {
-		data.VlanBasedReOriginateRouteType5 = types.BoolValue(true)
+	if value := res.Get(prefix + "vlan-based.re-originate.route-type5"); !data.VlanBasedReOriginateRouteType5.IsNull() {
+		if value.Exists() {
+			data.VlanBasedReOriginateRouteType5 = types.BoolValue(true)
+		} else {
+			data.VlanBasedReOriginateRouteType5 = types.BoolValue(false)
+		}
 	} else {
-		data.VlanBasedReOriginateRouteType5 = types.BoolValue(false)
+		data.VlanBasedReOriginateRouteType5 = types.BoolNull()
 	}
 }
 
@@ -272,63 +304,6 @@ func (data *EVPNInstance) fromBody(ctx context.Context, res gjson.Result) {
 		data.VlanBasedReOriginateRouteType5 = types.BoolValue(true)
 	} else {
 		data.VlanBasedReOriginateRouteType5 = types.BoolValue(false)
-	}
-}
-
-func (data *EVPNInstance) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.EvpnInstanceNum.IsUnknown() {
-		data.EvpnInstanceNum = types.Int64Null()
-	}
-	if data.VlanBasedReplicationTypeIngress.IsUnknown() {
-		data.VlanBasedReplicationTypeIngress = types.BoolNull()
-	}
-	if data.VlanBasedReplicationTypeStatic.IsUnknown() {
-		data.VlanBasedReplicationTypeStatic = types.BoolNull()
-	}
-	if data.VlanBasedReplicationTypeP2mp.IsUnknown() {
-		data.VlanBasedReplicationTypeP2mp = types.BoolNull()
-	}
-	if data.VlanBasedReplicationTypeMp2mp.IsUnknown() {
-		data.VlanBasedReplicationTypeMp2mp = types.BoolNull()
-	}
-	if data.VlanBasedEncapsulation.IsUnknown() {
-		data.VlanBasedEncapsulation = types.StringNull()
-	}
-	if data.VlanBasedAutoRouteTarget.IsUnknown() {
-		data.VlanBasedAutoRouteTarget = types.BoolNull()
-	}
-	if data.VlanBasedRd.IsUnknown() {
-		data.VlanBasedRd = types.StringNull()
-	}
-	if data.VlanBasedRouteTarget.IsUnknown() {
-		data.VlanBasedRouteTarget = types.StringNull()
-	}
-	if data.VlanBasedRouteTargetBoth.IsUnknown() {
-		data.VlanBasedRouteTargetBoth = types.StringNull()
-	}
-	if data.VlanBasedRouteTargetImport.IsUnknown() {
-		data.VlanBasedRouteTargetImport = types.StringNull()
-	}
-	if data.VlanBasedRouteTargetExport.IsUnknown() {
-		data.VlanBasedRouteTargetExport = types.StringNull()
-	}
-	if data.VlanBasedIpLocalLearningDisable.IsUnknown() {
-		data.VlanBasedIpLocalLearningDisable = types.BoolNull()
-	}
-	if data.VlanBasedIpLocalLearningEnable.IsUnknown() {
-		data.VlanBasedIpLocalLearningEnable = types.BoolNull()
-	}
-	if data.VlanBasedDefaultGatewayAdvertise.IsUnknown() {
-		data.VlanBasedDefaultGatewayAdvertise = types.StringNull()
-	}
-	if data.VlanBasedReOriginateRouteType5.IsUnknown() {
-		data.VlanBasedReOriginateRouteType5 = types.BoolNull()
 	}
 }
 

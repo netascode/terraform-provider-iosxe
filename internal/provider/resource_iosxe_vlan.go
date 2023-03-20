@@ -67,32 +67,26 @@ func (r *VLANResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"remote_span": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure as Remote SPAN VLAN").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"private_vlan_primary": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure the VLAN as a primary private VLAN").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"private_vlan_association": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure association between private VLANs").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"private_vlan_community": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure the VLAN as a community private VLAN").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"private_vlan_isolated": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure the VLAN as an isolated private VLAN").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ascii name of the VLAN").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 128),
 				},
@@ -100,7 +94,6 @@ func (r *VLANResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown VLAN switching").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -148,8 +141,6 @@ func (r *VLANResource) Create(ctx context.Context, req resource.CreateRequest, r
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -217,8 +208,6 @@ func (r *VLANResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

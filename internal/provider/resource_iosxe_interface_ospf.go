@@ -77,7 +77,6 @@ func (r *InterfaceOSPFResource) Schema(ctx context.Context, req resource.SchemaR
 			"cost": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Route cost of this interface").AddIntegerRangeDescription(1, 65535).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 65535),
 				},
@@ -85,7 +84,6 @@ func (r *InterfaceOSPFResource) Schema(ctx context.Context, req resource.SchemaR
 			"dead_interval": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Interval after which a neighbor is declared dead").AddIntegerRangeDescription(1, 65535).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 65535),
 				},
@@ -93,7 +91,6 @@ func (r *InterfaceOSPFResource) Schema(ctx context.Context, req resource.SchemaR
 			"hello_interval": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Time between HELLO packets").AddIntegerRangeDescription(1, 65535).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 65535),
 				},
@@ -101,32 +98,26 @@ func (r *InterfaceOSPFResource) Schema(ctx context.Context, req resource.SchemaR
 			"mtu_ignore": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ignores the MTU in DBD packets").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"network_type_broadcast": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify OSPF broadcast multi-access network").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"network_type_non_broadcast": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify OSPF NBMA network").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"network_type_point_to_multipoint": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify OSPF point-to-multipoint network").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"network_type_point_to_point": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify OSPF point-to-point network").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"priority": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Router priority").AddIntegerRangeDescription(0, 255).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 255),
 				},
@@ -177,8 +168,6 @@ func (r *InterfaceOSPFResource) Create(ctx context.Context, req resource.CreateR
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -246,8 +235,6 @@ func (r *InterfaceOSPFResource) Update(ctx context.Context, req resource.UpdateR
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

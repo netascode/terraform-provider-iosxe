@@ -91,55 +91,67 @@ func (data *InterfaceLoopback) updateFromBody(ctx context.Context, res gjson.Res
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() && !data.Name.IsNull() {
 		data.Name = types.Int64Value(value.Int())
 	} else {
 		data.Name = types.Int64Null()
 	}
-	if value := res.Get(prefix + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() && !data.Description.IsNull() {
 		data.Description = types.StringValue(value.String())
 	} else {
 		data.Description = types.StringNull()
 	}
-	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown = types.BoolValue(true)
+	if value := res.Get(prefix + "shutdown"); !data.Shutdown.IsNull() {
+		if value.Exists() {
+			data.Shutdown = types.BoolValue(true)
+		} else {
+			data.Shutdown = types.BoolValue(false)
+		}
 	} else {
-		data.Shutdown = types.BoolValue(false)
+		data.Shutdown = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vrf.forwarding"); value.Exists() {
+	if value := res.Get(prefix + "vrf.forwarding"); value.Exists() && !data.VrfForwarding.IsNull() {
 		data.VrfForwarding = types.StringValue(value.String())
 	} else {
 		data.VrfForwarding = types.StringNull()
 	}
-	if value := res.Get(prefix + "ip.address.primary.address"); value.Exists() {
+	if value := res.Get(prefix + "ip.address.primary.address"); value.Exists() && !data.Ipv4Address.IsNull() {
 		data.Ipv4Address = types.StringValue(value.String())
 	} else {
 		data.Ipv4Address = types.StringNull()
 	}
-	if value := res.Get(prefix + "ip.address.primary.mask"); value.Exists() {
+	if value := res.Get(prefix + "ip.address.primary.mask"); value.Exists() && !data.Ipv4AddressMask.IsNull() {
 		data.Ipv4AddressMask = types.StringValue(value.String())
 	} else {
 		data.Ipv4AddressMask = types.StringNull()
 	}
-	if value := res.Get(prefix + "ip.access-group.in.acl.acl-name"); value.Exists() {
+	if value := res.Get(prefix + "ip.access-group.in.acl.acl-name"); value.Exists() && !data.IpAccessGroupIn.IsNull() {
 		data.IpAccessGroupIn = types.StringValue(value.String())
 	} else {
 		data.IpAccessGroupIn = types.StringNull()
 	}
-	if value := res.Get(prefix + "ip.access-group.in.acl.in"); value.Exists() {
-		data.IpAccessGroupInEnable = types.BoolValue(true)
+	if value := res.Get(prefix + "ip.access-group.in.acl.in"); !data.IpAccessGroupInEnable.IsNull() {
+		if value.Exists() {
+			data.IpAccessGroupInEnable = types.BoolValue(true)
+		} else {
+			data.IpAccessGroupInEnable = types.BoolValue(false)
+		}
 	} else {
-		data.IpAccessGroupInEnable = types.BoolValue(false)
+		data.IpAccessGroupInEnable = types.BoolNull()
 	}
-	if value := res.Get(prefix + "ip.access-group.out.acl.acl-name"); value.Exists() {
+	if value := res.Get(prefix + "ip.access-group.out.acl.acl-name"); value.Exists() && !data.IpAccessGroupOut.IsNull() {
 		data.IpAccessGroupOut = types.StringValue(value.String())
 	} else {
 		data.IpAccessGroupOut = types.StringNull()
 	}
-	if value := res.Get(prefix + "ip.access-group.out.acl.out"); value.Exists() {
-		data.IpAccessGroupOutEnable = types.BoolValue(true)
+	if value := res.Get(prefix + "ip.access-group.out.acl.out"); !data.IpAccessGroupOutEnable.IsNull() {
+		if value.Exists() {
+			data.IpAccessGroupOutEnable = types.BoolValue(true)
+		} else {
+			data.IpAccessGroupOutEnable = types.BoolValue(false)
+		}
 	} else {
-		data.IpAccessGroupOutEnable = types.BoolValue(false)
+		data.IpAccessGroupOutEnable = types.BoolNull()
 	}
 }
 
@@ -180,45 +192,6 @@ func (data *InterfaceLoopback) fromBody(ctx context.Context, res gjson.Result) {
 		data.IpAccessGroupOutEnable = types.BoolValue(true)
 	} else {
 		data.IpAccessGroupOutEnable = types.BoolValue(false)
-	}
-}
-
-func (data *InterfaceLoopback) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.Int64Null()
-	}
-	if data.Description.IsUnknown() {
-		data.Description = types.StringNull()
-	}
-	if data.Shutdown.IsUnknown() {
-		data.Shutdown = types.BoolNull()
-	}
-	if data.VrfForwarding.IsUnknown() {
-		data.VrfForwarding = types.StringNull()
-	}
-	if data.Ipv4Address.IsUnknown() {
-		data.Ipv4Address = types.StringNull()
-	}
-	if data.Ipv4AddressMask.IsUnknown() {
-		data.Ipv4AddressMask = types.StringNull()
-	}
-	if data.IpAccessGroupIn.IsUnknown() {
-		data.IpAccessGroupIn = types.StringNull()
-	}
-	if data.IpAccessGroupInEnable.IsUnknown() {
-		data.IpAccessGroupInEnable = types.BoolNull()
-	}
-	if data.IpAccessGroupOut.IsUnknown() {
-		data.IpAccessGroupOut = types.StringNull()
-	}
-	if data.IpAccessGroupOutEnable.IsUnknown() {
-		data.IpAccessGroupOutEnable = types.BoolNull()
 	}
 }
 

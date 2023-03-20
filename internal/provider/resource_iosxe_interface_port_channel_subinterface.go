@@ -67,7 +67,6 @@ func (r *InterfacePortChannelSubinterfaceResource) Schema(ctx context.Context, r
 			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(0, 200),
 					stringvalidator.RegexMatches(regexp.MustCompile(`.*`), ""),
@@ -76,17 +75,14 @@ func (r *InterfacePortChannelSubinterfaceResource) Schema(ctx context.Context, r
 			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vrf_forwarding": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure forwarding table").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ipv4_address": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
@@ -94,7 +90,6 @@ func (r *InterfacePortChannelSubinterfaceResource) Schema(ctx context.Context, r
 			"ipv4_address_mask": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
@@ -102,7 +97,6 @@ func (r *InterfacePortChannelSubinterfaceResource) Schema(ctx context.Context, r
 			"encapsulation_dot1q_vlan_id": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 4094),
 				},
@@ -110,12 +104,10 @@ func (r *InterfacePortChannelSubinterfaceResource) Schema(ctx context.Context, r
 			"ip_access_group_in": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ip_access_group_in_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").AddDefaultValueDescription("true").String,
 				Optional:            true,
-				Computed:            true,
 				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},
@@ -123,12 +115,10 @@ func (r *InterfacePortChannelSubinterfaceResource) Schema(ctx context.Context, r
 			"ip_access_group_out": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ip_access_group_out_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").AddDefaultValueDescription("true").String,
 				Optional:            true,
-				Computed:            true,
 				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},
@@ -141,7 +131,6 @@ func (r *InterfacePortChannelSubinterfaceResource) Schema(ctx context.Context, r
 						"address": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -149,12 +138,10 @@ func (r *InterfacePortChannelSubinterfaceResource) Schema(ctx context.Context, r
 						"global": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Helper-address is global").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VRF name for helper-address (if different from interface VRF)").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -205,8 +192,6 @@ func (r *InterfacePortChannelSubinterfaceResource) Create(ctx context.Context, r
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -274,8 +259,6 @@ func (r *InterfacePortChannelSubinterfaceResource) Update(ctx context.Context, r
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

@@ -109,27 +109,35 @@ func (data *InterfaceNVE) updateFromBody(ctx context.Context, res gjson.Result) 
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() && !data.Name.IsNull() {
 		data.Name = types.Int64Value(value.Int())
 	} else {
 		data.Name = types.Int64Null()
 	}
-	if value := res.Get(prefix + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() && !data.Description.IsNull() {
 		data.Description = types.StringValue(value.String())
 	} else {
 		data.Description = types.StringNull()
 	}
-	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown = types.BoolValue(true)
+	if value := res.Get(prefix + "shutdown"); !data.Shutdown.IsNull() {
+		if value.Exists() {
+			data.Shutdown = types.BoolValue(true)
+		} else {
+			data.Shutdown = types.BoolValue(false)
+		}
 	} else {
-		data.Shutdown = types.BoolValue(false)
+		data.Shutdown = types.BoolNull()
 	}
-	if value := res.Get(prefix + "host-reachability.protocol.bgp"); value.Exists() {
-		data.HostReachabilityProtocolBgp = types.BoolValue(true)
+	if value := res.Get(prefix + "host-reachability.protocol.bgp"); !data.HostReachabilityProtocolBgp.IsNull() {
+		if value.Exists() {
+			data.HostReachabilityProtocolBgp = types.BoolValue(true)
+		} else {
+			data.HostReachabilityProtocolBgp = types.BoolValue(false)
+		}
 	} else {
-		data.HostReachabilityProtocolBgp = types.BoolValue(false)
+		data.HostReachabilityProtocolBgp = types.BoolNull()
 	}
-	if value := res.Get(prefix + "source-interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "source-interface.Loopback"); value.Exists() && !data.SourceInterfaceLoopback.IsNull() {
 		data.SourceInterfaceLoopback = types.Int64Value(value.Int())
 	} else {
 		data.SourceInterfaceLoopback = types.Int64Null()
@@ -157,12 +165,12 @@ func (data *InterfaceNVE) updateFromBody(ctx context.Context, res gjson.Result) 
 				return true
 			},
 		)
-		if value := r.Get("vni-range"); value.Exists() {
+		if value := r.Get("vni-range"); value.Exists() && !data.VniVrfs[i].VniRange.IsNull() {
 			data.VniVrfs[i].VniRange = types.StringValue(value.String())
 		} else {
 			data.VniVrfs[i].VniRange = types.StringNull()
 		}
-		if value := r.Get("vrf"); value.Exists() {
+		if value := r.Get("vrf"); value.Exists() && !data.VniVrfs[i].Vrf.IsNull() {
 			data.VniVrfs[i].Vrf = types.StringValue(value.String())
 		} else {
 			data.VniVrfs[i].Vrf = types.StringNull()
@@ -191,20 +199,24 @@ func (data *InterfaceNVE) updateFromBody(ctx context.Context, res gjson.Result) 
 				return true
 			},
 		)
-		if value := r.Get("vni-range"); value.Exists() {
+		if value := r.Get("vni-range"); value.Exists() && !data.Vnis[i].VniRange.IsNull() {
 			data.Vnis[i].VniRange = types.StringValue(value.String())
 		} else {
 			data.Vnis[i].VniRange = types.StringNull()
 		}
-		if value := r.Get("mcast-group.multicast-group-min"); value.Exists() {
+		if value := r.Get("mcast-group.multicast-group-min"); value.Exists() && !data.Vnis[i].Ipv4MulticastGroup.IsNull() {
 			data.Vnis[i].Ipv4MulticastGroup = types.StringValue(value.String())
 		} else {
 			data.Vnis[i].Ipv4MulticastGroup = types.StringNull()
 		}
-		if value := r.Get("ir-cp-config.ingress-replication"); value.Exists() {
-			data.Vnis[i].IngressReplication = types.BoolValue(true)
+		if value := r.Get("ir-cp-config.ingress-replication"); !data.Vnis[i].IngressReplication.IsNull() {
+			if value.Exists() {
+				data.Vnis[i].IngressReplication = types.BoolValue(true)
+			} else {
+				data.Vnis[i].IngressReplication = types.BoolValue(false)
+			}
 		} else {
-			data.Vnis[i].IngressReplication = types.BoolValue(false)
+			data.Vnis[i].IngressReplication = types.BoolNull()
 		}
 	}
 }
@@ -262,49 +274,6 @@ func (data *InterfaceNVE) fromBody(ctx context.Context, res gjson.Result) {
 			data.Vnis = append(data.Vnis, item)
 			return true
 		})
-	}
-}
-
-func (data *InterfaceNVE) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.Int64Null()
-	}
-	if data.Description.IsUnknown() {
-		data.Description = types.StringNull()
-	}
-	if data.Shutdown.IsUnknown() {
-		data.Shutdown = types.BoolNull()
-	}
-	if data.HostReachabilityProtocolBgp.IsUnknown() {
-		data.HostReachabilityProtocolBgp = types.BoolNull()
-	}
-	if data.SourceInterfaceLoopback.IsUnknown() {
-		data.SourceInterfaceLoopback = types.Int64Null()
-	}
-	for i := range data.VniVrfs {
-		if data.VniVrfs[i].VniRange.IsUnknown() {
-			data.VniVrfs[i].VniRange = types.StringNull()
-		}
-		if data.VniVrfs[i].Vrf.IsUnknown() {
-			data.VniVrfs[i].Vrf = types.StringNull()
-		}
-	}
-	for i := range data.Vnis {
-		if data.Vnis[i].VniRange.IsUnknown() {
-			data.Vnis[i].VniRange = types.StringNull()
-		}
-		if data.Vnis[i].Ipv4MulticastGroup.IsUnknown() {
-			data.Vnis[i].Ipv4MulticastGroup = types.StringNull()
-		}
-		if data.Vnis[i].IngressReplication.IsUnknown() {
-			data.Vnis[i].IngressReplication = types.BoolNull()
-		}
 	}
 }
 

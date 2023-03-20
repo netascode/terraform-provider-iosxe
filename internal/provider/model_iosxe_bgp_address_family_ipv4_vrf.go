@@ -82,7 +82,7 @@ func (data *BGPAddressFamilyIPv4VRF) updateFromBody(ctx context.Context, res gjs
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "af-name"); value.Exists() {
+	if value := res.Get(prefix + "af-name"); value.Exists() && !data.AfName.IsNull() {
 		data.AfName = types.StringValue(value.String())
 	} else {
 		data.AfName = types.StringNull()
@@ -110,25 +110,37 @@ func (data *BGPAddressFamilyIPv4VRF) updateFromBody(ctx context.Context, res gjs
 				return true
 			},
 		)
-		if value := r.Get("name"); value.Exists() {
+		if value := r.Get("name"); value.Exists() && !data.Vrfs[i].Name.IsNull() {
 			data.Vrfs[i].Name = types.StringValue(value.String())
 		} else {
 			data.Vrfs[i].Name = types.StringNull()
 		}
-		if value := r.Get("ipv4-unicast.advertise.l2vpn.evpn"); value.Exists() {
-			data.Vrfs[i].AdvertiseL2vpnEvpn = types.BoolValue(true)
+		if value := r.Get("ipv4-unicast.advertise.l2vpn.evpn"); !data.Vrfs[i].AdvertiseL2vpnEvpn.IsNull() {
+			if value.Exists() {
+				data.Vrfs[i].AdvertiseL2vpnEvpn = types.BoolValue(true)
+			} else {
+				data.Vrfs[i].AdvertiseL2vpnEvpn = types.BoolValue(false)
+			}
 		} else {
-			data.Vrfs[i].AdvertiseL2vpnEvpn = types.BoolValue(false)
+			data.Vrfs[i].AdvertiseL2vpnEvpn = types.BoolNull()
 		}
-		if value := r.Get("ipv4-unicast.redistribute-vrf.connected"); value.Exists() {
-			data.Vrfs[i].RedistributeConnected = types.BoolValue(true)
+		if value := r.Get("ipv4-unicast.redistribute-vrf.connected"); !data.Vrfs[i].RedistributeConnected.IsNull() {
+			if value.Exists() {
+				data.Vrfs[i].RedistributeConnected = types.BoolValue(true)
+			} else {
+				data.Vrfs[i].RedistributeConnected = types.BoolValue(false)
+			}
 		} else {
-			data.Vrfs[i].RedistributeConnected = types.BoolValue(false)
+			data.Vrfs[i].RedistributeConnected = types.BoolNull()
 		}
-		if value := r.Get("ipv4-unicast.redistribute-vrf.static"); value.Exists() {
-			data.Vrfs[i].RedistributeStatic = types.BoolValue(true)
+		if value := r.Get("ipv4-unicast.redistribute-vrf.static"); !data.Vrfs[i].RedistributeStatic.IsNull() {
+			if value.Exists() {
+				data.Vrfs[i].RedistributeStatic = types.BoolValue(true)
+			} else {
+				data.Vrfs[i].RedistributeStatic = types.BoolValue(false)
+			}
 		} else {
-			data.Vrfs[i].RedistributeStatic = types.BoolValue(false)
+			data.Vrfs[i].RedistributeStatic = types.BoolNull()
 		}
 	}
 }
@@ -163,35 +175,6 @@ func (data *BGPAddressFamilyIPv4VRF) fromBody(ctx context.Context, res gjson.Res
 			data.Vrfs = append(data.Vrfs, item)
 			return true
 		})
-	}
-}
-
-func (data *BGPAddressFamilyIPv4VRF) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Asn.IsUnknown() {
-		data.Asn = types.StringNull()
-	}
-	if data.AfName.IsUnknown() {
-		data.AfName = types.StringNull()
-	}
-	for i := range data.Vrfs {
-		if data.Vrfs[i].Name.IsUnknown() {
-			data.Vrfs[i].Name = types.StringNull()
-		}
-		if data.Vrfs[i].AdvertiseL2vpnEvpn.IsUnknown() {
-			data.Vrfs[i].AdvertiseL2vpnEvpn = types.BoolNull()
-		}
-		if data.Vrfs[i].RedistributeConnected.IsUnknown() {
-			data.Vrfs[i].RedistributeConnected = types.BoolNull()
-		}
-		if data.Vrfs[i].RedistributeStatic.IsUnknown() {
-			data.Vrfs[i].RedistributeStatic = types.BoolNull()
-		}
 	}
 }
 

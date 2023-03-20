@@ -140,80 +140,118 @@ func (data *System) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "hostname"); value.Exists() {
+	if value := res.Get(prefix + "hostname"); value.Exists() && !data.Hostname.IsNull() {
 		data.Hostname = types.StringValue(value.String())
 	} else {
 		data.Hostname = types.StringNull()
 	}
-	if value := res.Get(prefix + "ip.routing-conf.routing"); value.Exists() {
-		data.IpRouting = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "ip.routing-conf.routing"); !data.IpRouting.IsNull() {
+		if value.Exists() {
+			data.IpRouting = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.IpRouting = types.BoolValue(false)
+		data.IpRouting = types.BoolNull()
 	}
-	if value := res.Get(prefix + "ipv6.unicast-routing"); value.Exists() {
-		data.Ipv6UnicastRouting = types.BoolValue(true)
+	if value := res.Get(prefix + "ipv6.unicast-routing"); !data.Ipv6UnicastRouting.IsNull() {
+		if value.Exists() {
+			data.Ipv6UnicastRouting = types.BoolValue(true)
+		} else {
+			data.Ipv6UnicastRouting = types.BoolValue(false)
+		}
 	} else {
-		data.Ipv6UnicastRouting = types.BoolValue(false)
+		data.Ipv6UnicastRouting = types.BoolNull()
 	}
-	if value := res.Get(prefix + "system.Cisco-IOS-XE-switch:mtu.size"); value.Exists() {
+	if value := res.Get(prefix + "system.Cisco-IOS-XE-switch:mtu.size"); value.Exists() && !data.Mtu.IsNull() {
 		data.Mtu = types.Int64Value(value.Int())
 	} else {
 		data.Mtu = types.Int64Null()
 	}
-	if value := res.Get(prefix + "ip.source-route"); value.Exists() {
-		data.IpSourceRoute = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "ip.source-route"); !data.IpSourceRoute.IsNull() {
+		if value.Exists() {
+			data.IpSourceRoute = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.IpSourceRoute = types.BoolValue(false)
+		data.IpSourceRoute = types.BoolNull()
 	}
-	if value := res.Get(prefix + "ip.domain.lookup"); value.Exists() {
-		data.IpDomainLookup = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "ip.domain.lookup"); !data.IpDomainLookup.IsNull() {
+		if value.Exists() {
+			data.IpDomainLookup = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.IpDomainLookup = types.BoolValue(false)
+		data.IpDomainLookup = types.BoolNull()
 	}
-	if value := res.Get(prefix + "ip.domain.name"); value.Exists() {
+	if value := res.Get(prefix + "ip.domain.name"); value.Exists() && !data.IpDomainName.IsNull() {
 		data.IpDomainName = types.StringValue(value.String())
 	} else {
 		data.IpDomainName = types.StringNull()
 	}
-	if value := res.Get(prefix + "login.delay"); value.Exists() {
+	if value := res.Get(prefix + "login.delay"); value.Exists() && !data.LoginDelay.IsNull() {
 		data.LoginDelay = types.Int64Value(value.Int())
 	} else {
 		data.LoginDelay = types.Int64Null()
 	}
-	if value := res.Get(prefix + "login.on-failure"); value.Exists() {
-		data.LoginOnFailure = types.BoolValue(true)
+	if value := res.Get(prefix + "login.on-failure"); !data.LoginOnFailure.IsNull() {
+		if value.Exists() {
+			data.LoginOnFailure = types.BoolValue(true)
+		} else {
+			data.LoginOnFailure = types.BoolValue(false)
+		}
 	} else {
-		data.LoginOnFailure = types.BoolValue(false)
+		data.LoginOnFailure = types.BoolNull()
 	}
-	if value := res.Get(prefix + "login.on-failure.log"); value.Exists() {
-		data.LoginOnFailureLog = types.BoolValue(true)
+	if value := res.Get(prefix + "login.on-failure.log"); !data.LoginOnFailureLog.IsNull() {
+		if value.Exists() {
+			data.LoginOnFailureLog = types.BoolValue(true)
+		} else {
+			data.LoginOnFailureLog = types.BoolValue(false)
+		}
 	} else {
-		data.LoginOnFailureLog = types.BoolValue(false)
+		data.LoginOnFailureLog = types.BoolNull()
 	}
-	if value := res.Get(prefix + "login.on-success"); value.Exists() {
-		data.LoginOnSuccess = types.BoolValue(true)
+	if value := res.Get(prefix + "login.on-success"); !data.LoginOnSuccess.IsNull() {
+		if value.Exists() {
+			data.LoginOnSuccess = types.BoolValue(true)
+		} else {
+			data.LoginOnSuccess = types.BoolValue(false)
+		}
 	} else {
-		data.LoginOnSuccess = types.BoolValue(false)
+		data.LoginOnSuccess = types.BoolNull()
 	}
-	if value := res.Get(prefix + "login.on-success.log"); value.Exists() {
-		data.LoginOnSuccessLog = types.BoolValue(true)
+	if value := res.Get(prefix + "login.on-success.log"); !data.LoginOnSuccessLog.IsNull() {
+		if value.Exists() {
+			data.LoginOnSuccessLog = types.BoolValue(true)
+		} else {
+			data.LoginOnSuccessLog = types.BoolValue(false)
+		}
 	} else {
-		data.LoginOnSuccessLog = types.BoolValue(false)
+		data.LoginOnSuccessLog = types.BoolNull()
 	}
-	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing"); value.Exists() {
-		data.MulticastRouting = types.BoolValue(true)
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing"); !data.MulticastRouting.IsNull() {
+		if value.Exists() {
+			data.MulticastRouting = types.BoolValue(true)
+		} else {
+			data.MulticastRouting = types.BoolValue(false)
+		}
 	} else {
-		data.MulticastRouting = types.BoolValue(false)
+		data.MulticastRouting = types.BoolNull()
 	}
-	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:mcr-conf.multicast-routing"); value.Exists() {
-		data.MulticastRoutingSwitch = types.BoolValue(true)
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:mcr-conf.multicast-routing"); !data.MulticastRoutingSwitch.IsNull() {
+		if value.Exists() {
+			data.MulticastRoutingSwitch = types.BoolValue(true)
+		} else {
+			data.MulticastRoutingSwitch = types.BoolValue(false)
+		}
 	} else {
-		data.MulticastRoutingSwitch = types.BoolValue(false)
+		data.MulticastRoutingSwitch = types.BoolNull()
 	}
-	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing.distributed"); value.Exists() {
-		data.MulticastRoutingDistributed = types.BoolValue(true)
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-multicast:multicast-routing.distributed"); !data.MulticastRoutingDistributed.IsNull() {
+		if value.Exists() {
+			data.MulticastRoutingDistributed = types.BoolValue(true)
+		} else {
+			data.MulticastRoutingDistributed = types.BoolValue(false)
+		}
 	} else {
-		data.MulticastRoutingDistributed = types.BoolValue(false)
+		data.MulticastRoutingDistributed = types.BoolNull()
 	}
 	for i := range data.MulticastRoutingVrfs {
 		keys := [...]string{"name"}
@@ -238,15 +276,19 @@ func (data *System) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("name"); value.Exists() {
+		if value := r.Get("name"); value.Exists() && !data.MulticastRoutingVrfs[i].Vrf.IsNull() {
 			data.MulticastRoutingVrfs[i].Vrf = types.StringValue(value.String())
 		} else {
 			data.MulticastRoutingVrfs[i].Vrf = types.StringNull()
 		}
-		if value := r.Get("distributed"); value.Exists() {
-			data.MulticastRoutingVrfs[i].Distributed = types.BoolValue(true)
+		if value := r.Get("distributed"); !data.MulticastRoutingVrfs[i].Distributed.IsNull() {
+			if value.Exists() {
+				data.MulticastRoutingVrfs[i].Distributed = types.BoolValue(true)
+			} else {
+				data.MulticastRoutingVrfs[i].Distributed = types.BoolValue(false)
+			}
 		} else {
-			data.MulticastRoutingVrfs[i].Distributed = types.BoolValue(false)
+			data.MulticastRoutingVrfs[i].Distributed = types.BoolNull()
 		}
 	}
 }
@@ -338,68 +380,6 @@ func (data *System) fromBody(ctx context.Context, res gjson.Result) {
 			data.MulticastRoutingVrfs = append(data.MulticastRoutingVrfs, item)
 			return true
 		})
-	}
-}
-
-func (data *System) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Hostname.IsUnknown() {
-		data.Hostname = types.StringNull()
-	}
-	if data.IpRouting.IsUnknown() {
-		data.IpRouting = types.BoolNull()
-	}
-	if data.Ipv6UnicastRouting.IsUnknown() {
-		data.Ipv6UnicastRouting = types.BoolNull()
-	}
-	if data.Mtu.IsUnknown() {
-		data.Mtu = types.Int64Null()
-	}
-	if data.IpSourceRoute.IsUnknown() {
-		data.IpSourceRoute = types.BoolNull()
-	}
-	if data.IpDomainLookup.IsUnknown() {
-		data.IpDomainLookup = types.BoolNull()
-	}
-	if data.IpDomainName.IsUnknown() {
-		data.IpDomainName = types.StringNull()
-	}
-	if data.LoginDelay.IsUnknown() {
-		data.LoginDelay = types.Int64Null()
-	}
-	if data.LoginOnFailure.IsUnknown() {
-		data.LoginOnFailure = types.BoolNull()
-	}
-	if data.LoginOnFailureLog.IsUnknown() {
-		data.LoginOnFailureLog = types.BoolNull()
-	}
-	if data.LoginOnSuccess.IsUnknown() {
-		data.LoginOnSuccess = types.BoolNull()
-	}
-	if data.LoginOnSuccessLog.IsUnknown() {
-		data.LoginOnSuccessLog = types.BoolNull()
-	}
-	if data.MulticastRouting.IsUnknown() {
-		data.MulticastRouting = types.BoolNull()
-	}
-	if data.MulticastRoutingSwitch.IsUnknown() {
-		data.MulticastRoutingSwitch = types.BoolNull()
-	}
-	if data.MulticastRoutingDistributed.IsUnknown() {
-		data.MulticastRoutingDistributed = types.BoolNull()
-	}
-	for i := range data.MulticastRoutingVrfs {
-		if data.MulticastRoutingVrfs[i].Vrf.IsUnknown() {
-			data.MulticastRoutingVrfs[i].Vrf = types.StringNull()
-		}
-		if data.MulticastRoutingVrfs[i].Distributed.IsUnknown() {
-			data.MulticastRoutingVrfs[i].Distributed = types.BoolNull()
-		}
 	}
 }
 

@@ -73,37 +73,37 @@ func (data *Username) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() && !data.Name.IsNull() {
 		data.Name = types.StringValue(value.String())
 	} else {
 		data.Name = types.StringNull()
 	}
-	if value := res.Get(prefix + "privilege"); value.Exists() {
+	if value := res.Get(prefix + "privilege"); value.Exists() && !data.Privilege.IsNull() {
 		data.Privilege = types.Int64Value(value.Int())
 	} else {
 		data.Privilege = types.Int64Null()
 	}
-	if value := res.Get(prefix + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() && !data.Description.IsNull() {
 		data.Description = types.StringValue(value.String())
 	} else {
 		data.Description = types.StringNull()
 	}
-	if value := res.Get(prefix + "password.encryption"); value.Exists() {
+	if value := res.Get(prefix + "password.encryption"); value.Exists() && !data.PasswordEncryption.IsNull() {
 		data.PasswordEncryption = types.StringValue(value.String())
 	} else {
 		data.PasswordEncryption = types.StringNull()
 	}
-	if value := res.Get(prefix + "password.password"); value.Exists() {
+	if value := res.Get(prefix + "password.password"); value.Exists() && !data.Password.IsNull() {
 		data.Password = types.StringValue(value.String())
 	} else {
 		data.Password = types.StringNull()
 	}
-	if value := res.Get(prefix + "secret.encryption"); value.Exists() {
+	if value := res.Get(prefix + "secret.encryption"); value.Exists() && !data.SecretEncryption.IsNull() {
 		data.SecretEncryption = types.StringValue(value.String())
 	} else {
 		data.SecretEncryption = types.StringNull()
 	}
-	if value := res.Get(prefix + "secret.secret"); value.Exists() {
+	if value := res.Get(prefix + "secret.secret"); value.Exists() && !data.Secret.IsNull() {
 		data.Secret = types.StringValue(value.String())
 	} else {
 		data.Secret = types.StringNull()
@@ -132,36 +132,6 @@ func (data *Username) fromBody(ctx context.Context, res gjson.Result) {
 	}
 	if value := res.Get(prefix + "secret.secret"); value.Exists() {
 		data.Secret = types.StringValue(value.String())
-	}
-}
-
-func (data *Username) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	if data.Privilege.IsUnknown() {
-		data.Privilege = types.Int64Null()
-	}
-	if data.Description.IsUnknown() {
-		data.Description = types.StringNull()
-	}
-	if data.PasswordEncryption.IsUnknown() {
-		data.PasswordEncryption = types.StringNull()
-	}
-	if data.Password.IsUnknown() {
-		data.Password = types.StringNull()
-	}
-	if data.SecretEncryption.IsUnknown() {
-		data.SecretEncryption = types.StringNull()
-	}
-	if data.Secret.IsUnknown() {
-		data.Secret = types.StringNull()
 	}
 }
 

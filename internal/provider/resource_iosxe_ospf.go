@@ -68,22 +68,18 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"bfd_all_interfaces": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable BFD on all interfaces").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"default_information_originate": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Distribute a default route").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"default_information_originate_always": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Always advertise default route").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"default_metric": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set metric of redistributed routes").AddIntegerRangeDescription(1, 16777214).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 16777214),
 				},
@@ -91,7 +87,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"distance": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Administrative distance").AddIntegerRangeDescription(1, 255).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 255),
 				},
@@ -99,7 +94,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"domain_tag": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("OSPF domain-tag").AddIntegerRangeDescription(1, 4294967295).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 4294967295),
 				},
@@ -107,12 +101,10 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"mpls_ldp_autoconfig": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure LDP automatic configuration").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"mpls_ldp_sync": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure LDP-IGP Synchronization").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"neighbor": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify a neighbor router").String,
@@ -122,7 +114,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"ip": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Neighbor address").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -130,7 +121,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"priority": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("OSPF priority of non-broadcast neighbor").AddIntegerRangeDescription(0, 255).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(0, 255),
 							},
@@ -138,7 +128,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"cost": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("OSPF cost for point-to-multipoint neighbor").AddIntegerRangeDescription(1, 65535).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 65535),
 							},
@@ -154,7 +143,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"ip": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Network number").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -162,7 +150,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"wildcard": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("OSPF wild card bits").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -170,7 +157,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"area": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Set the OSPF area ID").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -178,7 +164,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"priority": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("OSPF topology priority").AddIntegerRangeDescription(0, 127).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 127),
 				},
@@ -186,7 +171,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"router_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Override configured router identifier (peers will reset)").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
@@ -194,7 +178,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the OSPF protocol under the current instance").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"summary_address": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure IP address summaries").String,
@@ -204,7 +187,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"ip": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("IP summary address").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -212,7 +194,6 @@ func (r *OSPFResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 						"mask": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Summary mask").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -266,8 +247,6 @@ func (r *OSPFResource) Create(ctx context.Context, req resource.CreateRequest, r
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -335,8 +314,6 @@ func (r *OSPFResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

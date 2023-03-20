@@ -64,17 +64,14 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"autorp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure AutoRP global operations").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"autorp_listener": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Allow AutoRP packets across sparse mode interface").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"bsr_candidate_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 2147483647),
 				},
@@ -82,7 +79,6 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"bsr_candidate_mask": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Hash Mask length for RP selection").AddIntegerRangeDescription(0, 32).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 32),
 				},
@@ -90,7 +86,6 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"bsr_candidate_priority": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Priority value for candidate bootstrap router").AddIntegerRangeDescription(0, 255).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 255),
 				},
@@ -98,22 +93,18 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"bsr_candidate_accept_rp_candidate": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("BSR RP candidate filter").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ssm_range": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ACL for group range to be used for SSM").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ssm_default": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use 232/8 group range for SSM").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"rp_address": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("IP address of Rendezvous-point for group").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
@@ -121,12 +112,10 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"rp_address_override": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Overrides dynamically learnt RP mappings").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"rp_address_bidir": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"rp_addresses": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("PIM RP-address (Rendezvous Point)").String,
@@ -136,12 +125,10 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 						"access_list": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("IP Access-list").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"rp_address": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("IP address of Rendezvous-point for group").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -149,12 +136,10 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 						"override": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Overrides dynamically learnt RP mappings").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"bidir": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -167,17 +152,14 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 						"interface": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Autonomic-Networking virtual interface").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"group_list": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("IP Access list").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"interval": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("RP candidate advertisement interval").AddIntegerRangeDescription(1, 16383).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 16383),
 							},
@@ -185,7 +167,6 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 						"priority": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("RP candidate priority").AddIntegerRangeDescription(0, 255).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(0, 255),
 							},
@@ -193,7 +174,6 @@ func (r *PIMVRFResource) Schema(ctx context.Context, req resource.SchemaRequest,
 						"bidir": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Group range treated in bidirectional shared-tree mode").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -244,8 +224,6 @@ func (r *PIMVRFResource) Create(ctx context.Context, req resource.CreateRequest,
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -313,8 +291,6 @@ func (r *PIMVRFResource) Update(ctx context.Context, req resource.UpdateRequest,
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

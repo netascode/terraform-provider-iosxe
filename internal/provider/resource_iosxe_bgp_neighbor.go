@@ -67,22 +67,18 @@ func (r *BGPNeighborResource) Schema(ctx context.Context, req resource.SchemaReq
 			"remote_as": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify a BGP peer-group remote-as").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Neighbor specific description").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Administratively shut down this neighbor").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"update_source_loopback": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -130,8 +126,6 @@ func (r *BGPNeighborResource) Create(ctx context.Context, req resource.CreateReq
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -199,8 +193,6 @@ func (r *BGPNeighborResource) Update(ctx context.Context, req resource.UpdateReq
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

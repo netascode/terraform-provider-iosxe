@@ -67,27 +67,22 @@ func (r *EVPNInstanceResource) Schema(ctx context.Context, req resource.SchemaRe
 			"vlan_based_replication_type_ingress": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ingress replication").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_replication_type_static": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Static replication").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_replication_type_p2mp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("p2mp replication").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_replication_type_mp2mp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("mp2mp replication").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_encapsulation": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Data encapsulation method").AddStringEnumDescription("mpls", "vxlan").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("mpls", "vxlan"),
 				},
@@ -95,47 +90,38 @@ func (r *EVPNInstanceResource) Schema(ctx context.Context, req resource.SchemaRe
 			"vlan_based_auto_route_target": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Automatically set a route-target").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_rd": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_route_target": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_route_target_both": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_route_target_import": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_route_target_export": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_ip_local_learning_disable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Disable IP local learning from dataplane").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_ip_local_learning_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP local learning from dataplane").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vlan_based_default_gateway_advertise": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Advertise Default Gateway MAC/IP routes").AddStringEnumDescription("disable", "enable").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("disable", "enable"),
 				},
@@ -143,7 +129,6 @@ func (r *EVPNInstanceResource) Schema(ctx context.Context, req resource.SchemaRe
 			"vlan_based_re_originate_route_type5": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Re-originate route-type 5").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -191,8 +176,6 @@ func (r *EVPNInstanceResource) Create(ctx context.Context, req resource.CreateRe
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -260,8 +243,6 @@ func (r *EVPNInstanceResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

@@ -64,7 +64,6 @@ func (r *UsernameResource) Schema(ctx context.Context, req resource.SchemaReques
 			"privilege": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set user privilege level").AddIntegerRangeDescription(0, 15).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 15),
 				},
@@ -72,12 +71,10 @@ func (r *UsernameResource) Schema(ctx context.Context, req resource.SchemaReques
 			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("description string with max 128 characters").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"password_encryption": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("0", "6", "7").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("0", "6", "7"),
 				},
@@ -85,7 +82,6 @@ func (r *UsernameResource) Schema(ctx context.Context, req resource.SchemaReques
 			"password": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`.*`), ""),
 				},
@@ -93,7 +89,6 @@ func (r *UsernameResource) Schema(ctx context.Context, req resource.SchemaReques
 			"secret_encryption": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("0", "5", "8", "9").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("0", "5", "8", "9"),
 				},
@@ -101,7 +96,6 @@ func (r *UsernameResource) Schema(ctx context.Context, req resource.SchemaReques
 			"secret": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -149,8 +143,6 @@ func (r *UsernameResource) Create(ctx context.Context, req resource.CreateReques
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -218,8 +210,6 @@ func (r *UsernameResource) Update(ctx context.Context, req resource.UpdateReques
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

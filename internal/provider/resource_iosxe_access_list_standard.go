@@ -69,7 +69,6 @@ func (r *AccessListStandardResource) Schema(ctx context.Context, req resource.Sc
 						"sequence": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 2147483647).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 2147483647),
 							},
@@ -77,7 +76,6 @@ func (r *AccessListStandardResource) Schema(ctx context.Context, req resource.Sc
 						"remark": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Access list entry comment").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.LengthBetween(1, 100),
 							},
@@ -85,12 +83,10 @@ func (r *AccessListStandardResource) Schema(ctx context.Context, req resource.Sc
 						"deny_prefix": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Network address prefix (DEPRECATED - use ipv4-address-prefix)").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"deny_prefix_mask": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Wildcard bits").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -98,22 +94,18 @@ func (r *AccessListStandardResource) Schema(ctx context.Context, req resource.Sc
 						"deny_any": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Any source prefix").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"deny_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("A single source host (DEPRECATED - use host-address)").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"permit_prefix": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Network address prefix (DEPRECATED - use ipv4-address-prefix)").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"permit_prefix_mask": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Wildcard bits").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -121,12 +113,10 @@ func (r *AccessListStandardResource) Schema(ctx context.Context, req resource.Sc
 						"permit_any": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Any source prefix").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"permit_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("A single source host (DEPRECATED - use host-address)").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -177,8 +167,6 @@ func (r *AccessListStandardResource) Create(ctx context.Context, req resource.Cr
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -246,8 +234,6 @@ func (r *AccessListStandardResource) Update(ctx context.Context, req resource.Up
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

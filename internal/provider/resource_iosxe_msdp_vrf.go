@@ -62,7 +62,6 @@ func (r *MSDPVRFResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"originator_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure MSDP Originator ID").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"peers": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure an MSDP peer").String,
@@ -72,12 +71,10 @@ func (r *MSDPVRFResource) Schema(ctx context.Context, req resource.SchemaRequest
 						"addr": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"remote_as": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Configured AS number").AddIntegerRangeDescription(1, 65535).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 65535),
 							},
@@ -85,7 +82,6 @@ func (r *MSDPVRFResource) Schema(ctx context.Context, req resource.SchemaRequest
 						"connect_source_loopback": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(0, 2147483647),
 							},
@@ -101,12 +97,10 @@ func (r *MSDPVRFResource) Schema(ctx context.Context, req resource.SchemaRequest
 						"addr": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"encryption": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 7).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(0, 7),
 							},
@@ -164,8 +158,6 @@ func (r *MSDPVRFResource) Create(ctx context.Context, req resource.CreateRequest
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -233,8 +225,6 @@ func (r *MSDPVRFResource) Update(ctx context.Context, req resource.UpdateRequest
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

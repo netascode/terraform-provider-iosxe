@@ -55,27 +55,22 @@ func (r *EVPNResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"replication_type_ingress": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Ingress replication").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"replication_type_static": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Static replication").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"replication_type_p2mp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("p2mp replication").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"replication_type_mp2mp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("mp2mp replication").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"mac_duplication_limit": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Number of MAC moves within specified time interval").AddIntegerRangeDescription(2, 1000).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(2, 1000),
 				},
@@ -83,7 +78,6 @@ func (r *EVPNResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"mac_duplication_time": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("MAC duplication timer").AddIntegerRangeDescription(10, 36000).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(10, 36000),
 				},
@@ -91,7 +85,6 @@ func (r *EVPNResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"ip_duplication_limit": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Number of IP moves within specified time interval").AddIntegerRangeDescription(2, 1000).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(2, 1000),
 				},
@@ -99,7 +92,6 @@ func (r *EVPNResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"ip_duplication_time": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("IP duplication timer").AddIntegerRangeDescription(10, 36000).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(10, 36000),
 				},
@@ -107,7 +99,6 @@ func (r *EVPNResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"router_id_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 2147483647),
 				},
@@ -115,17 +106,14 @@ func (r *EVPNResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"default_gateway_advertise": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Advertise Default Gateway MAC/IP routes").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"logging_peer_state": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Peer state transition logging").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"route_target_auto_vni": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set vni-based route-target").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -173,8 +161,6 @@ func (r *EVPNResource) Create(ctx context.Context, req resource.CreateRequest, r
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -242,8 +228,6 @@ func (r *EVPNResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

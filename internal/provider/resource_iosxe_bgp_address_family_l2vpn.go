@@ -116,8 +116,6 @@ func (r *BGPAddressFamilyL2VPNResource) Create(ctx context.Context, req resource
 		}
 	}
 
-	plan.setUnknownValues(ctx)
-
 	plan.Id = types.StringValue(plan.getPath())
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Create finished successfully", plan.getPath()))
@@ -184,8 +182,6 @@ func (r *BGPAddressFamilyL2VPNResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

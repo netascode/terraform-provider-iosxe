@@ -231,32 +231,40 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() && !data.Name.IsNull() {
 		data.Name = types.StringValue(value.String())
 	} else {
 		data.Name = types.StringNull()
 	}
-	if value := res.Get(prefix + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() && !data.Description.IsNull() {
 		data.Description = types.StringValue(value.String())
 	} else {
 		data.Description = types.StringNull()
 	}
-	if value := res.Get(prefix + "rd"); value.Exists() {
+	if value := res.Get(prefix + "rd"); value.Exists() && !data.Rd.IsNull() {
 		data.Rd = types.StringValue(value.String())
 	} else {
 		data.Rd = types.StringNull()
 	}
-	if value := res.Get(prefix + "address-family.ipv4"); value.Exists() {
-		data.AddressFamilyIpv4 = types.BoolValue(true)
+	if value := res.Get(prefix + "address-family.ipv4"); !data.AddressFamilyIpv4.IsNull() {
+		if value.Exists() {
+			data.AddressFamilyIpv4 = types.BoolValue(true)
+		} else {
+			data.AddressFamilyIpv4 = types.BoolValue(false)
+		}
 	} else {
-		data.AddressFamilyIpv4 = types.BoolValue(false)
+		data.AddressFamilyIpv4 = types.BoolNull()
 	}
-	if value := res.Get(prefix + "address-family.ipv6"); value.Exists() {
-		data.AddressFamilyIpv6 = types.BoolValue(true)
+	if value := res.Get(prefix + "address-family.ipv6"); !data.AddressFamilyIpv6.IsNull() {
+		if value.Exists() {
+			data.AddressFamilyIpv6 = types.BoolValue(true)
+		} else {
+			data.AddressFamilyIpv6 = types.BoolValue(false)
+		}
 	} else {
-		data.AddressFamilyIpv6 = types.BoolValue(false)
+		data.AddressFamilyIpv6 = types.BoolNull()
 	}
-	if value := res.Get(prefix + "vpn.id"); value.Exists() {
+	if value := res.Get(prefix + "vpn.id"); value.Exists() && !data.VpnId.IsNull() {
 		data.VpnId = types.StringValue(value.String())
 	} else {
 		data.VpnId = types.StringNull()
@@ -284,15 +292,19 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.RouteTargetImport[i].Value.IsNull() {
 			data.RouteTargetImport[i].Value = types.StringValue(value.String())
 		} else {
 			data.RouteTargetImport[i].Value = types.StringNull()
 		}
-		if value := r.Get("stitching"); value.Exists() {
-			data.RouteTargetImport[i].Stitching = types.BoolValue(true)
+		if value := r.Get("stitching"); !data.RouteTargetImport[i].Stitching.IsNull() {
+			if value.Exists() {
+				data.RouteTargetImport[i].Stitching = types.BoolValue(true)
+			} else {
+				data.RouteTargetImport[i].Stitching = types.BoolValue(false)
+			}
 		} else {
-			data.RouteTargetImport[i].Stitching = types.BoolValue(false)
+			data.RouteTargetImport[i].Stitching = types.BoolNull()
 		}
 	}
 	for i := range data.RouteTargetExport {
@@ -318,15 +330,19 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.RouteTargetExport[i].Value.IsNull() {
 			data.RouteTargetExport[i].Value = types.StringValue(value.String())
 		} else {
 			data.RouteTargetExport[i].Value = types.StringNull()
 		}
-		if value := r.Get("stitching"); value.Exists() {
-			data.RouteTargetExport[i].Stitching = types.BoolValue(true)
+		if value := r.Get("stitching"); !data.RouteTargetExport[i].Stitching.IsNull() {
+			if value.Exists() {
+				data.RouteTargetExport[i].Stitching = types.BoolValue(true)
+			} else {
+				data.RouteTargetExport[i].Stitching = types.BoolValue(false)
+			}
 		} else {
-			data.RouteTargetExport[i].Stitching = types.BoolValue(false)
+			data.RouteTargetExport[i].Stitching = types.BoolNull()
 		}
 	}
 	for i := range data.Ipv4RouteTargetImport {
@@ -352,7 +368,7 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.Ipv4RouteTargetImport[i].Value.IsNull() {
 			data.Ipv4RouteTargetImport[i].Value = types.StringValue(value.String())
 		} else {
 			data.Ipv4RouteTargetImport[i].Value = types.StringNull()
@@ -381,15 +397,19 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.Ipv4RouteTargetImportStitching[i].Value.IsNull() {
 			data.Ipv4RouteTargetImportStitching[i].Value = types.StringValue(value.String())
 		} else {
 			data.Ipv4RouteTargetImportStitching[i].Value = types.StringNull()
 		}
-		if value := r.Get("stitching"); value.Exists() {
-			data.Ipv4RouteTargetImportStitching[i].Stitching = types.BoolValue(true)
+		if value := r.Get("stitching"); !data.Ipv4RouteTargetImportStitching[i].Stitching.IsNull() {
+			if value.Exists() {
+				data.Ipv4RouteTargetImportStitching[i].Stitching = types.BoolValue(true)
+			} else {
+				data.Ipv4RouteTargetImportStitching[i].Stitching = types.BoolValue(false)
+			}
 		} else {
-			data.Ipv4RouteTargetImportStitching[i].Stitching = types.BoolValue(false)
+			data.Ipv4RouteTargetImportStitching[i].Stitching = types.BoolNull()
 		}
 	}
 	for i := range data.Ipv4RouteTargetExport {
@@ -415,7 +435,7 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.Ipv4RouteTargetExport[i].Value.IsNull() {
 			data.Ipv4RouteTargetExport[i].Value = types.StringValue(value.String())
 		} else {
 			data.Ipv4RouteTargetExport[i].Value = types.StringNull()
@@ -444,15 +464,19 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.Ipv4RouteTargetExportStitching[i].Value.IsNull() {
 			data.Ipv4RouteTargetExportStitching[i].Value = types.StringValue(value.String())
 		} else {
 			data.Ipv4RouteTargetExportStitching[i].Value = types.StringNull()
 		}
-		if value := r.Get("stitching"); value.Exists() {
-			data.Ipv4RouteTargetExportStitching[i].Stitching = types.BoolValue(true)
+		if value := r.Get("stitching"); !data.Ipv4RouteTargetExportStitching[i].Stitching.IsNull() {
+			if value.Exists() {
+				data.Ipv4RouteTargetExportStitching[i].Stitching = types.BoolValue(true)
+			} else {
+				data.Ipv4RouteTargetExportStitching[i].Stitching = types.BoolValue(false)
+			}
 		} else {
-			data.Ipv4RouteTargetExportStitching[i].Stitching = types.BoolValue(false)
+			data.Ipv4RouteTargetExportStitching[i].Stitching = types.BoolNull()
 		}
 	}
 	for i := range data.Ipv6RouteTargetImport {
@@ -478,7 +502,7 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.Ipv6RouteTargetImport[i].Value.IsNull() {
 			data.Ipv6RouteTargetImport[i].Value = types.StringValue(value.String())
 		} else {
 			data.Ipv6RouteTargetImport[i].Value = types.StringNull()
@@ -507,15 +531,19 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.Ipv6RouteTargetImportStitching[i].Value.IsNull() {
 			data.Ipv6RouteTargetImportStitching[i].Value = types.StringValue(value.String())
 		} else {
 			data.Ipv6RouteTargetImportStitching[i].Value = types.StringNull()
 		}
-		if value := r.Get("stitching"); value.Exists() {
-			data.Ipv6RouteTargetImportStitching[i].Stitching = types.BoolValue(true)
+		if value := r.Get("stitching"); !data.Ipv6RouteTargetImportStitching[i].Stitching.IsNull() {
+			if value.Exists() {
+				data.Ipv6RouteTargetImportStitching[i].Stitching = types.BoolValue(true)
+			} else {
+				data.Ipv6RouteTargetImportStitching[i].Stitching = types.BoolValue(false)
+			}
 		} else {
-			data.Ipv6RouteTargetImportStitching[i].Stitching = types.BoolValue(false)
+			data.Ipv6RouteTargetImportStitching[i].Stitching = types.BoolNull()
 		}
 	}
 	for i := range data.Ipv6RouteTargetExport {
@@ -541,7 +569,7 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.Ipv6RouteTargetExport[i].Value.IsNull() {
 			data.Ipv6RouteTargetExport[i].Value = types.StringValue(value.String())
 		} else {
 			data.Ipv6RouteTargetExport[i].Value = types.StringNull()
@@ -570,15 +598,19 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("asn-ip"); value.Exists() {
+		if value := r.Get("asn-ip"); value.Exists() && !data.Ipv6RouteTargetExportStitching[i].Value.IsNull() {
 			data.Ipv6RouteTargetExportStitching[i].Value = types.StringValue(value.String())
 		} else {
 			data.Ipv6RouteTargetExportStitching[i].Value = types.StringNull()
 		}
-		if value := r.Get("stitching"); value.Exists() {
-			data.Ipv6RouteTargetExportStitching[i].Stitching = types.BoolValue(true)
+		if value := r.Get("stitching"); !data.Ipv6RouteTargetExportStitching[i].Stitching.IsNull() {
+			if value.Exists() {
+				data.Ipv6RouteTargetExportStitching[i].Stitching = types.BoolValue(true)
+			} else {
+				data.Ipv6RouteTargetExportStitching[i].Stitching = types.BoolValue(false)
+			}
 		} else {
-			data.Ipv6RouteTargetExportStitching[i].Stitching = types.BoolValue(false)
+			data.Ipv6RouteTargetExportStitching[i].Stitching = types.BoolNull()
 		}
 	}
 }
@@ -746,101 +778,6 @@ func (data *VRF) fromBody(ctx context.Context, res gjson.Result) {
 			data.Ipv6RouteTargetExportStitching = append(data.Ipv6RouteTargetExportStitching, item)
 			return true
 		})
-	}
-}
-
-func (data *VRF) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	if data.Description.IsUnknown() {
-		data.Description = types.StringNull()
-	}
-	if data.Rd.IsUnknown() {
-		data.Rd = types.StringNull()
-	}
-	if data.AddressFamilyIpv4.IsUnknown() {
-		data.AddressFamilyIpv4 = types.BoolNull()
-	}
-	if data.AddressFamilyIpv6.IsUnknown() {
-		data.AddressFamilyIpv6 = types.BoolNull()
-	}
-	if data.VpnId.IsUnknown() {
-		data.VpnId = types.StringNull()
-	}
-	for i := range data.RouteTargetImport {
-		if data.RouteTargetImport[i].Value.IsUnknown() {
-			data.RouteTargetImport[i].Value = types.StringNull()
-		}
-		if data.RouteTargetImport[i].Stitching.IsUnknown() {
-			data.RouteTargetImport[i].Stitching = types.BoolNull()
-		}
-	}
-	for i := range data.RouteTargetExport {
-		if data.RouteTargetExport[i].Value.IsUnknown() {
-			data.RouteTargetExport[i].Value = types.StringNull()
-		}
-		if data.RouteTargetExport[i].Stitching.IsUnknown() {
-			data.RouteTargetExport[i].Stitching = types.BoolNull()
-		}
-	}
-	for i := range data.Ipv4RouteTargetImport {
-		if data.Ipv4RouteTargetImport[i].Value.IsUnknown() {
-			data.Ipv4RouteTargetImport[i].Value = types.StringNull()
-		}
-	}
-	for i := range data.Ipv4RouteTargetImportStitching {
-		if data.Ipv4RouteTargetImportStitching[i].Value.IsUnknown() {
-			data.Ipv4RouteTargetImportStitching[i].Value = types.StringNull()
-		}
-		if data.Ipv4RouteTargetImportStitching[i].Stitching.IsUnknown() {
-			data.Ipv4RouteTargetImportStitching[i].Stitching = types.BoolNull()
-		}
-	}
-	for i := range data.Ipv4RouteTargetExport {
-		if data.Ipv4RouteTargetExport[i].Value.IsUnknown() {
-			data.Ipv4RouteTargetExport[i].Value = types.StringNull()
-		}
-	}
-	for i := range data.Ipv4RouteTargetExportStitching {
-		if data.Ipv4RouteTargetExportStitching[i].Value.IsUnknown() {
-			data.Ipv4RouteTargetExportStitching[i].Value = types.StringNull()
-		}
-		if data.Ipv4RouteTargetExportStitching[i].Stitching.IsUnknown() {
-			data.Ipv4RouteTargetExportStitching[i].Stitching = types.BoolNull()
-		}
-	}
-	for i := range data.Ipv6RouteTargetImport {
-		if data.Ipv6RouteTargetImport[i].Value.IsUnknown() {
-			data.Ipv6RouteTargetImport[i].Value = types.StringNull()
-		}
-	}
-	for i := range data.Ipv6RouteTargetImportStitching {
-		if data.Ipv6RouteTargetImportStitching[i].Value.IsUnknown() {
-			data.Ipv6RouteTargetImportStitching[i].Value = types.StringNull()
-		}
-		if data.Ipv6RouteTargetImportStitching[i].Stitching.IsUnknown() {
-			data.Ipv6RouteTargetImportStitching[i].Stitching = types.BoolNull()
-		}
-	}
-	for i := range data.Ipv6RouteTargetExport {
-		if data.Ipv6RouteTargetExport[i].Value.IsUnknown() {
-			data.Ipv6RouteTargetExport[i].Value = types.StringNull()
-		}
-	}
-	for i := range data.Ipv6RouteTargetExportStitching {
-		if data.Ipv6RouteTargetExportStitching[i].Value.IsUnknown() {
-			data.Ipv6RouteTargetExportStitching[i].Value = types.StringNull()
-		}
-		if data.Ipv6RouteTargetExportStitching[i].Stitching.IsUnknown() {
-			data.Ipv6RouteTargetExportStitching[i].Stitching = types.BoolNull()
-		}
 	}
 }
 

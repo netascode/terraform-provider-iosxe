@@ -77,7 +77,6 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"media_type": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Media type").AddStringEnumDescription("auto-select", "rj45", "sfp").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("auto-select", "rj45", "sfp"),
 				},
@@ -85,12 +84,10 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"switchport": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(0, 200),
 					stringvalidator.RegexMatches(regexp.MustCompile(`.*`), ""),
@@ -99,17 +96,14 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vrf_forwarding": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure forwarding table").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ipv4_address": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
@@ -117,7 +111,6 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"ipv4_address_mask": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 				},
@@ -125,12 +118,10 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"unnumbered": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP processing without an explicit address").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"encapsulation_dot1q_vlan_id": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 4094).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 4094),
 				},
@@ -138,7 +129,6 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"channel_group_number": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 512).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 512),
 				},
@@ -146,7 +136,6 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"channel_group_mode": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Etherchannel Mode of the interface").AddStringEnumDescription("active", "auto", "desirable", "on", "passive").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("active", "auto", "desirable", "on", "passive"),
 				},
@@ -154,17 +143,14 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"ip_dhcp_relay_source_interface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set source interface for relayed messages").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ip_access_group_in": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ip_access_group_in_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("inbound packets").AddDefaultValueDescription("true").String,
 				Optional:            true,
-				Computed:            true,
 				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},
@@ -172,12 +158,10 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 			"ip_access_group_out": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ip_access_group_out_enable": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("outbound packets").AddDefaultValueDescription("true").String,
 				Optional:            true,
-				Computed:            true,
 				PlanModifiers: []planmodifier.Bool{
 					helpers.BooleanDefaultModifier(true),
 				},
@@ -190,7 +174,6 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 						"address": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -198,12 +181,10 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 						"global": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Helper-address is global").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VRF name for helper-address (if different from interface VRF)").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -216,12 +197,10 @@ func (r *InterfaceEthernetResource) Schema(ctx context.Context, req resource.Sch
 						"template_name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"merge": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("merge option of binding").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -272,8 +251,6 @@ func (r *InterfaceEthernetResource) Create(ctx context.Context, req resource.Cre
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -341,8 +318,6 @@ func (r *InterfaceEthernetResource) Update(ctx context.Context, req resource.Upd
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
