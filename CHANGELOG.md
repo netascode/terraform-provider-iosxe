@@ -1,4 +1,4 @@
-## 0.1.13 (unreleased)
+## 0.1.13
 
 - BREAKING CHANGE: Remove default value of `ip_access_group_in_enable` and `ip_access_group_out_enable` attributes of `iosxe_interface_ethernet` resource
 - BREAKING CHANGE: Remove default value of `ip_access_group_in_enable` and `ip_access_group_out_enable` attributes of `iosxe_interface_loopback` resource
