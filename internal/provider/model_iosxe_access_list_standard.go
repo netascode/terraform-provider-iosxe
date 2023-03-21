@@ -276,10 +276,10 @@ func (data *AccessListStandard) getEmptyLeafsDelete(ctx context.Context) []strin
 
 	for i := range data.Entries {
 		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.ValueInt64(), 10)}
-		if !data.Entries[i].DenyAny.ValueBool() {
+		if !data.Entries[i].DenyAny.IsNull() && !data.Entries[i].DenyAny.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/deny-permit/deny/deny/std-ace/source-choice/any-case/any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].PermitAny.ValueBool() {
+		if !data.Entries[i].PermitAny.IsNull() && !data.Entries[i].PermitAny.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/deny-permit/permit/permit/std-ace/source-choice/any-case/any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

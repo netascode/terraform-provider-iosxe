@@ -207,13 +207,16 @@ func (data *InterfaceOSPF) getDeletedListItems(ctx context.Context, state Interf
 
 func (data *InterfaceOSPF) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.NetworkTypeBroadcast.ValueBool() {
+	if !data.NetworkTypeBroadcast.IsNull() && !data.NetworkTypeBroadcast.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/network/network-type-choice/broadcast/broadcast", data.getPath()))
 	}
-	if !data.NetworkTypeNonBroadcast.ValueBool() {
+	if !data.NetworkTypeNonBroadcast.IsNull() && !data.NetworkTypeNonBroadcast.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/network/network-type-choice/non-broadcast/non-broadcast", data.getPath()))
 	}
-	if !data.NetworkTypePointToPoint.ValueBool() {
+	if !data.NetworkTypePointToMultipoint.IsNull() && !data.NetworkTypePointToMultipoint.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/network/network-type-choice/point-to-multipoint/point-to-multipoint", data.getPath()))
+	}
+	if !data.NetworkTypePointToPoint.IsNull() && !data.NetworkTypePointToPoint.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/network/network-type-choice/point-to-point/point-to-point", data.getPath()))
 	}
 	return emptyLeafsDelete

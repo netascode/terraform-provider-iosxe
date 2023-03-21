@@ -122,10 +122,10 @@ func (data *BGPL2VPNEVPNNeighbor) getDeletedListItems(ctx context.Context, state
 
 func (data *BGPL2VPNEVPNNeighbor) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Activate.ValueBool() {
+	if !data.Activate.IsNull() && !data.Activate.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/activate", data.getPath()))
 	}
-	if !data.RouteReflectorClient.ValueBool() {
+	if !data.RouteReflectorClient.IsNull() && !data.RouteReflectorClient.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
 	}
 	return emptyLeafsDelete

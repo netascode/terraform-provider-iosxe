@@ -213,8 +213,14 @@ func (data *BGPAddressFamilyIPv4VRF) getEmptyLeafsDelete(ctx context.Context) []
 
 	for i := range data.Vrfs {
 		keyValues := [...]string{data.Vrfs[i].Name.ValueString()}
-		if !data.Vrfs[i].AdvertiseL2vpnEvpn.ValueBool() {
+		if !data.Vrfs[i].AdvertiseL2vpnEvpn.IsNull() && !data.Vrfs[i].AdvertiseL2vpnEvpn.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/vrf=%v/ipv4-unicast/advertise/l2vpn/evpn", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
+		if !data.Vrfs[i].RedistributeConnected.IsNull() && !data.Vrfs[i].RedistributeConnected.ValueBool() {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/vrf=%v/ipv4-unicast/redistribute-vrf/connected", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
+		if !data.Vrfs[i].RedistributeStatic.IsNull() && !data.Vrfs[i].RedistributeStatic.ValueBool() {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/vrf=%v/ipv4-unicast/redistribute-vrf/static", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}
 	return emptyLeafsDelete

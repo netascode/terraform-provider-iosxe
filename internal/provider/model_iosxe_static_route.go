@@ -237,10 +237,10 @@ func (data *StaticRoute) getEmptyLeafsDelete(ctx context.Context) []string {
 
 	for i := range data.NextHops {
 		keyValues := [...]string{data.NextHops[i].NextHop.ValueString()}
-		if !data.NextHops[i].Global.ValueBool() {
+		if !data.NextHops[i].Global.IsNull() && !data.NextHops[i].Global.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/fwd-list=%v/global", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.NextHops[i].Permanent.ValueBool() {
+		if !data.NextHops[i].Permanent.IsNull() && !data.NextHops[i].Permanent.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/fwd-list=%v/permanent", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

@@ -325,19 +325,19 @@ func (data *InterfacePortChannelSubinterface) getDeletedListItems(ctx context.Co
 
 func (data *InterfacePortChannelSubinterface) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Shutdown.ValueBool() {
+	if !data.Shutdown.IsNull() && !data.Shutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
-	if !data.IpAccessGroupInEnable.ValueBool() {
+	if !data.IpAccessGroupInEnable.IsNull() && !data.IpAccessGroupInEnable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/apply-type/apply-intf/acl/in", data.getPath()))
 	}
-	if !data.IpAccessGroupOutEnable.ValueBool() {
+	if !data.IpAccessGroupOutEnable.IsNull() && !data.IpAccessGroupOutEnable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/apply-type/apply-intf/acl/out", data.getPath()))
 	}
 
 	for i := range data.HelperAddresses {
 		keyValues := [...]string{data.HelperAddresses[i].Address.ValueString()}
-		if !data.HelperAddresses[i].Global.ValueBool() {
+		if !data.HelperAddresses[i].Global.IsNull() && !data.HelperAddresses[i].Global.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/helper-address=%v/helper-choice/global/global", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

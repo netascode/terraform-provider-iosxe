@@ -471,46 +471,61 @@ func (data *Service) getDeletedListItems(ctx context.Context, state Service) []s
 
 func (data *Service) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.PasswordEncryption.ValueBool() {
+	if !data.PasswordEncryption.IsNull() && !data.PasswordEncryption.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/password-encryption", data.getPath()))
 	}
-	if !data.TimestampsDebugDatetimeMsec.ValueBool() {
+	if !data.Timestamps.IsNull() && !data.Timestamps.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps", data.getPath()))
+	}
+	if !data.TimestampsDebug.IsNull() && !data.TimestampsDebug.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/debug-config", data.getPath()))
+	}
+	if !data.TimestampsDebugDatetime.IsNull() && !data.TimestampsDebugDatetime.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/debug-config/datetime", data.getPath()))
+	}
+	if !data.TimestampsDebugDatetimeMsec.IsNull() && !data.TimestampsDebugDatetimeMsec.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/debug-config/datetime/msec", data.getPath()))
 	}
-	if !data.TimestampsDebugDatetimeLocaltime.ValueBool() {
+	if !data.TimestampsDebugDatetimeLocaltime.IsNull() && !data.TimestampsDebugDatetimeLocaltime.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/debug-config/datetime/localtime", data.getPath()))
 	}
-	if !data.TimestampsDebugDatetimeShowTimezone.ValueBool() {
+	if !data.TimestampsDebugDatetimeShowTimezone.IsNull() && !data.TimestampsDebugDatetimeShowTimezone.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/debug-config/datetime/show-timezone", data.getPath()))
 	}
-	if !data.TimestampsDebugDatetimeYear.ValueBool() {
+	if !data.TimestampsDebugDatetimeYear.IsNull() && !data.TimestampsDebugDatetimeYear.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/debug-config/datetime/year", data.getPath()))
 	}
-	if !data.TimestampsDebugUptime.ValueBool() {
+	if !data.TimestampsDebugUptime.IsNull() && !data.TimestampsDebugUptime.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/debug-config/uptime", data.getPath()))
 	}
-	if !data.TimestampsLogDatetimeMsec.ValueBool() {
+	if !data.TimestampsLog.IsNull() && !data.TimestampsLog.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/log-config", data.getPath()))
+	}
+	if !data.TimestampsLogDatetime.IsNull() && !data.TimestampsLogDatetime.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/log-config/datetime", data.getPath()))
+	}
+	if !data.TimestampsLogDatetimeMsec.IsNull() && !data.TimestampsLogDatetimeMsec.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/log-config/datetime/msec", data.getPath()))
 	}
-	if !data.TimestampsLogDatetimeLocaltime.ValueBool() {
+	if !data.TimestampsLogDatetimeLocaltime.IsNull() && !data.TimestampsLogDatetimeLocaltime.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/log-config/datetime/localtime", data.getPath()))
 	}
-	if !data.TimestampsLogDatetimeShowTimezone.ValueBool() {
+	if !data.TimestampsLogDatetimeShowTimezone.IsNull() && !data.TimestampsLogDatetimeShowTimezone.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/log-config/datetime/show-timezone", data.getPath()))
 	}
-	if !data.TimestampsLogDatetimeYear.ValueBool() {
+	if !data.TimestampsLogDatetimeYear.IsNull() && !data.TimestampsLogDatetimeYear.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/log-config/datetime/year", data.getPath()))
 	}
-	if !data.TimestampsLogUptime.ValueBool() {
+	if !data.TimestampsLogUptime.IsNull() && !data.TimestampsLogUptime.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/timestamps/log-config/uptime", data.getPath()))
 	}
-	if !data.Dhcp.ValueBool() {
+	if !data.Dhcp.IsNull() && !data.Dhcp.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/dhcp", data.getPath()))
 	}
-	if !data.TcpKeepalivesIn.ValueBool() {
+	if !data.TcpKeepalivesIn.IsNull() && !data.TcpKeepalivesIn.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/tcp-keepalives-in", data.getPath()))
 	}
-	if !data.TcpKeepalivesOut.ValueBool() {
+	if !data.TcpKeepalivesOut.IsNull() && !data.TcpKeepalivesOut.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/tcp-keepalives-out", data.getPath()))
 	}
 	return emptyLeafsDelete

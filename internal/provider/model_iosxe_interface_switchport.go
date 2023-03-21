@@ -275,16 +275,28 @@ func (data *InterfaceSwitchport) getDeletedListItems(ctx context.Context, state 
 
 func (data *InterfaceSwitchport) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.ModePrivateVlanHost.ValueBool() {
+	if !data.ModeAccess.IsNull() && !data.ModeAccess.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/access/access", data.getPath()))
+	}
+	if !data.ModeDot1qTunnel.IsNull() && !data.ModeDot1qTunnel.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/dot1q-tunnel/dot1q-tunnel", data.getPath()))
+	}
+	if !data.ModePrivateVlanTrunk.IsNull() && !data.ModePrivateVlanTrunk.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/trunk", data.getPath()))
+	}
+	if !data.ModePrivateVlanHost.IsNull() && !data.ModePrivateVlanHost.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/host", data.getPath()))
 	}
-	if !data.ModePrivateVlanPromiscuous.ValueBool() {
+	if !data.ModePrivateVlanPromiscuous.IsNull() && !data.ModePrivateVlanPromiscuous.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/promiscuous", data.getPath()))
 	}
-	if !data.Nonegotiate.ValueBool() {
+	if !data.ModeTrunk.IsNull() && !data.ModeTrunk.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/trunk/trunk", data.getPath()))
+	}
+	if !data.Nonegotiate.IsNull() && !data.Nonegotiate.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:nonegotiate", data.getPath()))
 	}
-	if !data.Host.ValueBool() {
+	if !data.Host.IsNull() && !data.Host.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/host", data.getPath()))
 	}
 	return emptyLeafsDelete

@@ -334,16 +334,16 @@ func (data *InterfaceNVE) getDeletedListItems(ctx context.Context, state Interfa
 
 func (data *InterfaceNVE) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Shutdown.ValueBool() {
+	if !data.Shutdown.IsNull() && !data.Shutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
-	if !data.HostReachabilityProtocolBgp.ValueBool() {
+	if !data.HostReachabilityProtocolBgp.IsNull() && !data.HostReachabilityProtocolBgp.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/host-reachability/protocol/bgp", data.getPath()))
 	}
 
 	for i := range data.Vnis {
 		keyValues := [...]string{data.Vnis[i].VniRange.ValueString()}
-		if !data.Vnis[i].IngressReplication.ValueBool() {
+		if !data.Vnis[i].IngressReplication.IsNull() && !data.Vnis[i].IngressReplication.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/member/vni=%v/ir-cp-config/ingress-replication", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

@@ -243,16 +243,16 @@ func (data *DHCP) getDeletedListItems(ctx context.Context, state DHCP) []string 
 
 func (data *DHCP) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.RelayInformationTrustAll.ValueBool() {
+	if !data.RelayInformationTrustAll.IsNull() && !data.RelayInformationTrustAll.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/trust-all", data.getPath()))
 	}
-	if !data.RelayInformationOptionDefault.ValueBool() {
+	if !data.RelayInformationOptionDefault.IsNull() && !data.RelayInformationOptionDefault.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/option/option-default", data.getPath()))
 	}
-	if !data.RelayInformationOptionVpn.ValueBool() {
+	if !data.RelayInformationOptionVpn.IsNull() && !data.RelayInformationOptionVpn.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/option/vpn", data.getPath()))
 	}
-	if !data.Snooping.ValueBool() {
+	if !data.Snooping.IsNull() && !data.Snooping.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:snooping", data.getPath()))
 	}
 

@@ -539,8 +539,20 @@ func (data *OSPF) getDeletedListItems(ctx context.Context, state OSPF) []string 
 
 func (data *OSPF) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.DefaultInformationOriginateAlways.ValueBool() {
+	if !data.BfdAllInterfaces.IsNull() && !data.BfdAllInterfaces.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/bfd/all-interfaces", data.getPath()))
+	}
+	if !data.DefaultInformationOriginate.IsNull() && !data.DefaultInformationOriginate.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/default-information/originate", data.getPath()))
+	}
+	if !data.DefaultInformationOriginateAlways.IsNull() && !data.DefaultInformationOriginateAlways.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/default-information/originate/always", data.getPath()))
+	}
+	if !data.MplsLdpAutoconfig.IsNull() && !data.MplsLdpAutoconfig.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/mpls/ldp/autoconfig", data.getPath()))
+	}
+	if !data.MplsLdpSync.IsNull() && !data.MplsLdpSync.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/mpls/ldp/sync", data.getPath()))
 	}
 
 	return emptyLeafsDelete

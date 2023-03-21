@@ -695,6 +695,9 @@ func (data *Logging) getDeletedListItems(ctx context.Context, state Logging) []s
 
 func (data *Logging) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
+	if !data.Trap.IsNull() && !data.Trap.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/trap", data.getPath()))
+	}
 
 	return emptyLeafsDelete
 }

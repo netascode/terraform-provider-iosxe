@@ -502,32 +502,32 @@ func (data *PIMVRF) getDeletedListItems(ctx context.Context, state PIMVRF) []str
 
 func (data *PIMVRF) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.AutorpListener.ValueBool() {
+	if !data.AutorpListener.IsNull() && !data.AutorpListener.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/autorp-container/listener", data.getPath()))
 	}
-	if !data.SsmDefault.ValueBool() {
+	if !data.SsmDefault.IsNull() && !data.SsmDefault.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ssm/default", data.getPath()))
 	}
-	if !data.RpAddressOverride.ValueBool() {
+	if !data.RpAddressOverride.IsNull() && !data.RpAddressOverride.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/rp-address-conf/override", data.getPath()))
 	}
-	if !data.RpAddressBidir.ValueBool() {
+	if !data.RpAddressBidir.IsNull() && !data.RpAddressBidir.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/rp-address-conf/bidir", data.getPath()))
 	}
 
 	for i := range data.RpAddresses {
 		keyValues := [...]string{data.RpAddresses[i].AccessList.ValueString()}
-		if !data.RpAddresses[i].Override.ValueBool() {
+		if !data.RpAddresses[i].Override.IsNull() && !data.RpAddresses[i].Override.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/rp-address-list=%v/override", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.RpAddresses[i].Bidir.ValueBool() {
+		if !data.RpAddresses[i].Bidir.IsNull() && !data.RpAddresses[i].Bidir.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/rp-address-list=%v/bidir", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}
 
 	for i := range data.RpCandidates {
 		keyValues := [...]string{data.RpCandidates[i].Interface.ValueString()}
-		if !data.RpCandidates[i].Bidir.ValueBool() {
+		if !data.RpCandidates[i].Bidir.IsNull() && !data.RpCandidates[i].Bidir.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/rp-candidate=%v/bidir", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

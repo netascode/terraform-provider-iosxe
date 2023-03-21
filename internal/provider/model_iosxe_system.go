@@ -415,19 +415,34 @@ func (data *System) getDeletedListItems(ctx context.Context, state System) []str
 
 func (data *System) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Ipv6UnicastRouting.ValueBool() {
+	if !data.Ipv6UnicastRouting.IsNull() && !data.Ipv6UnicastRouting.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ipv6/unicast-routing", data.getPath()))
 	}
-	if !data.MulticastRoutingSwitch.ValueBool() {
+	if !data.LoginOnFailure.IsNull() && !data.LoginOnFailure.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/login/on-failure", data.getPath()))
+	}
+	if !data.LoginOnFailureLog.IsNull() && !data.LoginOnFailureLog.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/login/on-failure/log", data.getPath()))
+	}
+	if !data.LoginOnSuccess.IsNull() && !data.LoginOnSuccess.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/login/on-success", data.getPath()))
+	}
+	if !data.LoginOnSuccessLog.IsNull() && !data.LoginOnSuccessLog.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/login/on-success/log", data.getPath()))
+	}
+	if !data.MulticastRouting.IsNull() && !data.MulticastRouting.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing", data.getPath()))
+	}
+	if !data.MulticastRoutingSwitch.IsNull() && !data.MulticastRoutingSwitch.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:mcr-conf/multicast-routing", data.getPath()))
 	}
-	if !data.MulticastRoutingDistributed.ValueBool() {
+	if !data.MulticastRoutingDistributed.IsNull() && !data.MulticastRoutingDistributed.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/distributed", data.getPath()))
 	}
 
 	for i := range data.MulticastRoutingVrfs {
 		keyValues := [...]string{data.MulticastRoutingVrfs[i].Vrf.ValueString()}
-		if !data.MulticastRoutingVrfs[i].Distributed.ValueBool() {
+		if !data.MulticastRoutingVrfs[i].Distributed.IsNull() && !data.MulticastRoutingVrfs[i].Distributed.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/Cisco-IOS-XE-multicast:multicast-routing/vrf=%v/distributed", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

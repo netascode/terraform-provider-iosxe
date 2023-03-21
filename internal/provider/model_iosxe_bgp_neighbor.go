@@ -126,7 +126,7 @@ func (data *BGPNeighbor) getDeletedListItems(ctx context.Context, state BGPNeigh
 
 func (data *BGPNeighbor) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Shutdown.ValueBool() {
+	if !data.Shutdown.IsNull() && !data.Shutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	return emptyLeafsDelete

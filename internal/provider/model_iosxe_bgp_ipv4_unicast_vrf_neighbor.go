@@ -179,13 +179,13 @@ func (data *BGPIPv4UnicastVRFNeighbor) getDeletedListItems(ctx context.Context, 
 
 func (data *BGPIPv4UnicastVRFNeighbor) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Shutdown.ValueBool() {
+	if !data.Shutdown.IsNull() && !data.Shutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
-	if !data.Activate.ValueBool() {
+	if !data.Activate.IsNull() && !data.Activate.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/activate", data.getPath()))
 	}
-	if !data.RouteReflectorClient.ValueBool() {
+	if !data.RouteReflectorClient.IsNull() && !data.RouteReflectorClient.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
 	}
 	return emptyLeafsDelete

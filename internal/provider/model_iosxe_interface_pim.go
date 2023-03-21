@@ -215,19 +215,25 @@ func (data *InterfacePIM) getDeletedListItems(ctx context.Context, state Interfa
 
 func (data *InterfacePIM) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.Passive.ValueBool() {
+	if !data.Passive.IsNull() && !data.Passive.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/passive-mode/passive", data.getPath()))
 	}
-	if !data.SparseDenseMode.ValueBool() {
+	if !data.DenseMode.IsNull() && !data.DenseMode.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/dense/dense-mode", data.getPath()))
+	}
+	if !data.SparseMode.IsNull() && !data.SparseMode.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/sparse/sparse-mode", data.getPath()))
+	}
+	if !data.SparseDenseMode.IsNull() && !data.SparseDenseMode.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/pim-mode-choice/sparse-dense/sparse-dense-mode", data.getPath()))
 	}
-	if !data.Bfd.ValueBool() {
+	if !data.Bfd.IsNull() && !data.Bfd.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:bfd", data.getPath()))
 	}
-	if !data.Border.ValueBool() {
+	if !data.Border.IsNull() && !data.Border.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:border", data.getPath()))
 	}
-	if !data.BsrBorder.ValueBool() {
+	if !data.BsrBorder.IsNull() && !data.BsrBorder.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:bsr-border", data.getPath()))
 	}
 	return emptyLeafsDelete

@@ -652,34 +652,34 @@ func (data *AccessListExtended) getEmptyLeafsDelete(ctx context.Context) []strin
 
 	for i := range data.Entries {
 		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.ValueInt64(), 10)}
-		if !data.Entries[i].SourceAny.ValueBool() {
+		if !data.Entries[i].SourceAny.IsNull() && !data.Entries[i].SourceAny.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/source-choice/any-case/any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].DestinationAny.ValueBool() {
+		if !data.Entries[i].DestinationAny.IsNull() && !data.Entries[i].DestinationAny.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/destination-choice/any-case/dst-any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Ack.ValueBool() {
+		if !data.Entries[i].Ack.IsNull() && !data.Entries[i].Ack.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/ack", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Fin.ValueBool() {
+		if !data.Entries[i].Fin.IsNull() && !data.Entries[i].Fin.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/fin", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Psh.ValueBool() {
+		if !data.Entries[i].Psh.IsNull() && !data.Entries[i].Psh.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/psh", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Rst.ValueBool() {
+		if !data.Entries[i].Rst.IsNull() && !data.Entries[i].Rst.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/rst", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Syn.ValueBool() {
+		if !data.Entries[i].Syn.IsNull() && !data.Entries[i].Syn.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/syn", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Urg.ValueBool() {
+		if !data.Entries[i].Urg.IsNull() && !data.Entries[i].Urg.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/urg", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Established.ValueBool() {
+		if !data.Entries[i].Established.IsNull() && !data.Entries[i].Established.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/established", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
-		if !data.Entries[i].Fragments.ValueBool() {
+		if !data.Entries[i].Fragments.IsNull() && !data.Entries[i].Fragments.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/fragments", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}

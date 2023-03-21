@@ -1399,85 +1399,109 @@ func (data *Template) getDeletedListItems(ctx context.Context, state Template) [
 
 func (data *Template) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.SwitchportModeTrunk.ValueBool() {
+	if !data.SwitchportModeTrunk.IsNull() && !data.SwitchportModeTrunk.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/mode/trunk", data.getPath()))
 	}
-	if !data.SwitchportModeAccess.ValueBool() {
+	if !data.SwitchportModeAccess.IsNull() && !data.SwitchportModeAccess.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/mode/access", data.getPath()))
 	}
-	if !data.SwitchportNonegotiate.ValueBool() {
+	if !data.SwitchportNonegotiate.IsNull() && !data.SwitchportNonegotiate.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/nonegotiate", data.getPath()))
 	}
-	if !data.SwitchportBlockUnicast.ValueBool() {
+	if !data.SwitchportBlockUnicast.IsNull() && !data.SwitchportBlockUnicast.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/block/unicast", data.getPath()))
 	}
-	if !data.SwitchportPortSecurityAgingStatic.ValueBool() {
+	if !data.SwitchportPortSecurity.IsNull() && !data.SwitchportPortSecurity.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security", data.getPath()))
+	}
+	if !data.SwitchportPortSecurityAgingStatic.IsNull() && !data.SwitchportPortSecurityAgingStatic.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/aging/static", data.getPath()))
 	}
-	if !data.SwitchportPortSecurityAgingTypeInactivity.ValueBool() {
+	if !data.SwitchportPortSecurityAgingType.IsNull() && !data.SwitchportPortSecurityAgingType.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/aging/type", data.getPath()))
+	}
+	if !data.SwitchportPortSecurityAgingTypeInactivity.IsNull() && !data.SwitchportPortSecurityAgingTypeInactivity.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/aging/type/inactivity", data.getPath()))
 	}
 
 	for i := range data.SwitchportPortSecurityMaximumRange {
 		keyValues := [...]string{strconv.FormatInt(data.SwitchportPortSecurityMaximumRange[i].Range.ValueInt64(), 10)}
-		if !data.SwitchportPortSecurityMaximumRange[i].VlanAccess.ValueBool() {
+		if !data.SwitchportPortSecurityMaximumRange[i].Vlan.IsNull() && !data.SwitchportPortSecurityMaximumRange[i].Vlan.ValueBool() {
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/maximum/range=%v/vlan", data.getPath(), strings.Join(keyValues[:], ",")))
+		}
+		if !data.SwitchportPortSecurityMaximumRange[i].VlanAccess.IsNull() && !data.SwitchportPortSecurityMaximumRange[i].VlanAccess.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/maximum/range=%v/vlan/access", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}
-	if !data.SwitchportPortSecurityViolationProtect.ValueBool() {
+	if !data.SwitchportPortSecurityViolationProtect.IsNull() && !data.SwitchportPortSecurityViolationProtect.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/violation/protect", data.getPath()))
 	}
-	if !data.SwitchportPortSecurityViolationRestrict.ValueBool() {
+	if !data.SwitchportPortSecurityViolationRestrict.IsNull() && !data.SwitchportPortSecurityViolationRestrict.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/violation/restrict", data.getPath()))
 	}
-	if !data.SwitchportPortSecurityViolationShutdown.ValueBool() {
+	if !data.SwitchportPortSecurityViolationShutdown.IsNull() && !data.SwitchportPortSecurityViolationShutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/switchport/port-security/violation/shutdown", data.getPath()))
 	}
-	if !data.MabEap.ValueBool() {
+	if !data.Mab.IsNull() && !data.Mab.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/mab", data.getPath()))
+	}
+	if !data.MabEap.IsNull() && !data.MabEap.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/mab/eap", data.getPath()))
 	}
-	if !data.AccessSessionClosed.ValueBool() {
+	if !data.AccessSessionClosed.IsNull() && !data.AccessSessionClosed.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-session/closed", data.getPath()))
 	}
-	if !data.AuthenticationPeriodic.ValueBool() {
+	if !data.AccessSessionInterfaceTemplateSticky.IsNull() && !data.AccessSessionInterfaceTemplateSticky.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-session/interface-template/sticky", data.getPath()))
+	}
+	if !data.AuthenticationPeriodic.IsNull() && !data.AuthenticationPeriodic.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/authentication/periodic", data.getPath()))
 	}
-	if !data.AuthenticationTimerReauthenticateServer.ValueBool() {
+	if !data.AuthenticationTimerReauthenticateServer.IsNull() && !data.AuthenticationTimerReauthenticateServer.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/authentication/timer/reauthenticate/value/server/server", data.getPath()))
 	}
-	if !data.SpanningTreeBpduguardEnable.ValueBool() {
+	if !data.SpanningTreeBpduguardEnable.IsNull() && !data.SpanningTreeBpduguardEnable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/bpduguard/enable", data.getPath()))
 	}
-	if !data.SpanningTreeServicePolicy.ValueBool() {
+	if !data.SpanningTreeServicePolicy.IsNull() && !data.SpanningTreeServicePolicy.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/service-policy", data.getPath()))
 	}
-	if !data.SpanningTreePortfastDisable.ValueBool() {
+	if !data.SpanningTreePortfast.IsNull() && !data.SpanningTreePortfast.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/portfast", data.getPath()))
+	}
+	if !data.SpanningTreePortfastDisable.IsNull() && !data.SpanningTreePortfastDisable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/portfast/disable", data.getPath()))
 	}
-	if !data.SpanningTreePortfastEdge.ValueBool() {
+	if !data.SpanningTreePortfastEdge.IsNull() && !data.SpanningTreePortfastEdge.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/portfast/edge", data.getPath()))
 	}
-	if !data.SpanningTreePortfastNetwork.ValueBool() {
+	if !data.SpanningTreePortfastNetwork.IsNull() && !data.SpanningTreePortfastNetwork.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/portfast/network", data.getPath()))
 	}
-	if !data.StormControlActionShutdown.ValueBool() {
+	if !data.StormControlActionShutdown.IsNull() && !data.StormControlActionShutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/storm-control/action/shutdown", data.getPath()))
 	}
-	if !data.StormControlActionTrap.ValueBool() {
+	if !data.StormControlActionTrap.IsNull() && !data.StormControlActionTrap.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/storm-control/action/trap", data.getPath()))
 	}
-	if !data.IpDhcpSnoopingTrust.ValueBool() {
+	if !data.IpDhcpSnoopingTrust.IsNull() && !data.IpDhcpSnoopingTrust.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/dhcp/snooping/trust", data.getPath()))
 	}
 
-	if !data.SubscriberAgingInactivityTimerProbe.ValueBool() {
+	if !data.SubscriberAgingInactivityTimerProbe.IsNull() && !data.SubscriberAgingInactivityTimerProbe.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/timer-probe/inactivity-timer/inactivity-timer/probe", data.getPath()))
 	}
-	if !data.SubscriberAgingProbe.ValueBool() {
+	if !data.SubscriberAgingProbe.IsNull() && !data.SubscriberAgingProbe.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/timer-probe/probe/probe", data.getPath()))
 	}
+	if !data.DeviceTracking.IsNull() && !data.DeviceTracking.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/device-tracking", data.getPath()))
+	}
 
-	if !data.CtsManualPolicyStaticTrusted.ValueBool() {
+	if !data.CtsManual.IsNull() && !data.CtsManual.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/cts/manual", data.getPath()))
+	}
+	if !data.CtsManualPolicyStaticTrusted.IsNull() && !data.CtsManualPolicyStaticTrusted.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/cts/manual/policy/static/trusted", data.getPath()))
 	}
 	return emptyLeafsDelete

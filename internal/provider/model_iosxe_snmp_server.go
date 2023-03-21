@@ -911,25 +911,28 @@ func (data *SNMPServer) getDeletedListItems(ctx context.Context, state SNMPServe
 
 func (data *SNMPServer) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.IfindexPersist.ValueBool() {
+	if !data.IfindexPersist.IsNull() && !data.IfindexPersist.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:ifindex/persist", data.getPath()))
 	}
-	if !data.EnableInforms.ValueBool() {
+	if !data.EnableInforms.IsNull() && !data.EnableInforms.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/informs", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpAuthentication.ValueBool() {
+	if !data.EnableTraps.IsNull() && !data.EnableTraps.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpAuthentication.IsNull() && !data.EnableTrapsSnmpAuthentication.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/authentication", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpColdstart.ValueBool() {
+	if !data.EnableTrapsSnmpColdstart.IsNull() && !data.EnableTrapsSnmpColdstart.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/coldstart", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpLinkdown.ValueBool() {
+	if !data.EnableTrapsSnmpLinkdown.IsNull() && !data.EnableTrapsSnmpLinkdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkdown", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpLinkup.ValueBool() {
+	if !data.EnableTrapsSnmpLinkup.IsNull() && !data.EnableTrapsSnmpLinkup.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkup", data.getPath()))
 	}
-	if !data.EnableTrapsSnmpWarmstart.ValueBool() {
+	if !data.EnableTrapsSnmpWarmstart.IsNull() && !data.EnableTrapsSnmpWarmstart.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/warmstart", data.getPath()))
 	}
 

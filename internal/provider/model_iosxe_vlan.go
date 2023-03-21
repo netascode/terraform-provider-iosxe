@@ -194,19 +194,19 @@ func (data *VLAN) getDeletedListItems(ctx context.Context, state VLAN) []string 
 
 func (data *VLAN) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
-	if !data.RemoteSpan.ValueBool() {
+	if !data.RemoteSpan.IsNull() && !data.RemoteSpan.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/remote-span", data.getPath()))
 	}
-	if !data.PrivateVlanPrimary.ValueBool() {
+	if !data.PrivateVlanPrimary.IsNull() && !data.PrivateVlanPrimary.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/private-vlan/primary", data.getPath()))
 	}
-	if !data.PrivateVlanCommunity.ValueBool() {
+	if !data.PrivateVlanCommunity.IsNull() && !data.PrivateVlanCommunity.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/private-vlan/community", data.getPath()))
 	}
-	if !data.PrivateVlanIsolated.ValueBool() {
+	if !data.PrivateVlanIsolated.IsNull() && !data.PrivateVlanIsolated.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/private-vlan/isolated", data.getPath()))
 	}
-	if !data.Shutdown.ValueBool() {
+	if !data.Shutdown.IsNull() && !data.Shutdown.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	return emptyLeafsDelete

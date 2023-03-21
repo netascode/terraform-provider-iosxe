@@ -348,8 +348,8 @@ func (data *{{camelCase .Name}}) getDeletedListItems(ctx context.Context, state 
 func (data *{{camelCase .Name}}) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	{{- range .Attributes}}
-	{{- if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}
-	if !data.{{toGoName .TfName}}.ValueBool() {
+	{{- if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
+	if !data.{{toGoName .TfName}}.IsNull() && !data.{{toGoName .TfName}}.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{.YangName}}", data.getPath()))
 	}
 	{{- end}}
@@ -362,8 +362,8 @@ func (data *{{camelCase .Name}}) getEmptyLeafsDelete(ctx context.Context) []stri
 		{{- $list := (toGoName .TfName)}}
 		keyValues := [...]string{ {{range .Attributes}}{{if eq .Id true}}{{if eq .Type "Int64"}}strconv.FormatInt(data.{{$list}}[i].{{toGoName .TfName}}.ValueInt64(), 10), {{else if eq .Type "Bool"}}strconv.FormatBool(data.{{$list}}[i].{{toGoName .TfName}}.ValueBool()), {{else}}data.{{$list}}[i].{{toGoName .TfName}}.Value{{.Type}}(), {{end}}{{end}}{{end}} }
 		{{- range .Attributes}}
-		{{- if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}
-		if !data.{{$list}}[i].{{toGoName .TfName}}.ValueBool() {
+		{{- if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
+		if !data.{{$list}}[i].{{toGoName .TfName}}.IsNull() && !data.{{$list}}[i].{{toGoName .TfName}}.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{$yangName}}=%v/{{.YangName}}", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 		{{- end}}
