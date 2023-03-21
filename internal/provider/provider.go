@@ -225,7 +225,7 @@ func (p *IosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	}
 
 	clients := make(map[string]*restconf.Client)
-	c, err := restconf.NewClient(url, username, password, insecure, restconf.MaxRetries(int(retries)))
+	c, err := restconf.NewClient(url, username, password, insecure, restconf.MaxRetries(int(retries)), restconf.SkipDiscovery("/restconf", true))
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to create client",
@@ -233,11 +233,10 @@ func (p *IosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		)
 		return
 	}
-	c.Discovery()
-	clients[""] = &c
+	clients[""] = c
 
 	for _, device := range config.Devices {
-		c, err := restconf.NewClient(device.URL.ValueString(), username, password, insecure, restconf.MaxRetries(int(retries)))
+		c, err := restconf.NewClient(device.URL.ValueString(), username, password, insecure, restconf.MaxRetries(int(retries)), restconf.SkipDiscovery("/restconf", true))
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Unable to create client",
@@ -245,8 +244,7 @@ func (p *IosxeProvider) Configure(ctx context.Context, req provider.ConfigureReq
 			)
 			return
 		}
-		c.Discovery()
-		clients[device.Name.ValueString()] = &c
+		clients[device.Name.ValueString()] = c
 	}
 
 	resp.DataSourceData = clients
