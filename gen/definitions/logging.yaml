@@ -1,6 +1,7 @@
 ---
 name: Logging
 path: Cisco-IOS-XE-native:native/logging
+no_delete: true
 doc_category: Management
 attributes:
   - yang_name: monitor-config/config-options/common-case/common-config/monitor/severity
@@ -108,9 +109,9 @@ test_prerequisites:
     no_delete: true
     attributes:
       - name: ipv4
-        value: ''
+        value: ""
       - name: ipv6
-        value: ''
+        value: ""
     dependencies: [0]
   - path: Cisco-IOS-XE-native:native/interface/Loopback=100
     attributes:
