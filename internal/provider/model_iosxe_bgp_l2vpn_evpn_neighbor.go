@@ -65,25 +65,33 @@ func (data *BGPL2VPNEVPNNeighbor) updateFromBody(ctx context.Context, res gjson.
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "id"); value.Exists() {
+	if value := res.Get(prefix + "id"); value.Exists() && !data.Ip.IsNull() {
 		data.Ip = types.StringValue(value.String())
 	} else {
 		data.Ip = types.StringNull()
 	}
-	if value := res.Get(prefix + "activate"); value.Exists() {
-		data.Activate = types.BoolValue(true)
+	if value := res.Get(prefix + "activate"); !data.Activate.IsNull() {
+		if value.Exists() {
+			data.Activate = types.BoolValue(true)
+		} else {
+			data.Activate = types.BoolValue(false)
+		}
 	} else {
-		data.Activate = types.BoolValue(false)
+		data.Activate = types.BoolNull()
 	}
-	if value := res.Get(prefix + "send-community.send-community-where"); value.Exists() {
+	if value := res.Get(prefix + "send-community.send-community-where"); value.Exists() && !data.SendCommunity.IsNull() {
 		data.SendCommunity = types.StringValue(value.String())
 	} else {
 		data.SendCommunity = types.StringNull()
 	}
-	if value := res.Get(prefix + "route-reflector-client"); value.Exists() {
-		data.RouteReflectorClient = types.BoolValue(true)
+	if value := res.Get(prefix + "route-reflector-client"); !data.RouteReflectorClient.IsNull() {
+		if value.Exists() {
+			data.RouteReflectorClient = types.BoolValue(true)
+		} else {
+			data.RouteReflectorClient = types.BoolValue(false)
+		}
 	} else {
-		data.RouteReflectorClient = types.BoolValue(false)
+		data.RouteReflectorClient = types.BoolNull()
 	}
 }
 
@@ -104,30 +112,6 @@ func (data *BGPL2VPNEVPNNeighbor) fromBody(ctx context.Context, res gjson.Result
 		data.RouteReflectorClient = types.BoolValue(true)
 	} else {
 		data.RouteReflectorClient = types.BoolValue(false)
-	}
-}
-
-func (data *BGPL2VPNEVPNNeighbor) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Asn.IsUnknown() {
-		data.Asn = types.StringNull()
-	}
-	if data.Ip.IsUnknown() {
-		data.Ip = types.StringNull()
-	}
-	if data.Activate.IsUnknown() {
-		data.Activate = types.BoolNull()
-	}
-	if data.SendCommunity.IsUnknown() {
-		data.SendCommunity = types.StringNull()
-	}
-	if data.RouteReflectorClient.IsUnknown() {
-		data.RouteReflectorClient = types.BoolNull()
 	}
 }
 

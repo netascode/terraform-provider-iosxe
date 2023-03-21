@@ -69,7 +69,6 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 						"sequence": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 2147483647).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 2147483647),
 							},
@@ -77,7 +76,6 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 						"remark": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Access list entry comment").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.LengthBetween(1, 100),
 							},
@@ -85,7 +83,6 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 						"ace_rule_action": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("deny", "permit").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf("deny", "permit"),
 							},
@@ -93,17 +90,14 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 						"ace_rule_protocol": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"service_object_group": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Service object group name").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"source_prefix": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -111,7 +105,6 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 						"source_prefix_mask": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -119,47 +112,38 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 						"source_any": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Any source host").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"source_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("A single source host(DEPRECATED - use host-address)").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"source_object_group": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Source network object group").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"source_port_equal": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets on a given port number up to 10 ports").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"source_port_greater_than": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a greater port number").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"source_port_lesser_than": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a lower port number").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"source_port_range_from": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"source_port_range_to": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"destination_prefix": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -167,7 +151,6 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 						"destination_prefix_mask": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -175,97 +158,78 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 						"destination_any": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Any destination host").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"destination_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("A single destination host(DEPRECATED - use dst-host-address)").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"destination_object_group": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Destination network object group").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"destination_port_equal": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets on a given port number up to 10 ports").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"destination_port_greater_than": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a greater port number").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"destination_port_lesser_than": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets with a lower port number").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"destination_port_range_from": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"destination_port_range_to": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match only packets in the range of port numbers").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"ack": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match on the ACK bit").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"fin": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match on the FIN bit").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"psh": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match on the PSH bit").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"rst": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match on the RST bit").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"syn": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match on the SYN bit").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"urg": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match on the URG bit").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"established": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match established connections").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"dscp": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match packets with given dscp value").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"fragments": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Check non-initial fragments").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"precedence": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match packets with given precedence value").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"tos": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Match packets with given TOS value").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -316,8 +280,6 @@ func (r *AccessListExtendedResource) Create(ctx context.Context, req resource.Cr
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -385,8 +347,6 @@ func (r *AccessListExtendedResource) Update(ctx context.Context, req resource.Up
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

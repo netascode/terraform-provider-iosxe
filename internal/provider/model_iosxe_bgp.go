@@ -61,22 +61,26 @@ func (data *BGP) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "id"); value.Exists() {
+	if value := res.Get(prefix + "id"); value.Exists() && !data.Asn.IsNull() {
 		data.Asn = types.StringValue(value.String())
 	} else {
 		data.Asn = types.StringNull()
 	}
-	if value := res.Get(prefix + "bgp.default.ipv4-unicast"); value.Exists() {
-		data.DefaultIpv4Unicast = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "bgp.default.ipv4-unicast"); !data.DefaultIpv4Unicast.IsNull() {
+		if value.Exists() {
+			data.DefaultIpv4Unicast = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.DefaultIpv4Unicast = types.BoolValue(false)
+		data.DefaultIpv4Unicast = types.BoolNull()
 	}
-	if value := res.Get(prefix + "bgp.log-neighbor-changes"); value.Exists() {
-		data.LogNeighborChanges = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "bgp.log-neighbor-changes"); !data.LogNeighborChanges.IsNull() {
+		if value.Exists() {
+			data.LogNeighborChanges = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.LogNeighborChanges = types.BoolValue(false)
+		data.LogNeighborChanges = types.BoolNull()
 	}
-	if value := res.Get(prefix + "bgp.router-id.interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "bgp.router-id.interface.Loopback"); value.Exists() && !data.RouterIdLoopback.IsNull() {
 		data.RouterIdLoopback = types.Int64Value(value.Int())
 	} else {
 		data.RouterIdLoopback = types.Int64Null()
@@ -100,27 +104,6 @@ func (data *BGP) fromBody(ctx context.Context, res gjson.Result) {
 	}
 	if value := res.Get(prefix + "bgp.router-id.interface.Loopback"); value.Exists() {
 		data.RouterIdLoopback = types.Int64Value(value.Int())
-	}
-}
-
-func (data *BGP) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Asn.IsUnknown() {
-		data.Asn = types.StringNull()
-	}
-	if data.DefaultIpv4Unicast.IsUnknown() {
-		data.DefaultIpv4Unicast = types.BoolNull()
-	}
-	if data.LogNeighborChanges.IsUnknown() {
-		data.LogNeighborChanges = types.BoolNull()
-	}
-	if data.RouterIdLoopback.IsUnknown() {
-		data.RouterIdLoopback = types.Int64Null()
 	}
 }
 

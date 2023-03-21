@@ -73,7 +73,7 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 				Required:            true,
 				{{- else}}
 				Optional:            true,
-				{{- if ne .Type "List"}}
+				{{- if len .DefaultValue}}
 				Computed:            true,
 				{{- end}}
 				{{- end}}
@@ -135,7 +135,9 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 							Required:            true,
 							{{- else}}
 							Optional:            true,
+							{{- if len .DefaultValue}}
 							Computed:            true,
+							{{- end}}
 							{{- end}}
 							{{- if len .EnumValues}}
 							Validators: []validator.String{
@@ -219,8 +221,6 @@ func (r *{{camelCase .Name}}Resource) Create(ctx context.Context, req resource.C
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 	
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -288,8 +288,6 @@ func (r *{{camelCase .Name}}Resource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

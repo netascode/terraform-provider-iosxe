@@ -68,7 +68,6 @@ func (r *SNMPServerGroupResource) Schema(ctx context.Context, req resource.Schem
 						"security_level": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("security level type").AddStringEnumDescription("auth", "noauth", "priv").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf("auth", "noauth", "priv"),
 							},
@@ -76,12 +75,10 @@ func (r *SNMPServerGroupResource) Schema(ctx context.Context, req resource.Schem
 						"context_node": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("specify a context to associate these views for the group").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"match_node": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("context name match criteria").AddStringEnumDescription("exact", "prefix").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf("exact", "prefix"),
 							},
@@ -89,22 +86,18 @@ func (r *SNMPServerGroupResource) Schema(ctx context.Context, req resource.Schem
 						"read_node": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("specify a read view for the group").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"write_node": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("specify a write view for the group").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"notify_node": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("specify a notify view for the group").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"access_ipv6_acl": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.LengthBetween(1, 194),
 							},
@@ -112,7 +105,6 @@ func (r *SNMPServerGroupResource) Schema(ctx context.Context, req resource.Schem
 						"access_standard_acl": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 99),
 							},
@@ -120,7 +112,6 @@ func (r *SNMPServerGroupResource) Schema(ctx context.Context, req resource.Schem
 						"access_acl_name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.LengthBetween(1, 183),
 							},
@@ -174,8 +165,6 @@ func (r *SNMPServerGroupResource) Create(ctx context.Context, req resource.Creat
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -243,8 +232,6 @@ func (r *SNMPServerGroupResource) Update(ctx context.Context, req resource.Updat
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

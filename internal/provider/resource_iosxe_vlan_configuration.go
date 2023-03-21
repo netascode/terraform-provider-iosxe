@@ -66,7 +66,6 @@ func (r *VLANConfigurationResource) Schema(ctx context.Context, req resource.Sch
 			"vni": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VxLAN VNI value").AddIntegerRangeDescription(4096, 16777215).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(4096, 16777215),
 				},
@@ -74,12 +73,10 @@ func (r *VLANConfigurationResource) Schema(ctx context.Context, req resource.Sch
 			"access_vfi": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enter VFI name").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"evpn_instance": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 65535).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 65535),
 				},
@@ -87,7 +84,6 @@ func (r *VLANConfigurationResource) Schema(ctx context.Context, req resource.Sch
 			"evpn_instance_vni": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VxLAN VNI value").AddIntegerRangeDescription(4096, 16777215).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(4096, 16777215),
 				},
@@ -138,8 +134,6 @@ func (r *VLANConfigurationResource) Create(ctx context.Context, req resource.Cre
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -207,8 +201,6 @@ func (r *VLANConfigurationResource) Update(ctx context.Context, req resource.Upd
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

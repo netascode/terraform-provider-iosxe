@@ -74,7 +74,6 @@ func (r *LoggingIPv6HostVRFTransportResource) Schema(ctx context.Context, req re
 						"port_number": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the UDP port number (default=514)").AddIntegerRangeDescription(1, 65535).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 65535),
 							},
@@ -90,7 +89,6 @@ func (r *LoggingIPv6HostVRFTransportResource) Schema(ctx context.Context, req re
 						"port_number": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the TCP port number (default=601)").AddIntegerRangeDescription(1, 65535).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 65535),
 							},
@@ -106,7 +104,6 @@ func (r *LoggingIPv6HostVRFTransportResource) Schema(ctx context.Context, req re
 						"port_number": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the TLS port number (default=6514)").AddIntegerRangeDescription(1025, 65535).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1025, 65535),
 							},
@@ -114,7 +111,6 @@ func (r *LoggingIPv6HostVRFTransportResource) Schema(ctx context.Context, req re
 						"profile": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the TLS profile").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -165,8 +161,6 @@ func (r *LoggingIPv6HostVRFTransportResource) Create(ctx context.Context, req re
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -234,8 +228,6 @@ func (r *LoggingIPv6HostVRFTransportResource) Update(ctx context.Context, req re
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

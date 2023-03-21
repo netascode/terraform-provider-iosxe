@@ -84,45 +84,57 @@ func (data *BGPIPv4UnicastVRFNeighbor) updateFromBody(ctx context.Context, res g
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "id"); value.Exists() {
+	if value := res.Get(prefix + "id"); value.Exists() && !data.Ip.IsNull() {
 		data.Ip = types.StringValue(value.String())
 	} else {
 		data.Ip = types.StringNull()
 	}
-	if value := res.Get(prefix + "remote-as"); value.Exists() {
+	if value := res.Get(prefix + "remote-as"); value.Exists() && !data.RemoteAs.IsNull() {
 		data.RemoteAs = types.StringValue(value.String())
 	} else {
 		data.RemoteAs = types.StringNull()
 	}
-	if value := res.Get(prefix + "description"); value.Exists() {
+	if value := res.Get(prefix + "description"); value.Exists() && !data.Description.IsNull() {
 		data.Description = types.StringValue(value.String())
 	} else {
 		data.Description = types.StringNull()
 	}
-	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown = types.BoolValue(true)
+	if value := res.Get(prefix + "shutdown"); !data.Shutdown.IsNull() {
+		if value.Exists() {
+			data.Shutdown = types.BoolValue(true)
+		} else {
+			data.Shutdown = types.BoolValue(false)
+		}
 	} else {
-		data.Shutdown = types.BoolValue(false)
+		data.Shutdown = types.BoolNull()
 	}
-	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "update-source.interface.Loopback"); value.Exists() && !data.UpdateSourceLoopback.IsNull() {
 		data.UpdateSourceLoopback = types.StringValue(value.String())
 	} else {
 		data.UpdateSourceLoopback = types.StringNull()
 	}
-	if value := res.Get(prefix + "activate"); value.Exists() {
-		data.Activate = types.BoolValue(true)
+	if value := res.Get(prefix + "activate"); !data.Activate.IsNull() {
+		if value.Exists() {
+			data.Activate = types.BoolValue(true)
+		} else {
+			data.Activate = types.BoolValue(false)
+		}
 	} else {
-		data.Activate = types.BoolValue(false)
+		data.Activate = types.BoolNull()
 	}
-	if value := res.Get(prefix + "send-community.send-community-where"); value.Exists() {
+	if value := res.Get(prefix + "send-community.send-community-where"); value.Exists() && !data.SendCommunity.IsNull() {
 		data.SendCommunity = types.StringValue(value.String())
 	} else {
 		data.SendCommunity = types.StringNull()
 	}
-	if value := res.Get(prefix + "route-reflector-client"); value.Exists() {
-		data.RouteReflectorClient = types.BoolValue(true)
+	if value := res.Get(prefix + "route-reflector-client"); !data.RouteReflectorClient.IsNull() {
+		if value.Exists() {
+			data.RouteReflectorClient = types.BoolValue(true)
+		} else {
+			data.RouteReflectorClient = types.BoolValue(false)
+		}
 	} else {
-		data.RouteReflectorClient = types.BoolValue(false)
+		data.RouteReflectorClient = types.BoolNull()
 	}
 }
 
@@ -157,45 +169,6 @@ func (data *BGPIPv4UnicastVRFNeighbor) fromBody(ctx context.Context, res gjson.R
 		data.RouteReflectorClient = types.BoolValue(true)
 	} else {
 		data.RouteReflectorClient = types.BoolValue(false)
-	}
-}
-
-func (data *BGPIPv4UnicastVRFNeighbor) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Asn.IsUnknown() {
-		data.Asn = types.StringNull()
-	}
-	if data.Vrf.IsUnknown() {
-		data.Vrf = types.StringNull()
-	}
-	if data.Ip.IsUnknown() {
-		data.Ip = types.StringNull()
-	}
-	if data.RemoteAs.IsUnknown() {
-		data.RemoteAs = types.StringNull()
-	}
-	if data.Description.IsUnknown() {
-		data.Description = types.StringNull()
-	}
-	if data.Shutdown.IsUnknown() {
-		data.Shutdown = types.BoolNull()
-	}
-	if data.UpdateSourceLoopback.IsUnknown() {
-		data.UpdateSourceLoopback = types.StringNull()
-	}
-	if data.Activate.IsUnknown() {
-		data.Activate = types.BoolNull()
-	}
-	if data.SendCommunity.IsUnknown() {
-		data.SendCommunity = types.StringNull()
-	}
-	if data.RouteReflectorClient.IsUnknown() {
-		data.RouteReflectorClient = types.BoolNull()
 	}
 }
 

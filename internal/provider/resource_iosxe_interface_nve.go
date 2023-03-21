@@ -68,7 +68,6 @@ func (r *InterfaceNVEResource) Schema(ctx context.Context, req resource.SchemaRe
 			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Interface specific description").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(0, 200),
 					stringvalidator.RegexMatches(regexp.MustCompile(`.*`), ""),
@@ -77,17 +76,14 @@ func (r *InterfaceNVEResource) Schema(ctx context.Context, req resource.SchemaRe
 			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"host_reachability_protocol_bgp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 2147483647),
 				},
@@ -100,12 +96,10 @@ func (r *InterfaceNVEResource) Schema(ctx context.Context, req resource.SchemaRe
 						"vni_range": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify a particular VRF").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -118,12 +112,10 @@ func (r *InterfaceNVEResource) Schema(ctx context.Context, req resource.SchemaRe
 						"vni_range": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"ipv4_multicast_group": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Starting Multicast Group IPv4 Address").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
 							},
@@ -131,7 +123,6 @@ func (r *InterfaceNVEResource) Schema(ctx context.Context, req resource.SchemaRe
 						"ingress_replication": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Ingress Replication control-plane (BGP) signaling").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -182,8 +173,6 @@ func (r *InterfaceNVEResource) Create(ctx context.Context, req resource.CreateRe
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -251,8 +240,6 @@ func (r *InterfaceNVEResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

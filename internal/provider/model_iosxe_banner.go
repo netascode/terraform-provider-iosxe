@@ -58,22 +58,22 @@ func (data *Banner) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "exec.banner"); value.Exists() {
+	if value := res.Get(prefix + "exec.banner"); value.Exists() && !data.ExecBanner.IsNull() {
 		data.ExecBanner = types.StringValue(value.String())
 	} else {
 		data.ExecBanner = types.StringNull()
 	}
-	if value := res.Get(prefix + "login.banner"); value.Exists() {
+	if value := res.Get(prefix + "login.banner"); value.Exists() && !data.LoginBanner.IsNull() {
 		data.LoginBanner = types.StringValue(value.String())
 	} else {
 		data.LoginBanner = types.StringNull()
 	}
-	if value := res.Get(prefix + "prompt-timeout.banner"); value.Exists() {
+	if value := res.Get(prefix + "prompt-timeout.banner"); value.Exists() && !data.PromptTimeoutBanner.IsNull() {
 		data.PromptTimeoutBanner = types.StringValue(value.String())
 	} else {
 		data.PromptTimeoutBanner = types.StringNull()
 	}
-	if value := res.Get(prefix + "motd.banner"); value.Exists() {
+	if value := res.Get(prefix + "motd.banner"); value.Exists() && !data.MotdBanner.IsNull() {
 		data.MotdBanner = types.StringValue(value.String())
 	} else {
 		data.MotdBanner = types.StringNull()
@@ -96,27 +96,6 @@ func (data *Banner) fromBody(ctx context.Context, res gjson.Result) {
 	}
 	if value := res.Get(prefix + "motd.banner"); value.Exists() {
 		data.MotdBanner = types.StringValue(value.String())
-	}
-}
-
-func (data *Banner) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.ExecBanner.IsUnknown() {
-		data.ExecBanner = types.StringNull()
-	}
-	if data.LoginBanner.IsUnknown() {
-		data.LoginBanner = types.StringNull()
-	}
-	if data.PromptTimeoutBanner.IsUnknown() {
-		data.PromptTimeoutBanner = types.StringNull()
-	}
-	if data.MotdBanner.IsUnknown() {
-		data.MotdBanner = types.StringNull()
 	}
 }
 

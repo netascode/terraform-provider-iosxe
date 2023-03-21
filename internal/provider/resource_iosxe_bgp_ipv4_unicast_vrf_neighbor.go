@@ -76,32 +76,26 @@ func (r *BGPIPv4UnicastVRFNeighborResource) Schema(ctx context.Context, req reso
 			"remote_as": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify a BGP peer-group remote-as").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Neighbor specific description").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"shutdown": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Administratively shut down this neighbor").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"update_source_loopback": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"activate": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable the address family for this neighbor").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"send_community": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("both", "extended", "standard").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("both", "extended", "standard"),
 				},
@@ -109,7 +103,6 @@ func (r *BGPIPv4UnicastVRFNeighborResource) Schema(ctx context.Context, req reso
 			"route_reflector_client": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure a neighbor as Route Reflector client").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -157,8 +150,6 @@ func (r *BGPIPv4UnicastVRFNeighborResource) Create(ctx context.Context, req reso
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -226,8 +217,6 @@ func (r *BGPIPv4UnicastVRFNeighborResource) Update(ctx context.Context, req reso
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

@@ -93,42 +93,70 @@ func (data *InterfacePIM) updateFromBody(ctx context.Context, res gjson.Result) 
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:pim-mode-choice-cfg.passive"); value.Exists() {
-		data.Passive = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:pim-mode-choice-cfg.passive"); !data.Passive.IsNull() {
+		if value.Exists() {
+			data.Passive = types.BoolValue(true)
+		} else {
+			data.Passive = types.BoolValue(false)
+		}
 	} else {
-		data.Passive = types.BoolValue(false)
+		data.Passive = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:pim-mode-choice-cfg.dense-mode"); value.Exists() {
-		data.DenseMode = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:pim-mode-choice-cfg.dense-mode"); !data.DenseMode.IsNull() {
+		if value.Exists() {
+			data.DenseMode = types.BoolValue(true)
+		} else {
+			data.DenseMode = types.BoolValue(false)
+		}
 	} else {
-		data.DenseMode = types.BoolValue(false)
+		data.DenseMode = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); value.Exists() {
-		data.SparseMode = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-mode"); !data.SparseMode.IsNull() {
+		if value.Exists() {
+			data.SparseMode = types.BoolValue(true)
+		} else {
+			data.SparseMode = types.BoolValue(false)
+		}
 	} else {
-		data.SparseMode = types.BoolValue(false)
+		data.SparseMode = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-dense-mode"); value.Exists() {
-		data.SparseDenseMode = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:pim-mode-choice-cfg.sparse-dense-mode"); !data.SparseDenseMode.IsNull() {
+		if value.Exists() {
+			data.SparseDenseMode = types.BoolValue(true)
+		} else {
+			data.SparseDenseMode = types.BoolValue(false)
+		}
 	} else {
-		data.SparseDenseMode = types.BoolValue(false)
+		data.SparseDenseMode = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bfd"); value.Exists() {
-		data.Bfd = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bfd"); !data.Bfd.IsNull() {
+		if value.Exists() {
+			data.Bfd = types.BoolValue(true)
+		} else {
+			data.Bfd = types.BoolValue(false)
+		}
 	} else {
-		data.Bfd = types.BoolValue(false)
+		data.Bfd = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:border"); value.Exists() {
-		data.Border = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:border"); !data.Border.IsNull() {
+		if value.Exists() {
+			data.Border = types.BoolValue(true)
+		} else {
+			data.Border = types.BoolValue(false)
+		}
 	} else {
-		data.Border = types.BoolValue(false)
+		data.Border = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-border"); value.Exists() {
-		data.BsrBorder = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-border"); !data.BsrBorder.IsNull() {
+		if value.Exists() {
+			data.BsrBorder = types.BoolValue(true)
+		} else {
+			data.BsrBorder = types.BoolValue(false)
+		}
 	} else {
-		data.BsrBorder = types.BoolValue(false)
+		data.BsrBorder = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:dr-priority"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:dr-priority"); value.Exists() && !data.DrPriority.IsNull() {
 		data.DrPriority = types.Int64Value(value.Int())
 	} else {
 		data.DrPriority = types.Int64Null()
@@ -177,45 +205,6 @@ func (data *InterfacePIM) fromBody(ctx context.Context, res gjson.Result) {
 	}
 	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:dr-priority"); value.Exists() {
 		data.DrPriority = types.Int64Value(value.Int())
-	}
-}
-
-func (data *InterfacePIM) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Type.IsUnknown() {
-		data.Type = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	if data.Passive.IsUnknown() {
-		data.Passive = types.BoolNull()
-	}
-	if data.DenseMode.IsUnknown() {
-		data.DenseMode = types.BoolNull()
-	}
-	if data.SparseMode.IsUnknown() {
-		data.SparseMode = types.BoolNull()
-	}
-	if data.SparseDenseMode.IsUnknown() {
-		data.SparseDenseMode = types.BoolNull()
-	}
-	if data.Bfd.IsUnknown() {
-		data.Bfd = types.BoolNull()
-	}
-	if data.Border.IsUnknown() {
-		data.Border = types.BoolNull()
-	}
-	if data.BsrBorder.IsUnknown() {
-		data.BsrBorder = types.BoolNull()
-	}
-	if data.DrPriority.IsUnknown() {
-		data.DrPriority = types.Int64Null()
 	}
 }
 

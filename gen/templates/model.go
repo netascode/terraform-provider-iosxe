@@ -119,29 +119,35 @@ func (data *{{camelCase .Name}}) updateFromBody(ctx context.Context, res gjson.R
 	{{- range .Attributes}}
 	{{- if and (ne .Reference true) (ne .WriteOnly true)}}
 	{{- if eq .Type "Int64"}}
-	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() && !data.{{toGoName .TfName}}.IsNull() {
 		data.{{toGoName .TfName}} = types.Int64Value(value.Int())
 	} else {
 		data.{{toGoName .TfName}} = types.Int64Null()
 	}
 	{{- else if eq .Type "Float64"}}
-	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() && !data.{{toGoName .TfName}}.IsNull() {
 		data.{{toGoName .TfName}} = types.Float64Value(value.Float())
 	} else {
 		data.{{toGoName .TfName}} = types.Float64Null()
 	}
 	{{- else if eq .Type "Bool"}}
-	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); !data.{{toGoName .TfName}}.IsNull() {
 		{{- if eq .TypeYangBool "boolean"}}
-		data.{{toGoName .TfName}} = types.BoolValue(value.Bool())
+		if value.Exists() {
+			data.{{toGoName .TfName}} = types.BoolValue(value.Bool())
+		}
 		{{- else}}
-		data.{{toGoName .TfName}} = types.BoolValue(true)
+		if value.Exists() {
+			data.{{toGoName .TfName}} = types.BoolValue(true)
+		} else {
+			data.{{toGoName .TfName}} = types.BoolValue(false)
+		}
 		{{- end}}
 	} else {
-		data.{{toGoName .TfName}} = types.BoolValue(false)
+		data.{{toGoName .TfName}} = types.BoolNull()
 	}
 	{{- else if eq .Type "String"}}
-	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() {
+	if value := res.Get(prefix+"{{toJsonPath .YangName .XPath}}"); value.Exists() && !data.{{toGoName .TfName}}.IsNull() {
 		data.{{toGoName .TfName}} = types.StringValue(value.String())
 	} else {
 		data.{{toGoName .TfName}} = types.StringNull()
@@ -177,29 +183,35 @@ func (data *{{camelCase .Name}}) updateFromBody(ctx context.Context, res gjson.R
 		{{- range .Attributes}}
 		{{- if ne .WriteOnly true}}
 		{{- if eq .Type "Int64"}}
-		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() && !data.{{$list}}[i].{{toGoName .TfName}}.IsNull() {
 			data.{{$list}}[i].{{toGoName .TfName}} = types.Int64Value(value.Int())
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}} = types.Int64Null()
 		}
 		{{- else if eq .Type "Float64"}}
-		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() && !data.{{$list}}[i].{{toGoName .TfName}}.IsNull() {
 			data.{{$list}}[i].{{toGoName .TfName}} = types.Float64Value(value.Float())
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}} = type.Float64Null()
 		}
 		{{- else if eq .Type "Bool"}}
-		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		if value := r.Get("{{toJsonPath .YangName .XPath}}"); !data.{{$list}}[i].{{toGoName .TfName}}.IsNull() {
 			{{- if eq .TypeYangBool "boolean"}}
-			data.{{$list}}[i].{{toGoName .TfName}} = types.BoolValue(value.Bool())
+			if value.Exists() {
+				data.{{$list}}[i].{{toGoName .TfName}} = types.BoolValue(value.Bool())
+			}
 			{{- else}}
-			data.{{$list}}[i].{{toGoName .TfName}} = types.BoolValue(true)
+			if value.Exists() {
+				data.{{$list}}[i].{{toGoName .TfName}} = types.BoolValue(true)
+			} else {
+				data.{{$list}}[i].{{toGoName .TfName}} = types.BoolValue(false)
+			}
 			{{- end}}
 		} else {
-			data.{{$list}}[i].{{toGoName .TfName}} = types.BoolValue(false)
+			data.{{$list}}[i].{{toGoName .TfName}} = types.BoolNull()
 		}
 		{{- else if eq .Type "String"}}
-		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() {
+		if value := r.Get("{{toJsonPath .YangName .XPath}}"); value.Exists() && !data.{{$list}}[i].{{toGoName .TfName}}.IsNull() {
 			data.{{$list}}[i].{{toGoName .TfName}} = types.StringValue(value.String())
 		} else {
 			data.{{$list}}[i].{{toGoName .TfName}} = types.StringNull()
@@ -280,31 +292,6 @@ func (data *{{camelCase .Name}}) fromBody(ctx context.Context, res gjson.Result)
 		})
 	}
 	{{- end}}
-	{{- end}}
-	{{- end}}
-}
-
-func (data *{{camelCase .Name}}) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	{{- range .Attributes}}
-	{{- if ne .Type "List"}}
-	if data.{{toGoName .TfName}}.IsUnknown() {
-		data.{{toGoName .TfName}} = types.{{.Type}}Null()
-	}
-	{{- else}}
-	{{- $list := (toGoName .TfName)}}
-	for i := range data.{{$list}} {
-		{{- range .Attributes}}
-		if data.{{$list}}[i].{{toGoName .TfName}}.IsUnknown() {
-			data.{{$list}}[i].{{toGoName .TfName}} = types.{{.Type}}Null()
-		}
-		{{- end}}
-	}
 	{{- end}}
 	{{- end}}
 }

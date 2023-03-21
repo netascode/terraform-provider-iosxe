@@ -7,6 +7,14 @@ description: |-
 
 # Changelog
 
+## 0.1.13 (unreleased)
+
+- BREAKING CHANGE: Remove default value of `ip_access_group_in_enable` and `ip_access_group_out_enable` attributes of `iosxe_interface_ethernet` resource
+- BREAKING CHANGE: Remove default value of `ip_access_group_in_enable` and `ip_access_group_out_enable` attributes of `iosxe_interface_loopback` resource
+- BREAKING CHANGE: Remove default value of `ip_access_group_in_enable` and `ip_access_group_out_enable` attributes of `iosxe_interface_port_channel_subinterface` resource
+- BREAKING CHANGE: Remove default value of `ip_access_group_in_enable` and `ip_access_group_out_enable` attributes of `iosxe_interface_port_channel` resource
+- BREAKING CHANGE: Remove default value of `ip_access_group_in_enable` and `ip_access_group_out_enable` attributes of `iosxe_interface_vlan` resource
+
 ## 0.1.12
 
 - Add iosxe_snmp_server_user resource and data source

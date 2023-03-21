@@ -77,42 +77,34 @@ func (r *InterfacePIMResource) Schema(ctx context.Context, req resource.SchemaRe
 			"passive": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM passive interface operation").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"dense_mode": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM dense-mode operation").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"sparse_mode": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM sparse-mode operation").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"sparse_dense_mode": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable PIM sparse-dense-mode operation").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"bfd": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure BFD").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"border": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Border of PIM domain").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"bsr_border": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Border of PIM domain").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"dr_priority": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("PIM router DR priority").AddIntegerRangeDescription(0, 4294967295).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 4294967295),
 				},
@@ -163,8 +155,6 @@ func (r *InterfacePIMResource) Create(ctx context.Context, req resource.CreateRe
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -232,8 +222,6 @@ func (r *InterfacePIMResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

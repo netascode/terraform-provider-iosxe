@@ -57,7 +57,6 @@ func (r *SystemResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"hostname": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set system's network name").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 246),
 					stringvalidator.RegexMatches(regexp.MustCompile(`([0-9.]*[A-Za-z\-_]+[A-Za-z0-9.\-_]*)`), ""),
@@ -66,17 +65,14 @@ func (r *SystemResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"ip_routing": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable or disable IP routing").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ipv6_unicast_routing": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable unicast routing").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"mtu": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1500, 9198).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1500, 9198),
 				},
@@ -84,17 +80,14 @@ func (r *SystemResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"ip_source_route": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Process packets with source routing header options").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ip_domain_lookup": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP Domain Name System hostname translation").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"ip_domain_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Define the default domain name").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 236),
 				},
@@ -102,7 +95,6 @@ func (r *SystemResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"login_delay": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set delay between successive fail login").AddIntegerRangeDescription(1, 10).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 10),
 				},
@@ -110,37 +102,30 @@ func (r *SystemResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"login_on_failure": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set options for failed login attempt").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"login_on_failure_log": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Generate syslogs on failure logins").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"login_on_success": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set options for successful login attempt").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"login_on_success_log": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Generate syslogs on successful logins").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"multicast_routing": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP multicast forwarding").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"multicast_routing_switch": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable IP multicast forwarding, some XE devices use this option instead of `multicast_routing`.").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"multicast_routing_distributed": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"multicast_routing_vrfs": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Select VPN Routing/Forwarding instance").String,
@@ -150,12 +135,10 @@ func (r *SystemResource) Schema(ctx context.Context, req resource.SchemaRequest,
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"distributed": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -206,8 +189,6 @@ func (r *SystemResource) Create(ctx context.Context, req resource.CreateRequest,
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -275,8 +256,6 @@ func (r *SystemResource) Update(ctx context.Context, req resource.UpdateRequest,
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

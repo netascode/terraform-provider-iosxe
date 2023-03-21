@@ -69,12 +69,10 @@ func (r *BGPL2VPNEVPNNeighborResource) Schema(ctx context.Context, req resource.
 			"activate": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable the address family for this neighbor").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"send_community": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("both", "extended", "standard").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("both", "extended", "standard"),
 				},
@@ -82,7 +80,6 @@ func (r *BGPL2VPNEVPNNeighborResource) Schema(ctx context.Context, req resource.
 			"route_reflector_client": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure a neighbor as Route Reflector client").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -130,8 +127,6 @@ func (r *BGPL2VPNEVPNNeighborResource) Create(ctx context.Context, req resource.
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -199,8 +194,6 @@ func (r *BGPL2VPNEVPNNeighborResource) Update(ctx context.Context, req resource.
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

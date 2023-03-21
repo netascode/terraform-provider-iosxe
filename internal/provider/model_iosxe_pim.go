@@ -156,60 +156,78 @@ func (data *PIM) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:autorp-container.autorp"); value.Exists() {
-		data.Autorp = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:autorp-container.autorp"); !data.Autorp.IsNull() {
+		if value.Exists() {
+			data.Autorp = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.Autorp = types.BoolValue(false)
+		data.Autorp = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:autorp-container.listener"); value.Exists() {
-		data.AutorpListener = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:autorp-container.listener"); !data.AutorpListener.IsNull() {
+		if value.Exists() {
+			data.AutorpListener = types.BoolValue(true)
+		} else {
+			data.AutorpListener = types.BoolValue(false)
+		}
 	} else {
-		data.AutorpListener = types.BoolValue(false)
+		data.AutorpListener = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.Loopback"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.Loopback"); value.Exists() && !data.BsrCandidateLoopback.IsNull() {
 		data.BsrCandidateLoopback = types.Int64Value(value.Int())
 	} else {
 		data.BsrCandidateLoopback = types.Int64Null()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.mask"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.mask"); value.Exists() && !data.BsrCandidateMask.IsNull() {
 		data.BsrCandidateMask = types.Int64Value(value.Int())
 	} else {
 		data.BsrCandidateMask = types.Int64Null()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.priority"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.priority"); value.Exists() && !data.BsrCandidatePriority.IsNull() {
 		data.BsrCandidatePriority = types.Int64Value(value.Int())
 	} else {
 		data.BsrCandidatePriority = types.Int64Null()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.accept-rp-candidate"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:bsr-candidate.accept-rp-candidate"); value.Exists() && !data.BsrCandidateAcceptRpCandidate.IsNull() {
 		data.BsrCandidateAcceptRpCandidate = types.StringValue(value.String())
 	} else {
 		data.BsrCandidateAcceptRpCandidate = types.StringNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:ssm.range"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:ssm.range"); value.Exists() && !data.SsmRange.IsNull() {
 		data.SsmRange = types.StringValue(value.String())
 	} else {
 		data.SsmRange = types.StringNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:ssm.default"); value.Exists() {
-		data.SsmDefault = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:ssm.default"); !data.SsmDefault.IsNull() {
+		if value.Exists() {
+			data.SsmDefault = types.BoolValue(true)
+		} else {
+			data.SsmDefault = types.BoolValue(false)
+		}
 	} else {
-		data.SsmDefault = types.BoolValue(false)
+		data.SsmDefault = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.address"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.address"); value.Exists() && !data.RpAddress.IsNull() {
 		data.RpAddress = types.StringValue(value.String())
 	} else {
 		data.RpAddress = types.StringNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.override"); value.Exists() {
-		data.RpAddressOverride = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.override"); !data.RpAddressOverride.IsNull() {
+		if value.Exists() {
+			data.RpAddressOverride = types.BoolValue(true)
+		} else {
+			data.RpAddressOverride = types.BoolValue(false)
+		}
 	} else {
-		data.RpAddressOverride = types.BoolValue(false)
+		data.RpAddressOverride = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.bidir"); value.Exists() {
-		data.RpAddressBidir = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-multicast:rp-address-conf.bidir"); !data.RpAddressBidir.IsNull() {
+		if value.Exists() {
+			data.RpAddressBidir = types.BoolValue(true)
+		} else {
+			data.RpAddressBidir = types.BoolValue(false)
+		}
 	} else {
-		data.RpAddressBidir = types.BoolValue(false)
+		data.RpAddressBidir = types.BoolNull()
 	}
 	for i := range data.RpAddresses {
 		keys := [...]string{"access-list"}
@@ -234,25 +252,33 @@ func (data *PIM) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("access-list"); value.Exists() {
+		if value := r.Get("access-list"); value.Exists() && !data.RpAddresses[i].AccessList.IsNull() {
 			data.RpAddresses[i].AccessList = types.StringValue(value.String())
 		} else {
 			data.RpAddresses[i].AccessList = types.StringNull()
 		}
-		if value := r.Get("rp-address"); value.Exists() {
+		if value := r.Get("rp-address"); value.Exists() && !data.RpAddresses[i].RpAddress.IsNull() {
 			data.RpAddresses[i].RpAddress = types.StringValue(value.String())
 		} else {
 			data.RpAddresses[i].RpAddress = types.StringNull()
 		}
-		if value := r.Get("override"); value.Exists() {
-			data.RpAddresses[i].Override = types.BoolValue(true)
+		if value := r.Get("override"); !data.RpAddresses[i].Override.IsNull() {
+			if value.Exists() {
+				data.RpAddresses[i].Override = types.BoolValue(true)
+			} else {
+				data.RpAddresses[i].Override = types.BoolValue(false)
+			}
 		} else {
-			data.RpAddresses[i].Override = types.BoolValue(false)
+			data.RpAddresses[i].Override = types.BoolNull()
 		}
-		if value := r.Get("bidir"); value.Exists() {
-			data.RpAddresses[i].Bidir = types.BoolValue(true)
+		if value := r.Get("bidir"); !data.RpAddresses[i].Bidir.IsNull() {
+			if value.Exists() {
+				data.RpAddresses[i].Bidir = types.BoolValue(true)
+			} else {
+				data.RpAddresses[i].Bidir = types.BoolValue(false)
+			}
 		} else {
-			data.RpAddresses[i].Bidir = types.BoolValue(false)
+			data.RpAddresses[i].Bidir = types.BoolNull()
 		}
 	}
 	for i := range data.RpCandidates {
@@ -278,30 +304,34 @@ func (data *PIM) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("interface"); value.Exists() {
+		if value := r.Get("interface"); value.Exists() && !data.RpCandidates[i].Interface.IsNull() {
 			data.RpCandidates[i].Interface = types.StringValue(value.String())
 		} else {
 			data.RpCandidates[i].Interface = types.StringNull()
 		}
-		if value := r.Get("group-list"); value.Exists() {
+		if value := r.Get("group-list"); value.Exists() && !data.RpCandidates[i].GroupList.IsNull() {
 			data.RpCandidates[i].GroupList = types.StringValue(value.String())
 		} else {
 			data.RpCandidates[i].GroupList = types.StringNull()
 		}
-		if value := r.Get("interval"); value.Exists() {
+		if value := r.Get("interval"); value.Exists() && !data.RpCandidates[i].Interval.IsNull() {
 			data.RpCandidates[i].Interval = types.Int64Value(value.Int())
 		} else {
 			data.RpCandidates[i].Interval = types.Int64Null()
 		}
-		if value := r.Get("priority"); value.Exists() {
+		if value := r.Get("priority"); value.Exists() && !data.RpCandidates[i].Priority.IsNull() {
 			data.RpCandidates[i].Priority = types.Int64Value(value.Int())
 		} else {
 			data.RpCandidates[i].Priority = types.Int64Null()
 		}
-		if value := r.Get("bidir"); value.Exists() {
-			data.RpCandidates[i].Bidir = types.BoolValue(true)
+		if value := r.Get("bidir"); !data.RpCandidates[i].Bidir.IsNull() {
+			if value.Exists() {
+				data.RpCandidates[i].Bidir = types.BoolValue(true)
+			} else {
+				data.RpCandidates[i].Bidir = types.BoolValue(false)
+			}
 		} else {
-			data.RpCandidates[i].Bidir = types.BoolValue(false)
+			data.RpCandidates[i].Bidir = types.BoolNull()
 		}
 	}
 }
@@ -402,79 +432,6 @@ func (data *PIM) fromBody(ctx context.Context, res gjson.Result) {
 			data.RpCandidates = append(data.RpCandidates, item)
 			return true
 		})
-	}
-}
-
-func (data *PIM) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Autorp.IsUnknown() {
-		data.Autorp = types.BoolNull()
-	}
-	if data.AutorpListener.IsUnknown() {
-		data.AutorpListener = types.BoolNull()
-	}
-	if data.BsrCandidateLoopback.IsUnknown() {
-		data.BsrCandidateLoopback = types.Int64Null()
-	}
-	if data.BsrCandidateMask.IsUnknown() {
-		data.BsrCandidateMask = types.Int64Null()
-	}
-	if data.BsrCandidatePriority.IsUnknown() {
-		data.BsrCandidatePriority = types.Int64Null()
-	}
-	if data.BsrCandidateAcceptRpCandidate.IsUnknown() {
-		data.BsrCandidateAcceptRpCandidate = types.StringNull()
-	}
-	if data.SsmRange.IsUnknown() {
-		data.SsmRange = types.StringNull()
-	}
-	if data.SsmDefault.IsUnknown() {
-		data.SsmDefault = types.BoolNull()
-	}
-	if data.RpAddress.IsUnknown() {
-		data.RpAddress = types.StringNull()
-	}
-	if data.RpAddressOverride.IsUnknown() {
-		data.RpAddressOverride = types.BoolNull()
-	}
-	if data.RpAddressBidir.IsUnknown() {
-		data.RpAddressBidir = types.BoolNull()
-	}
-	for i := range data.RpAddresses {
-		if data.RpAddresses[i].AccessList.IsUnknown() {
-			data.RpAddresses[i].AccessList = types.StringNull()
-		}
-		if data.RpAddresses[i].RpAddress.IsUnknown() {
-			data.RpAddresses[i].RpAddress = types.StringNull()
-		}
-		if data.RpAddresses[i].Override.IsUnknown() {
-			data.RpAddresses[i].Override = types.BoolNull()
-		}
-		if data.RpAddresses[i].Bidir.IsUnknown() {
-			data.RpAddresses[i].Bidir = types.BoolNull()
-		}
-	}
-	for i := range data.RpCandidates {
-		if data.RpCandidates[i].Interface.IsUnknown() {
-			data.RpCandidates[i].Interface = types.StringNull()
-		}
-		if data.RpCandidates[i].GroupList.IsUnknown() {
-			data.RpCandidates[i].GroupList = types.StringNull()
-		}
-		if data.RpCandidates[i].Interval.IsUnknown() {
-			data.RpCandidates[i].Interval = types.Int64Null()
-		}
-		if data.RpCandidates[i].Priority.IsUnknown() {
-			data.RpCandidates[i].Priority = types.Int64Null()
-		}
-		if data.RpCandidates[i].Bidir.IsUnknown() {
-			data.RpCandidates[i].Bidir = types.BoolNull()
-		}
 	}
 }
 

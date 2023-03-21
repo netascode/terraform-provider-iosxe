@@ -65,7 +65,7 @@ func (data *InterfaceOSPFProcess) updateFromBody(ctx context.Context, res gjson.
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "id"); value.Exists() {
+	if value := res.Get(prefix + "id"); value.Exists() && !data.ProcessId.IsNull() {
 		data.ProcessId = types.Int64Value(value.Int())
 	} else {
 		data.ProcessId = types.Int64Null()
@@ -93,7 +93,7 @@ func (data *InterfaceOSPFProcess) updateFromBody(ctx context.Context, res gjson.
 				return true
 			},
 		)
-		if value := r.Get("area-id"); value.Exists() {
+		if value := r.Get("area-id"); value.Exists() && !data.Area[i].AreaId.IsNull() {
 			data.Area[i].AreaId = types.StringValue(value.String())
 		} else {
 			data.Area[i].AreaId = types.StringNull()
@@ -116,29 +116,6 @@ func (data *InterfaceOSPFProcess) fromBody(ctx context.Context, res gjson.Result
 			data.Area = append(data.Area, item)
 			return true
 		})
-	}
-}
-
-func (data *InterfaceOSPFProcess) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Type.IsUnknown() {
-		data.Type = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	if data.ProcessId.IsUnknown() {
-		data.ProcessId = types.Int64Null()
-	}
-	for i := range data.Area {
-		if data.Area[i].AreaId.IsUnknown() {
-			data.Area[i].AreaId = types.StringNull()
-		}
 	}
 }
 

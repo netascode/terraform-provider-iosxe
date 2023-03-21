@@ -161,50 +161,70 @@ func (data *OSPF) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "id"); value.Exists() {
+	if value := res.Get(prefix + "id"); value.Exists() && !data.ProcessId.IsNull() {
 		data.ProcessId = types.Int64Value(value.Int())
 	} else {
 		data.ProcessId = types.Int64Null()
 	}
-	if value := res.Get(prefix + "bfd.all-interfaces"); value.Exists() {
-		data.BfdAllInterfaces = types.BoolValue(true)
+	if value := res.Get(prefix + "bfd.all-interfaces"); !data.BfdAllInterfaces.IsNull() {
+		if value.Exists() {
+			data.BfdAllInterfaces = types.BoolValue(true)
+		} else {
+			data.BfdAllInterfaces = types.BoolValue(false)
+		}
 	} else {
-		data.BfdAllInterfaces = types.BoolValue(false)
+		data.BfdAllInterfaces = types.BoolNull()
 	}
-	if value := res.Get(prefix + "default-information.originate"); value.Exists() {
-		data.DefaultInformationOriginate = types.BoolValue(true)
+	if value := res.Get(prefix + "default-information.originate"); !data.DefaultInformationOriginate.IsNull() {
+		if value.Exists() {
+			data.DefaultInformationOriginate = types.BoolValue(true)
+		} else {
+			data.DefaultInformationOriginate = types.BoolValue(false)
+		}
 	} else {
-		data.DefaultInformationOriginate = types.BoolValue(false)
+		data.DefaultInformationOriginate = types.BoolNull()
 	}
-	if value := res.Get(prefix + "default-information.originate.always"); value.Exists() {
-		data.DefaultInformationOriginateAlways = types.BoolValue(true)
+	if value := res.Get(prefix + "default-information.originate.always"); !data.DefaultInformationOriginateAlways.IsNull() {
+		if value.Exists() {
+			data.DefaultInformationOriginateAlways = types.BoolValue(true)
+		} else {
+			data.DefaultInformationOriginateAlways = types.BoolValue(false)
+		}
 	} else {
-		data.DefaultInformationOriginateAlways = types.BoolValue(false)
+		data.DefaultInformationOriginateAlways = types.BoolNull()
 	}
-	if value := res.Get(prefix + "default-metric"); value.Exists() {
+	if value := res.Get(prefix + "default-metric"); value.Exists() && !data.DefaultMetric.IsNull() {
 		data.DefaultMetric = types.Int64Value(value.Int())
 	} else {
 		data.DefaultMetric = types.Int64Null()
 	}
-	if value := res.Get(prefix + "distance.distance"); value.Exists() {
+	if value := res.Get(prefix + "distance.distance"); value.Exists() && !data.Distance.IsNull() {
 		data.Distance = types.Int64Value(value.Int())
 	} else {
 		data.Distance = types.Int64Null()
 	}
-	if value := res.Get(prefix + "domain-tag"); value.Exists() {
+	if value := res.Get(prefix + "domain-tag"); value.Exists() && !data.DomainTag.IsNull() {
 		data.DomainTag = types.Int64Value(value.Int())
 	} else {
 		data.DomainTag = types.Int64Null()
 	}
-	if value := res.Get(prefix + "mpls.ldp.autoconfig"); value.Exists() {
-		data.MplsLdpAutoconfig = types.BoolValue(true)
+	if value := res.Get(prefix + "mpls.ldp.autoconfig"); !data.MplsLdpAutoconfig.IsNull() {
+		if value.Exists() {
+			data.MplsLdpAutoconfig = types.BoolValue(true)
+		} else {
+			data.MplsLdpAutoconfig = types.BoolValue(false)
+		}
 	} else {
-		data.MplsLdpAutoconfig = types.BoolValue(false)
+		data.MplsLdpAutoconfig = types.BoolNull()
 	}
-	if value := res.Get(prefix + "mpls.ldp.sync"); value.Exists() {
-		data.MplsLdpSync = types.BoolValue(true)
+	if value := res.Get(prefix + "mpls.ldp.sync"); !data.MplsLdpSync.IsNull() {
+		if value.Exists() {
+			data.MplsLdpSync = types.BoolValue(true)
+		} else {
+			data.MplsLdpSync = types.BoolValue(false)
+		}
 	} else {
-		data.MplsLdpSync = types.BoolValue(false)
+		data.MplsLdpSync = types.BoolNull()
 	}
 	for i := range data.Neighbor {
 		keys := [...]string{"ip"}
@@ -229,17 +249,17 @@ func (data *OSPF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("ip"); value.Exists() {
+		if value := r.Get("ip"); value.Exists() && !data.Neighbor[i].Ip.IsNull() {
 			data.Neighbor[i].Ip = types.StringValue(value.String())
 		} else {
 			data.Neighbor[i].Ip = types.StringNull()
 		}
-		if value := r.Get("priority"); value.Exists() {
+		if value := r.Get("priority"); value.Exists() && !data.Neighbor[i].Priority.IsNull() {
 			data.Neighbor[i].Priority = types.Int64Value(value.Int())
 		} else {
 			data.Neighbor[i].Priority = types.Int64Null()
 		}
-		if value := r.Get("cost"); value.Exists() {
+		if value := r.Get("cost"); value.Exists() && !data.Neighbor[i].Cost.IsNull() {
 			data.Neighbor[i].Cost = types.Int64Value(value.Int())
 		} else {
 			data.Neighbor[i].Cost = types.Int64Null()
@@ -268,36 +288,38 @@ func (data *OSPF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("ip"); value.Exists() {
+		if value := r.Get("ip"); value.Exists() && !data.Network[i].Ip.IsNull() {
 			data.Network[i].Ip = types.StringValue(value.String())
 		} else {
 			data.Network[i].Ip = types.StringNull()
 		}
-		if value := r.Get("wildcard"); value.Exists() {
+		if value := r.Get("wildcard"); value.Exists() && !data.Network[i].Wildcard.IsNull() {
 			data.Network[i].Wildcard = types.StringValue(value.String())
 		} else {
 			data.Network[i].Wildcard = types.StringNull()
 		}
-		if value := r.Get("area"); value.Exists() {
+		if value := r.Get("area"); value.Exists() && !data.Network[i].Area.IsNull() {
 			data.Network[i].Area = types.StringValue(value.String())
 		} else {
 			data.Network[i].Area = types.StringNull()
 		}
 	}
-	if value := res.Get(prefix + "priority"); value.Exists() {
+	if value := res.Get(prefix + "priority"); value.Exists() && !data.Priority.IsNull() {
 		data.Priority = types.Int64Value(value.Int())
 	} else {
 		data.Priority = types.Int64Null()
 	}
-	if value := res.Get(prefix + "router-id"); value.Exists() {
+	if value := res.Get(prefix + "router-id"); value.Exists() && !data.RouterId.IsNull() {
 		data.RouterId = types.StringValue(value.String())
 	} else {
 		data.RouterId = types.StringNull()
 	}
-	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown = types.BoolValue(value.Bool())
+	if value := res.Get(prefix + "shutdown"); !data.Shutdown.IsNull() {
+		if value.Exists() {
+			data.Shutdown = types.BoolValue(value.Bool())
+		}
 	} else {
-		data.Shutdown = types.BoolValue(false)
+		data.Shutdown = types.BoolNull()
 	}
 	for i := range data.SummaryAddress {
 		keys := [...]string{"ip"}
@@ -322,12 +344,12 @@ func (data *OSPF) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("ip"); value.Exists() {
+		if value := r.Get("ip"); value.Exists() && !data.SummaryAddress[i].Ip.IsNull() {
 			data.SummaryAddress[i].Ip = types.StringValue(value.String())
 		} else {
 			data.SummaryAddress[i].Ip = types.StringNull()
 		}
-		if value := r.Get("mask"); value.Exists() {
+		if value := r.Get("mask"); value.Exists() && !data.SummaryAddress[i].Mask.IsNull() {
 			data.SummaryAddress[i].Mask = types.StringValue(value.String())
 		} else {
 			data.SummaryAddress[i].Mask = types.StringNull()
@@ -432,81 +454,6 @@ func (data *OSPF) fromBody(ctx context.Context, res gjson.Result) {
 			data.SummaryAddress = append(data.SummaryAddress, item)
 			return true
 		})
-	}
-}
-
-func (data *OSPF) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.ProcessId.IsUnknown() {
-		data.ProcessId = types.Int64Null()
-	}
-	if data.BfdAllInterfaces.IsUnknown() {
-		data.BfdAllInterfaces = types.BoolNull()
-	}
-	if data.DefaultInformationOriginate.IsUnknown() {
-		data.DefaultInformationOriginate = types.BoolNull()
-	}
-	if data.DefaultInformationOriginateAlways.IsUnknown() {
-		data.DefaultInformationOriginateAlways = types.BoolNull()
-	}
-	if data.DefaultMetric.IsUnknown() {
-		data.DefaultMetric = types.Int64Null()
-	}
-	if data.Distance.IsUnknown() {
-		data.Distance = types.Int64Null()
-	}
-	if data.DomainTag.IsUnknown() {
-		data.DomainTag = types.Int64Null()
-	}
-	if data.MplsLdpAutoconfig.IsUnknown() {
-		data.MplsLdpAutoconfig = types.BoolNull()
-	}
-	if data.MplsLdpSync.IsUnknown() {
-		data.MplsLdpSync = types.BoolNull()
-	}
-	for i := range data.Neighbor {
-		if data.Neighbor[i].Ip.IsUnknown() {
-			data.Neighbor[i].Ip = types.StringNull()
-		}
-		if data.Neighbor[i].Priority.IsUnknown() {
-			data.Neighbor[i].Priority = types.Int64Null()
-		}
-		if data.Neighbor[i].Cost.IsUnknown() {
-			data.Neighbor[i].Cost = types.Int64Null()
-		}
-	}
-	for i := range data.Network {
-		if data.Network[i].Ip.IsUnknown() {
-			data.Network[i].Ip = types.StringNull()
-		}
-		if data.Network[i].Wildcard.IsUnknown() {
-			data.Network[i].Wildcard = types.StringNull()
-		}
-		if data.Network[i].Area.IsUnknown() {
-			data.Network[i].Area = types.StringNull()
-		}
-	}
-	if data.Priority.IsUnknown() {
-		data.Priority = types.Int64Null()
-	}
-	if data.RouterId.IsUnknown() {
-		data.RouterId = types.StringNull()
-	}
-	if data.Shutdown.IsUnknown() {
-		data.Shutdown = types.BoolNull()
-	}
-	for i := range data.SummaryAddress {
-		if data.SummaryAddress[i].Ip.IsUnknown() {
-			data.SummaryAddress[i].Ip = types.StringNull()
-		}
-		if data.SummaryAddress[i].Mask.IsUnknown() {
-			data.SummaryAddress[i].Mask = types.StringNull()
-		}
 	}
 }
 

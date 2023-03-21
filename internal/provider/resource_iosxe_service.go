@@ -53,107 +53,86 @@ func (r *ServiceResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"pad": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable PAD commands").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"password_encryption": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Encrypt system passwords").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"password_recovery": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable password recovery").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp debug/log messages").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_debug": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp debug messages").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_debug_datetime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp with date and time").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_debug_datetime_msec": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Include milliseconds in timestamp").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_debug_datetime_localtime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use local time zone for timestamps").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_debug_datetime_show_timezone": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Add time zone information to timestamp").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_debug_datetime_year": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Include year in timestamp").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_debug_uptime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp with system uptime").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_log": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp log messages").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_log_datetime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp with date and time").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_log_datetime_msec": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Include milliseconds in timestamp").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_log_datetime_localtime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use local time zone for timestamps").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_log_datetime_show_timezone": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Add time zone information to timestamp").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_log_datetime_year": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Include year in timestamp").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"timestamps_log_uptime": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Timestamp with system uptime").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"dhcp": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Enable DHCP server and relay agent").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"tcp_keepalives_in": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Generate keepalives on idle incoming network connections").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"tcp_keepalives_out": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Generate keepalives on idle outgoing network connections").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -201,8 +180,6 @@ func (r *ServiceResource) Create(ctx context.Context, req resource.CreateRequest
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -270,8 +247,6 @@ func (r *ServiceResource) Update(ctx context.Context, req resource.UpdateRequest
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

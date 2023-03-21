@@ -53,22 +53,18 @@ func (r *BannerResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"exec_banner": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Banner message").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"login_banner": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Banner message").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"prompt_timeout_banner": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Banner message").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"motd_banner": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Banner message").String,
 				Optional:            true,
-				Computed:            true,
 			},
 		},
 	}
@@ -116,8 +112,6 @@ func (r *BannerResource) Create(ctx context.Context, req resource.CreateRequest,
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -185,8 +179,6 @@ func (r *BannerResource) Update(ctx context.Context, req resource.UpdateRequest,
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

@@ -82,12 +82,10 @@ func (r *StaticRouteResource) Schema(ctx context.Context, req resource.SchemaReq
 						"next_hop": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"metric": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 255).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 255),
 							},
@@ -95,22 +93,18 @@ func (r *StaticRouteResource) Schema(ctx context.Context, req resource.SchemaReq
 						"global": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Next hop address is global").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify name of the next hop").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"permanent": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("permanent route").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"tag": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Set tag for this route").AddIntegerRangeDescription(1, 4294967295).String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 4294967295),
 							},
@@ -164,8 +158,6 @@ func (r *StaticRouteResource) Create(ctx context.Context, req resource.CreateReq
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -233,8 +225,6 @@ func (r *StaticRouteResource) Update(ctx context.Context, req resource.UpdateReq
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

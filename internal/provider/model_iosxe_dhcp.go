@@ -90,35 +90,51 @@ func (data *DHCP) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:compatibility.suboption.link-selection"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:compatibility.suboption.link-selection"); value.Exists() && !data.CompatibilitySuboptionLinkSelection.IsNull() {
 		data.CompatibilitySuboptionLinkSelection = types.StringValue(value.String())
 	} else {
 		data.CompatibilitySuboptionLinkSelection = types.StringNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:compatibility.suboption.server-override"); value.Exists() {
+	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:compatibility.suboption.server-override"); value.Exists() && !data.CompatibilitySuboptionServerOverride.IsNull() {
 		data.CompatibilitySuboptionServerOverride = types.StringValue(value.String())
 	} else {
 		data.CompatibilitySuboptionServerOverride = types.StringNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.trust-all"); value.Exists() {
-		data.RelayInformationTrustAll = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.trust-all"); !data.RelayInformationTrustAll.IsNull() {
+		if value.Exists() {
+			data.RelayInformationTrustAll = types.BoolValue(true)
+		} else {
+			data.RelayInformationTrustAll = types.BoolValue(false)
+		}
 	} else {
-		data.RelayInformationTrustAll = types.BoolValue(false)
+		data.RelayInformationTrustAll = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.option.option-default"); value.Exists() {
-		data.RelayInformationOptionDefault = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.option.option-default"); !data.RelayInformationOptionDefault.IsNull() {
+		if value.Exists() {
+			data.RelayInformationOptionDefault = types.BoolValue(true)
+		} else {
+			data.RelayInformationOptionDefault = types.BoolValue(false)
+		}
 	} else {
-		data.RelayInformationOptionDefault = types.BoolValue(false)
+		data.RelayInformationOptionDefault = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.option.vpn"); value.Exists() {
-		data.RelayInformationOptionVpn = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:relay.information.option.vpn"); !data.RelayInformationOptionVpn.IsNull() {
+		if value.Exists() {
+			data.RelayInformationOptionVpn = types.BoolValue(true)
+		} else {
+			data.RelayInformationOptionVpn = types.BoolValue(false)
+		}
 	} else {
-		data.RelayInformationOptionVpn = types.BoolValue(false)
+		data.RelayInformationOptionVpn = types.BoolNull()
 	}
-	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:snooping"); value.Exists() {
-		data.Snooping = types.BoolValue(true)
+	if value := res.Get(prefix + "Cisco-IOS-XE-dhcp:snooping"); !data.Snooping.IsNull() {
+		if value.Exists() {
+			data.Snooping = types.BoolValue(true)
+		} else {
+			data.Snooping = types.BoolValue(false)
+		}
 	} else {
-		data.Snooping = types.BoolValue(false)
+		data.Snooping = types.BoolNull()
 	}
 	for i := range data.SnoopingVlans {
 		keys := [...]string{"id"}
@@ -143,7 +159,7 @@ func (data *DHCP) updateFromBody(ctx context.Context, res gjson.Result) {
 				return true
 			},
 		)
-		if value := r.Get("id"); value.Exists() {
+		if value := r.Get("id"); value.Exists() && !data.SnoopingVlans[i].VlanId.IsNull() {
 			data.SnoopingVlans[i].VlanId = types.Int64Value(value.Int())
 		} else {
 			data.SnoopingVlans[i].VlanId = types.Int64Null()
@@ -192,38 +208,6 @@ func (data *DHCP) fromBody(ctx context.Context, res gjson.Result) {
 			data.SnoopingVlans = append(data.SnoopingVlans, item)
 			return true
 		})
-	}
-}
-
-func (data *DHCP) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.CompatibilitySuboptionLinkSelection.IsUnknown() {
-		data.CompatibilitySuboptionLinkSelection = types.StringNull()
-	}
-	if data.CompatibilitySuboptionServerOverride.IsUnknown() {
-		data.CompatibilitySuboptionServerOverride = types.StringNull()
-	}
-	if data.RelayInformationTrustAll.IsUnknown() {
-		data.RelayInformationTrustAll = types.BoolNull()
-	}
-	if data.RelayInformationOptionDefault.IsUnknown() {
-		data.RelayInformationOptionDefault = types.BoolNull()
-	}
-	if data.RelayInformationOptionVpn.IsUnknown() {
-		data.RelayInformationOptionVpn = types.BoolNull()
-	}
-	if data.Snooping.IsUnknown() {
-		data.Snooping = types.BoolNull()
-	}
-	for i := range data.SnoopingVlans {
-		if data.SnoopingVlans[i].VlanId.IsUnknown() {
-			data.SnoopingVlans[i].VlanId = types.Int64Null()
-		}
 	}
 }
 

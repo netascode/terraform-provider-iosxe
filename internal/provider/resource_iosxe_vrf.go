@@ -63,7 +63,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"description": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("VRF specific description").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 244),
 				},
@@ -71,7 +70,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"rd": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify Route Distinguisher").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 				},
@@ -82,17 +80,14 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"address_family_ipv4": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Address family").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"address_family_ipv6": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Address family").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"vpn_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure VPN ID in rfc2685 format").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`[0-9a-fA-F][0-9a-fA-F]?[0-9a-fA-F]?:[0-9a-fA-F][0-9a-fA-F]?[0-9a-fA-F]?[0-9a-fA-F]?`), ""),
 				},
@@ -105,7 +100,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -113,7 +107,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"stitching": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -126,7 +119,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -134,7 +126,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"stitching": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -147,7 +138,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -163,7 +153,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -187,7 +176,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -203,7 +191,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -227,7 +214,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -243,7 +229,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -267,7 +252,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -283,7 +267,6 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
 							Optional:            true,
-							Computed:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -345,8 +328,6 @@ func (r *VRFResource) Create(ctx context.Context, req resource.CreateRequest, re
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -414,8 +395,6 @@ func (r *VRFResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

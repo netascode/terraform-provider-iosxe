@@ -95,7 +95,7 @@ func (data *SNMPServerGroup) updateFromBody(ctx context.Context, res gjson.Resul
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "id"); value.Exists() {
+	if value := res.Get(prefix + "id"); value.Exists() && !data.Name.IsNull() {
 		data.Name = types.StringValue(value.String())
 	} else {
 		data.Name = types.StringNull()
@@ -123,47 +123,47 @@ func (data *SNMPServerGroup) updateFromBody(ctx context.Context, res gjson.Resul
 				return true
 			},
 		)
-		if value := r.Get("security-level"); value.Exists() {
+		if value := r.Get("security-level"); value.Exists() && !data.V3Security[i].SecurityLevel.IsNull() {
 			data.V3Security[i].SecurityLevel = types.StringValue(value.String())
 		} else {
 			data.V3Security[i].SecurityLevel = types.StringNull()
 		}
-		if value := r.Get("context-node"); value.Exists() {
+		if value := r.Get("context-node"); value.Exists() && !data.V3Security[i].ContextNode.IsNull() {
 			data.V3Security[i].ContextNode = types.StringValue(value.String())
 		} else {
 			data.V3Security[i].ContextNode = types.StringNull()
 		}
-		if value := r.Get("match-node"); value.Exists() {
+		if value := r.Get("match-node"); value.Exists() && !data.V3Security[i].MatchNode.IsNull() {
 			data.V3Security[i].MatchNode = types.StringValue(value.String())
 		} else {
 			data.V3Security[i].MatchNode = types.StringNull()
 		}
-		if value := r.Get("read-node"); value.Exists() {
+		if value := r.Get("read-node"); value.Exists() && !data.V3Security[i].ReadNode.IsNull() {
 			data.V3Security[i].ReadNode = types.StringValue(value.String())
 		} else {
 			data.V3Security[i].ReadNode = types.StringNull()
 		}
-		if value := r.Get("write-node"); value.Exists() {
+		if value := r.Get("write-node"); value.Exists() && !data.V3Security[i].WriteNode.IsNull() {
 			data.V3Security[i].WriteNode = types.StringValue(value.String())
 		} else {
 			data.V3Security[i].WriteNode = types.StringNull()
 		}
-		if value := r.Get("notify-node"); value.Exists() {
+		if value := r.Get("notify-node"); value.Exists() && !data.V3Security[i].NotifyNode.IsNull() {
 			data.V3Security[i].NotifyNode = types.StringValue(value.String())
 		} else {
 			data.V3Security[i].NotifyNode = types.StringNull()
 		}
-		if value := r.Get("access-config.ipv6-acl"); value.Exists() {
+		if value := r.Get("access-config.ipv6-acl"); value.Exists() && !data.V3Security[i].AccessIpv6Acl.IsNull() {
 			data.V3Security[i].AccessIpv6Acl = types.StringValue(value.String())
 		} else {
 			data.V3Security[i].AccessIpv6Acl = types.StringNull()
 		}
-		if value := r.Get("access-config.standard-acl"); value.Exists() {
+		if value := r.Get("access-config.standard-acl"); value.Exists() && !data.V3Security[i].AccessStandardAcl.IsNull() {
 			data.V3Security[i].AccessStandardAcl = types.Int64Value(value.Int())
 		} else {
 			data.V3Security[i].AccessStandardAcl = types.Int64Null()
 		}
-		if value := r.Get("access-config.acl-name"); value.Exists() {
+		if value := r.Get("access-config.acl-name"); value.Exists() && !data.V3Security[i].AccessAclName.IsNull() {
 			data.V3Security[i].AccessAclName = types.StringValue(value.String())
 		} else {
 			data.V3Security[i].AccessAclName = types.StringNull()
@@ -210,47 +210,6 @@ func (data *SNMPServerGroup) fromBody(ctx context.Context, res gjson.Result) {
 			data.V3Security = append(data.V3Security, item)
 			return true
 		})
-	}
-}
-
-func (data *SNMPServerGroup) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	for i := range data.V3Security {
-		if data.V3Security[i].SecurityLevel.IsUnknown() {
-			data.V3Security[i].SecurityLevel = types.StringNull()
-		}
-		if data.V3Security[i].ContextNode.IsUnknown() {
-			data.V3Security[i].ContextNode = types.StringNull()
-		}
-		if data.V3Security[i].MatchNode.IsUnknown() {
-			data.V3Security[i].MatchNode = types.StringNull()
-		}
-		if data.V3Security[i].ReadNode.IsUnknown() {
-			data.V3Security[i].ReadNode = types.StringNull()
-		}
-		if data.V3Security[i].WriteNode.IsUnknown() {
-			data.V3Security[i].WriteNode = types.StringNull()
-		}
-		if data.V3Security[i].NotifyNode.IsUnknown() {
-			data.V3Security[i].NotifyNode = types.StringNull()
-		}
-		if data.V3Security[i].AccessIpv6Acl.IsUnknown() {
-			data.V3Security[i].AccessIpv6Acl = types.StringNull()
-		}
-		if data.V3Security[i].AccessStandardAcl.IsUnknown() {
-			data.V3Security[i].AccessStandardAcl = types.Int64Null()
-		}
-		if data.V3Security[i].AccessAclName.IsUnknown() {
-			data.V3Security[i].AccessAclName = types.StringNull()
-		}
 	}
 }
 

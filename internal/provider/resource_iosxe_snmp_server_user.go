@@ -81,7 +81,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_aes_algorithm": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("128", "192", "256").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("128", "192", "256"),
 				},
@@ -89,12 +88,10 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_aes_password": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Authentication password for user").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"v3_auth_priv_aes_access_ipv6_acl": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 194),
 				},
@@ -102,7 +99,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_aes_access_standard_acl": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 99),
 				},
@@ -110,7 +106,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_aes_access_acl_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 183),
 				},
@@ -118,12 +113,10 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_des_password": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Authentication password for user").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"v3_auth_priv_des_access_ipv6_acl": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 194),
 				},
@@ -131,7 +124,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_des_access_standard_acl": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 99),
 				},
@@ -139,7 +131,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_des_access_acl_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 183),
 				},
@@ -147,12 +138,10 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_des3_password": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Authentication password for user").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"v3_auth_priv_des3_access_ipv6_acl": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 194),
 				},
@@ -160,7 +149,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_des3_access_standard_acl": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 99),
 				},
@@ -168,7 +156,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_priv_des3_access_acl_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 183),
 				},
@@ -176,7 +163,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_access_ipv6_acl": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify IPv6 Named Access-List").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 194),
 				},
@@ -184,7 +170,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_access_standard_acl": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Standard IP Access-list allowing access with this community string").AddIntegerRangeDescription(1, 99).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 99),
 				},
@@ -192,7 +177,6 @@ func (r *SNMPServerUserResource) Schema(ctx context.Context, req resource.Schema
 			"v3_auth_access_acl_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Access-list name").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.LengthBetween(1, 183),
 				},
@@ -243,8 +227,6 @@ func (r *SNMPServerUserResource) Create(ctx context.Context, req resource.Create
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -312,8 +294,6 @@ func (r *SNMPServerUserResource) Update(ctx context.Context, req resource.Update
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

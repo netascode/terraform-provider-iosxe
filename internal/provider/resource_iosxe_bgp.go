@@ -62,17 +62,14 @@ func (r *BGPResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"default_ipv4_unicast": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Activate ipv4-unicast for a peer by default").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"log_neighbor_changes": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Log neighbor up/down and reset reason").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"router_id_loopback": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Loopback interface").AddIntegerRangeDescription(0, 2147483647).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 2147483647),
 				},
@@ -123,8 +120,6 @@ func (r *BGPResource) Create(ctx context.Context, req resource.CreateRequest, re
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -192,8 +187,6 @@ func (r *BGPResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

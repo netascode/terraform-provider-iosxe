@@ -223,7 +223,7 @@ func (data *AccessListExtended) updateFromBody(ctx context.Context, res gjson.Re
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() && !data.Name.IsNull() {
 		data.Name = types.StringValue(value.String())
 	} else {
 		data.Name = types.StringNull()
@@ -251,182 +251,222 @@ func (data *AccessListExtended) updateFromBody(ctx context.Context, res gjson.Re
 				return true
 			},
 		)
-		if value := r.Get("sequence"); value.Exists() {
+		if value := r.Get("sequence"); value.Exists() && !data.Entries[i].Sequence.IsNull() {
 			data.Entries[i].Sequence = types.Int64Value(value.Int())
 		} else {
 			data.Entries[i].Sequence = types.Int64Null()
 		}
-		if value := r.Get("remark"); value.Exists() {
+		if value := r.Get("remark"); value.Exists() && !data.Entries[i].Remark.IsNull() {
 			data.Entries[i].Remark = types.StringValue(value.String())
 		} else {
 			data.Entries[i].Remark = types.StringNull()
 		}
-		if value := r.Get("ace-rule.action"); value.Exists() {
+		if value := r.Get("ace-rule.action"); value.Exists() && !data.Entries[i].AceRuleAction.IsNull() {
 			data.Entries[i].AceRuleAction = types.StringValue(value.String())
 		} else {
 			data.Entries[i].AceRuleAction = types.StringNull()
 		}
-		if value := r.Get("ace-rule.protocol"); value.Exists() {
+		if value := r.Get("ace-rule.protocol"); value.Exists() && !data.Entries[i].AceRuleProtocol.IsNull() {
 			data.Entries[i].AceRuleProtocol = types.StringValue(value.String())
 		} else {
 			data.Entries[i].AceRuleProtocol = types.StringNull()
 		}
-		if value := r.Get("ace-rule.object-group-str"); value.Exists() {
+		if value := r.Get("ace-rule.object-group-str"); value.Exists() && !data.Entries[i].ServiceObjectGroup.IsNull() {
 			data.Entries[i].ServiceObjectGroup = types.StringValue(value.String())
 		} else {
 			data.Entries[i].ServiceObjectGroup = types.StringNull()
 		}
-		if value := r.Get("ace-rule.ipv4-address"); value.Exists() {
+		if value := r.Get("ace-rule.ipv4-address"); value.Exists() && !data.Entries[i].SourcePrefix.IsNull() {
 			data.Entries[i].SourcePrefix = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourcePrefix = types.StringNull()
 		}
-		if value := r.Get("ace-rule.mask"); value.Exists() {
+		if value := r.Get("ace-rule.mask"); value.Exists() && !data.Entries[i].SourcePrefixMask.IsNull() {
 			data.Entries[i].SourcePrefixMask = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourcePrefixMask = types.StringNull()
 		}
-		if value := r.Get("ace-rule.any"); value.Exists() {
-			data.Entries[i].SourceAny = types.BoolValue(true)
+		if value := r.Get("ace-rule.any"); !data.Entries[i].SourceAny.IsNull() {
+			if value.Exists() {
+				data.Entries[i].SourceAny = types.BoolValue(true)
+			} else {
+				data.Entries[i].SourceAny = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].SourceAny = types.BoolValue(false)
+			data.Entries[i].SourceAny = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.host"); value.Exists() {
+		if value := r.Get("ace-rule.host"); value.Exists() && !data.Entries[i].SourceHost.IsNull() {
 			data.Entries[i].SourceHost = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourceHost = types.StringNull()
 		}
-		if value := r.Get("ace-rule.object-group"); value.Exists() {
+		if value := r.Get("ace-rule.object-group"); value.Exists() && !data.Entries[i].SourceObjectGroup.IsNull() {
 			data.Entries[i].SourceObjectGroup = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourceObjectGroup = types.StringNull()
 		}
-		if value := r.Get("ace-rule.src-eq"); value.Exists() {
+		if value := r.Get("ace-rule.src-eq"); value.Exists() && !data.Entries[i].SourcePortEqual.IsNull() {
 			data.Entries[i].SourcePortEqual = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourcePortEqual = types.StringNull()
 		}
-		if value := r.Get("ace-rule.src-gt"); value.Exists() {
+		if value := r.Get("ace-rule.src-gt"); value.Exists() && !data.Entries[i].SourcePortGreaterThan.IsNull() {
 			data.Entries[i].SourcePortGreaterThan = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourcePortGreaterThan = types.StringNull()
 		}
-		if value := r.Get("ace-rule.src-lt"); value.Exists() {
+		if value := r.Get("ace-rule.src-lt"); value.Exists() && !data.Entries[i].SourcePortLesserThan.IsNull() {
 			data.Entries[i].SourcePortLesserThan = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourcePortLesserThan = types.StringNull()
 		}
-		if value := r.Get("ace-rule.src-range1"); value.Exists() {
+		if value := r.Get("ace-rule.src-range1"); value.Exists() && !data.Entries[i].SourcePortRangeFrom.IsNull() {
 			data.Entries[i].SourcePortRangeFrom = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourcePortRangeFrom = types.StringNull()
 		}
-		if value := r.Get("ace-rule.src-range2"); value.Exists() {
+		if value := r.Get("ace-rule.src-range2"); value.Exists() && !data.Entries[i].SourcePortRangeTo.IsNull() {
 			data.Entries[i].SourcePortRangeTo = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourcePortRangeTo = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dest-ipv4-address"); value.Exists() {
+		if value := r.Get("ace-rule.dest-ipv4-address"); value.Exists() && !data.Entries[i].DestinationPrefix.IsNull() {
 			data.Entries[i].DestinationPrefix = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationPrefix = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dest-mask"); value.Exists() {
+		if value := r.Get("ace-rule.dest-mask"); value.Exists() && !data.Entries[i].DestinationPrefixMask.IsNull() {
 			data.Entries[i].DestinationPrefixMask = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationPrefixMask = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dst-any"); value.Exists() {
-			data.Entries[i].DestinationAny = types.BoolValue(true)
+		if value := r.Get("ace-rule.dst-any"); !data.Entries[i].DestinationAny.IsNull() {
+			if value.Exists() {
+				data.Entries[i].DestinationAny = types.BoolValue(true)
+			} else {
+				data.Entries[i].DestinationAny = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].DestinationAny = types.BoolValue(false)
+			data.Entries[i].DestinationAny = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.dst-host"); value.Exists() {
+		if value := r.Get("ace-rule.dst-host"); value.Exists() && !data.Entries[i].DestinationHost.IsNull() {
 			data.Entries[i].DestinationHost = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationHost = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dst-object-group"); value.Exists() {
+		if value := r.Get("ace-rule.dst-object-group"); value.Exists() && !data.Entries[i].DestinationObjectGroup.IsNull() {
 			data.Entries[i].DestinationObjectGroup = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationObjectGroup = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dst-eq"); value.Exists() {
+		if value := r.Get("ace-rule.dst-eq"); value.Exists() && !data.Entries[i].DestinationPortEqual.IsNull() {
 			data.Entries[i].DestinationPortEqual = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationPortEqual = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dst-gt"); value.Exists() {
+		if value := r.Get("ace-rule.dst-gt"); value.Exists() && !data.Entries[i].DestinationPortGreaterThan.IsNull() {
 			data.Entries[i].DestinationPortGreaterThan = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationPortGreaterThan = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dst-lt"); value.Exists() {
+		if value := r.Get("ace-rule.dst-lt"); value.Exists() && !data.Entries[i].DestinationPortLesserThan.IsNull() {
 			data.Entries[i].DestinationPortLesserThan = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationPortLesserThan = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dst-range1"); value.Exists() {
+		if value := r.Get("ace-rule.dst-range1"); value.Exists() && !data.Entries[i].DestinationPortRangeFrom.IsNull() {
 			data.Entries[i].DestinationPortRangeFrom = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationPortRangeFrom = types.StringNull()
 		}
-		if value := r.Get("ace-rule.dst-range2"); value.Exists() {
+		if value := r.Get("ace-rule.dst-range2"); value.Exists() && !data.Entries[i].DestinationPortRangeTo.IsNull() {
 			data.Entries[i].DestinationPortRangeTo = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationPortRangeTo = types.StringNull()
 		}
-		if value := r.Get("ace-rule.ack"); value.Exists() {
-			data.Entries[i].Ack = types.BoolValue(true)
+		if value := r.Get("ace-rule.ack"); !data.Entries[i].Ack.IsNull() {
+			if value.Exists() {
+				data.Entries[i].Ack = types.BoolValue(true)
+			} else {
+				data.Entries[i].Ack = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].Ack = types.BoolValue(false)
+			data.Entries[i].Ack = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.fin"); value.Exists() {
-			data.Entries[i].Fin = types.BoolValue(true)
+		if value := r.Get("ace-rule.fin"); !data.Entries[i].Fin.IsNull() {
+			if value.Exists() {
+				data.Entries[i].Fin = types.BoolValue(true)
+			} else {
+				data.Entries[i].Fin = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].Fin = types.BoolValue(false)
+			data.Entries[i].Fin = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.psh"); value.Exists() {
-			data.Entries[i].Psh = types.BoolValue(true)
+		if value := r.Get("ace-rule.psh"); !data.Entries[i].Psh.IsNull() {
+			if value.Exists() {
+				data.Entries[i].Psh = types.BoolValue(true)
+			} else {
+				data.Entries[i].Psh = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].Psh = types.BoolValue(false)
+			data.Entries[i].Psh = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.rst"); value.Exists() {
-			data.Entries[i].Rst = types.BoolValue(true)
+		if value := r.Get("ace-rule.rst"); !data.Entries[i].Rst.IsNull() {
+			if value.Exists() {
+				data.Entries[i].Rst = types.BoolValue(true)
+			} else {
+				data.Entries[i].Rst = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].Rst = types.BoolValue(false)
+			data.Entries[i].Rst = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.syn"); value.Exists() {
-			data.Entries[i].Syn = types.BoolValue(true)
+		if value := r.Get("ace-rule.syn"); !data.Entries[i].Syn.IsNull() {
+			if value.Exists() {
+				data.Entries[i].Syn = types.BoolValue(true)
+			} else {
+				data.Entries[i].Syn = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].Syn = types.BoolValue(false)
+			data.Entries[i].Syn = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.urg"); value.Exists() {
-			data.Entries[i].Urg = types.BoolValue(true)
+		if value := r.Get("ace-rule.urg"); !data.Entries[i].Urg.IsNull() {
+			if value.Exists() {
+				data.Entries[i].Urg = types.BoolValue(true)
+			} else {
+				data.Entries[i].Urg = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].Urg = types.BoolValue(false)
+			data.Entries[i].Urg = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.established"); value.Exists() {
-			data.Entries[i].Established = types.BoolValue(true)
+		if value := r.Get("ace-rule.established"); !data.Entries[i].Established.IsNull() {
+			if value.Exists() {
+				data.Entries[i].Established = types.BoolValue(true)
+			} else {
+				data.Entries[i].Established = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].Established = types.BoolValue(false)
+			data.Entries[i].Established = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.dscp"); value.Exists() {
+		if value := r.Get("ace-rule.dscp"); value.Exists() && !data.Entries[i].Dscp.IsNull() {
 			data.Entries[i].Dscp = types.StringValue(value.String())
 		} else {
 			data.Entries[i].Dscp = types.StringNull()
 		}
-		if value := r.Get("ace-rule.fragments"); value.Exists() {
-			data.Entries[i].Fragments = types.BoolValue(true)
+		if value := r.Get("ace-rule.fragments"); !data.Entries[i].Fragments.IsNull() {
+			if value.Exists() {
+				data.Entries[i].Fragments = types.BoolValue(true)
+			} else {
+				data.Entries[i].Fragments = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].Fragments = types.BoolValue(false)
+			data.Entries[i].Fragments = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.precedence"); value.Exists() {
+		if value := r.Get("ace-rule.precedence"); value.Exists() && !data.Entries[i].Precedence.IsNull() {
 			data.Entries[i].Precedence = types.StringValue(value.String())
 		} else {
 			data.Entries[i].Precedence = types.StringNull()
 		}
-		if value := r.Get("ace-rule.tos"); value.Exists() {
+		if value := r.Get("ace-rule.tos"); value.Exists() && !data.Entries[i].Tos.IsNull() {
 			data.Entries[i].Tos = types.StringValue(value.String())
 		} else {
 			data.Entries[i].Tos = types.StringNull()
@@ -574,128 +614,6 @@ func (data *AccessListExtended) fromBody(ctx context.Context, res gjson.Result) 
 			data.Entries = append(data.Entries, item)
 			return true
 		})
-	}
-}
-
-func (data *AccessListExtended) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	for i := range data.Entries {
-		if data.Entries[i].Sequence.IsUnknown() {
-			data.Entries[i].Sequence = types.Int64Null()
-		}
-		if data.Entries[i].Remark.IsUnknown() {
-			data.Entries[i].Remark = types.StringNull()
-		}
-		if data.Entries[i].AceRuleAction.IsUnknown() {
-			data.Entries[i].AceRuleAction = types.StringNull()
-		}
-		if data.Entries[i].AceRuleProtocol.IsUnknown() {
-			data.Entries[i].AceRuleProtocol = types.StringNull()
-		}
-		if data.Entries[i].ServiceObjectGroup.IsUnknown() {
-			data.Entries[i].ServiceObjectGroup = types.StringNull()
-		}
-		if data.Entries[i].SourcePrefix.IsUnknown() {
-			data.Entries[i].SourcePrefix = types.StringNull()
-		}
-		if data.Entries[i].SourcePrefixMask.IsUnknown() {
-			data.Entries[i].SourcePrefixMask = types.StringNull()
-		}
-		if data.Entries[i].SourceAny.IsUnknown() {
-			data.Entries[i].SourceAny = types.BoolNull()
-		}
-		if data.Entries[i].SourceHost.IsUnknown() {
-			data.Entries[i].SourceHost = types.StringNull()
-		}
-		if data.Entries[i].SourceObjectGroup.IsUnknown() {
-			data.Entries[i].SourceObjectGroup = types.StringNull()
-		}
-		if data.Entries[i].SourcePortEqual.IsUnknown() {
-			data.Entries[i].SourcePortEqual = types.StringNull()
-		}
-		if data.Entries[i].SourcePortGreaterThan.IsUnknown() {
-			data.Entries[i].SourcePortGreaterThan = types.StringNull()
-		}
-		if data.Entries[i].SourcePortLesserThan.IsUnknown() {
-			data.Entries[i].SourcePortLesserThan = types.StringNull()
-		}
-		if data.Entries[i].SourcePortRangeFrom.IsUnknown() {
-			data.Entries[i].SourcePortRangeFrom = types.StringNull()
-		}
-		if data.Entries[i].SourcePortRangeTo.IsUnknown() {
-			data.Entries[i].SourcePortRangeTo = types.StringNull()
-		}
-		if data.Entries[i].DestinationPrefix.IsUnknown() {
-			data.Entries[i].DestinationPrefix = types.StringNull()
-		}
-		if data.Entries[i].DestinationPrefixMask.IsUnknown() {
-			data.Entries[i].DestinationPrefixMask = types.StringNull()
-		}
-		if data.Entries[i].DestinationAny.IsUnknown() {
-			data.Entries[i].DestinationAny = types.BoolNull()
-		}
-		if data.Entries[i].DestinationHost.IsUnknown() {
-			data.Entries[i].DestinationHost = types.StringNull()
-		}
-		if data.Entries[i].DestinationObjectGroup.IsUnknown() {
-			data.Entries[i].DestinationObjectGroup = types.StringNull()
-		}
-		if data.Entries[i].DestinationPortEqual.IsUnknown() {
-			data.Entries[i].DestinationPortEqual = types.StringNull()
-		}
-		if data.Entries[i].DestinationPortGreaterThan.IsUnknown() {
-			data.Entries[i].DestinationPortGreaterThan = types.StringNull()
-		}
-		if data.Entries[i].DestinationPortLesserThan.IsUnknown() {
-			data.Entries[i].DestinationPortLesserThan = types.StringNull()
-		}
-		if data.Entries[i].DestinationPortRangeFrom.IsUnknown() {
-			data.Entries[i].DestinationPortRangeFrom = types.StringNull()
-		}
-		if data.Entries[i].DestinationPortRangeTo.IsUnknown() {
-			data.Entries[i].DestinationPortRangeTo = types.StringNull()
-		}
-		if data.Entries[i].Ack.IsUnknown() {
-			data.Entries[i].Ack = types.BoolNull()
-		}
-		if data.Entries[i].Fin.IsUnknown() {
-			data.Entries[i].Fin = types.BoolNull()
-		}
-		if data.Entries[i].Psh.IsUnknown() {
-			data.Entries[i].Psh = types.BoolNull()
-		}
-		if data.Entries[i].Rst.IsUnknown() {
-			data.Entries[i].Rst = types.BoolNull()
-		}
-		if data.Entries[i].Syn.IsUnknown() {
-			data.Entries[i].Syn = types.BoolNull()
-		}
-		if data.Entries[i].Urg.IsUnknown() {
-			data.Entries[i].Urg = types.BoolNull()
-		}
-		if data.Entries[i].Established.IsUnknown() {
-			data.Entries[i].Established = types.BoolNull()
-		}
-		if data.Entries[i].Dscp.IsUnknown() {
-			data.Entries[i].Dscp = types.StringNull()
-		}
-		if data.Entries[i].Fragments.IsUnknown() {
-			data.Entries[i].Fragments = types.BoolNull()
-		}
-		if data.Entries[i].Precedence.IsUnknown() {
-			data.Entries[i].Precedence = types.StringNull()
-		}
-		if data.Entries[i].Tos.IsUnknown() {
-			data.Entries[i].Tos = types.StringNull()
-		}
 	}
 }
 

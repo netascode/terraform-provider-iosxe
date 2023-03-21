@@ -103,7 +103,7 @@ func (data *AccessListStandard) updateFromBody(ctx context.Context, res gjson.Re
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() && !data.Name.IsNull() {
 		data.Name = types.StringValue(value.String())
 	} else {
 		data.Name = types.StringNull()
@@ -131,52 +131,60 @@ func (data *AccessListStandard) updateFromBody(ctx context.Context, res gjson.Re
 				return true
 			},
 		)
-		if value := r.Get("sequence"); value.Exists() {
+		if value := r.Get("sequence"); value.Exists() && !data.Entries[i].Sequence.IsNull() {
 			data.Entries[i].Sequence = types.Int64Value(value.Int())
 		} else {
 			data.Entries[i].Sequence = types.Int64Null()
 		}
-		if value := r.Get("remark"); value.Exists() {
+		if value := r.Get("remark"); value.Exists() && !data.Entries[i].Remark.IsNull() {
 			data.Entries[i].Remark = types.StringValue(value.String())
 		} else {
 			data.Entries[i].Remark = types.StringNull()
 		}
-		if value := r.Get("deny.std-ace.ipv4-prefix"); value.Exists() {
+		if value := r.Get("deny.std-ace.ipv4-prefix"); value.Exists() && !data.Entries[i].DenyPrefix.IsNull() {
 			data.Entries[i].DenyPrefix = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DenyPrefix = types.StringNull()
 		}
-		if value := r.Get("deny.std-ace.mask"); value.Exists() {
+		if value := r.Get("deny.std-ace.mask"); value.Exists() && !data.Entries[i].DenyPrefixMask.IsNull() {
 			data.Entries[i].DenyPrefixMask = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DenyPrefixMask = types.StringNull()
 		}
-		if value := r.Get("deny.std-ace.any"); value.Exists() {
-			data.Entries[i].DenyAny = types.BoolValue(true)
+		if value := r.Get("deny.std-ace.any"); !data.Entries[i].DenyAny.IsNull() {
+			if value.Exists() {
+				data.Entries[i].DenyAny = types.BoolValue(true)
+			} else {
+				data.Entries[i].DenyAny = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].DenyAny = types.BoolValue(false)
+			data.Entries[i].DenyAny = types.BoolNull()
 		}
-		if value := r.Get("deny.std-ace.host"); value.Exists() {
+		if value := r.Get("deny.std-ace.host"); value.Exists() && !data.Entries[i].DenyHost.IsNull() {
 			data.Entries[i].DenyHost = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DenyHost = types.StringNull()
 		}
-		if value := r.Get("permit.std-ace.ipv4-prefix"); value.Exists() {
+		if value := r.Get("permit.std-ace.ipv4-prefix"); value.Exists() && !data.Entries[i].PermitPrefix.IsNull() {
 			data.Entries[i].PermitPrefix = types.StringValue(value.String())
 		} else {
 			data.Entries[i].PermitPrefix = types.StringNull()
 		}
-		if value := r.Get("permit.std-ace.mask"); value.Exists() {
+		if value := r.Get("permit.std-ace.mask"); value.Exists() && !data.Entries[i].PermitPrefixMask.IsNull() {
 			data.Entries[i].PermitPrefixMask = types.StringValue(value.String())
 		} else {
 			data.Entries[i].PermitPrefixMask = types.StringNull()
 		}
-		if value := r.Get("permit.std-ace.any"); value.Exists() {
-			data.Entries[i].PermitAny = types.BoolValue(true)
+		if value := r.Get("permit.std-ace.any"); !data.Entries[i].PermitAny.IsNull() {
+			if value.Exists() {
+				data.Entries[i].PermitAny = types.BoolValue(true)
+			} else {
+				data.Entries[i].PermitAny = types.BoolValue(false)
+			}
 		} else {
-			data.Entries[i].PermitAny = types.BoolValue(false)
+			data.Entries[i].PermitAny = types.BoolNull()
 		}
-		if value := r.Get("permit.std-ace.host"); value.Exists() {
+		if value := r.Get("permit.std-ace.host"); value.Exists() && !data.Entries[i].PermitHost.IsNull() {
 			data.Entries[i].PermitHost = types.StringValue(value.String())
 		} else {
 			data.Entries[i].PermitHost = types.StringNull()
@@ -230,50 +238,6 @@ func (data *AccessListStandard) fromBody(ctx context.Context, res gjson.Result) 
 			data.Entries = append(data.Entries, item)
 			return true
 		})
-	}
-}
-
-func (data *AccessListStandard) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	for i := range data.Entries {
-		if data.Entries[i].Sequence.IsUnknown() {
-			data.Entries[i].Sequence = types.Int64Null()
-		}
-		if data.Entries[i].Remark.IsUnknown() {
-			data.Entries[i].Remark = types.StringNull()
-		}
-		if data.Entries[i].DenyPrefix.IsUnknown() {
-			data.Entries[i].DenyPrefix = types.StringNull()
-		}
-		if data.Entries[i].DenyPrefixMask.IsUnknown() {
-			data.Entries[i].DenyPrefixMask = types.StringNull()
-		}
-		if data.Entries[i].DenyAny.IsUnknown() {
-			data.Entries[i].DenyAny = types.BoolNull()
-		}
-		if data.Entries[i].DenyHost.IsUnknown() {
-			data.Entries[i].DenyHost = types.StringNull()
-		}
-		if data.Entries[i].PermitPrefix.IsUnknown() {
-			data.Entries[i].PermitPrefix = types.StringNull()
-		}
-		if data.Entries[i].PermitPrefixMask.IsUnknown() {
-			data.Entries[i].PermitPrefixMask = types.StringNull()
-		}
-		if data.Entries[i].PermitAny.IsUnknown() {
-			data.Entries[i].PermitAny = types.BoolNull()
-		}
-		if data.Entries[i].PermitHost.IsUnknown() {
-			data.Entries[i].PermitHost = types.StringNull()
-		}
 	}
 }
 

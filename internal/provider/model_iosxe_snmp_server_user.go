@@ -125,102 +125,102 @@ func (data *SNMPServerUser) updateFromBody(ctx context.Context, res gjson.Result
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "username"); value.Exists() {
+	if value := res.Get(prefix + "username"); value.Exists() && !data.Username.IsNull() {
 		data.Username = types.StringValue(value.String())
 	} else {
 		data.Username = types.StringNull()
 	}
-	if value := res.Get(prefix + "grpname"); value.Exists() {
+	if value := res.Get(prefix + "grpname"); value.Exists() && !data.Grpname.IsNull() {
 		data.Grpname = types.StringValue(value.String())
 	} else {
 		data.Grpname = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.algorithm"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.algorithm"); value.Exists() && !data.V3AuthAlgorithm.IsNull() {
 		data.V3AuthAlgorithm = types.StringValue(value.String())
 	} else {
 		data.V3AuthAlgorithm = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.password"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.password"); value.Exists() && !data.V3AuthPassword.IsNull() {
 		data.V3AuthPassword = types.StringValue(value.String())
 	} else {
 		data.V3AuthPassword = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.algorithm"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.algorithm"); value.Exists() && !data.V3AuthPrivAesAlgorithm.IsNull() {
 		data.V3AuthPrivAesAlgorithm = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivAesAlgorithm = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.password"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.password"); value.Exists() && !data.V3AuthPrivAesPassword.IsNull() {
 		data.V3AuthPrivAesPassword = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivAesPassword = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.access-config.ipv6-acl"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.access-config.ipv6-acl"); value.Exists() && !data.V3AuthPrivAesAccessIpv6Acl.IsNull() {
 		data.V3AuthPrivAesAccessIpv6Acl = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivAesAccessIpv6Acl = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.access-config.standard-acl"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.access-config.standard-acl"); value.Exists() && !data.V3AuthPrivAesAccessStandardAcl.IsNull() {
 		data.V3AuthPrivAesAccessStandardAcl = types.Int64Value(value.Int())
 	} else {
 		data.V3AuthPrivAesAccessStandardAcl = types.Int64Null()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.access-config.acl-name"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.aes.access-config.acl-name"); value.Exists() && !data.V3AuthPrivAesAccessAclName.IsNull() {
 		data.V3AuthPrivAesAccessAclName = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivAesAccessAclName = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.des.password"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.des.password"); value.Exists() && !data.V3AuthPrivDesPassword.IsNull() {
 		data.V3AuthPrivDesPassword = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivDesPassword = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.des.access-config.ipv6-acl"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.des.access-config.ipv6-acl"); value.Exists() && !data.V3AuthPrivDesAccessIpv6Acl.IsNull() {
 		data.V3AuthPrivDesAccessIpv6Acl = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivDesAccessIpv6Acl = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.des.access-config.standard-acl"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.des.access-config.standard-acl"); value.Exists() && !data.V3AuthPrivDesAccessStandardAcl.IsNull() {
 		data.V3AuthPrivDesAccessStandardAcl = types.Int64Value(value.Int())
 	} else {
 		data.V3AuthPrivDesAccessStandardAcl = types.Int64Null()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.des.access-config.acl-name"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.des.access-config.acl-name"); value.Exists() && !data.V3AuthPrivDesAccessAclName.IsNull() {
 		data.V3AuthPrivDesAccessAclName = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivDesAccessAclName = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.des3.password"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.des3.password"); value.Exists() && !data.V3AuthPrivDes3Password.IsNull() {
 		data.V3AuthPrivDes3Password = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivDes3Password = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.des3.access-config.ipv6-acl"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.des3.access-config.ipv6-acl"); value.Exists() && !data.V3AuthPrivDes3AccessIpv6Acl.IsNull() {
 		data.V3AuthPrivDes3AccessIpv6Acl = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivDes3AccessIpv6Acl = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.des3.access-config.standard-acl"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.des3.access-config.standard-acl"); value.Exists() && !data.V3AuthPrivDes3AccessStandardAcl.IsNull() {
 		data.V3AuthPrivDes3AccessStandardAcl = types.Int64Value(value.Int())
 	} else {
 		data.V3AuthPrivDes3AccessStandardAcl = types.Int64Null()
 	}
-	if value := res.Get(prefix + "v3.auth-config.priv-config.des3.access-config.acl-name"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.priv-config.des3.access-config.acl-name"); value.Exists() && !data.V3AuthPrivDes3AccessAclName.IsNull() {
 		data.V3AuthPrivDes3AccessAclName = types.StringValue(value.String())
 	} else {
 		data.V3AuthPrivDes3AccessAclName = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.access-config.ipv6-acl"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.access-config.ipv6-acl"); value.Exists() && !data.V3AuthAccessIpv6Acl.IsNull() {
 		data.V3AuthAccessIpv6Acl = types.StringValue(value.String())
 	} else {
 		data.V3AuthAccessIpv6Acl = types.StringNull()
 	}
-	if value := res.Get(prefix + "v3.auth-config.access-config.standard-acl"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.access-config.standard-acl"); value.Exists() && !data.V3AuthAccessStandardAcl.IsNull() {
 		data.V3AuthAccessStandardAcl = types.Int64Value(value.Int())
 	} else {
 		data.V3AuthAccessStandardAcl = types.Int64Null()
 	}
-	if value := res.Get(prefix + "v3.auth-config.access-config.acl-name"); value.Exists() {
+	if value := res.Get(prefix + "v3.auth-config.access-config.acl-name"); value.Exists() && !data.V3AuthAccessAclName.IsNull() {
 		data.V3AuthAccessAclName = types.StringValue(value.String())
 	} else {
 		data.V3AuthAccessAclName = types.StringNull()
@@ -285,75 +285,6 @@ func (data *SNMPServerUser) fromBody(ctx context.Context, res gjson.Result) {
 	}
 	if value := res.Get(prefix + "v3.auth-config.access-config.acl-name"); value.Exists() {
 		data.V3AuthAccessAclName = types.StringValue(value.String())
-	}
-}
-
-func (data *SNMPServerUser) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.Username.IsUnknown() {
-		data.Username = types.StringNull()
-	}
-	if data.Grpname.IsUnknown() {
-		data.Grpname = types.StringNull()
-	}
-	if data.V3AuthAlgorithm.IsUnknown() {
-		data.V3AuthAlgorithm = types.StringNull()
-	}
-	if data.V3AuthPassword.IsUnknown() {
-		data.V3AuthPassword = types.StringNull()
-	}
-	if data.V3AuthPrivAesAlgorithm.IsUnknown() {
-		data.V3AuthPrivAesAlgorithm = types.StringNull()
-	}
-	if data.V3AuthPrivAesPassword.IsUnknown() {
-		data.V3AuthPrivAesPassword = types.StringNull()
-	}
-	if data.V3AuthPrivAesAccessIpv6Acl.IsUnknown() {
-		data.V3AuthPrivAesAccessIpv6Acl = types.StringNull()
-	}
-	if data.V3AuthPrivAesAccessStandardAcl.IsUnknown() {
-		data.V3AuthPrivAesAccessStandardAcl = types.Int64Null()
-	}
-	if data.V3AuthPrivAesAccessAclName.IsUnknown() {
-		data.V3AuthPrivAesAccessAclName = types.StringNull()
-	}
-	if data.V3AuthPrivDesPassword.IsUnknown() {
-		data.V3AuthPrivDesPassword = types.StringNull()
-	}
-	if data.V3AuthPrivDesAccessIpv6Acl.IsUnknown() {
-		data.V3AuthPrivDesAccessIpv6Acl = types.StringNull()
-	}
-	if data.V3AuthPrivDesAccessStandardAcl.IsUnknown() {
-		data.V3AuthPrivDesAccessStandardAcl = types.Int64Null()
-	}
-	if data.V3AuthPrivDesAccessAclName.IsUnknown() {
-		data.V3AuthPrivDesAccessAclName = types.StringNull()
-	}
-	if data.V3AuthPrivDes3Password.IsUnknown() {
-		data.V3AuthPrivDes3Password = types.StringNull()
-	}
-	if data.V3AuthPrivDes3AccessIpv6Acl.IsUnknown() {
-		data.V3AuthPrivDes3AccessIpv6Acl = types.StringNull()
-	}
-	if data.V3AuthPrivDes3AccessStandardAcl.IsUnknown() {
-		data.V3AuthPrivDes3AccessStandardAcl = types.Int64Null()
-	}
-	if data.V3AuthPrivDes3AccessAclName.IsUnknown() {
-		data.V3AuthPrivDes3AccessAclName = types.StringNull()
-	}
-	if data.V3AuthAccessIpv6Acl.IsUnknown() {
-		data.V3AuthAccessIpv6Acl = types.StringNull()
-	}
-	if data.V3AuthAccessStandardAcl.IsUnknown() {
-		data.V3AuthAccessStandardAcl = types.Int64Null()
-	}
-	if data.V3AuthAccessAclName.IsUnknown() {
-		data.V3AuthAccessAclName = types.StringNull()
 	}
 }
 

@@ -87,45 +87,65 @@ func (data *VLAN) updateFromBody(ctx context.Context, res gjson.Result) {
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
 	}
-	if value := res.Get(prefix + "id"); value.Exists() {
+	if value := res.Get(prefix + "id"); value.Exists() && !data.VlanId.IsNull() {
 		data.VlanId = types.Int64Value(value.Int())
 	} else {
 		data.VlanId = types.Int64Null()
 	}
-	if value := res.Get(prefix + "remote-span"); value.Exists() {
-		data.RemoteSpan = types.BoolValue(true)
+	if value := res.Get(prefix + "remote-span"); !data.RemoteSpan.IsNull() {
+		if value.Exists() {
+			data.RemoteSpan = types.BoolValue(true)
+		} else {
+			data.RemoteSpan = types.BoolValue(false)
+		}
 	} else {
-		data.RemoteSpan = types.BoolValue(false)
+		data.RemoteSpan = types.BoolNull()
 	}
-	if value := res.Get(prefix + "private-vlan.primary"); value.Exists() {
-		data.PrivateVlanPrimary = types.BoolValue(true)
+	if value := res.Get(prefix + "private-vlan.primary"); !data.PrivateVlanPrimary.IsNull() {
+		if value.Exists() {
+			data.PrivateVlanPrimary = types.BoolValue(true)
+		} else {
+			data.PrivateVlanPrimary = types.BoolValue(false)
+		}
 	} else {
-		data.PrivateVlanPrimary = types.BoolValue(false)
+		data.PrivateVlanPrimary = types.BoolNull()
 	}
-	if value := res.Get(prefix + "private-vlan.association"); value.Exists() {
+	if value := res.Get(prefix + "private-vlan.association"); value.Exists() && !data.PrivateVlanAssociation.IsNull() {
 		data.PrivateVlanAssociation = types.StringValue(value.String())
 	} else {
 		data.PrivateVlanAssociation = types.StringNull()
 	}
-	if value := res.Get(prefix + "private-vlan.community"); value.Exists() {
-		data.PrivateVlanCommunity = types.BoolValue(true)
+	if value := res.Get(prefix + "private-vlan.community"); !data.PrivateVlanCommunity.IsNull() {
+		if value.Exists() {
+			data.PrivateVlanCommunity = types.BoolValue(true)
+		} else {
+			data.PrivateVlanCommunity = types.BoolValue(false)
+		}
 	} else {
-		data.PrivateVlanCommunity = types.BoolValue(false)
+		data.PrivateVlanCommunity = types.BoolNull()
 	}
-	if value := res.Get(prefix + "private-vlan.isolated"); value.Exists() {
-		data.PrivateVlanIsolated = types.BoolValue(true)
+	if value := res.Get(prefix + "private-vlan.isolated"); !data.PrivateVlanIsolated.IsNull() {
+		if value.Exists() {
+			data.PrivateVlanIsolated = types.BoolValue(true)
+		} else {
+			data.PrivateVlanIsolated = types.BoolValue(false)
+		}
 	} else {
-		data.PrivateVlanIsolated = types.BoolValue(false)
+		data.PrivateVlanIsolated = types.BoolNull()
 	}
-	if value := res.Get(prefix + "name"); value.Exists() {
+	if value := res.Get(prefix + "name"); value.Exists() && !data.Name.IsNull() {
 		data.Name = types.StringValue(value.String())
 	} else {
 		data.Name = types.StringNull()
 	}
-	if value := res.Get(prefix + "shutdown"); value.Exists() {
-		data.Shutdown = types.BoolValue(true)
+	if value := res.Get(prefix + "shutdown"); !data.Shutdown.IsNull() {
+		if value.Exists() {
+			data.Shutdown = types.BoolValue(true)
+		} else {
+			data.Shutdown = types.BoolValue(false)
+		}
 	} else {
-		data.Shutdown = types.BoolValue(false)
+		data.Shutdown = types.BoolNull()
 	}
 }
 
@@ -164,39 +184,6 @@ func (data *VLAN) fromBody(ctx context.Context, res gjson.Result) {
 		data.Shutdown = types.BoolValue(true)
 	} else {
 		data.Shutdown = types.BoolValue(false)
-	}
-}
-
-func (data *VLAN) setUnknownValues(ctx context.Context) {
-	if data.Device.IsUnknown() {
-		data.Device = types.StringNull()
-	}
-	if data.Id.IsUnknown() {
-		data.Id = types.StringNull()
-	}
-	if data.VlanId.IsUnknown() {
-		data.VlanId = types.Int64Null()
-	}
-	if data.RemoteSpan.IsUnknown() {
-		data.RemoteSpan = types.BoolNull()
-	}
-	if data.PrivateVlanPrimary.IsUnknown() {
-		data.PrivateVlanPrimary = types.BoolNull()
-	}
-	if data.PrivateVlanAssociation.IsUnknown() {
-		data.PrivateVlanAssociation = types.StringNull()
-	}
-	if data.PrivateVlanCommunity.IsUnknown() {
-		data.PrivateVlanCommunity = types.BoolNull()
-	}
-	if data.PrivateVlanIsolated.IsUnknown() {
-		data.PrivateVlanIsolated = types.BoolNull()
-	}
-	if data.Name.IsUnknown() {
-		data.Name = types.StringNull()
-	}
-	if data.Shutdown.IsUnknown() {
-		data.Shutdown = types.BoolNull()
 	}
 }
 

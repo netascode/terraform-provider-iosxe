@@ -56,12 +56,10 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"monitor_severity": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"buffered_size": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Logging buffer size").AddIntegerRangeDescription(4096, 2147483647).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(4096, 2147483647),
 				},
@@ -69,17 +67,14 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"buffered_severity": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Logging severity level").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"console_severity": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"facility": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Facility parameter for syslog messages").AddStringEnumDescription("auth", "cron", "daemon", "kern", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7", "lpr", "mail", "news", "sys10", "sys11", "sys12", "sys13", "sys14", "sys9", "syslog", "user", "uucp").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("auth", "cron", "daemon", "kern", "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7", "lpr", "mail", "news", "sys10", "sys11", "sys12", "sys13", "sys14", "sys9", "syslog", "user", "uucp"),
 				},
@@ -87,7 +82,6 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"history_size": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set history table size").AddIntegerRangeDescription(0, 65535).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 65535),
 				},
@@ -95,22 +89,18 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"history_severity": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trap": schema.BoolAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Set trap server logging level").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"trap_severity": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"origin_id_type": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Use origin hostname/ip/ipv6 as ID").AddStringEnumDescription("hostname", "ip", "ipv6").String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.String{
 					stringvalidator.OneOf("hostname", "ip", "ipv6"),
 				},
@@ -118,17 +108,14 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"origin_id_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Define a unique text string as ID").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"file_name": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"file_max_size": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 4294967295).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 4294967295),
 				},
@@ -136,7 +123,6 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"file_min_size": schema.Int64Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 4294967295).String,
 				Optional:            true,
-				Computed:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(0, 4294967295),
 				},
@@ -144,12 +130,10 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"file_severity": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interface": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Optional:            true,
-				Computed:            true,
 			},
 			"source_interfaces_vrf": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Specify interface and vrf for source address in logging transactions").String,
@@ -159,7 +143,6 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the vrf of source interface for logging transactions").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"interface_name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
@@ -176,7 +159,6 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 						"ipv4_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -189,12 +171,10 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 						"ipv4_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Set VRF option").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -207,7 +187,6 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 						"ipv6_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -220,12 +199,10 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 						"ipv6_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Set VRF option").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -276,8 +253,6 @@ func (r *LoggingResource) Create(ctx context.Context, req resource.CreateRequest
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -345,8 +320,6 @@ func (r *LoggingResource) Update(ctx context.Context, req resource.UpdateRequest
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))

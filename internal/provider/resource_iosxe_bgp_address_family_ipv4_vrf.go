@@ -77,22 +77,18 @@ func (r *BGPAddressFamilyIPv4VRFResource) Schema(ctx context.Context, req resour
 						"name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"advertise_l2vpn_evpn": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Advertise/export prefixes to l2vpn evpn table").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"redistribute_connected": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Connected").String,
 							Optional:            true,
-							Computed:            true,
 						},
 						"redistribute_static": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Static routes").String,
 							Optional:            true,
-							Computed:            true,
 						},
 					},
 				},
@@ -143,8 +139,6 @@ func (r *BGPAddressFamilyIPv4VRFResource) Create(ctx context.Context, req resour
 			return
 		}
 	}
-
-	plan.setUnknownValues(ctx)
 
 	plan.Id = types.StringValue(plan.getPath())
 
@@ -212,8 +206,6 @@ func (r *BGPAddressFamilyIPv4VRFResource) Update(ctx context.Context, req resour
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
 		return
 	}
-
-	plan.setUnknownValues(ctx)
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
