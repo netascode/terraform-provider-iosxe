@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/terraform-plugin-framework-validators v0.10.0
 	github.com/hashicorp/terraform-plugin-go v0.14.3
 	github.com/hashicorp/terraform-plugin-log v0.8.0
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
 	github.com/netascode/go-restconf v0.1.8
 	github.com/openconfig/goyang v1.2.0
 	github.com/tidwall/gjson v1.14.4
