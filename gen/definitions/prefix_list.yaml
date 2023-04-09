@@ -9,7 +9,7 @@ attributes:
       - yang_name: name
         example: PREFIX_LIST_1
         id: true
-      - yang_name: no
+      - yang_name: "no"
         tf_name: seq
         example: 10
         id: true
