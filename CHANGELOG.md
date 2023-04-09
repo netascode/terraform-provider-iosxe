@@ -1,3 +1,7 @@
+## 0.1.14 (unreleased)
+
+- Add `iosxe_prefix_list` resource and data source
+
 ## 0.1.13
 
 - BREAKING CHANGE: Remove default value of `ip_access_group_in_enable` and `ip_access_group_out_enable` attributes of `iosxe_interface_ethernet` resource
@@ -8,8 +12,8 @@
 
 ## 0.1.12
 
-- Add iosxe_snmp_server_user resource and data source
-- BREAKING CHANGE: Rename access_config_ipv6_acl attribute of iosxe_snmp_server_group resource to access_ipv6_acl
+- Add `iosxe_snmp_server_user` resource and data source
+- BREAKING CHANGE: Rename `access_config_ipv6_acl` attribute of `iosxe_snmp_server_group` resource to `access_ipv6_acl`
 
 ## 0.1.11
 
