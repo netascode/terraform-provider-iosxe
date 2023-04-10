@@ -1,7 +1,7 @@
 ---
 name: Access List Extended
 path: Cisco-IOS-XE-native:native/ip/access-list/Cisco-IOS-XE-acl:extended=%v
-doc_category: ACL
+doc_category: System
 attributes:
   - yang_name: name
     example: EACL1
