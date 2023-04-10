@@ -1,4 +1,4 @@
-## 0.1.14 (unreleased)
+## 0.1.14
 
 - Add `iosxe_prefix_list` resource and data source
 - Add `iosxe_route_map` resource and data source
