@@ -61,13 +61,13 @@ func testAccIosxeLoggingIPv4HostVRFTransportConfig_all() string {
 		ipv4_host = "2.2.2.2"
 		vrf = "VRF1"
 		transport_udp_ports = [{
-		port_number = 10000
+			port_number = 10000
 		}]
 		transport_tcp_ports = [{
-		port_number = 10001
+			port_number = 10001
 		}]
 		transport_tls_ports = [{
-		port_number = 10002
+			port_number = 10002
 		}]
   		depends_on = [iosxe_restconf.PreReq0, ]
 	}

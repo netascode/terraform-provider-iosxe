@@ -57,7 +57,7 @@ func testAccIosxeInterfaceOSPFProcessConfig_all() string {
 		name = "2"
 		process_id = 1
 		area = [{
-		area_id = "1"
+			area_id = "1"
 		}]
   		depends_on = [iosxe_restconf.PreReq0, ]
 	}

@@ -76,8 +76,8 @@ func testAccIosxeInterfacePortChannelConfig_all() string {
 		ip_access_group_out_enable = true
 		ip_dhcp_relay_source_interface = "Loopback100"
 		helper_addresses = [{
-		address = "10.10.10.10"
-		global = false
+			address = "10.10.10.10"
+			global = false
 		}]
   		depends_on = [iosxe_restconf.PreReq0, ]
 	}

@@ -81,19 +81,19 @@ func testAccIosxeSNMPServerConfig_all() string {
 		source_interface_traps_gigabit_ethernet = "1"
 		trap_source_gigabit_ethernet = "1"
 		snmp_communities = [{
-		name = "COM1"
-		view = "VIEW1"
-		permission = "ro"
-		ipv6 = "ACL1"
-		access_list_name = "1"
+			name = "COM1"
+			view = "VIEW1"
+			permission = "ro"
+			ipv6 = "ACL1"
+			access_list_name = "1"
 		}]
 		contexts = [{
-		name = "CON1"
+			name = "CON1"
 		}]
 		views = [{
-		name = "VIEW1"
-		mib = "interfaces"
-		inc_exl = "included"
+			name = "VIEW1"
+			mib = "interfaces"
+			inc_exl = "included"
 		}]
 	}
 	`

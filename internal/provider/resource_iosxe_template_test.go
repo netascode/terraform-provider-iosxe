@@ -120,9 +120,9 @@ func testAccIosxeTemplateConfig_all() string {
 		switchport_port_security_aging_type = true
 		switchport_port_security_aging_type_inactivity = true
 		switchport_port_security_maximum_range = [{
-		range = 100
-		vlan = true
-		vlan_access = true
+			range = 100
+			vlan = true
+			vlan_access = true
 		}]
 		switchport_port_security_violation_protect = false
 		switchport_port_security_violation_restrict = false
@@ -161,8 +161,8 @@ func testAccIosxeTemplateConfig_all() string {
 		ip_dhcp_snooping_limit_rate = 10
 		ip_dhcp_snooping_trust = true
 		ip_access_group = [{
-		direction = "in"
-		access_list = "ACL1"
+			direction = "in"
+			access_list = "ACL1"
 		}]
 		subscriber_aging_probe = true
 		device_tracking = true

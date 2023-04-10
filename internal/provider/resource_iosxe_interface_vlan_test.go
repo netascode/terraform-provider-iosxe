@@ -81,9 +81,9 @@ func testAccIosxeInterfaceVLANConfig_all() string {
 		ip_access_group_out = "1"
 		ip_access_group_out_enable = true
 		helper_addresses = [{
-		address = "10.10.10.10"
-		global = false
-		vrf = "VRF1"
+			address = "10.10.10.10"
+			global = false
+			vrf = "VRF1"
 		}]
   		depends_on = [iosxe_restconf.PreReq0, ]
 	}

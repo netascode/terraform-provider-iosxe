@@ -77,8 +77,8 @@ func testAccIosxeSystemConfig_all() string {
 		multicast_routing = true
 		multicast_routing_distributed = true
 		multicast_routing_vrfs = [{
-		vrf = "VRF1"
-		distributed = true
+			vrf = "VRF1"
+			distributed = true
 		}]
   		depends_on = [iosxe_restconf.PreReq0, ]
 	}

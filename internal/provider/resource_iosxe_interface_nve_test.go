@@ -53,8 +53,8 @@ func testAccIosxeInterfaceNVEConfig_all() string {
 		host_reachability_protocol_bgp = true
 		source_interface_loopback = 100
 		vnis = [{
-		vni_range = "10000"
-		ipv4_multicast_group = "225.1.1.1"
+			vni_range = "10000"
+			ipv4_multicast_group = "225.1.1.1"
 		}]
 	}
 	`

@@ -95,7 +95,7 @@ func testAccIosxe{{camelCase .Name}}Config_minimum() string {
 		{{.TfName}} = [{
 		{{- range  .Attributes}}
 		{{- if ne .ExcludeTest true}}
-		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
 		{{- end}}
 		{{- end}}
 		}]
@@ -120,7 +120,7 @@ func testAccIosxe{{camelCase .Name}}Config_all() string {
 		{{.TfName}} = [{
 		{{- range  .Attributes}}
 		{{- if ne .ExcludeTest true}}
-		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
 		{{- end}}
 		{{- end}}
 		}]

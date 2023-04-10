@@ -80,16 +80,16 @@ func testAccIosxePIMConfig_all() string {
 		rp_address_override = false
 		rp_address_bidir = false
 		rp_addresses = [{
-		access_list = "10"
-		rp_address = "10.10.10.10"
-		override = false
-		bidir = false
+			access_list = "10"
+			rp_address = "10.10.10.10"
+			override = false
+			bidir = false
 		}]
 		rp_candidates = [{
-		interface = "Loopback100"
-		interval = 100
-		priority = 10
-		bidir = false
+			interface = "Loopback100"
+			interval = 100
+			priority = 10
+			bidir = false
 		}]
   		depends_on = [iosxe_restconf.PreReq0, ]
 	}

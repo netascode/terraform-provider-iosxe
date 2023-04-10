@@ -57,14 +57,14 @@ func testAccIosxeMSDPConfig_all() string {
 	resource "iosxe_msdp" "test" {
 		originator_id = "Loopback100"
 		peers = [{
-		addr = "10.1.1.1"
-		remote_as = 65000
-		connect_source_loopback = 100
+			addr = "10.1.1.1"
+			remote_as = 65000
+			connect_source_loopback = 100
 		}]
 		passwords = [{
-		addr = "10.1.1.1"
-		encryption = 0
-		password = "Cisco123"
+			addr = "10.1.1.1"
+			encryption = 0
+			password = "Cisco123"
 		}]
   		depends_on = [iosxe_restconf.PreReq0, ]
 	}

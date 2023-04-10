@@ -45,10 +45,10 @@ func testAccIosxeAccessListStandardConfig_all() string {
 	resource "iosxe_access_list_standard" "test" {
 		name = "SACL1"
 		entries = [{
-		sequence = 10
-		remark = "Description"
-		deny_prefix = "10.0.0.0"
-		deny_prefix_mask = "0.0.0.255"
+			sequence = 10
+			remark = "Description"
+			deny_prefix = "10.0.0.0"
+			deny_prefix_mask = "0.0.0.255"
 		}]
 	}
 	`
