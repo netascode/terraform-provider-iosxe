@@ -6,8 +6,6 @@ resource "iosxe_ospf" "example" {
   default_metric                       = 21
   distance                             = 120
   domain_tag                           = 10
-  mpls_ldp_autoconfig                  = true
-  mpls_ldp_sync                        = true
   neighbor = [
     {
       ip       = "2.2.2.2"

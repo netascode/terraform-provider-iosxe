@@ -21,10 +21,7 @@ test_prerequisites:
     attributes:
       - name: name
         value: 100
-  - path: Cisco-IOS-XE-native:native/interface/Loopback=100/ip/address/primary
-    attributes:
-      - name: address
+      - name: ip/address/primary/address
         value: 200.200.200.200
-      - name: mask
+      - name: ip/address/primary/mask
         value: 255.255.255.255
-    dependencies: [0]

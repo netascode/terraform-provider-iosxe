@@ -37,18 +37,10 @@ resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
   attributes = {
-      name = "VRF1"
+      "name" = "VRF1"
+      "address-family/ipv4" = ""
+      "address-family/ipv6" = ""
   }
-}
-
-resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
-  delete = false
-  attributes = {
-      ipv4 = ""
-      ipv6 = ""
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -58,7 +50,7 @@ func testAccIosxeLoggingIPv6HostVRFTransportConfig_minimum() string {
 	resource "iosxe_logging_ipv6_host_vrf_transport" "test" {
 		ipv6_host = "2001::1"
 		vrf = "VRF1"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }
@@ -77,7 +69,7 @@ func testAccIosxeLoggingIPv6HostVRFTransportConfig_all() string {
 		transport_tls_ports = [{
 		port_number = 10002
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

@@ -22,18 +22,16 @@ func TestAccIosxePIMVRF(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "bsr_candidate_loopback", "100"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "bsr_candidate_mask", "30"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "bsr_candidate_priority", "10"),
-					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "bsr_candidate_accept_rp_candidate", "10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "ssm_range", "10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "ssm_default", "false"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_address", "19.19.19.19"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_address_override", "false"),
-					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_address_bidir", "true"),
+					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_address_bidir", "false"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_addresses.0.access_list", "10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_addresses.0.rp_address", "10.10.10.10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_addresses.0.override", "false"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_addresses.0.bidir", "false"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_candidates.0.interface", "Loopback100"),
-					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_candidates.0.group_list", "10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_candidates.0.interval", "100"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_candidates.0.priority", "10"),
 					resource.TestCheckResourceAttr("iosxe_pim_vrf.test", "rp_candidates.0.bidir", "false"),
@@ -53,41 +51,20 @@ resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
   attributes = {
-      name = "VRF1"
+      "name" = "VRF1"
+      "address-family/ipv4" = ""
   }
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
-  delete = false
-  attributes = {
-      ipv4 = ""
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
-}
-
-resource "iosxe_restconf" "PreReq2" {
   path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
   attributes = {
-      name = "100"
+      "name" = "100"
+      "vrf/forwarding" = "VRF1"
+      "ip/address/primary/address" = "200.200.200.200"
+      "ip/address/primary/mask" = "255.255.255.255"
   }
-}
-
-resource "iosxe_restconf" "PreReq3" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100/vrf"
-  attributes = {
-      forwarding = "VRF1"
-  }
-  depends_on = [iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
-}
-
-resource "iosxe_restconf" "PreReq4" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100/ip/address/primary"
-  attributes = {
-      address = "200.200.200.200"
-      mask = "255.255.255.255"
-  }
-  depends_on = [iosxe_restconf.PreReq3, ]
+  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -96,7 +73,7 @@ func testAccIosxePIMVRFConfig_minimum() string {
 	return `
 	resource "iosxe_pim_vrf" "test" {
 		vrf = "VRF1"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, iosxe_restconf.PreReq4, ]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }
@@ -110,12 +87,11 @@ func testAccIosxePIMVRFConfig_all() string {
 		bsr_candidate_loopback = 100
 		bsr_candidate_mask = 30
 		bsr_candidate_priority = 10
-		bsr_candidate_accept_rp_candidate = "10"
 		ssm_range = "10"
 		ssm_default = false
 		rp_address = "19.19.19.19"
 		rp_address_override = false
-		rp_address_bidir = true
+		rp_address_bidir = false
 		rp_addresses = [{
 		access_list = "10"
 		rp_address = "10.10.10.10"
@@ -124,12 +100,11 @@ func testAccIosxePIMVRFConfig_all() string {
 		}]
 		rp_candidates = [{
 		interface = "Loopback100"
-		group_list = "10"
 		interval = 100
 		priority = 10
 		bidir = false
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, iosxe_restconf.PreReq4, ]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

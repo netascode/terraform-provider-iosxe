@@ -41,17 +41,9 @@ resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
   attributes = {
-      name = "VRF1"
+      "name" = "VRF1"
+      "address-family/ipv4" = ""
   }
-}
-
-resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
-  delete = false
-  attributes = {
-      ipv4 = ""
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -75,7 +67,7 @@ resource "iosxe_system" "test" {
     vrf = "VRF1"
     distributed = true
   }]
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 data "iosxe_system" "test" {

@@ -29,17 +29,10 @@ const testAccDataSourceIosxeBGPPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
   attributes = {
-      name = "100"
+      "name" = "100"
+      "ip/address/primary/address" = "200.200.200.200"
+      "ip/address/primary/mask" = "255.255.255.255"
   }
-}
-
-resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100/ip/address/primary"
-  attributes = {
-      address = "200.200.200.200"
-      mask = "255.255.255.255"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -51,7 +44,7 @@ resource "iosxe_bgp" "test" {
   default_ipv4_unicast = false
   log_neighbor_changes = true
   router_id_loopback = 100
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 data "iosxe_bgp" "test" {

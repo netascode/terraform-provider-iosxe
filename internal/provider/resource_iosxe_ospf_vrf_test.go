@@ -24,8 +24,6 @@ func TestAccIosxeOSPFVRF(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "default_metric", "21"),
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "distance", "120"),
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "domain_tag", "10"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "mpls_ldp_autoconfig", "true"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "mpls_ldp_sync", "true"),
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.ip", "2.2.2.2"),
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.priority", "10"),
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.cost", "100"),
@@ -53,17 +51,9 @@ resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
   attributes = {
-      name = "VRF1"
+      "name" = "VRF1"
+      "address-family/ipv4" = ""
   }
-}
-
-resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
-  delete = false
-  attributes = {
-      ipv4 = ""
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -73,7 +63,7 @@ func testAccIosxeOSPFVRFConfig_minimum() string {
 	resource "iosxe_ospf_vrf" "test" {
 		process_id = 1
 		vrf = "VRF1"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }
@@ -89,8 +79,6 @@ func testAccIosxeOSPFVRFConfig_all() string {
 		default_metric = 21
 		distance = 120
 		domain_tag = 10
-		mpls_ldp_autoconfig = true
-		mpls_ldp_sync = true
 		neighbor = [{
 		ip = "2.2.2.2"
 		priority = 10
@@ -108,7 +96,7 @@ func testAccIosxeOSPFVRFConfig_all() string {
 		ip = "3.3.3.0"
 		mask = "255.255.255.0"
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

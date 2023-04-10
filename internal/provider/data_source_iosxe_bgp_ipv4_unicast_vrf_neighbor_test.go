@@ -34,31 +34,23 @@ resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
   attributes = {
-      name = "VRF1"
-      rd = "1:1"
+      "name" = "VRF1"
+      "rd" = "1:1"
+      "address-family/ipv4" = ""
   }
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
-  delete = false
+  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
   attributes = {
-      ipv4 = ""
+      "id" = "65000"
   }
-  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 resource "iosxe_restconf" "PreReq2" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      id = "65000"
-  }
-}
-
-resource "iosxe_restconf" "PreReq3" {
   path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/with-vrf/ipv4=unicast"
   attributes = {
-      af-name = "unicast"
+      "af-name" = "unicast"
   }
   lists = [
     {
@@ -67,19 +59,19 @@ resource "iosxe_restconf" "PreReq3" {
       items = [
           {
             attributes = {
-              name = "VRF1"
+              "name" = "VRF1"
             }
           },
       ] 
     },
   ]
-  depends_on = [iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 
-resource "iosxe_restconf" "PreReq4" {
+resource "iosxe_restconf" "PreReq3" {
   path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
   attributes = {
-      name = "100"
+      "name" = "100"
   }
 }
 
@@ -98,7 +90,7 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "test" {
   activate = true
   send_community = "both"
   route_reflector_client = false
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, iosxe_restconf.PreReq4, ]
+  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
 }
 
 data "iosxe_bgp_ipv4_unicast_vrf_neighbor" "test" {

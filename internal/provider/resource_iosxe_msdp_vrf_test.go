@@ -40,32 +40,18 @@ resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
   attributes = {
-      name = "VRF1"
+      "name" = "VRF1"
+      "address-family/ipv4" = ""
   }
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
-  delete = false
-  attributes = {
-      ipv4 = ""
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
-}
-
-resource "iosxe_restconf" "PreReq2" {
   path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
   attributes = {
-      name = "100"
+      "name" = "100"
+      "vrf/forwarding" = "VRF1"
   }
-}
-
-resource "iosxe_restconf" "PreReq3" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100/vrf"
-  attributes = {
-      forwarding = "VRF1"
-  }
-  depends_on = [iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -74,7 +60,7 @@ func testAccIosxeMSDPVRFConfig_minimum() string {
 	return `
 	resource "iosxe_msdp_vrf" "test" {
 		vrf = "VRF1"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }
@@ -94,7 +80,7 @@ func testAccIosxeMSDPVRFConfig_all() string {
 		encryption = 0
 		password = "Cisco123"
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

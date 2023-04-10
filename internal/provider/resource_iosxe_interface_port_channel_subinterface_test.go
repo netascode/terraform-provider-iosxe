@@ -45,23 +45,15 @@ resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
   attributes = {
-      name = "VRF1"
+      "name" = "VRF1"
+      "address-family/ipv4" = ""
   }
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
-  delete = false
-  attributes = {
-      ipv4 = ""
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
-}
-
-resource "iosxe_restconf" "PreReq2" {
   path = "Cisco-IOS-XE-native:native/interface/Port-channel=10"
   attributes = {
-      name = "10"
+      "name" = "10"
   }
 }
 
@@ -71,7 +63,7 @@ func testAccIosxeInterfacePortChannelSubinterfaceConfig_minimum() string {
 	return `
 	resource "iosxe_interface_port_channel_subinterface" "test" {
 		name = "10.666"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }
@@ -94,7 +86,7 @@ func testAccIosxeInterfacePortChannelSubinterfaceConfig_all() string {
 		address = "10.10.10.10"
 		global = false
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

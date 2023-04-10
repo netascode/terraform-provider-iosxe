@@ -32,14 +32,10 @@ test_prerequisites:
         value: VRF1
       - name: rd
         value: 1:1
-  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family
-    no_delete: true
-    attributes:
-      - name: ipv4
-        value: ''
-    dependencies: [0]
+      - name: address-family/ipv4
+        value: ""
   - path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000
     attributes:
       - name: id
         value: 65000
-    dependencies: [1]
+    dependencies: [0]

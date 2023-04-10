@@ -21,18 +21,16 @@ func TestAccDataSourceIosxePIM(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "bsr_candidate_loopback", "100"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "bsr_candidate_mask", "30"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "bsr_candidate_priority", "10"),
-					resource.TestCheckResourceAttr("data.iosxe_pim.test", "bsr_candidate_accept_rp_candidate", "10"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "ssm_range", "10"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "ssm_default", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_address", "9.9.9.9"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_address_override", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_address_bidir", "true"),
+					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_address_bidir", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_addresses.0.access_list", "10"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_addresses.0.rp_address", "10.10.10.10"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_addresses.0.override", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_addresses.0.bidir", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_candidates.0.interface", "Loopback100"),
-					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_candidates.0.group_list", "10"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_candidates.0.interval", "100"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_candidates.0.priority", "10"),
 					resource.TestCheckResourceAttr("data.iosxe_pim.test", "rp_candidates.0.bidir", "false"),
@@ -46,17 +44,11 @@ const testAccDataSourceIosxePIMPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
   attributes = {
-      name = "100"
+      "name" = "100"
+      "ip/address/primary/address" = "200.200.200.200"
+      "ip/address/primary/mask" = "255.255.255.255"
+      "ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode" = ""
   }
-}
-
-resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100/ip/address/primary"
-  attributes = {
-      address = "200.200.200.200"
-      mask = "255.255.255.255"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -69,12 +61,11 @@ resource "iosxe_pim" "test" {
   bsr_candidate_loopback = 100
   bsr_candidate_mask = 30
   bsr_candidate_priority = 10
-  bsr_candidate_accept_rp_candidate = "10"
   ssm_range = "10"
   ssm_default = false
   rp_address = "9.9.9.9"
   rp_address_override = false
-  rp_address_bidir = true
+  rp_address_bidir = false
   rp_addresses = [{
     access_list = "10"
     rp_address = "10.10.10.10"
@@ -83,12 +74,11 @@ resource "iosxe_pim" "test" {
   }]
   rp_candidates = [{
     interface = "Loopback100"
-    group_list = "10"
     interval = 100
     priority = 10
     bidir = false
   }]
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 data "iosxe_pim" "test" {

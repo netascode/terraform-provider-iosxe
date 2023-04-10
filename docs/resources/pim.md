@@ -14,17 +14,16 @@ This resource can manage the PIM configuration.
 
 ```terraform
 resource "iosxe_pim" "example" {
-  autorp                            = false
-  autorp_listener                   = false
-  bsr_candidate_loopback            = 100
-  bsr_candidate_mask                = 30
-  bsr_candidate_priority            = 10
-  bsr_candidate_accept_rp_candidate = "10"
-  ssm_range                         = "10"
-  ssm_default                       = false
-  rp_address                        = "9.9.9.9"
-  rp_address_override               = false
-  rp_address_bidir                  = true
+  autorp                 = false
+  autorp_listener        = false
+  bsr_candidate_loopback = 100
+  bsr_candidate_mask     = 30
+  bsr_candidate_priority = 10
+  ssm_range              = "10"
+  ssm_default            = false
+  rp_address             = "9.9.9.9"
+  rp_address_override    = false
+  rp_address_bidir       = false
   rp_addresses = [
     {
       access_list = "10"
@@ -35,11 +34,10 @@ resource "iosxe_pim" "example" {
   ]
   rp_candidates = [
     {
-      interface  = "Loopback100"
-      group_list = "10"
-      interval   = 100
-      priority   = 10
-      bidir      = false
+      interface = "Loopback100"
+      interval  = 100
+      priority  = 10
+      bidir     = false
     }
   ]
 }

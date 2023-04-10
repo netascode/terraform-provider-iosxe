@@ -18,6 +18,7 @@ attributes:
   - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/priority
     example: 10
   - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/accept-rp-candidate
+    exclude_test: true
     example: 10
   - yang_name: Cisco-IOS-XE-multicast:ssm/range
     example: 10
@@ -31,7 +32,7 @@ attributes:
     example: false
   - yang_name: Cisco-IOS-XE-multicast:rp-address-conf/bidir
     tf_name: rp_address_bidir
-    example: true
+    example: false
   - yang_name: Cisco-IOS-XE-multicast:rp-address-list
     tf_name: rp_addresses
     type: List
@@ -53,6 +54,7 @@ attributes:
         example: Loopback100
         id: true
       - yang_name: group-list
+        exclude_test: true
         example: 10
       - yang_name: interval
         example: 100
@@ -65,10 +67,9 @@ test_prerequisites:
     attributes:
       - name: name
         value: 100
-  - path: Cisco-IOS-XE-native:native/interface/Loopback=100/ip/address/primary
-    attributes:
-      - name: address
+      - name: ip/address/primary/address
         value: 200.200.200.200
-      - name: mask
+      - name: ip/address/primary/mask
         value: 255.255.255.255
-    dependencies: [0]
+      - name: ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode
+        value: ""

@@ -47,17 +47,9 @@ resource "iosxe_restconf" "PreReq0" {
   path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
   delete = false
   attributes = {
-      name = "VRF1"
+      "name" = "VRF1"
+      "address-family/ipv4" = ""
   }
-}
-
-resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family"
-  delete = false
-  attributes = {
-      ipv4 = ""
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -67,7 +59,7 @@ func testAccIosxeInterfaceEthernetConfig_minimum() string {
 	resource "iosxe_interface_ethernet" "test" {
 		type = "GigabitEthernet"
 		name = "3"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }
@@ -95,7 +87,7 @@ func testAccIosxeInterfaceEthernetConfig_all() string {
 		template_name = "TEMP1"
 		merge = false
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+  		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

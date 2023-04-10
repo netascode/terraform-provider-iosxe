@@ -105,20 +105,14 @@ test_prerequisites:
     attributes:
       - name: name
         value: VRF1
-  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family
-    no_delete: true
-    attributes:
-      - name: ipv4
+      - name: address-family/ipv4
         value: ""
-      - name: ipv6
+      - name: address-family/ipv6
         value: ""
-    dependencies: [0]
   - path: Cisco-IOS-XE-native:native/interface/Loopback=100
     attributes:
       - name: name
         value: 100
-  - path: Cisco-IOS-XE-native:native/interface/Loopback=100/vrf
-    attributes:
-      - name: forwarding
+      - name: vrf/forwarding
         value: VRF1
-    dependencies: [1, 2]
+    dependencies: [0]

@@ -54,7 +54,7 @@ resource "iosxe_restconf" "PreReq{{$index}}" {
   {{- end}}
   attributes = {
     {{- range  .Attributes}}
-      {{.Name}} = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
+      "{{.Name}}" = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
     {{- end}}
   }
   {{- if .Lists}}
@@ -68,7 +68,7 @@ resource "iosxe_restconf" "PreReq{{$index}}" {
           {
             attributes = {
 			{{- range .Attributes}}
-				{{.Name}} = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
+				"{{.Name}}" = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
 			{{- end}}
             }
           },

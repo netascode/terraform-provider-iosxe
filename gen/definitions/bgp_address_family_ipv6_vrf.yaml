@@ -28,7 +28,7 @@ test_prerequisites:
   - path: Cisco-IOS-XE-native:native/ipv6
     attributes:
       - name: unicast-routing
-        value: ''
+        value: ""
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true
     attributes:
@@ -36,14 +36,11 @@ test_prerequisites:
         value: VRF1
       - name: rd
         value: 1:1
-  - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1/address-family
-    no_delete: true
-    attributes:
-      - name: ipv6
-        value: ''
-    dependencies: [0, 1]
+      - name: address-family/ipv6
+        value: ""
+    dependencies: [0]
   - path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000
     attributes:
       - name: id
         value: 65000
-    dependencies: [2]
+    dependencies: [1]

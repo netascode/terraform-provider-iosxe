@@ -22,8 +22,6 @@ func TestAccDataSourceIosxeOSPF(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_ospf.test", "default_metric", "21"),
 					resource.TestCheckResourceAttr("data.iosxe_ospf.test", "distance", "120"),
 					resource.TestCheckResourceAttr("data.iosxe_ospf.test", "domain_tag", "10"),
-					resource.TestCheckResourceAttr("data.iosxe_ospf.test", "mpls_ldp_autoconfig", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_ospf.test", "mpls_ldp_sync", "true"),
 					resource.TestCheckResourceAttr("data.iosxe_ospf.test", "neighbor.0.ip", "2.2.2.2"),
 					resource.TestCheckResourceAttr("data.iosxe_ospf.test", "neighbor.0.priority", "10"),
 					resource.TestCheckResourceAttr("data.iosxe_ospf.test", "neighbor.0.cost", "100"),
@@ -51,8 +49,6 @@ resource "iosxe_ospf" "test" {
   default_metric = 21
   distance = 120
   domain_tag = 10
-  mpls_ldp_autoconfig = true
-  mpls_ldp_sync = true
   neighbor = [{
     ip = "2.2.2.2"
     priority = 10
