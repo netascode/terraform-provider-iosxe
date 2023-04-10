@@ -104,11 +104,11 @@ func (r *EVPNInstanceResource) Schema(ctx context.Context, req resource.SchemaRe
 				Optional:            true,
 			},
 			"vlan_based_route_target_import": schema.StringAttribute{
-				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
+				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn (DEPRECATED, use rt-value-entry)").String,
 				Optional:            true,
 			},
 			"vlan_based_route_target_export": schema.StringAttribute{
-				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn").String,
+				MarkdownDescription: helpers.NewAttributeDescription("ASN:nn or IP-address:nn (DEPRECATED, use rt-value-entry)").String,
 				Optional:            true,
 			},
 			"vlan_based_ip_local_learning_disable": schema.BoolAttribute{

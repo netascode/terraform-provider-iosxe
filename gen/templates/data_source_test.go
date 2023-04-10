@@ -25,11 +25,11 @@ func TestAccDataSourceIosxe{{camelCase .Name}}(t *testing.T) {
 					{{- $list := .TfName }}
 					{{- range  .Attributes}}
 					{{- if and (ne .WriteOnly true) (ne .ExcludeTest true)}}
-					resource.TestCheckResourceAttr("data.iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{.TfName}}", "{{.Example}}"),
+					resource.TestCheckResourceAttr("data.iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
 					{{- end}}
 					{{- end}}
 					{{- else}}
-					resource.TestCheckResourceAttr("data.iosxe_{{snakeCase $name}}.test", "{{.TfName}}", "{{.Example}}"),
+					resource.TestCheckResourceAttr("data.iosxe_{{snakeCase $name}}.test", "{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
 					{{- end}}
 					{{- end}}
 					{{- end}}
@@ -90,12 +90,12 @@ resource "iosxe_{{snakeCase $name}}" "test" {
   {{.TfName}} = [{
     {{- range  .Attributes}}
     {{- if ne .ExcludeTest true}}
-    {{.TfName}} = {{if eq .Type "String"}}"{{end}}{{.Example}}{{if eq .Type "String"}}"{{end}}
+    {{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
     {{- end}}
     {{- end}}
   }]
 {{- else}}
-  {{.TfName}} = {{if eq .Type "String"}}"{{end}}{{.Example}}{{if eq .Type "String"}}"{{end}}
+  {{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
 {{- end}}
 {{- end}}
 {{- end}}
@@ -107,7 +107,7 @@ resource "iosxe_{{snakeCase $name}}" "test" {
 data "iosxe_{{snakeCase .Name}}" "test" {
 {{- range  .Attributes}}
 {{- if or (eq .Id true) (eq .Reference true)}}
-  {{.TfName}} = {{if eq .Type "String"}}"{{end}}{{.Example}}{{if eq .Type "String"}}"{{end}}
+  {{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
 {{- end}}
 {{- end}}
   depends_on = [iosxe_{{snakeCase $name}}.test]
