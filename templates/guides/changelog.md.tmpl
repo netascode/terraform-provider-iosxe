@@ -12,6 +12,7 @@ description: |-
 - Add `route_maps` attribute to `iosxe_bgp_ipv4_unicast_vrf_neighbor` resource
 - Add `iosxe_bgp_address_family_ipv4` resource and data source
 - Add `iosxe_bgp_address_family_ipv6` resource and data source
+- Add `iosxe_bgp_ipv4_unicast_neighbor` resource and data source
 
 ## 0.1.14
 
