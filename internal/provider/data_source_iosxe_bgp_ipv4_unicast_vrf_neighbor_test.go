@@ -23,6 +23,8 @@ func TestAccDataSourceIosxeBGPIPv4UnicastVRFNeighbor(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "activate", "true"),
 					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "send_community", "both"),
 					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_reflector_client", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_maps.0.in_out", "in"),
+					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_maps.0.route_map_name", "RM1"),
 				),
 			},
 		},
@@ -90,6 +92,10 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "test" {
   activate = true
   send_community = "both"
   route_reflector_client = false
+  route_maps = [{
+    in_out = "in"
+    route_map_name = "RM1"
+  }]
   depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
 }
 

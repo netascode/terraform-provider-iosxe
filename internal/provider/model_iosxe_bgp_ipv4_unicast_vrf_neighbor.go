@@ -6,7 +6,10 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"reflect"
 	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
@@ -15,18 +18,23 @@ import (
 )
 
 type BGPIPv4UnicastVRFNeighbor struct {
-	Device               types.String `tfsdk:"device"`
-	Id                   types.String `tfsdk:"id"`
-	Asn                  types.String `tfsdk:"asn"`
-	Vrf                  types.String `tfsdk:"vrf"`
-	Ip                   types.String `tfsdk:"ip"`
-	RemoteAs             types.String `tfsdk:"remote_as"`
-	Description          types.String `tfsdk:"description"`
-	Shutdown             types.Bool   `tfsdk:"shutdown"`
-	UpdateSourceLoopback types.String `tfsdk:"update_source_loopback"`
-	Activate             types.Bool   `tfsdk:"activate"`
-	SendCommunity        types.String `tfsdk:"send_community"`
-	RouteReflectorClient types.Bool   `tfsdk:"route_reflector_client"`
+	Device               types.String                         `tfsdk:"device"`
+	Id                   types.String                         `tfsdk:"id"`
+	Asn                  types.String                         `tfsdk:"asn"`
+	Vrf                  types.String                         `tfsdk:"vrf"`
+	Ip                   types.String                         `tfsdk:"ip"`
+	RemoteAs             types.String                         `tfsdk:"remote_as"`
+	Description          types.String                         `tfsdk:"description"`
+	Shutdown             types.Bool                           `tfsdk:"shutdown"`
+	UpdateSourceLoopback types.String                         `tfsdk:"update_source_loopback"`
+	Activate             types.Bool                           `tfsdk:"activate"`
+	SendCommunity        types.String                         `tfsdk:"send_community"`
+	RouteReflectorClient types.Bool                           `tfsdk:"route_reflector_client"`
+	RouteMaps            []BGPIPv4UnicastVRFNeighborRouteMaps `tfsdk:"route_maps"`
+}
+type BGPIPv4UnicastVRFNeighborRouteMaps struct {
+	InOut        types.String `tfsdk:"in_out"`
+	RouteMapName types.String `tfsdk:"route_map_name"`
 }
 
 func (data BGPIPv4UnicastVRFNeighbor) getPath() string {
@@ -74,6 +82,17 @@ func (data BGPIPv4UnicastVRFNeighbor) toBody(ctx context.Context) string {
 	if !data.RouteReflectorClient.IsNull() && !data.RouteReflectorClient.IsUnknown() {
 		if data.RouteReflectorClient.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-reflector-client", map[string]string{})
+		}
+	}
+	if len(data.RouteMaps) > 0 {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-map", []interface{}{})
+		for index, item := range data.RouteMaps {
+			if !item.InOut.IsNull() && !item.InOut.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-map"+"."+strconv.Itoa(index)+"."+"inout", item.InOut.ValueString())
+			}
+			if !item.RouteMapName.IsNull() && !item.RouteMapName.IsUnknown() {
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"route-map"+"."+strconv.Itoa(index)+"."+"route-map-name", item.RouteMapName.ValueString())
+			}
 		}
 	}
 	return body
@@ -136,6 +155,40 @@ func (data *BGPIPv4UnicastVRFNeighbor) updateFromBody(ctx context.Context, res g
 	} else {
 		data.RouteReflectorClient = types.BoolNull()
 	}
+	for i := range data.RouteMaps {
+		keys := [...]string{"inout"}
+		keyValues := [...]string{data.RouteMaps[i].InOut.ValueString()}
+
+		var r gjson.Result
+		res.Get(prefix + "route-map").ForEach(
+			func(_, v gjson.Result) bool {
+				found := false
+				for ik := range keys {
+					if v.Get(keys[ik]).String() == keyValues[ik] {
+						found = true
+						continue
+					}
+					found = false
+					break
+				}
+				if found {
+					r = v
+					return false
+				}
+				return true
+			},
+		)
+		if value := r.Get("inout"); value.Exists() && !data.RouteMaps[i].InOut.IsNull() {
+			data.RouteMaps[i].InOut = types.StringValue(value.String())
+		} else {
+			data.RouteMaps[i].InOut = types.StringNull()
+		}
+		if value := r.Get("route-map-name"); value.Exists() && !data.RouteMaps[i].RouteMapName.IsNull() {
+			data.RouteMaps[i].RouteMapName = types.StringValue(value.String())
+		} else {
+			data.RouteMaps[i].RouteMapName = types.StringNull()
+		}
+	}
 }
 
 func (data *BGPIPv4UnicastVRFNeighbor) fromBody(ctx context.Context, res gjson.Result) {
@@ -170,10 +223,49 @@ func (data *BGPIPv4UnicastVRFNeighbor) fromBody(ctx context.Context, res gjson.R
 	} else {
 		data.RouteReflectorClient = types.BoolValue(false)
 	}
+	if value := res.Get(prefix + "route-map"); value.Exists() {
+		data.RouteMaps = make([]BGPIPv4UnicastVRFNeighborRouteMaps, 0)
+		value.ForEach(func(k, v gjson.Result) bool {
+			item := BGPIPv4UnicastVRFNeighborRouteMaps{}
+			if cValue := v.Get("inout"); cValue.Exists() {
+				item.InOut = types.StringValue(cValue.String())
+			}
+			if cValue := v.Get("route-map-name"); cValue.Exists() {
+				item.RouteMapName = types.StringValue(cValue.String())
+			}
+			data.RouteMaps = append(data.RouteMaps, item)
+			return true
+		})
+	}
 }
 
 func (data *BGPIPv4UnicastVRFNeighbor) getDeletedListItems(ctx context.Context, state BGPIPv4UnicastVRFNeighbor) []string {
 	deletedListItems := make([]string, 0)
+	for i := range state.RouteMaps {
+		stateKeyValues := [...]string{state.RouteMaps[i].InOut.ValueString()}
+
+		emptyKeys := true
+		if !reflect.ValueOf(state.RouteMaps[i].InOut.ValueString()).IsZero() {
+			emptyKeys = false
+		}
+		if emptyKeys {
+			continue
+		}
+
+		found := false
+		for j := range data.RouteMaps {
+			found = true
+			if state.RouteMaps[i].InOut.ValueString() != data.RouteMaps[j].InOut.ValueString() {
+				found = false
+			}
+			if found {
+				break
+			}
+		}
+		if !found {
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/route-map=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
+		}
+	}
 	return deletedListItems
 }
 
@@ -188,5 +280,6 @@ func (data *BGPIPv4UnicastVRFNeighbor) getEmptyLeafsDelete(ctx context.Context) 
 	if !data.RouteReflectorClient.IsNull() && !data.RouteReflectorClient.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
 	}
+
 	return emptyLeafsDelete
 }

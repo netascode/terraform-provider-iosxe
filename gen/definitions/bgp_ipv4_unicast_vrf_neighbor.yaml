@@ -33,6 +33,16 @@ attributes:
     example: both
   - yang_name: route-reflector-client
     example: false
+  - yang_name: route-map
+    tf_name: route_maps
+    type: List
+    attributes:
+      - yang_name: inout
+        tf_name: in_out
+        id: true
+        example: in
+      - yang_name: route-map-name
+        example: RM1
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true

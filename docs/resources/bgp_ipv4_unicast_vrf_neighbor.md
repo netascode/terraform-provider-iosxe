@@ -24,6 +24,12 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
   activate               = true
   send_community         = "both"
   route_reflector_client = false
+  route_maps = [
+    {
+      in_out         = "in"
+      route_map_name = "RM1"
+    }
+  ]
 }
 ```
 
@@ -42,6 +48,7 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 - `description` (String) Neighbor specific description
 - `device` (String) A device name from the provider configuration.
 - `remote_as` (String) Specify a BGP peer-group remote-as
+- `route_maps` (Attributes List) Apply route map to neighbor (see [below for nested schema](#nestedatt--route_maps))
 - `route_reflector_client` (Boolean) Configure a neighbor as Route Reflector client
 - `send_community` (String) - Choices: `both`, `extended`, `standard`
 - `shutdown` (Boolean) Administratively shut down this neighbor
@@ -50,6 +57,17 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 ### Read-Only
 
 - `id` (String) The path of the object.
+
+<a id="nestedatt--route_maps"></a>
+### Nested Schema for `route_maps`
+
+Required:
+
+- `route_map_name` (String)
+
+Optional:
+
+- `in_out` (String) - Choices: `in`, `out`
 
 ## Import
 

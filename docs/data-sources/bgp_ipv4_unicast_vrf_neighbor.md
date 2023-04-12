@@ -39,9 +39,18 @@ data "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 - `description` (String) Neighbor specific description
 - `id` (String) The path of the retrieved object.
 - `remote_as` (String) Specify a BGP peer-group remote-as
+- `route_maps` (Attributes List) Apply route map to neighbor (see [below for nested schema](#nestedatt--route_maps))
 - `route_reflector_client` (Boolean) Configure a neighbor as Route Reflector client
 - `send_community` (String)
 - `shutdown` (Boolean) Administratively shut down this neighbor
 - `update_source_loopback` (String) Loopback interface
+
+<a id="nestedatt--route_maps"></a>
+### Nested Schema for `route_maps`
+
+Read-Only:
+
+- `in_out` (String)
+- `route_map_name` (String)
 
 

@@ -104,6 +104,25 @@ func (r *BGPIPv4UnicastVRFNeighborResource) Schema(ctx context.Context, req reso
 				MarkdownDescription: helpers.NewAttributeDescription("Configure a neighbor as Route Reflector client").String,
 				Optional:            true,
 			},
+			"route_maps": schema.ListNestedAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Apply route map to neighbor").String,
+				Optional:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"in_out": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("in", "out").String,
+							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.OneOf("in", "out"),
+							},
+						},
+						"route_map_name": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Required:            true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
