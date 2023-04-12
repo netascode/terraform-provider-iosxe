@@ -7,7 +7,7 @@ description: |-
 
 # Changelog
 
-## 0.1.15 (unreleased)
+## 0.1.15
 
 - Add `route_maps` attribute to `iosxe_bgp_ipv4_unicast_vrf_neighbor` resource
 - Add `iosxe_bgp_address_family_ipv4` resource and data source
