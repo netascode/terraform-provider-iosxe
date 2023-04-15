@@ -425,7 +425,7 @@ func (data *{{camelCase .Name}}) getEmptyLeafsDelete(ctx context.Context) []stri
 	{{- end}}
 	{{- if eq .Type "List"}}
 	{{- $hasEmpty := false}}
-	{{ range .Attributes}}{{ if and (eq .Type "Bool") (eq .TypeYangBool "empty")}}{{ $hasEmpty = true}}{{ end}}{{- end}}
+	{{ range .Attributes}}{{ if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}{{ $hasEmpty = true}}{{ end}}{{- end}}
 	{{- if $hasEmpty}}
 	{{- $yangName := .YangName}}
 	for i := range data.{{toGoName .TfName}} {
