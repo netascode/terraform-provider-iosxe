@@ -57,6 +57,18 @@ func (d *InterfacePortChannelDataSource) Schema(ctx context.Context, req datasou
 				MarkdownDescription: "Shutdown the selected interface",
 				Computed:            true,
 			},
+			"ip_proxy_arp": schema.BoolAttribute{
+				MarkdownDescription: "Enable proxy ARP",
+				Computed:            true,
+			},
+			"ip_redirects": schema.BoolAttribute{
+				MarkdownDescription: "Enable sending ICMP Redirect messages",
+				Computed:            true,
+			},
+			"unreachables": schema.BoolAttribute{
+				MarkdownDescription: "Enable sending ICMP Unreachable messages",
+				Computed:            true,
+			},
 			"vrf_forwarding": schema.StringAttribute{
 				MarkdownDescription: "Configure forwarding table",
 				Computed:            true,

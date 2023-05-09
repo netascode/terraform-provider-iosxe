@@ -18,6 +18,9 @@ func TestAccDataSourceIosxeInterfacePortChannelSubinterface(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel_subinterface.test", "description", "My Interface Description"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel_subinterface.test", "shutdown", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel_subinterface.test", "ip_proxy_arp", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel_subinterface.test", "ip_redirects", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel_subinterface.test", "unreachables", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel_subinterface.test", "vrf_forwarding", "VRF1"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel_subinterface.test", "ipv4_address", "192.0.2.2"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel_subinterface.test", "ipv4_address_mask", "255.255.255.0"),
@@ -59,6 +62,9 @@ resource "iosxe_interface_port_channel_subinterface" "test" {
   name = "10.666"
   description = "My Interface Description"
   shutdown = false
+  ip_proxy_arp = false
+  ip_redirects = false
+  unreachables = false
   vrf_forwarding = "VRF1"
   ipv4_address = "192.0.2.2"
   ipv4_address_mask = "255.255.255.0"

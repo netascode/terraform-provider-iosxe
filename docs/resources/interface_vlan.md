@@ -18,6 +18,9 @@ resource "iosxe_interface_vlan" "example" {
   autostate                      = false
   description                    = "My Interface Description"
   shutdown                       = false
+  ip_proxy_arp                   = false
+  ip_redirects                   = false
+  unreachables                   = false
   vrf_forwarding                 = "VRF1"
   ipv4_address                   = "10.1.1.1"
   ipv4_address_mask              = "255.255.255.0"
@@ -54,10 +57,13 @@ resource "iosxe_interface_vlan" "example" {
 - `ip_access_group_out` (String)
 - `ip_access_group_out_enable` (Boolean) outbound packets
 - `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
+- `ip_proxy_arp` (Boolean) Enable proxy ARP
+- `ip_redirects` (Boolean) Enable sending ICMP Redirect messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface
 - `unnumbered` (String) Enable IP processing without an explicit address
+- `unreachables` (Boolean) Enable sending ICMP Unreachable messages
 - `vrf_forwarding` (String) Configure forwarding table
 
 ### Read-Only

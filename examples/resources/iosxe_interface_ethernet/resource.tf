@@ -3,6 +3,9 @@ resource "iosxe_interface_ethernet" "example" {
   name                           = "3"
   description                    = "My Interface Description"
   shutdown                       = false
+  ip_proxy_arp                   = false
+  ip_redirects                   = false
+  unreachables                   = false
   ipv4_address                   = "15.1.1.1"
   ipv4_address_mask              = "255.255.255.252"
   ip_dhcp_relay_source_interface = "Loopback100"

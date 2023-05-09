@@ -7,6 +7,14 @@ description: |-
 
 # Changelog
 
+## 0.1.16 (unreleased)
+
+- Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_ethernet` resource
+- Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_loopback` resource
+- Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_port_channel_subinterface` resource
+- Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_port_channel` resource
+- Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_vlan` resource
+
 ## 0.1.15
 
 - Add `route_maps` attribute to `iosxe_bgp_ipv4_unicast_vrf_neighbor` resource

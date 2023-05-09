@@ -24,6 +24,9 @@ type InterfaceVLAN struct {
 	Autostate                  types.Bool                     `tfsdk:"autostate"`
 	Description                types.String                   `tfsdk:"description"`
 	Shutdown                   types.Bool                     `tfsdk:"shutdown"`
+	IpProxyArp                 types.Bool                     `tfsdk:"ip_proxy_arp"`
+	IpRedirects                types.Bool                     `tfsdk:"ip_redirects"`
+	Unreachables               types.Bool                     `tfsdk:"unreachables"`
 	VrfForwarding              types.String                   `tfsdk:"vrf_forwarding"`
 	Ipv4Address                types.String                   `tfsdk:"ipv4_address"`
 	Ipv4AddressMask            types.String                   `tfsdk:"ipv4_address_mask"`
@@ -71,6 +74,15 @@ func (data InterfaceVLAN) toBody(ctx context.Context) string {
 		if data.Shutdown.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"shutdown", map[string]string{})
 		}
+	}
+	if !data.IpProxyArp.IsNull() && !data.IpProxyArp.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.proxy-arp", data.IpProxyArp.ValueBool())
+	}
+	if !data.IpRedirects.IsNull() && !data.IpRedirects.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.redirects", data.IpRedirects.ValueBool())
+	}
+	if !data.Unreachables.IsNull() && !data.Unreachables.IsUnknown() {
+		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"ip.Cisco-IOS-XE-icmp:unreachables", data.Unreachables.ValueBool())
 	}
 	if !data.VrfForwarding.IsNull() && !data.VrfForwarding.IsUnknown() {
 		body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"vrf.forwarding", data.VrfForwarding.ValueString())
@@ -152,6 +164,27 @@ func (data *InterfaceVLAN) updateFromBody(ctx context.Context, res gjson.Result)
 		}
 	} else {
 		data.Shutdown = types.BoolNull()
+	}
+	if value := res.Get(prefix + "ip.proxy-arp"); !data.IpProxyArp.IsNull() {
+		if value.Exists() {
+			data.IpProxyArp = types.BoolValue(value.Bool())
+		}
+	} else {
+		data.IpProxyArp = types.BoolNull()
+	}
+	if value := res.Get(prefix + "ip.redirects"); !data.IpRedirects.IsNull() {
+		if value.Exists() {
+			data.IpRedirects = types.BoolValue(value.Bool())
+		}
+	} else {
+		data.IpRedirects = types.BoolNull()
+	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-icmp:unreachables"); !data.Unreachables.IsNull() {
+		if value.Exists() {
+			data.Unreachables = types.BoolValue(value.Bool())
+		}
+	} else {
+		data.Unreachables = types.BoolNull()
 	}
 	if value := res.Get(prefix + "vrf.forwarding"); value.Exists() && !data.VrfForwarding.IsNull() {
 		data.VrfForwarding = types.StringValue(value.String())
@@ -268,6 +301,21 @@ func (data *InterfaceVLAN) fromBody(ctx context.Context, res gjson.Result) {
 		data.Shutdown = types.BoolValue(true)
 	} else {
 		data.Shutdown = types.BoolValue(false)
+	}
+	if value := res.Get(prefix + "ip.proxy-arp"); value.Exists() {
+		data.IpProxyArp = types.BoolValue(value.Bool())
+	} else {
+		data.IpProxyArp = types.BoolValue(false)
+	}
+	if value := res.Get(prefix + "ip.redirects"); value.Exists() {
+		data.IpRedirects = types.BoolValue(value.Bool())
+	} else {
+		data.IpRedirects = types.BoolValue(false)
+	}
+	if value := res.Get(prefix + "ip.Cisco-IOS-XE-icmp:unreachables"); value.Exists() {
+		data.Unreachables = types.BoolValue(value.Bool())
+	} else {
+		data.Unreachables = types.BoolValue(false)
 	}
 	if value := res.Get(prefix + "vrf.forwarding"); value.Exists() {
 		data.VrfForwarding = types.StringValue(value.String())

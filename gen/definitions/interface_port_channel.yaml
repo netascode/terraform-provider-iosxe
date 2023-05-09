@@ -9,6 +9,12 @@ attributes:
     example: My Interface Description
   - yang_name: shutdown
     example: false
+  - yang_name: ip/proxy-arp
+    example: false
+  - yang_name: ip/redirects
+    example: false
+  - yang_name: ip/Cisco-IOS-XE-icmp:unreachables
+    example: false
   - yang_name: vrf-choice/vrf/vrf/forwarding
     xpath: vrf/forwarding
     tf_name: vrf_forwarding

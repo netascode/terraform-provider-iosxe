@@ -17,6 +17,9 @@ resource "iosxe_interface_loopback" "example" {
   name                       = 100
   description                = "My Interface Description"
   shutdown                   = false
+  ip_proxy_arp               = false
+  ip_redirects               = false
+  unreachables               = false
   vrf_forwarding             = "VRF1"
   ipv4_address               = "200.1.1.1"
   ipv4_address_mask          = "255.255.255.255"
@@ -42,9 +45,12 @@ resource "iosxe_interface_loopback" "example" {
 - `ip_access_group_in_enable` (Boolean) inbound packets
 - `ip_access_group_out` (String)
 - `ip_access_group_out_enable` (Boolean) outbound packets
+- `ip_proxy_arp` (Boolean) Enable proxy ARP
+- `ip_redirects` (Boolean) Enable sending ICMP Redirect messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `shutdown` (Boolean) Shutdown the selected interface
+- `unreachables` (Boolean) Enable sending ICMP Unreachable messages
 - `vrf_forwarding` (String) Configure forwarding table
 
 ### Read-Only

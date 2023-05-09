@@ -18,6 +18,9 @@ func TestAccDataSourceIosxeInterfaceEthernet(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "description", "My Interface Description"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "shutdown", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_proxy_arp", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_redirects", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "unreachables", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ipv4_address", "15.1.1.1"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ipv4_address_mask", "255.255.255.252"),
 					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_dhcp_relay_source_interface", "Loopback100"),
@@ -55,6 +58,9 @@ resource "iosxe_interface_ethernet" "test" {
   name = "3"
   description = "My Interface Description"
   shutdown = false
+  ip_proxy_arp = false
+  ip_redirects = false
+  unreachables = false
   ipv4_address = "15.1.1.1"
   ipv4_address_mask = "255.255.255.252"
   ip_dhcp_relay_source_interface = "Loopback100"

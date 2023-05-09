@@ -44,6 +44,8 @@ data "iosxe_interface_ethernet" "example" {
 - `ip_access_group_out` (String)
 - `ip_access_group_out_enable` (Boolean) outbound packets
 - `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
+- `ip_proxy_arp` (Boolean) Enable proxy ARP
+- `ip_redirects` (Boolean) Enable sending ICMP Redirect messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `media_type` (String) Media type
@@ -51,6 +53,7 @@ data "iosxe_interface_ethernet" "example" {
 - `source_template` (Attributes List) (see [below for nested schema](#nestedatt--source_template))
 - `switchport` (Boolean)
 - `unnumbered` (String) Enable IP processing without an explicit address
+- `unreachables` (Boolean) Enable sending ICMP Unreachable messages
 - `vrf_forwarding` (String) Configure forwarding table
 
 <a id="nestedatt--helper_addresses"></a>

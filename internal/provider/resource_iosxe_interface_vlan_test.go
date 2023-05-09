@@ -22,6 +22,9 @@ func TestAccIosxeInterfaceVLAN(t *testing.T) {
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "autostate", "false"),
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "description", "My Interface Description"),
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "shutdown", "false"),
+					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_proxy_arp", "false"),
+					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_redirects", "false"),
+					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "unreachables", "false"),
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "vrf_forwarding", "VRF1"),
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ipv4_address", "10.1.1.1"),
 					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ipv4_address_mask", "255.255.255.0"),
@@ -72,6 +75,9 @@ func testAccIosxeInterfaceVLANConfig_all() string {
 		autostate = false
 		description = "My Interface Description"
 		shutdown = false
+		ip_proxy_arp = false
+		ip_redirects = false
+		unreachables = false
 		vrf_forwarding = "VRF1"
 		ipv4_address = "10.1.1.1"
 		ipv4_address_mask = "255.255.255.0"

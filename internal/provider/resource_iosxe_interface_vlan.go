@@ -81,6 +81,18 @@ func (r *InterfaceVLANResource) Schema(ctx context.Context, req resource.SchemaR
 				MarkdownDescription: helpers.NewAttributeDescription("Shutdown the selected interface").String,
 				Optional:            true,
 			},
+			"ip_proxy_arp": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Enable proxy ARP").String,
+				Optional:            true,
+			},
+			"ip_redirects": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Enable sending ICMP Redirect messages").String,
+				Optional:            true,
+			},
+			"unreachables": schema.BoolAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Enable sending ICMP Unreachable messages").String,
+				Optional:            true,
+			},
 			"vrf_forwarding": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure forwarding table").String,
 				Optional:            true,

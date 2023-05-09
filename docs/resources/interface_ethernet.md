@@ -18,6 +18,9 @@ resource "iosxe_interface_ethernet" "example" {
   name                           = "3"
   description                    = "My Interface Description"
   shutdown                       = false
+  ip_proxy_arp                   = false
+  ip_redirects                   = false
+  unreachables                   = false
   ipv4_address                   = "15.1.1.1"
   ipv4_address_mask              = "255.255.255.252"
   ip_dhcp_relay_source_interface = "Loopback100"
@@ -64,6 +67,8 @@ resource "iosxe_interface_ethernet" "example" {
 - `ip_access_group_out` (String)
 - `ip_access_group_out_enable` (Boolean) outbound packets
 - `ip_dhcp_relay_source_interface` (String) Set source interface for relayed messages
+- `ip_proxy_arp` (Boolean) Enable proxy ARP
+- `ip_redirects` (Boolean) Enable sending ICMP Redirect messages
 - `ipv4_address` (String)
 - `ipv4_address_mask` (String)
 - `media_type` (String) Media type
@@ -72,6 +77,7 @@ resource "iosxe_interface_ethernet" "example" {
 - `source_template` (Attributes List) (see [below for nested schema](#nestedatt--source_template))
 - `switchport` (Boolean)
 - `unnumbered` (String) Enable IP processing without an explicit address
+- `unreachables` (Boolean) Enable sending ICMP Unreachable messages
 - `vrf_forwarding` (String) Configure forwarding table
 
 ### Read-Only
