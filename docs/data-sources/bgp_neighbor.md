@@ -38,5 +38,3 @@ data "iosxe_bgp_neighbor" "example" {
 - `remote_as` (String) Specify a BGP peer-group remote-as
 - `shutdown` (Boolean) Administratively shut down this neighbor
 - `update_source_loopback` (String) Loopback interface
-
-

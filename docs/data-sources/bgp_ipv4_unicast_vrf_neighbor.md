@@ -52,5 +52,3 @@ Read-Only:
 
 - `in_out` (String)
 - `route_map_name` (String)
-
-

@@ -45,5 +45,3 @@ Read-Only:
 - `name` (String)
 - `redistribute_connected` (Boolean) Connected
 - `redistribute_static` (Boolean) Static routes
-
-

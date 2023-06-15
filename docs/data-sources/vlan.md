@@ -39,5 +39,3 @@ data "iosxe_vlan" "example" {
 - `private_vlan_primary` (Boolean) Configure the VLAN as a primary private VLAN
 - `remote_span` (Boolean) Configure as Remote SPAN VLAN
 - `shutdown` (Boolean) Shutdown VLAN switching
-
-

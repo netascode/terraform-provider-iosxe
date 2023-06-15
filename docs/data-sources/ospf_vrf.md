@@ -76,5 +76,3 @@ Read-Only:
 
 - `ip` (String) IP summary address
 - `mask` (String) Summary mask
-
-

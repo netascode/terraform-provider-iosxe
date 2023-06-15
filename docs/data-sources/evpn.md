@@ -39,5 +39,3 @@ data "iosxe_evpn" "example" {
 - `replication_type_static` (Boolean) Static replication
 - `route_target_auto_vni` (Boolean) Set vni-based route-target
 - `router_id_loopback` (Number) Loopback interface
-
-

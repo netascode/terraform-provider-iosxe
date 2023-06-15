@@ -41,5 +41,3 @@ data "iosxe_dhcp" "example" {
 Read-Only:
 
 - `vlan_id` (Number)
-
-

@@ -44,5 +44,3 @@ data "iosxe_interface_ospf_process" "example" {
 Read-Only:
 
 - `area_id` (String) Set the OSPF area ID
-
-

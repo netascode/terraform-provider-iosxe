@@ -42,5 +42,3 @@ data "iosxe_interface_pim" "example" {
 - `passive` (Boolean) Enable PIM passive interface operation
 - `sparse_dense_mode` (Boolean) Enable PIM sparse-dense-mode operation
 - `sparse_mode` (Boolean) Enable PIM sparse-mode operation
-
-

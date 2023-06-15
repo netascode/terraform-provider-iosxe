@@ -126,5 +126,3 @@ Read-Only:
 - `range` (Number) Maximum addresses
 - `vlan` (Boolean) Max secure addresses per vlan
 - `vlan_access` (Boolean) access vlan
-
-

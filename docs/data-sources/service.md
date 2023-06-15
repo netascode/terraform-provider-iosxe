@@ -48,5 +48,3 @@ data "iosxe_service" "example" {
 - `timestamps_log_datetime_show_timezone` (Boolean) Add time zone information to timestamp
 - `timestamps_log_datetime_year` (Boolean) Include year in timestamp
 - `timestamps_log_uptime` (Boolean) Timestamp with system uptime
-
-

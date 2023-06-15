@@ -90,5 +90,3 @@ Read-Only:
 
 - `interface_name` (String)
 - `vrf` (String) Specify the vrf of source interface for logging transactions
-
-

@@ -49,5 +49,3 @@ Read-Only:
 - `permit_prefix_mask` (String) Wildcard bits
 - `remark` (String) Access list entry comment
 - `sequence` (Number)
-
-

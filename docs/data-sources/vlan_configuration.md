@@ -36,5 +36,3 @@ data "iosxe_vlan_configuration" "example" {
 - `evpn_instance_vni` (Number) VxLAN VNI value
 - `id` (String) The path of the retrieved object.
 - `vni` (Number) VxLAN VNI value
-
-

@@ -61,5 +61,3 @@ Read-Only:
 Read-Only:
 
 - `port_number` (Number) Specify the UDP port number (default=514)
-
-

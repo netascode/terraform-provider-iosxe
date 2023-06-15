@@ -47,5 +47,3 @@ Read-Only:
 - `next_hop` (String)
 - `permanent` (Boolean) permanent route
 - `tag` (Number) Set tag for this route
-
-

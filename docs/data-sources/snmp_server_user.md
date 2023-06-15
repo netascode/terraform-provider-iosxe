@@ -52,5 +52,3 @@ data "iosxe_snmp_server_user" "example" {
 - `v3_auth_priv_des_access_ipv6_acl` (String) Specify IPv6 Named Access-List
 - `v3_auth_priv_des_access_standard_acl` (Number) Standard IP Access-list allowing access with this community string
 - `v3_auth_priv_des_password` (String) Authentication password for user
-
-

@@ -51,5 +51,3 @@ Read-Only:
 
 - `distributed` (Boolean) Distributed multicast switching
 - `vrf` (String)
-
-

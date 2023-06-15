@@ -37,5 +37,3 @@ data "iosxe_bgp_l2vpn_evpn_neighbor" "example" {
 - `id` (String) The path of the retrieved object.
 - `route_reflector_client` (Boolean) Configure a neighbor as Route Reflector client
 - `send_community` (String)
-
-

@@ -56,5 +56,3 @@ Read-Only:
 - `address` (String)
 - `global` (Boolean) Helper-address is global
 - `vrf` (String) VRF name for helper-address (if different from interface VRF)
-
-

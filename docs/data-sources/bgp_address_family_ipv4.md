@@ -34,5 +34,3 @@ data "iosxe_bgp_address_family_ipv4" "example" {
 ### Read-Only
 
 - `id` (String) The path of the retrieved object.
-
-

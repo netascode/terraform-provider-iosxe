@@ -14,6 +14,7 @@ description: |-
 - Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_port_channel_subinterface` resource
 - Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_port_channel` resource
 - Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_vlan` resource
+- Add `iosxe_mdt_subscription` resource and data source
 
 ## 0.1.15
 

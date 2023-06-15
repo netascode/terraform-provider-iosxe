@@ -40,5 +40,3 @@ Read-Only:
 - `le` (Number) Maximum prefix length to be matched
 - `name` (String) Name of the prefix-list
 - `seq` (Number) Seq Number of the prefix-list
-
-

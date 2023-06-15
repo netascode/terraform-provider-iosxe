@@ -43,5 +43,3 @@ data "iosxe_interface_ospf" "example" {
 - `network_type_point_to_multipoint` (Boolean) Specify OSPF point-to-multipoint network
 - `network_type_point_to_point` (Boolean) Specify OSPF point-to-point network
 - `priority` (Number) Router priority
-
-

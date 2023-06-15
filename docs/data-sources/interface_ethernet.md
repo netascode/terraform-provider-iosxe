@@ -73,5 +73,3 @@ Read-Only:
 
 - `merge` (Boolean) merge option of binding
 - `template_name` (String)
-
-

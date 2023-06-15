@@ -44,5 +44,3 @@ data "iosxe_interface_loopback" "example" {
 - `shutdown` (Boolean) Shutdown the selected interface
 - `unreachables` (Boolean) Enable sending ICMP Unreachable messages
 - `vrf_forwarding` (String) Configure forwarding table
-
-

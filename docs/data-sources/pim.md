@@ -62,5 +62,3 @@ Read-Only:
 - `interface` (String) Autonomic-Networking virtual interface
 - `interval` (Number) RP candidate advertisement interval
 - `priority` (Number) RP candidate priority
-
-

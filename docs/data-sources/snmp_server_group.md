@@ -48,5 +48,3 @@ Read-Only:
 - `read_node` (String) specify a read view for the group
 - `security_level` (String) security level type
 - `write_node` (String) specify a write view for the group
-
-

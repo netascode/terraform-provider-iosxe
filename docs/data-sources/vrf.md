@@ -132,5 +132,3 @@ Read-Only:
 
 - `stitching` (Boolean) VXLAN route target set
 - `value` (String) Value
-
-

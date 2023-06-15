@@ -75,5 +75,3 @@ Read-Only:
 - `syn` (Boolean) Match on the SYN bit
 - `tos` (String) Match packets with given TOS value
 - `urg` (Boolean) Match on the URG bit
-
-

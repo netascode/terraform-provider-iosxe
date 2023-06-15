@@ -49,5 +49,3 @@ Read-Only:
 - `addr` (String)
 - `connect_source_loopback` (Number) Loopback interface
 - `remote_as` (Number) Configured AS number
-
-

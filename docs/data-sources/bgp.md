@@ -35,5 +35,3 @@ data "iosxe_bgp" "example" {
 - `id` (String) The path of the retrieved object.
 - `log_neighbor_changes` (Boolean) Log neighbor up/down and reset reason
 - `router_id_loopback` (Number) Loopback interface
-
-

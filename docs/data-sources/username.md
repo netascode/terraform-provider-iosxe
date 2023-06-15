@@ -38,5 +38,3 @@ data "iosxe_username" "example" {
 - `privilege` (Number) Set user privilege level
 - `secret` (String)
 - `secret_encryption` (String)
-
-

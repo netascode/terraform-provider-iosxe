@@ -98,5 +98,3 @@ Read-Only:
 - `inc_exl` (String)
 - `mib` (String)
 - `name` (String)
-
-

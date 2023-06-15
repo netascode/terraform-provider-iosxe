@@ -118,5 +118,3 @@ Read-Only:
 - `set_tag` (Number) Tag value
 - `set_vrf` (String) VPN Routing/Forwarding instance name
 - `set_weight` (Number) BGP weight for routing table
-
-

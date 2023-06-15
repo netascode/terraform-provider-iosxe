@@ -31,5 +31,3 @@ data "iosxe_banner" "example" {
 - `login_banner` (String) Banner message
 - `motd_banner` (String) Banner message
 - `prompt_timeout_banner` (String) Banner message
-
-

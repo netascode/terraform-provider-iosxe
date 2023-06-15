@@ -46,5 +46,3 @@ data "iosxe_interface_switchport" "example" {
 - `trunk_allowed_vlans` (String)
 - `trunk_native_vlan` (Number)
 - `trunk_native_vlan_tag` (Boolean)
-
-
