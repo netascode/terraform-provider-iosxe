@@ -7,7 +7,7 @@ description: |-
 
 # Changelog
 
-## 0.1.16 (unreleased)
+## 0.1.16
 
 - Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_ethernet` resource
 - Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_loopback` resource
