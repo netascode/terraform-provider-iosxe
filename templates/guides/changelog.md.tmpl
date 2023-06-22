@@ -7,7 +7,7 @@ description: |-
 
 # Changelog
 
-## 0.1.17 (unreleased)
+## 0.1.17
 
 - Fix modelling of `iosxe_access_list_standard` resource to work with newer versions of IOS-XE
 - Fix modelling of `iosxe_access_list_extended` resource to work with newer versions of IOS-XE
