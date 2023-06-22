@@ -126,6 +126,11 @@ func (r *RestconfResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
+	if _, ok := r.clients[plan.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", plan.Device.ValueString()))
+		return
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.getPath()))
 
 	body := plan.toBody(ctx)
@@ -157,6 +162,11 @@ func (r *RestconfResource) Read(ctx context.Context, req resource.ReadRequest, r
 	diags := req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if _, ok := r.clients[state.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", state.Device.ValueString()))
 		return
 	}
 
@@ -198,6 +208,11 @@ func (r *RestconfResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+	if _, ok := r.clients[plan.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", plan.Device.ValueString()))
+		return
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.getPath()))
 
 	body := plan.toBody(ctx)
@@ -234,6 +249,11 @@ func (r *RestconfResource) Delete(ctx context.Context, req resource.DeleteReques
 	diags := req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if _, ok := r.clients[state.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", state.Device.ValueString()))
 		return
 	}
 

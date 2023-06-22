@@ -88,6 +88,11 @@ func (r *BannerResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
+	if _, ok := r.clients[plan.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", plan.Device.ValueString()))
+		return
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.getPath()))
 
 	// Create object
@@ -131,6 +136,11 @@ func (r *BannerResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
+	if _, ok := r.clients[state.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", state.Device.ValueString()))
+		return
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", state.Id.ValueString()))
 
 	res, err := r.clients[state.Device.ValueString()].GetData(state.Id.ValueString())
@@ -165,6 +175,11 @@ func (r *BannerResource) Update(ctx context.Context, req resource.UpdateRequest,
 	diags = req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if _, ok := r.clients[plan.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", plan.Device.ValueString()))
 		return
 	}
 
@@ -215,6 +230,11 @@ func (r *BannerResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	diags := req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if _, ok := r.clients[state.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", state.Device.ValueString()))
 		return
 	}
 

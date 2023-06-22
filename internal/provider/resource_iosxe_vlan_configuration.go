@@ -110,6 +110,11 @@ func (r *VLANConfigurationResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
+	if _, ok := r.clients[plan.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", plan.Device.ValueString()))
+		return
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Create", plan.getPath()))
 
 	// Create object
@@ -153,6 +158,11 @@ func (r *VLANConfigurationResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
+	if _, ok := r.clients[state.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", state.Device.ValueString()))
+		return
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Read", state.Id.ValueString()))
 
 	res, err := r.clients[state.Device.ValueString()].GetData(state.Id.ValueString())
@@ -187,6 +197,11 @@ func (r *VLANConfigurationResource) Update(ctx context.Context, req resource.Upd
 	diags = req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if _, ok := r.clients[plan.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", plan.Device.ValueString()))
 		return
 	}
 
@@ -237,6 +252,11 @@ func (r *VLANConfigurationResource) Delete(ctx context.Context, req resource.Del
 	diags := req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if _, ok := r.clients[state.Device.ValueString()]; !ok {
+		resp.Diagnostics.AddAttributeError(path.Root("device"), "Invalid device", fmt.Sprintf("Device '%s' does not exist in provider configuration.", state.Device.ValueString()))
 		return
 	}
 

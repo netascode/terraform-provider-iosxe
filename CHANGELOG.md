@@ -1,3 +1,7 @@
+## 0.1.18 (unreleased)
+
+- Validate if referenced `device` exists in provider configuration
+
 ## 0.1.17
 
 - Fix modelling of `iosxe_access_list_standard` resource to work with newer versions of IOS-XE
