@@ -14,8 +14,8 @@ attributes:
         id: true
       - yang_name: remark
         example: Description
-      - yang_name: deny-permit/deny/deny/std-ace/source-choice/ipv4-prefix-case/ipv4-prefix
-        xpath: deny/std-ace/ipv4-prefix
+      - yang_name: deny-permit/deny/deny/std-ace/source-choice/ipv4-prefix-case/ipv4-address-prefix
+        xpath: deny/std-ace/ipv4-address-prefix
         tf_name: deny_prefix
         example: 10.0.0.0
       - yang_name: deny-permit/deny/deny/std-ace/source-choice/ipv4-prefix-case/mask
@@ -27,13 +27,13 @@ attributes:
         tf_name: deny_any
         example: true
         exclude_test: true
-      - yang_name: deny-permit/deny/deny/std-ace/source-choice/host-case/host
-        xpath: deny/std-ace/host
+      - yang_name: deny-permit/deny/deny/std-ace/source-choice/host-case/host-address
+        xpath: deny/std-ace/host-address
         tf_name: deny_host
         example: 10.1.1.1
         exclude_test: true
-      - yang_name: deny-permit/permit/permit/std-ace/source-choice/ipv4-prefix-case/ipv4-prefix
-        xpath: permit/std-ace/ipv4-prefix
+      - yang_name: deny-permit/permit/permit/std-ace/source-choice/ipv4-prefix-case/ipv4-address-prefix
+        xpath: permit/std-ace/ipv4-address-prefix
         tf_name: permit_prefix
         example: 10.0.0.0
         exclude_test: true
@@ -47,8 +47,8 @@ attributes:
         tf_name: permit_any
         example: true
         exclude_test: true
-      - yang_name: deny-permit/permit/permit/std-ace/source-choice/host-case/host
-        xpath: permit/std-ace/host
+      - yang_name: deny-permit/permit/permit/std-ace/source-choice/host-case/host-address
+        xpath: permit/std-ace/host-address
         tf_name: permit_host
         example: 10.1.1.1
         exclude_test: true

@@ -7,6 +7,11 @@ description: |-
 
 # Changelog
 
+## 0.1.17 (unreleased)
+
+- Fix modelling of `iosxe_access_list_standard` resource to work with newer versions of IOS-XE
+- Fix modelling of `iosxe_access_list_extended` resource to work with newer versions of IOS-XE
+
 ## 0.1.16
 
 - Add `ip_proxy_arp`, `ip_redirects` and `ip_unreachables` attribute to `iosxe_interface_ethernet` resource

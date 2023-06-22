@@ -35,8 +35,8 @@ attributes:
         tf_name: source_any
         example: true
         exclude_test: true
-      - yang_name: ace-rule/source-choice/host-case/host
-        xpath: ace-rule/host
+      - yang_name: ace-rule/source-choice/host-case/host-address
+        xpath: ace-rule/host-address
         tf_name: source_host
         example: 10.1.1.1
         exclude_test: true
@@ -84,8 +84,8 @@ attributes:
         tf_name: destination_any
         example: true
         exclude_test: true
-      - yang_name: ace-rule/destination-choice/host-case/dst-host
-        xpath: ace-rule/dst-host
+      - yang_name: ace-rule/destination-choice/host-case/dst-host-address
+        xpath: ace-rule/dst-host-address
         tf_name: destination_host
         example: 10.1.1.1
       - yang_name: ace-rule/destination-choice/object-group-case/dst-object-group

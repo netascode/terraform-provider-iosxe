@@ -81,8 +81,11 @@ func (r *AccessListStandardResource) Schema(ctx context.Context, req resource.Sc
 							},
 						},
 						"deny_prefix": schema.StringAttribute{
-							MarkdownDescription: helpers.NewAttributeDescription("Network address prefix (DEPRECATED - use ipv4-address-prefix)").String,
+							MarkdownDescription: helpers.NewAttributeDescription("Network address prefix").String,
 							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
 						},
 						"deny_prefix_mask": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Wildcard bits").String,
@@ -96,12 +99,18 @@ func (r *AccessListStandardResource) Schema(ctx context.Context, req resource.Sc
 							Optional:            true,
 						},
 						"deny_host": schema.StringAttribute{
-							MarkdownDescription: helpers.NewAttributeDescription("A single source host (DEPRECATED - use host-address)").String,
+							MarkdownDescription: helpers.NewAttributeDescription("A single source host").String,
 							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
 						},
 						"permit_prefix": schema.StringAttribute{
-							MarkdownDescription: helpers.NewAttributeDescription("Network address prefix (DEPRECATED - use ipv4-address-prefix)").String,
+							MarkdownDescription: helpers.NewAttributeDescription("Network address prefix").String,
 							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
 						},
 						"permit_prefix_mask": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Wildcard bits").String,
@@ -115,8 +124,11 @@ func (r *AccessListStandardResource) Schema(ctx context.Context, req resource.Sc
 							Optional:            true,
 						},
 						"permit_host": schema.StringAttribute{
-							MarkdownDescription: helpers.NewAttributeDescription("A single source host (DEPRECATED - use host-address)").String,
+							MarkdownDescription: helpers.NewAttributeDescription("A single source host").String,
 							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
 						},
 					},
 				},

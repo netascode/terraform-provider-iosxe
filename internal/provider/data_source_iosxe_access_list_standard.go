@@ -63,7 +63,7 @@ func (d *AccessListStandardDataSource) Schema(ctx context.Context, req datasourc
 							Computed:            true,
 						},
 						"deny_prefix": schema.StringAttribute{
-							MarkdownDescription: "Network address prefix (DEPRECATED - use ipv4-address-prefix)",
+							MarkdownDescription: "Network address prefix",
 							Computed:            true,
 						},
 						"deny_prefix_mask": schema.StringAttribute{
@@ -75,11 +75,11 @@ func (d *AccessListStandardDataSource) Schema(ctx context.Context, req datasourc
 							Computed:            true,
 						},
 						"deny_host": schema.StringAttribute{
-							MarkdownDescription: "A single source host (DEPRECATED - use host-address)",
+							MarkdownDescription: "A single source host",
 							Computed:            true,
 						},
 						"permit_prefix": schema.StringAttribute{
-							MarkdownDescription: "Network address prefix (DEPRECATED - use ipv4-address-prefix)",
+							MarkdownDescription: "Network address prefix",
 							Computed:            true,
 						},
 						"permit_prefix_mask": schema.StringAttribute{
@@ -91,7 +91,7 @@ func (d *AccessListStandardDataSource) Schema(ctx context.Context, req datasourc
 							Computed:            true,
 						},
 						"permit_host": schema.StringAttribute{
-							MarkdownDescription: "A single source host (DEPRECATED - use host-address)",
+							MarkdownDescription: "A single source host",
 							Computed:            true,
 						},
 					},

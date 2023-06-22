@@ -114,8 +114,11 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 							Optional:            true,
 						},
 						"source_host": schema.StringAttribute{
-							MarkdownDescription: helpers.NewAttributeDescription("A single source host(DEPRECATED - use host-address)").String,
+							MarkdownDescription: helpers.NewAttributeDescription("A single source host").String,
 							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
 						},
 						"source_object_group": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Source network object group").String,
@@ -160,8 +163,11 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 							Optional:            true,
 						},
 						"destination_host": schema.StringAttribute{
-							MarkdownDescription: helpers.NewAttributeDescription("A single destination host(DEPRECATED - use dst-host-address)").String,
+							MarkdownDescription: helpers.NewAttributeDescription("A single destination host").String,
 							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\p{N}\p{L}]+)?`), ""),
+							},
 						},
 						"destination_object_group": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Destination network object group").String,

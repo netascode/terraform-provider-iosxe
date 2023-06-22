@@ -112,7 +112,7 @@ func (data AccessListExtended) toBody(ctx context.Context) string {
 				}
 			}
 			if !item.SourceHost.IsNull() && !item.SourceHost.IsUnknown() {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.host", item.SourceHost.ValueString())
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.host-address", item.SourceHost.ValueString())
 			}
 			if !item.SourceObjectGroup.IsNull() && !item.SourceObjectGroup.IsUnknown() {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.object-group", item.SourceObjectGroup.ValueString())
@@ -144,7 +144,7 @@ func (data AccessListExtended) toBody(ctx context.Context) string {
 				}
 			}
 			if !item.DestinationHost.IsNull() && !item.DestinationHost.IsUnknown() {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-host", item.DestinationHost.ValueString())
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-host-address", item.DestinationHost.ValueString())
 			}
 			if !item.DestinationObjectGroup.IsNull() && !item.DestinationObjectGroup.IsUnknown() {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"ace-rule.dst-object-group", item.DestinationObjectGroup.ValueString())
@@ -295,7 +295,7 @@ func (data *AccessListExtended) updateFromBody(ctx context.Context, res gjson.Re
 		} else {
 			data.Entries[i].SourceAny = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.host"); value.Exists() && !data.Entries[i].SourceHost.IsNull() {
+		if value := r.Get("ace-rule.host-address"); value.Exists() && !data.Entries[i].SourceHost.IsNull() {
 			data.Entries[i].SourceHost = types.StringValue(value.String())
 		} else {
 			data.Entries[i].SourceHost = types.StringNull()
@@ -349,7 +349,7 @@ func (data *AccessListExtended) updateFromBody(ctx context.Context, res gjson.Re
 		} else {
 			data.Entries[i].DestinationAny = types.BoolNull()
 		}
-		if value := r.Get("ace-rule.dst-host"); value.Exists() && !data.Entries[i].DestinationHost.IsNull() {
+		if value := r.Get("ace-rule.dst-host-address"); value.Exists() && !data.Entries[i].DestinationHost.IsNull() {
 			data.Entries[i].DestinationHost = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DestinationHost = types.StringNull()
@@ -509,7 +509,7 @@ func (data *AccessListExtended) fromBody(ctx context.Context, res gjson.Result) 
 			} else {
 				item.SourceAny = types.BoolValue(false)
 			}
-			if cValue := v.Get("ace-rule.host"); cValue.Exists() {
+			if cValue := v.Get("ace-rule.host-address"); cValue.Exists() {
 				item.SourceHost = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.object-group"); cValue.Exists() {
@@ -541,7 +541,7 @@ func (data *AccessListExtended) fromBody(ctx context.Context, res gjson.Result) 
 			} else {
 				item.DestinationAny = types.BoolValue(false)
 			}
-			if cValue := v.Get("ace-rule.dst-host"); cValue.Exists() {
+			if cValue := v.Get("ace-rule.dst-host-address"); cValue.Exists() {
 				item.DestinationHost = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("ace-rule.dst-object-group"); cValue.Exists() {

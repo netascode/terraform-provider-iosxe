@@ -66,7 +66,7 @@ func (data AccessListStandard) toBody(ctx context.Context) string {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"remark", item.Remark.ValueString())
 			}
 			if !item.DenyPrefix.IsNull() && !item.DenyPrefix.IsUnknown() {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"deny.std-ace.ipv4-prefix", item.DenyPrefix.ValueString())
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"deny.std-ace.ipv4-address-prefix", item.DenyPrefix.ValueString())
 			}
 			if !item.DenyPrefixMask.IsNull() && !item.DenyPrefixMask.IsUnknown() {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"deny.std-ace.mask", item.DenyPrefixMask.ValueString())
@@ -77,10 +77,10 @@ func (data AccessListStandard) toBody(ctx context.Context) string {
 				}
 			}
 			if !item.DenyHost.IsNull() && !item.DenyHost.IsUnknown() {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"deny.std-ace.host", item.DenyHost.ValueString())
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"deny.std-ace.host-address", item.DenyHost.ValueString())
 			}
 			if !item.PermitPrefix.IsNull() && !item.PermitPrefix.IsUnknown() {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"permit.std-ace.ipv4-prefix", item.PermitPrefix.ValueString())
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"permit.std-ace.ipv4-address-prefix", item.PermitPrefix.ValueString())
 			}
 			if !item.PermitPrefixMask.IsNull() && !item.PermitPrefixMask.IsUnknown() {
 				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"permit.std-ace.mask", item.PermitPrefixMask.ValueString())
@@ -91,7 +91,7 @@ func (data AccessListStandard) toBody(ctx context.Context) string {
 				}
 			}
 			if !item.PermitHost.IsNull() && !item.PermitHost.IsUnknown() {
-				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"permit.std-ace.host", item.PermitHost.ValueString())
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"access-list-seq-rule"+"."+strconv.Itoa(index)+"."+"permit.std-ace.host-address", item.PermitHost.ValueString())
 			}
 		}
 	}
@@ -141,7 +141,7 @@ func (data *AccessListStandard) updateFromBody(ctx context.Context, res gjson.Re
 		} else {
 			data.Entries[i].Remark = types.StringNull()
 		}
-		if value := r.Get("deny.std-ace.ipv4-prefix"); value.Exists() && !data.Entries[i].DenyPrefix.IsNull() {
+		if value := r.Get("deny.std-ace.ipv4-address-prefix"); value.Exists() && !data.Entries[i].DenyPrefix.IsNull() {
 			data.Entries[i].DenyPrefix = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DenyPrefix = types.StringNull()
@@ -160,12 +160,12 @@ func (data *AccessListStandard) updateFromBody(ctx context.Context, res gjson.Re
 		} else {
 			data.Entries[i].DenyAny = types.BoolNull()
 		}
-		if value := r.Get("deny.std-ace.host"); value.Exists() && !data.Entries[i].DenyHost.IsNull() {
+		if value := r.Get("deny.std-ace.host-address"); value.Exists() && !data.Entries[i].DenyHost.IsNull() {
 			data.Entries[i].DenyHost = types.StringValue(value.String())
 		} else {
 			data.Entries[i].DenyHost = types.StringNull()
 		}
-		if value := r.Get("permit.std-ace.ipv4-prefix"); value.Exists() && !data.Entries[i].PermitPrefix.IsNull() {
+		if value := r.Get("permit.std-ace.ipv4-address-prefix"); value.Exists() && !data.Entries[i].PermitPrefix.IsNull() {
 			data.Entries[i].PermitPrefix = types.StringValue(value.String())
 		} else {
 			data.Entries[i].PermitPrefix = types.StringNull()
@@ -184,7 +184,7 @@ func (data *AccessListStandard) updateFromBody(ctx context.Context, res gjson.Re
 		} else {
 			data.Entries[i].PermitAny = types.BoolNull()
 		}
-		if value := r.Get("permit.std-ace.host"); value.Exists() && !data.Entries[i].PermitHost.IsNull() {
+		if value := r.Get("permit.std-ace.host-address"); value.Exists() && !data.Entries[i].PermitHost.IsNull() {
 			data.Entries[i].PermitHost = types.StringValue(value.String())
 		} else {
 			data.Entries[i].PermitHost = types.StringNull()
@@ -207,7 +207,7 @@ func (data *AccessListStandard) fromBody(ctx context.Context, res gjson.Result) 
 			if cValue := v.Get("remark"); cValue.Exists() {
 				item.Remark = types.StringValue(cValue.String())
 			}
-			if cValue := v.Get("deny.std-ace.ipv4-prefix"); cValue.Exists() {
+			if cValue := v.Get("deny.std-ace.ipv4-address-prefix"); cValue.Exists() {
 				item.DenyPrefix = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("deny.std-ace.mask"); cValue.Exists() {
@@ -218,10 +218,10 @@ func (data *AccessListStandard) fromBody(ctx context.Context, res gjson.Result) 
 			} else {
 				item.DenyAny = types.BoolValue(false)
 			}
-			if cValue := v.Get("deny.std-ace.host"); cValue.Exists() {
+			if cValue := v.Get("deny.std-ace.host-address"); cValue.Exists() {
 				item.DenyHost = types.StringValue(cValue.String())
 			}
-			if cValue := v.Get("permit.std-ace.ipv4-prefix"); cValue.Exists() {
+			if cValue := v.Get("permit.std-ace.ipv4-address-prefix"); cValue.Exists() {
 				item.PermitPrefix = types.StringValue(cValue.String())
 			}
 			if cValue := v.Get("permit.std-ace.mask"); cValue.Exists() {
@@ -232,7 +232,7 @@ func (data *AccessListStandard) fromBody(ctx context.Context, res gjson.Result) 
 			} else {
 				item.PermitAny = types.BoolValue(false)
 			}
-			if cValue := v.Get("permit.std-ace.host"); cValue.Exists() {
+			if cValue := v.Get("permit.std-ace.host-address"); cValue.Exists() {
 				item.PermitHost = types.StringValue(cValue.String())
 			}
 			data.Entries = append(data.Entries, item)

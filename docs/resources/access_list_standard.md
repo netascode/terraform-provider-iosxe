@@ -48,12 +48,12 @@ resource "iosxe_access_list_standard" "example" {
 Optional:
 
 - `deny_any` (Boolean) Any source prefix
-- `deny_host` (String) A single source host (DEPRECATED - use host-address)
-- `deny_prefix` (String) Network address prefix (DEPRECATED - use ipv4-address-prefix)
+- `deny_host` (String) A single source host
+- `deny_prefix` (String) Network address prefix
 - `deny_prefix_mask` (String) Wildcard bits
 - `permit_any` (Boolean) Any source prefix
-- `permit_host` (String) A single source host (DEPRECATED - use host-address)
-- `permit_prefix` (String) Network address prefix (DEPRECATED - use ipv4-address-prefix)
+- `permit_host` (String) A single source host
+- `permit_prefix` (String) Network address prefix
 - `permit_prefix_mask` (String) Wildcard bits
 - `remark` (String) Access list entry comment
 - `sequence` (Number) - Range: `1`-`2147483647`

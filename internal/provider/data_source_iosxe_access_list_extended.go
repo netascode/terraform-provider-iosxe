@@ -87,7 +87,7 @@ func (d *AccessListExtendedDataSource) Schema(ctx context.Context, req datasourc
 							Computed:            true,
 						},
 						"source_host": schema.StringAttribute{
-							MarkdownDescription: "A single source host(DEPRECATED - use host-address)",
+							MarkdownDescription: "A single source host",
 							Computed:            true,
 						},
 						"source_object_group": schema.StringAttribute{
@@ -127,7 +127,7 @@ func (d *AccessListExtendedDataSource) Schema(ctx context.Context, req datasourc
 							Computed:            true,
 						},
 						"destination_host": schema.StringAttribute{
-							MarkdownDescription: "A single destination host(DEPRECATED - use dst-host-address)",
+							MarkdownDescription: "A single destination host",
 							Computed:            true,
 						},
 						"destination_object_group": schema.StringAttribute{
