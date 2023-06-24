@@ -95,7 +95,7 @@ resource "iosxe_logging" "example" {
 <a id="nestedatt--ipv4_hosts"></a>
 ### Nested Schema for `ipv4_hosts`
 
-Optional:
+Required:
 
 - `ipv4_host` (String)
 
@@ -103,7 +103,7 @@ Optional:
 <a id="nestedatt--ipv4_vrf_hosts"></a>
 ### Nested Schema for `ipv4_vrf_hosts`
 
-Optional:
+Required:
 
 - `ipv4_host` (String)
 - `vrf` (String) Set VRF option
@@ -112,7 +112,7 @@ Optional:
 <a id="nestedatt--ipv6_hosts"></a>
 ### Nested Schema for `ipv6_hosts`
 
-Optional:
+Required:
 
 - `ipv6_host` (String)
 
@@ -120,7 +120,7 @@ Optional:
 <a id="nestedatt--ipv6_vrf_hosts"></a>
 ### Nested Schema for `ipv6_vrf_hosts`
 
-Optional:
+Required:
 
 - `ipv6_host` (String)
 - `vrf` (String) Set VRF option
@@ -132,9 +132,6 @@ Optional:
 Required:
 
 - `interface_name` (String)
-
-Optional:
-
 - `vrf` (String) Specify the vrf of source interface for logging transactions
 
 ## Import

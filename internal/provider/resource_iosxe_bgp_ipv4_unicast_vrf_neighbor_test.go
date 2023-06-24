@@ -91,7 +91,7 @@ func testAccIosxeBGPIPv4UnicastVRFNeighborConfig_minimum() string {
 		asn = "65000"
 		vrf = "VRF1"
 		ip = "3.3.3.3"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
 	}
 	`
 }

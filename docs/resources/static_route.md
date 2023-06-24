@@ -49,12 +49,15 @@ resource "iosxe_static_route" "example" {
 <a id="nestedatt--next_hops"></a>
 ### Nested Schema for `next_hops`
 
+Required:
+
+- `next_hop` (String)
+
 Optional:
 
 - `global` (Boolean) Next hop address is global
 - `metric` (Number) - Range: `1`-`255`
 - `name` (String) Specify name of the next hop
-- `next_hop` (String)
 - `permanent` (Boolean) permanent route
 - `tag` (Number) Set tag for this route
   - Range: `1`-`4294967295`

@@ -78,9 +78,12 @@ resource "iosxe_pim_vrf" "example" {
 <a id="nestedatt--rp_addresses"></a>
 ### Nested Schema for `rp_addresses`
 
-Optional:
+Required:
 
 - `access_list` (String) IP Access-list
+
+Optional:
+
 - `bidir` (Boolean) Group range treated in bidirectional shared-tree mode
 - `override` (Boolean) Overrides dynamically learnt RP mappings
 - `rp_address` (String) IP address of Rendezvous-point for group
@@ -89,11 +92,14 @@ Optional:
 <a id="nestedatt--rp_candidates"></a>
 ### Nested Schema for `rp_candidates`
 
+Required:
+
+- `interface` (String) Autonomic-Networking virtual interface
+
 Optional:
 
 - `bidir` (Boolean) Group range treated in bidirectional shared-tree mode
 - `group_list` (String) IP Access list
-- `interface` (String) Autonomic-Networking virtual interface
 - `interval` (Number) RP candidate advertisement interval
   - Range: `1`-`16383`
 - `priority` (Number) RP candidate priority

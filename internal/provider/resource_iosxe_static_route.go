@@ -81,7 +81,7 @@ func (r *StaticRouteResource) Schema(ctx context.Context, req resource.SchemaReq
 					Attributes: map[string]schema.Attribute{
 						"next_hop": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"metric": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 255).String,

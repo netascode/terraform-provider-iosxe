@@ -45,7 +45,7 @@ func testAccIosxeBGPAddressFamilyIPv4Config_minimum() string {
 	resource "iosxe_bgp_address_family_ipv4" "test" {
 		asn = "65000"
 		af_name = "unicast"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

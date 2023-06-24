@@ -71,7 +71,7 @@ resource "iosxe_restconf" "PreReq1" {
 func testAccIosxeLoggingConfig_minimum() string {
 	return `
 	resource "iosxe_logging" "test" {
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

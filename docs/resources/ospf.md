@@ -84,11 +84,14 @@ resource "iosxe_ospf" "example" {
 <a id="nestedatt--neighbor"></a>
 ### Nested Schema for `neighbor`
 
+Required:
+
+- `ip` (String) Neighbor address
+
 Optional:
 
 - `cost` (Number) OSPF cost for point-to-multipoint neighbor
   - Range: `1`-`65535`
-- `ip` (String) Neighbor address
 - `priority` (Number) OSPF priority of non-broadcast neighbor
   - Range: `0`-`255`
 
@@ -96,19 +99,25 @@ Optional:
 <a id="nestedatt--network"></a>
 ### Nested Schema for `network`
 
+Required:
+
+- `ip` (String) Network number
+
 Optional:
 
 - `area` (String) Set the OSPF area ID
-- `ip` (String) Network number
 - `wildcard` (String) OSPF wild card bits
 
 
 <a id="nestedatt--summary_address"></a>
 ### Nested Schema for `summary_address`
 
-Optional:
+Required:
 
 - `ip` (String) IP summary address
+
+Optional:
+
 - `mask` (String) Summary mask
 
 ## Import

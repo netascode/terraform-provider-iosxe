@@ -47,7 +47,7 @@ func testAccIosxeBGPConfig_minimum() string {
 	return `
 	resource "iosxe_bgp" "test" {
 		asn = "65000"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

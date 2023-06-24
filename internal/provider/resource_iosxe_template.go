@@ -143,7 +143,7 @@ func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaReques
 					Attributes: map[string]schema.Attribute{
 						"range": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Maximum addresses").AddIntegerRangeDescription(1, 3072).String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 3072),
 							},
@@ -370,7 +370,7 @@ func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaReques
 					Attributes: map[string]schema.Attribute{
 						"direction": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("packet flow direction").AddStringEnumDescription("in", "out").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf("in", "out"),
 							},
@@ -408,7 +408,7 @@ func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaReques
 					Attributes: map[string]schema.Attribute{
 						"policy_name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"vlan_range": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VLAN IDs of the VLANs for which this policy applies").String,

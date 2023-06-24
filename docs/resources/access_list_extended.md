@@ -58,6 +58,10 @@ resource "iosxe_access_list_extended" "example" {
 <a id="nestedatt--entries"></a>
 ### Nested Schema for `entries`
 
+Required:
+
+- `sequence` (Number) - Range: `1`-`2147483647`
+
 Optional:
 
 - `ace_rule_action` (String) - Choices: `deny`, `permit`
@@ -81,7 +85,6 @@ Optional:
 - `psh` (Boolean) Match on the PSH bit
 - `remark` (String) Access list entry comment
 - `rst` (Boolean) Match on the RST bit
-- `sequence` (Number) - Range: `1`-`2147483647`
 - `service_object_group` (String) Service object group name
 - `source_any` (Boolean) Any source host
 - `source_host` (String) A single source host

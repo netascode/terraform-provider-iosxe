@@ -76,7 +76,7 @@ func (r *BGPAddressFamilyIPv6VRFResource) Schema(ctx context.Context, req resour
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"advertise_l2vpn_evpn": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Advertise/export prefixes to l2vpn evpn table").String,

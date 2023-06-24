@@ -72,7 +72,7 @@ func testAccIosxeBGPIPv4UnicastNeighborConfig_minimum() string {
 	resource "iosxe_bgp_ipv4_unicast_neighbor" "test" {
 		asn = "65000"
 		ip = "3.3.3.3"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
 	}
 	`
 }

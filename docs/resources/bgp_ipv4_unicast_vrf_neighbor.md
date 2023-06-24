@@ -63,11 +63,8 @@ resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "example" {
 
 Required:
 
-- `route_map_name` (String)
-
-Optional:
-
 - `in_out` (String) - Choices: `in`, `out`
+- `route_map_name` (String)
 
 ## Import
 

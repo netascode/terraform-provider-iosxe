@@ -56,7 +56,7 @@ func testAccIosxeInterfaceLoopbackConfig_minimum() string {
 	return `
 	resource "iosxe_interface_loopback" "test" {
 		name = 100
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

@@ -25,7 +25,16 @@ func TestAccIosxe{{camelCase .Name}}(t *testing.T) {
 					{{- $list := .TfName }}
 					{{- range  .Attributes}}
 					{{- if and (not .WriteOnly) (not .ExcludeTest)}}
+					{{- if eq .Type "List"}}
+					{{- $clist := .TfName }}
+					{{- range  .Attributes}}
+					{{- if and (not .WriteOnly) (not .ExcludeTest)}}
+					resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{$clist}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
+					{{- end}}
+					{{- end}}
+					{{- else}}
 					resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
+					{{- end}}
 					{{- end}}
 					{{- end}}
 					{{- else}}
@@ -95,7 +104,17 @@ func testAccIosxe{{camelCase .Name}}Config_minimum() string {
 		{{.TfName}} = [{
 		{{- range  .Attributes}}
 		{{- if not .ExcludeTest}}
-			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+		{{- if eq .Type "List"}}
+			{{.TfName}} = [{
+				{{- range  .Attributes}}
+				{{- if not .ExcludeTest}}
+				{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+				{{- end}}
+				{{- end}}
+			}]
+		{{- else}}
+		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+		{{- end}}
 		{{- end}}
 		{{- end}}
 		}]
@@ -105,7 +124,7 @@ func testAccIosxe{{camelCase .Name}}Config_minimum() string {
 	{{- end}}
 	{{- end}}
 	{{- if .TestPrerequisites}}
-  		depends_on = [{{range $index, $item := .TestPrerequisites}}iosxe_restconf.PreReq{{$index}}, {{end}}]
+		depends_on = [{{range $index, $item := .TestPrerequisites}}iosxe_restconf.PreReq{{$index}}, {{end}}]
 	{{- end}}
 	}
 	`
@@ -118,11 +137,21 @@ func testAccIosxe{{camelCase .Name}}Config_all() string {
 	{{- if not .ExcludeTest}}
 	{{- if eq .Type "List"}}
 		{{.TfName}} = [{
-		{{- range  .Attributes}}
-		{{- if not .ExcludeTest}}
+			{{- range  .Attributes}}
+			{{- if not .ExcludeTest}}
+			{{- if eq .Type "List"}}
+				{{.TfName}} = [{
+					{{- range  .Attributes}}
+					{{- if not .ExcludeTest}}
+					{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+					{{- end}}
+					{{- end}}
+				}]
+			{{- else}}
 			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
-		{{- end}}
-		{{- end}}
+			{{- end}}
+			{{- end}}
+			{{- end}}
 		}]
 	{{- else}}
 		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}

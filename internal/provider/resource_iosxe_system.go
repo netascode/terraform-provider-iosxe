@@ -134,7 +134,7 @@ func (r *SystemResource) Schema(ctx context.Context, req resource.SchemaRequest,
 					Attributes: map[string]schema.Attribute{
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"distributed": schema.BoolAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Distributed multicast switching").String,

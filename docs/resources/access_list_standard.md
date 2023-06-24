@@ -45,6 +45,10 @@ resource "iosxe_access_list_standard" "example" {
 <a id="nestedatt--entries"></a>
 ### Nested Schema for `entries`
 
+Required:
+
+- `sequence` (Number) - Range: `1`-`2147483647`
+
 Optional:
 
 - `deny_any` (Boolean) Any source prefix
@@ -56,7 +60,6 @@ Optional:
 - `permit_prefix` (String) Network address prefix
 - `permit_prefix_mask` (String) Wildcard bits
 - `remark` (String) Access list entry comment
-- `sequence` (Number) - Range: `1`-`2147483647`
 
 ## Import
 

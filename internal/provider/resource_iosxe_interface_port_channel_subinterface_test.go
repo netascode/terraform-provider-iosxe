@@ -66,7 +66,7 @@ func testAccIosxeInterfacePortChannelSubinterfaceConfig_minimum() string {
 	return `
 	resource "iosxe_interface_port_channel_subinterface" "test" {
 		name = "10.666"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

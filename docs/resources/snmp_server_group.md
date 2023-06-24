@@ -49,6 +49,11 @@ resource "iosxe_snmp_server_group" "example" {
 <a id="nestedatt--v3_security"></a>
 ### Nested Schema for `v3_security`
 
+Required:
+
+- `security_level` (String) security level type
+  - Choices: `auth`, `noauth`, `priv`
+
 Optional:
 
 - `access_acl_name` (String) Access-list name
@@ -60,8 +65,6 @@ Optional:
   - Choices: `exact`, `prefix`
 - `notify_node` (String) specify a notify view for the group
 - `read_node` (String) specify a read view for the group
-- `security_level` (String) security level type
-  - Choices: `auth`, `noauth`, `priv`
 - `write_node` (String) specify a write view for the group
 
 ## Import

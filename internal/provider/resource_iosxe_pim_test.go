@@ -61,7 +61,7 @@ resource "iosxe_restconf" "PreReq0" {
 func testAccIosxePIMConfig_minimum() string {
 	return `
 	resource "iosxe_pim" "test" {
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

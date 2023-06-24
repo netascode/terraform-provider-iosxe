@@ -73,7 +73,7 @@ func (r *LoggingIPv6HostVRFTransportResource) Schema(ctx context.Context, req re
 					Attributes: map[string]schema.Attribute{
 						"port_number": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the UDP port number (default=514)").AddIntegerRangeDescription(1, 65535).String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 65535),
 							},
@@ -88,7 +88,7 @@ func (r *LoggingIPv6HostVRFTransportResource) Schema(ctx context.Context, req re
 					Attributes: map[string]schema.Attribute{
 						"port_number": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the TCP port number (default=601)").AddIntegerRangeDescription(1, 65535).String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 65535),
 							},
@@ -103,7 +103,7 @@ func (r *LoggingIPv6HostVRFTransportResource) Schema(ctx context.Context, req re
 					Attributes: map[string]schema.Attribute{
 						"port_number": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the TLS port number (default=6514)").AddIntegerRangeDescription(1025, 65535).String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1025, 65535),
 							},

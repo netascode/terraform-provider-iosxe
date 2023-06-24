@@ -88,7 +88,7 @@ func (r *BGPIPv4UnicastNeighborResource) Schema(ctx context.Context, req resourc
 					Attributes: map[string]schema.Attribute{
 						"in_out": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddStringEnumDescription("in", "out").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf("in", "out"),
 							},

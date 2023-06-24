@@ -53,20 +53,26 @@ resource "iosxe_interface_nve" "example" {
 <a id="nestedatt--vni_vrfs"></a>
 ### Nested Schema for `vni_vrfs`
 
-Optional:
+Required:
 
 - `vni_range` (String) VNI range or instance between 4096-16777215, example: 6010-6030 or 7115
+
+Optional:
+
 - `vrf` (String) Specify a particular VRF
 
 
 <a id="nestedatt--vnis"></a>
 ### Nested Schema for `vnis`
 
+Required:
+
+- `vni_range` (String) VNI range or instance between 4096-16777215, example: 6010-6030 or 7115
+
 Optional:
 
 - `ingress_replication` (Boolean) Ingress Replication control-plane (BGP) signaling
 - `ipv4_multicast_group` (String) Starting Multicast Group IPv4 Address
-- `vni_range` (String) VNI range or instance between 4096-16777215, example: 6010-6030 or 7115
 
 ## Import
 

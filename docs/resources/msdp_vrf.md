@@ -56,20 +56,23 @@ resource "iosxe_msdp_vrf" "example" {
 
 Required:
 
+- `addr` (String)
 - `password` (String)
 
 Optional:
 
-- `addr` (String)
 - `encryption` (Number) - Range: `0`-`7`
 
 
 <a id="nestedatt--peers"></a>
 ### Nested Schema for `peers`
 
-Optional:
+Required:
 
 - `addr` (String)
+
+Optional:
+
 - `connect_source_loopback` (Number) Loopback interface
   - Range: `0`-`2147483647`
 - `remote_as` (Number) Configured AS number

@@ -41,7 +41,7 @@ resource "iosxe_dhcp" "example" {
 <a id="nestedatt--snooping_vlans"></a>
 ### Nested Schema for `snooping_vlans`
 
-Optional:
+Required:
 
 - `vlan_id` (Number) - Range: `1`-`4094`
 

@@ -66,7 +66,7 @@ func testAccIosxeBGPAddressFamilyIPv6VRFConfig_minimum() string {
 	resource "iosxe_bgp_address_family_ipv6_vrf" "test" {
 		asn = "65000"
 		af_name = "unicast"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 	}
 	`
 }

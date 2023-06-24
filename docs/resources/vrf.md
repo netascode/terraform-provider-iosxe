@@ -108,7 +108,7 @@ resource "iosxe_vrf" "example" {
 <a id="nestedatt--ipv4_route_target_export"></a>
 ### Nested Schema for `ipv4_route_target_export`
 
-Optional:
+Required:
 
 - `value` (String) Value
 
@@ -116,17 +116,20 @@ Optional:
 <a id="nestedatt--ipv4_route_target_export_stitching"></a>
 ### Nested Schema for `ipv4_route_target_export_stitching`
 
+Required:
+
+- `value` (String) Value
+
 Optional:
 
 - `stitching` (Boolean) VXLAN route target set
   - Default value: `true`
-- `value` (String) Value
 
 
 <a id="nestedatt--ipv4_route_target_import"></a>
 ### Nested Schema for `ipv4_route_target_import`
 
-Optional:
+Required:
 
 - `value` (String) Value
 
@@ -134,17 +137,20 @@ Optional:
 <a id="nestedatt--ipv4_route_target_import_stitching"></a>
 ### Nested Schema for `ipv4_route_target_import_stitching`
 
+Required:
+
+- `value` (String) Value
+
 Optional:
 
 - `stitching` (Boolean) VXLAN route target set
   - Default value: `true`
-- `value` (String) Value
 
 
 <a id="nestedatt--ipv6_route_target_export"></a>
 ### Nested Schema for `ipv6_route_target_export`
 
-Optional:
+Required:
 
 - `value` (String) Value
 
@@ -152,17 +158,20 @@ Optional:
 <a id="nestedatt--ipv6_route_target_export_stitching"></a>
 ### Nested Schema for `ipv6_route_target_export_stitching`
 
+Required:
+
+- `value` (String) Value
+
 Optional:
 
 - `stitching` (Boolean) VXLAN route target set
   - Default value: `true`
-- `value` (String) Value
 
 
 <a id="nestedatt--ipv6_route_target_import"></a>
 ### Nested Schema for `ipv6_route_target_import`
 
-Optional:
+Required:
 
 - `value` (String) Value
 
@@ -170,29 +179,38 @@ Optional:
 <a id="nestedatt--ipv6_route_target_import_stitching"></a>
 ### Nested Schema for `ipv6_route_target_import_stitching`
 
+Required:
+
+- `value` (String) Value
+
 Optional:
 
 - `stitching` (Boolean) VXLAN route target set
   - Default value: `true`
-- `value` (String) Value
 
 
 <a id="nestedatt--route_target_export"></a>
 ### Nested Schema for `route_target_export`
 
+Required:
+
+- `value` (String) Value
+
 Optional:
 
 - `stitching` (Boolean) VXLAN route target set
-- `value` (String) Value
 
 
 <a id="nestedatt--route_target_import"></a>
 ### Nested Schema for `route_target_import`
 
+Required:
+
+- `value` (String) Value
+
 Optional:
 
 - `stitching` (Boolean) VXLAN route target set
-- `value` (String) Value
 
 ## Import
 

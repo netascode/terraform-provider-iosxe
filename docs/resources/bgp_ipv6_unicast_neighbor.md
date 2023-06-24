@@ -53,11 +53,8 @@ resource "iosxe_bgp_ipv6_unicast_neighbor" "example" {
 
 Required:
 
-- `route_map_name` (String)
-
-Optional:
-
 - `in_out` (String) - Choices: `in`, `out`
+- `route_map_name` (String)
 
 ## Import
 

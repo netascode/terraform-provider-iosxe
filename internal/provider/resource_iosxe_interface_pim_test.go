@@ -50,7 +50,7 @@ func testAccIosxeInterfacePIMConfig_minimum() string {
 	resource "iosxe_interface_pim" "test" {
 		type = "Loopback"
 		name = "100"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

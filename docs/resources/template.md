@@ -192,29 +192,38 @@ resource "iosxe_template" "example" {
 <a id="nestedatt--device_tracking_attach_policy"></a>
 ### Nested Schema for `device_tracking_attach_policy`
 
-Optional:
+Required:
 
 - `policy_name` (String)
+
+Optional:
+
 - `vlan_range` (String) VLAN IDs of the VLANs for which this policy applies
 
 
 <a id="nestedatt--ip_access_group"></a>
 ### Nested Schema for `ip_access_group`
 
+Required:
+
+- `direction` (String) packet flow direction
+  - Choices: `in`, `out`
+
 Optional:
 
 - `access_list` (String) Access control list name
-- `direction` (String) packet flow direction
-  - Choices: `in`, `out`
 
 
 <a id="nestedatt--switchport_port_security_maximum_range"></a>
 ### Nested Schema for `switchport_port_security_maximum_range`
 
-Optional:
+Required:
 
 - `range` (Number) Maximum addresses
   - Range: `1`-`3072`
+
+Optional:
+
 - `vlan` (Boolean) Max secure addresses per vlan
 - `vlan_access` (Boolean) access vlan
 

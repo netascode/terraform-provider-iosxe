@@ -47,10 +47,13 @@ resource "iosxe_bgp_address_family_ipv4_vrf" "example" {
 <a id="nestedatt--vrfs"></a>
 ### Nested Schema for `vrfs`
 
+Required:
+
+- `name` (String)
+
 Optional:
 
 - `advertise_l2vpn_evpn` (Boolean) Advertise/export prefixes to l2vpn evpn table
-- `name` (String)
 - `redistribute_connected` (Boolean) Connected
 - `redistribute_static` (Boolean) Static routes
 

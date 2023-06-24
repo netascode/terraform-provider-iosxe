@@ -69,9 +69,12 @@ resource "iosxe_interface_port_channel_subinterface" "example" {
 <a id="nestedatt--helper_addresses"></a>
 ### Nested Schema for `helper_addresses`
 
-Optional:
+Required:
 
 - `address` (String)
+
+Optional:
+
 - `global` (Boolean) Helper-address is global
 - `vrf` (String) VRF name for helper-address (if different from interface VRF)
 

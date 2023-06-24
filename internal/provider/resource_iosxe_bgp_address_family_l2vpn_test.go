@@ -45,7 +45,7 @@ func testAccIosxeBGPAddressFamilyL2VPNConfig_minimum() string {
 	resource "iosxe_bgp_address_family_l2vpn" "test" {
 		asn = "65000"
 		af_name = "evpn"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

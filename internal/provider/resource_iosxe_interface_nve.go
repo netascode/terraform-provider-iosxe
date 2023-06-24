@@ -95,7 +95,7 @@ func (r *InterfaceNVEResource) Schema(ctx context.Context, req resource.SchemaRe
 					Attributes: map[string]schema.Attribute{
 						"vni_range": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify a particular VRF").String,
@@ -111,7 +111,7 @@ func (r *InterfaceNVEResource) Schema(ctx context.Context, req resource.SchemaRe
 					Attributes: map[string]schema.Attribute{
 						"vni_range": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VNI range or instance between 4096-16777215, example: 6010-6030 or 7115").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"ipv4_multicast_group": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Starting Multicast Group IPv4 Address").String,

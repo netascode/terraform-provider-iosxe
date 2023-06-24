@@ -122,7 +122,7 @@ resource "iosxe_snmp_server" "example" {
 <a id="nestedatt--contexts"></a>
 ### Nested Schema for `contexts`
 
-Optional:
+Required:
 
 - `name` (String)
 
@@ -130,11 +130,14 @@ Optional:
 <a id="nestedatt--snmp_communities"></a>
 ### Nested Schema for `snmp_communities`
 
+Required:
+
+- `name` (String)
+
 Optional:
 
 - `access_list_name` (String) Access-list name
 - `ipv6` (String) Specify IPv6 Named Access-List
-- `name` (String)
 - `permission` (String) - Choices: `ro`, `rw`
 - `view` (String) Restrict this community to a named MIB view
 
@@ -142,11 +145,14 @@ Optional:
 <a id="nestedatt--views"></a>
 ### Nested Schema for `views`
 
+Required:
+
+- `mib` (String)
+- `name` (String)
+
 Optional:
 
 - `inc_exl` (String) - Choices: `excluded`, `included`
-- `mib` (String)
-- `name` (String)
 
 ## Import
 

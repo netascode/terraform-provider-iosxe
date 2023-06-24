@@ -63,7 +63,7 @@ func testAccIosxeOSPFVRFConfig_minimum() string {
 	resource "iosxe_ospf_vrf" "test" {
 		process_id = 1
 		vrf = "VRF1"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

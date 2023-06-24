@@ -107,6 +107,10 @@ resource "iosxe_route_map" "example" {
 <a id="nestedatt--entries"></a>
 ### Nested Schema for `entries`
 
+Required:
+
+- `seq` (Number) - Range: `0`-`65535`
+
 Optional:
 
 - `continue` (Boolean) Continue on a different entry within the route-map
@@ -147,7 +151,6 @@ Optional:
 - `match_track` (Number) tracking object
   - Range: `1`-`1000`
 - `operation` (String) - Choices: `deny`, `permit`
-- `seq` (Number) - Range: `0`-`65535`
 - `set_as_path_prepend_as` (String) <1-65535>;;AS number
 - `set_as_path_prepend_last_as` (Number) - Range: `1`-`10`
 - `set_as_path_tag` (Boolean) Set the tag as an AS-path attribute

@@ -92,7 +92,7 @@ func (r *InterfaceOSPFProcessResource) Schema(ctx context.Context, req resource.
 					Attributes: map[string]schema.Attribute{
 						"area_id": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Set the OSPF area ID").String,
-							Optional:            true,
+							Required:            true,
 						},
 					},
 				},

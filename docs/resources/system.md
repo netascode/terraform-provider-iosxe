@@ -66,10 +66,13 @@ resource "iosxe_system" "example" {
 <a id="nestedatt--multicast_routing_vrfs"></a>
 ### Nested Schema for `multicast_routing_vrfs`
 
+Required:
+
+- `vrf` (String)
+
 Optional:
 
 - `distributed` (Boolean) Distributed multicast switching
-- `vrf` (String)
 
 ## Import
 

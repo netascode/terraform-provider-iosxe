@@ -48,7 +48,7 @@ resource "iosxe_interface_ospf_process" "example" {
 <a id="nestedatt--area"></a>
 ### Nested Schema for `area`
 
-Optional:
+Required:
 
 - `area_id` (String) Set the OSPF area ID
 

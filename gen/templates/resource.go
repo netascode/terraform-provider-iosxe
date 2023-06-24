@@ -81,9 +81,9 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 				Required:            true,
 				{{- else}}
 				Optional:            true,
+				{{- end}}
 				{{- if len .DefaultValue}}
 				Computed:            true,
-				{{- end}}
 				{{- end}}
 				{{- if len .EnumValues}}
 				Validators: []validator.String{
@@ -123,7 +123,7 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						{{- range  .Attributes}}
-						"{{.TfName}}": schema.{{if or (eq .Type "StringList") (eq .Type "Int64List")}}List{{else}}{{.Type}}{{end}}Attribute{
+						"{{.TfName}}": schema.{{if eq .Type "List"}}ListNested{{else if or (eq .Type "StringList") (eq .Type "Int64List")}}List{{else}}{{.Type}}{{end}}Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("{{.Description}}")
 								{{- if len .EnumValues -}}
 								.AddStringEnumDescription({{range .EnumValues}}"{{.}}", {{end}})
@@ -143,13 +143,13 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 							{{- else if eq .Type "Int64List"}}
 							ElementType:         types.Int64Type,
 							{{- end}}
-							{{- if .Mandatory}}
+							{{- if or .Id .Mandatory}}
 							Required:            true,
 							{{- else}}
 							Optional:            true,
+							{{- end}}
 							{{- if len .DefaultValue}}
 							Computed:            true,
-							{{- end}}
 							{{- end}}
 							{{- if len .EnumValues}}
 							Validators: []validator.String{
@@ -175,6 +175,68 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 							Default:             booldefault.StaticBool({{.DefaultValue}}),
 							{{- else if and (len .DefaultValue) (eq .Type "String")}}
 							Default:             stringdefault.StaticString("{{.DefaultValue}}"),
+							{{- end}}
+							{{- if eq .Type "List"}}
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									{{- range  .Attributes}}
+									"{{.TfName}}": schema.{{if or (eq .Type "StringList") (eq .Type "Int64List")}}List{{else}}{{.Type}}{{end}}Attribute{
+										MarkdownDescription: helpers.NewAttributeDescription("{{.Description}}")
+											{{- if len .EnumValues -}}
+											.AddStringEnumDescription({{range .EnumValues}}"{{.}}", {{end}})
+											{{- end -}}
+											{{- if or (ne .MinInt 0) (ne .MaxInt 0) -}}
+											.AddIntegerRangeDescription({{.MinInt}}, {{.MaxInt}})
+											{{- end -}}
+											{{- if or (ne .MinFloat 0.0) (ne .MaxFloat 0.0) -}}
+											.AddFloatRangeDescription({{.MinFloat}}, {{.MaxFloat}})
+											{{- end -}}
+											{{- if len .DefaultValue -}}
+											.AddDefaultValueDescription("{{.DefaultValue}}")
+											{{- end -}}
+											.String,
+										{{- if eq .Type "StringList"}}
+										ElementType:         types.StringType,
+										{{- else if eq .Type "Int64List"}}
+										ElementType:         types.Int64Type,
+										{{- end}}
+										{{- if or .Id .Mandatory}}
+										Required:            true,
+										{{- else}}
+										Optional:            true,
+										{{- end}}
+										{{- if len .DefaultValue}}
+										Computed:            true,
+										{{- end}}
+										{{- if len .EnumValues}}
+										Validators: []validator.String{
+											stringvalidator.OneOf({{range .EnumValues}}"{{.}}", {{end}}),
+										},
+										{{- else if or (len .StringPatterns) (ne .StringMinLength 0) (ne .StringMaxLength 0) }}
+										Validators: []validator.String{
+											{{- if or (ne .StringMinLength 0) (ne .StringMaxLength 0)}}
+											stringvalidator.LengthBetween({{.StringMinLength}}, {{.StringMaxLength}}),
+											{{- end}}
+											{{- range .StringPatterns}}
+											stringvalidator.RegexMatches(regexp.MustCompile(`{{.}}`), ""),
+											{{- end}}
+										},
+										{{- else if or (ne .MinInt 0) (ne .MaxInt 0)}}
+										Validators: []validator.Int64{
+											int64validator.Between({{.MinInt}}, {{.MaxInt}}),
+										},
+										{{- end}}
+										{{- if and (len .DefaultValue) (eq .Type "Int64")}}
+										Default:             int64default.StaticInt64({{.DefaultValue}}),
+										{{- else if and (len .DefaultValue) (eq .Type "Bool")}}
+										Default:             booldefault.StaticBool({{.DefaultValue}}),
+										{{- else if and (len .DefaultValue) (eq .Type "String")}}
+										Default:             stringdefault.StaticString("{{.DefaultValue}}"),
+										{{- end}}
+									},
+									{{- end}}
+								},
+							},
 							{{- end}}
 						},
 						{{- end}}

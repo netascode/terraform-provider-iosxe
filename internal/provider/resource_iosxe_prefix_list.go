@@ -61,14 +61,14 @@ func (r *PrefixListResource) Schema(ctx context.Context, req resource.SchemaRequ
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Name of the prefix-list").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`([^s].*)|(s[^e].*)|(se[^q].*)|(seq[^u].*)|(sequ[^e].*)|(seque[^n].*)|(sequen[^c].*)|(sequenc[^e].*)|(sequence[^\-].*)|(sequence\-[^n].*)|(sequence\-n[^u].*)|(sequence\-nu[^m].*)|(sequence\-num[^b].*)|(sequence\-numb[^e].*)|(sequence\-numbe[^r].*)|(sequence\-number..*)`), ""),
 							},
 						},
 						"seq": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Seq Number of the prefix-list").AddIntegerRangeDescription(1, 4294967294).String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 4294967294),
 							},

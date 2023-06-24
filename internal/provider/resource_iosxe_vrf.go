@@ -100,7 +100,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -119,7 +119,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -138,7 +138,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -153,7 +153,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -174,7 +174,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -189,7 +189,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -210,7 +210,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -225,7 +225,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -246,7 +246,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},
@@ -261,7 +261,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"value": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Value").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
 							},

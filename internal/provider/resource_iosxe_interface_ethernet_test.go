@@ -62,7 +62,7 @@ func testAccIosxeInterfaceEthernetConfig_minimum() string {
 	resource "iosxe_interface_ethernet" "test" {
 		type = "GigabitEthernet"
 		name = "3"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

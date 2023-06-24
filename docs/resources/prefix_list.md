@@ -42,6 +42,12 @@ resource "iosxe_prefix_list" "example" {
 <a id="nestedatt--prefixes"></a>
 ### Nested Schema for `prefixes`
 
+Required:
+
+- `name` (String) Name of the prefix-list
+- `seq` (Number) Seq Number of the prefix-list
+  - Range: `1`-`4294967294`
+
 Optional:
 
 - `action` (String) Specify deny or permit action
@@ -51,9 +57,6 @@ Optional:
 - `ip` (String) IPv4 Prefix
 - `le` (Number) Maximum prefix length to be matched
   - Range: `1`-`32`
-- `name` (String) Name of the prefix-list
-- `seq` (Number) Seq Number of the prefix-list
-  - Range: `1`-`4294967294`
 
 ## Import
 

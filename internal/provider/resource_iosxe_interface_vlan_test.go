@@ -63,7 +63,7 @@ func testAccIosxeInterfaceVLANConfig_minimum() string {
 	return `
 	resource "iosxe_interface_vlan" "test" {
 		name = 10
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

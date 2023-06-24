@@ -45,7 +45,7 @@ func testAccIosxeInterfaceOSPFProcessConfig_minimum() string {
 		type = "GigabitEthernet"
 		name = "2"
 		process_id = 1
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

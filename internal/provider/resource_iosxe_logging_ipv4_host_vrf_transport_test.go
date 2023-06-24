@@ -50,7 +50,7 @@ func testAccIosxeLoggingIPv4HostVRFTransportConfig_minimum() string {
 	resource "iosxe_logging_ipv4_host_vrf_transport" "test" {
 		ipv4_host = "2.2.2.2"
 		vrf = "VRF1"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

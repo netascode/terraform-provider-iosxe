@@ -87,9 +87,12 @@ resource "iosxe_interface_ethernet" "example" {
 <a id="nestedatt--helper_addresses"></a>
 ### Nested Schema for `helper_addresses`
 
-Optional:
+Required:
 
 - `address` (String)
+
+Optional:
+
 - `global` (Boolean) Helper-address is global
 - `vrf` (String) VRF name for helper-address (if different from interface VRF)
 
@@ -97,10 +100,13 @@ Optional:
 <a id="nestedatt--source_template"></a>
 ### Nested Schema for `source_template`
 
+Required:
+
+- `template_name` (String)
+
 Optional:
 
 - `merge` (Boolean) merge option of binding
-- `template_name` (String)
 
 ## Import
 

@@ -142,7 +142,7 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 					Attributes: map[string]schema.Attribute{
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Specify the vrf of source interface for logging transactions").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"interface_name": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
@@ -158,7 +158,7 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 					Attributes: map[string]schema.Attribute{
 						"ipv4_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Optional:            true,
+							Required:            true,
 						},
 					},
 				},
@@ -170,11 +170,11 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 					Attributes: map[string]schema.Attribute{
 						"ipv4_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Set VRF option").String,
-							Optional:            true,
+							Required:            true,
 						},
 					},
 				},
@@ -186,7 +186,7 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 					Attributes: map[string]schema.Attribute{
 						"ipv6_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Optional:            true,
+							Required:            true,
 						},
 					},
 				},
@@ -198,11 +198,11 @@ func (r *LoggingResource) Schema(ctx context.Context, req resource.SchemaRequest
 					Attributes: map[string]schema.Attribute{
 						"ipv6_host": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Set VRF option").String,
-							Optional:            true,
+							Required:            true,
 						},
 					},
 				},

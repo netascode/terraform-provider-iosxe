@@ -65,7 +65,7 @@ func testAccIosxeBGPL2VPNEVPNNeighborConfig_minimum() string {
 	resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
 		asn = "65000"
 		ip = "3.3.3.3"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 	}
 	`
 }

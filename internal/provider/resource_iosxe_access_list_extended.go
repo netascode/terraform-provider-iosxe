@@ -68,7 +68,7 @@ func (r *AccessListExtendedResource) Schema(ctx context.Context, req resource.Sc
 					Attributes: map[string]schema.Attribute{
 						"sequence": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 2147483647).String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(1, 2147483647),
 							},

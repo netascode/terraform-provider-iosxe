@@ -56,7 +56,7 @@ resource "iosxe_logging_ipv4_host_vrf_transport" "example" {
 <a id="nestedatt--transport_tcp_ports"></a>
 ### Nested Schema for `transport_tcp_ports`
 
-Optional:
+Required:
 
 - `port_number` (Number) Specify the TCP port number (default=601)
   - Range: `1`-`65535`
@@ -65,17 +65,20 @@ Optional:
 <a id="nestedatt--transport_tls_ports"></a>
 ### Nested Schema for `transport_tls_ports`
 
-Optional:
+Required:
 
 - `port_number` (Number) Specify the TLS port number (default=6514)
   - Range: `1025`-`65535`
+
+Optional:
+
 - `profile` (String) Specify the TLS profile
 
 
 <a id="nestedatt--transport_udp_ports"></a>
 ### Nested Schema for `transport_udp_ports`
 
-Optional:
+Required:
 
 - `port_number` (Number) Specify the UDP port number (default=514)
   - Range: `1`-`65535`

@@ -68,7 +68,7 @@ func (r *RouteMapResource) Schema(ctx context.Context, req resource.SchemaReques
 					Attributes: map[string]schema.Attribute{
 						"seq": schema.Int64Attribute{
 							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 65535).String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.Int64{
 								int64validator.Between(0, 65535),
 							},

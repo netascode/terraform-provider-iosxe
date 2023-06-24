@@ -67,7 +67,7 @@ func (r *SNMPServerGroupResource) Schema(ctx context.Context, req resource.Schem
 					Attributes: map[string]schema.Attribute{
 						"security_level": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("security level type").AddStringEnumDescription("auth", "noauth", "priv").String,
-							Optional:            true,
+							Required:            true,
 							Validators: []validator.String{
 								stringvalidator.OneOf("auth", "noauth", "priv"),
 							},

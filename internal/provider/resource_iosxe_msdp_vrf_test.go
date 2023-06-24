@@ -60,7 +60,7 @@ func testAccIosxeMSDPVRFConfig_minimum() string {
 	return `
 	resource "iosxe_msdp_vrf" "test" {
 		vrf = "VRF1"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

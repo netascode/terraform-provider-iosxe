@@ -47,7 +47,7 @@ resource "iosxe_restconf" "PreReq0" {
 func testAccIosxeMSDPConfig_minimum() string {
 	return `
 	resource "iosxe_msdp" "test" {
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

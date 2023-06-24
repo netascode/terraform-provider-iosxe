@@ -117,7 +117,7 @@ func (r *PIMResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"access_list": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("IP Access-list").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"rp_address": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("IP address of Rendezvous-point for group").String,
@@ -144,7 +144,7 @@ func (r *PIMResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					Attributes: map[string]schema.Attribute{
 						"interface": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("Autonomic-Networking virtual interface").String,
-							Optional:            true,
+							Required:            true,
 						},
 						"group_list": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("IP Access list").String,
