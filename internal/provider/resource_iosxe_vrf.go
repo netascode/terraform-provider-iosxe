@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -161,9 +162,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
 							Optional:            true,
 							Computed:            true,
-							PlanModifiers: []planmodifier.Bool{
-								helpers.BooleanDefaultModifier(true),
-							},
+							Default:             booldefault.StaticBool(true),
 						},
 					},
 				},
@@ -199,9 +198,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
 							Optional:            true,
 							Computed:            true,
-							PlanModifiers: []planmodifier.Bool{
-								helpers.BooleanDefaultModifier(true),
-							},
+							Default:             booldefault.StaticBool(true),
 						},
 					},
 				},
@@ -237,9 +234,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
 							Optional:            true,
 							Computed:            true,
-							PlanModifiers: []planmodifier.Bool{
-								helpers.BooleanDefaultModifier(true),
-							},
+							Default:             booldefault.StaticBool(true),
 						},
 					},
 				},
@@ -275,9 +270,7 @@ func (r *VRFResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 							MarkdownDescription: helpers.NewAttributeDescription("VXLAN route target set").AddDefaultValueDescription("true").String,
 							Optional:            true,
 							Computed:            true,
-							PlanModifiers: []planmodifier.Bool{
-								helpers.BooleanDefaultModifier(true),
-							},
+							Default:             booldefault.StaticBool(true),
 						},
 					},
 				},
