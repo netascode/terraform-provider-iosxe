@@ -57,7 +57,7 @@ func (d *{{camelCase .Name}}DataSource) Schema(ctx context.Context, req datasour
 				{{- else if eq .Type "Int64List"}}
 				ElementType:         types.Int64Type,
 				{{- end}}
-				{{- if or (eq .Id true) (eq .Reference true)}}
+				{{- if or .Id .Reference}}
 				Required:            true,
 				{{- else}}
 				Computed:            true,

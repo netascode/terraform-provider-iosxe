@@ -20,11 +20,11 @@ func TestAccIosxe{{camelCase .Name}}(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					{{- $name := .Name }}
 					{{- range  .Attributes}}
-					{{- if and (ne .Reference true) (ne .WriteOnly true) (ne .ExcludeTest true)}}
+					{{- if and (not .Reference) (not .WriteOnly) (not .ExcludeTest)}}
 					{{- if eq .Type "List"}}
 					{{- $list := .TfName }}
 					{{- range  .Attributes}}
-					{{- if and (ne .WriteOnly true) (ne .ExcludeTest true)}}
+					{{- if and (not .WriteOnly) (not .ExcludeTest)}}
 					resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
 					{{- end}}
 					{{- end}}
@@ -90,11 +90,11 @@ func testAccIosxe{{camelCase .Name}}Config_minimum() string {
 	return `
 	resource "iosxe_{{snakeCase $name}}" "test" {
 	{{- range  .Attributes}}
-	{{- if or (eq .Reference true) (eq .Id true) (eq .Mandatory true)}}
+	{{- if or .Reference .Id .Mandatory}}
 	{{- if eq .Type "List"}}
 		{{.TfName}} = [{
 		{{- range  .Attributes}}
-		{{- if ne .ExcludeTest true}}
+		{{- if not .ExcludeTest}}
 			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
 		{{- end}}
 		{{- end}}
@@ -115,11 +115,11 @@ func testAccIosxe{{camelCase .Name}}Config_all() string {
 	return `
 	resource "iosxe_{{snakeCase $name}}" "test" {
 	{{- range  .Attributes}}
-	{{- if ne .ExcludeTest true}}
+	{{- if not .ExcludeTest}}
 	{{- if eq .Type "List"}}
 		{{.TfName}} = [{
 		{{- range  .Attributes}}
-		{{- if ne .ExcludeTest true}}
+		{{- if not .ExcludeTest}}
 			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
 		{{- end}}
 		{{- end}}

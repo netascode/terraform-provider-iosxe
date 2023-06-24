@@ -77,7 +77,7 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 				{{- else if eq .Type "Int64List"}}
 				ElementType:         types.Int64Type,
 				{{- end}}
-				{{- if or (eq .Id true) (eq .Reference true) (eq .Mandatory true)}}
+				{{- if or .Id .Reference .Mandatory}}
 				Required:            true,
 				{{- else}}
 				Optional:            true,
@@ -143,7 +143,7 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 							{{- else if eq .Type "Int64List"}}
 							ElementType:         types.Int64Type,
 							{{- end}}
-							{{- if eq .Mandatory true}}
+							{{- if .Mandatory}}
 							Required:            true,
 							{{- else}}
 							Optional:            true,

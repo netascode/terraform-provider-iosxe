@@ -20,11 +20,11 @@ func TestAccDataSourceIosxe{{camelCase .Name}}(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					{{- $name := .Name }}
 					{{- range  .Attributes}}
-					{{- if and (ne .Id true) (ne .Reference true) (ne .WriteOnly true) (ne .ExcludeTest true)}}
+					{{- if and (not .Id) (not .Reference) (not .WriteOnly) (not .ExcludeTest)}}
 					{{- if eq .Type "List"}}
 					{{- $list := .TfName }}
 					{{- range  .Attributes}}
-					{{- if and (ne .WriteOnly true) (ne .ExcludeTest true)}}
+					{{- if and (not .WriteOnly) (not .ExcludeTest)}}
 					resource.TestCheckResourceAttr("data.iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
 					{{- end}}
 					{{- end}}
@@ -85,11 +85,11 @@ const testAccDataSourceIosxe{{camelCase .Name}}Config = `
 
 resource "iosxe_{{snakeCase $name}}" "test" {
 {{- range  .Attributes}}
-{{- if ne .ExcludeTest true}}
+{{- if not .ExcludeTest}}
 {{- if eq .Type "List"}}
   {{.TfName}} = [{
     {{- range  .Attributes}}
-    {{- if ne .ExcludeTest true}}
+    {{- if not .ExcludeTest}}
     {{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
     {{- end}}
     {{- end}}
@@ -106,7 +106,7 @@ resource "iosxe_{{snakeCase $name}}" "test" {
 
 data "iosxe_{{snakeCase .Name}}" "test" {
 {{- range  .Attributes}}
-{{- if or (eq .Id true) (eq .Reference true)}}
+{{- if or .Id .Reference}}
   {{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
 {{- end}}
 {{- end}}
