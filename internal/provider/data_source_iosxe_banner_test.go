@@ -29,13 +29,14 @@ func TestAccDataSourceIosxeBanner(t *testing.T) {
 const testAccDataSourceIosxeBannerConfig = `
 
 resource "iosxe_banner" "test" {
-  exec_banner = "My Exec Banner"
-  login_banner = "My Login Banner"
-  prompt_timeout_banner = "My Prompt-Timeout Banner"
-  motd_banner = "My MOTD Banner"
+	delete_mode = "attributes"
+	exec_banner = "My Exec Banner"
+	login_banner = "My Login Banner"
+	prompt_timeout_banner = "My Prompt-Timeout Banner"
+	motd_banner = "My MOTD Banner"
 }
 
 data "iosxe_banner" "test" {
-  depends_on = [iosxe_banner.test]
+	depends_on = [iosxe_banner.test]
 }
 `

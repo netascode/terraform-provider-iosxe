@@ -17,12 +17,12 @@ func TestAccIosxeMSDP(t *testing.T) {
 				Config: testAccIosxeMSDPPrerequisitesConfig + testAccIosxeMSDPConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("iosxe_msdp.test", "originator_id", "Loopback100"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.addr", "10.1.1.1"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.remote_as", "65000"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.connect_source_loopback", "100"),
 					resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.addr", "10.1.1.1"),
 					resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.encryption", "0"),
 					resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.password", "Cisco123"),
+					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.addr", "10.1.1.1"),
+					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.remote_as", "65000"),
+					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.connect_source_loopback", "100"),
 				),
 			},
 			{
@@ -36,10 +36,10 @@ func TestAccIosxeMSDP(t *testing.T) {
 
 const testAccIosxeMSDPPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+	}
 }
 
 `
@@ -56,17 +56,17 @@ func testAccIosxeMSDPConfig_all() string {
 	return `
 	resource "iosxe_msdp" "test" {
 		originator_id = "Loopback100"
-		peers = [{
-			addr = "10.1.1.1"
-			remote_as = 65000
-			connect_source_loopback = 100
-		}]
 		passwords = [{
 			addr = "10.1.1.1"
 			encryption = 0
 			password = "Cisco123"
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		peers = [{
+			addr = "10.1.1.1"
+			remote_as = 65000
+			connect_source_loopback = 100
+		}]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

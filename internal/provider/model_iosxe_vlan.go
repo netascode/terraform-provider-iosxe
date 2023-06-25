@@ -28,7 +28,24 @@ type VLAN struct {
 	Shutdown               types.Bool   `tfsdk:"shutdown"`
 }
 
+type VLANData struct {
+	Device                 types.String `tfsdk:"device"`
+	Id                     types.String `tfsdk:"id"`
+	VlanId                 types.Int64  `tfsdk:"vlan_id"`
+	RemoteSpan             types.Bool   `tfsdk:"remote_span"`
+	PrivateVlanPrimary     types.Bool   `tfsdk:"private_vlan_primary"`
+	PrivateVlanAssociation types.String `tfsdk:"private_vlan_association"`
+	PrivateVlanCommunity   types.Bool   `tfsdk:"private_vlan_community"`
+	PrivateVlanIsolated    types.Bool   `tfsdk:"private_vlan_isolated"`
+	Name                   types.String `tfsdk:"name"`
+	Shutdown               types.Bool   `tfsdk:"shutdown"`
+}
+
 func (data VLAN) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=%v", url.QueryEscape(fmt.Sprintf("%v", data.VlanId.ValueInt64())))
+}
+
+func (data VLANData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=%v", url.QueryEscape(fmt.Sprintf("%v", data.VlanId.ValueInt64())))
 }
 
@@ -149,7 +166,7 @@ func (data *VLAN) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *VLAN) fromBody(ctx context.Context, res gjson.Result) {
+func (data *VLANData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -210,4 +227,30 @@ func (data *VLAN) getEmptyLeafsDelete(ctx context.Context) []string {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	return emptyLeafsDelete
+}
+
+func (data *VLAN) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.RemoteSpan.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/remote-span", data.getPath()))
+	}
+	if !data.PrivateVlanPrimary.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/private-vlan/primary", data.getPath()))
+	}
+	if !data.PrivateVlanAssociation.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/private-vlan/association", data.getPath()))
+	}
+	if !data.PrivateVlanCommunity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/private-vlan/community", data.getPath()))
+	}
+	if !data.PrivateVlanIsolated.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/private-vlan/isolated", data.getPath()))
+	}
+	if !data.Name.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/name", data.getPath()))
+	}
+	if !data.Shutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	return deletePaths
 }

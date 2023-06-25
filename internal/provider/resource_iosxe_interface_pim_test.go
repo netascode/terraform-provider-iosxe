@@ -37,10 +37,10 @@ func TestAccIosxeInterfacePIM(t *testing.T) {
 
 const testAccIosxeInterfacePIMPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+	}
 }
 
 `
@@ -68,7 +68,7 @@ func testAccIosxeInterfacePIMConfig_all() string {
 		border = false
 		bsr_border = false
 		dr_priority = 10
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

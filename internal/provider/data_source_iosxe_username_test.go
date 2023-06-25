@@ -29,15 +29,15 @@ func TestAccDataSourceIosxeUsername(t *testing.T) {
 const testAccDataSourceIosxeUsernameConfig = `
 
 resource "iosxe_username" "test" {
-  name = "user1"
-  privilege = 15
-  description = "User1 description"
-  password_encryption = "0"
-  password = "MyPassword"
+	name = "user1"
+	privilege = 15
+	description = "User1 description"
+	password_encryption = "0"
+	password = "MyPassword"
 }
 
 data "iosxe_username" "test" {
-  name = "user1"
-  depends_on = [iosxe_username.test]
+	name = "user1"
+	depends_on = [iosxe_username.test]
 }
 `

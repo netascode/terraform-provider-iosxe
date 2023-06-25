@@ -67,7 +67,7 @@ func (d *BGPAddressFamilyL2VPNDataSource) Configure(_ context.Context, req datas
 }
 
 func (d *BGPAddressFamilyL2VPNDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config BGPAddressFamilyL2VPN
+	var config BGPAddressFamilyL2VPNData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -85,7 +85,7 @@ func (d *BGPAddressFamilyL2VPNDataSource) Read(ctx context.Context, req datasour
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = BGPAddressFamilyL2VPN{Device: config.Device}
+		config = BGPAddressFamilyL2VPNData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

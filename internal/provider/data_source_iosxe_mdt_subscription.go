@@ -111,7 +111,7 @@ func (d *MDTSubscriptionDataSource) Configure(_ context.Context, req datasource.
 }
 
 func (d *MDTSubscriptionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config MDTSubscription
+	var config MDTSubscriptionData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -129,7 +129,7 @@ func (d *MDTSubscriptionDataSource) Read(ctx context.Context, req datasource.Rea
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = MDTSubscription{Device: config.Device}
+		config = MDTSubscriptionData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

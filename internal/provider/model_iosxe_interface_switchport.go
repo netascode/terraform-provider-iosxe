@@ -18,6 +18,26 @@ import (
 type InterfaceSwitchport struct {
 	Device                     types.String `tfsdk:"device"`
 	Id                         types.String `tfsdk:"id"`
+	DeleteMode                 types.String `tfsdk:"delete_mode"`
+	Type                       types.String `tfsdk:"type"`
+	Name                       types.String `tfsdk:"name"`
+	ModeAccess                 types.Bool   `tfsdk:"mode_access"`
+	ModeDot1qTunnel            types.Bool   `tfsdk:"mode_dot1q_tunnel"`
+	ModePrivateVlanTrunk       types.Bool   `tfsdk:"mode_private_vlan_trunk"`
+	ModePrivateVlanHost        types.Bool   `tfsdk:"mode_private_vlan_host"`
+	ModePrivateVlanPromiscuous types.Bool   `tfsdk:"mode_private_vlan_promiscuous"`
+	ModeTrunk                  types.Bool   `tfsdk:"mode_trunk"`
+	Nonegotiate                types.Bool   `tfsdk:"nonegotiate"`
+	AccessVlan                 types.String `tfsdk:"access_vlan"`
+	TrunkAllowedVlans          types.String `tfsdk:"trunk_allowed_vlans"`
+	TrunkNativeVlanTag         types.Bool   `tfsdk:"trunk_native_vlan_tag"`
+	TrunkNativeVlan            types.Int64  `tfsdk:"trunk_native_vlan"`
+	Host                       types.Bool   `tfsdk:"host"`
+}
+
+type InterfaceSwitchportData struct {
+	Device                     types.String `tfsdk:"device"`
+	Id                         types.String `tfsdk:"id"`
 	Type                       types.String `tfsdk:"type"`
 	Name                       types.String `tfsdk:"name"`
 	ModeAccess                 types.Bool   `tfsdk:"mode_access"`
@@ -35,6 +55,10 @@ type InterfaceSwitchport struct {
 }
 
 func (data InterfaceSwitchport) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v/switchport-config/switchport", url.QueryEscape(fmt.Sprintf("%v", data.Type.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
+}
+
+func (data InterfaceSwitchportData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v/switchport-config/switchport", url.QueryEscape(fmt.Sprintf("%v", data.Type.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
@@ -207,7 +231,7 @@ func (data *InterfaceSwitchport) updateFromBody(ctx context.Context, res gjson.R
 	}
 }
 
-func (data *InterfaceSwitchport) fromBody(ctx context.Context, res gjson.Result) {
+func (data *InterfaceSwitchportData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -276,22 +300,22 @@ func (data *InterfaceSwitchport) getDeletedListItems(ctx context.Context, state 
 func (data *InterfaceSwitchport) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.ModeAccess.IsNull() && !data.ModeAccess.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/access/access", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/access", data.getPath()))
 	}
 	if !data.ModeDot1qTunnel.IsNull() && !data.ModeDot1qTunnel.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/dot1q-tunnel/dot1q-tunnel", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/dot1q-tunnel", data.getPath()))
 	}
 	if !data.ModePrivateVlanTrunk.IsNull() && !data.ModePrivateVlanTrunk.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/trunk", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/private-vlan/trunk", data.getPath()))
 	}
 	if !data.ModePrivateVlanHost.IsNull() && !data.ModePrivateVlanHost.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/host", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/private-vlan/host", data.getPath()))
 	}
 	if !data.ModePrivateVlanPromiscuous.IsNull() && !data.ModePrivateVlanPromiscuous.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/private-vlan/private-vlan/promiscuous", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/private-vlan/promiscuous", data.getPath()))
 	}
 	if !data.ModeTrunk.IsNull() && !data.ModeTrunk.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/mode-choice/trunk/trunk", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/trunk", data.getPath()))
 	}
 	if !data.Nonegotiate.IsNull() && !data.Nonegotiate.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/Cisco-IOS-XE-switch:nonegotiate", data.getPath()))
@@ -300,4 +324,45 @@ func (data *InterfaceSwitchport) getEmptyLeafsDelete(ctx context.Context) []stri
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/host", data.getPath()))
 	}
 	return emptyLeafsDelete
+}
+
+func (data *InterfaceSwitchport) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.ModeAccess.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/access", data.getPath()))
+	}
+	if !data.ModeDot1qTunnel.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/dot1q-tunnel", data.getPath()))
+	}
+	if !data.ModePrivateVlanTrunk.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/private-vlan/trunk", data.getPath()))
+	}
+	if !data.ModePrivateVlanHost.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/private-vlan/host", data.getPath()))
+	}
+	if !data.ModePrivateVlanPromiscuous.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/private-vlan/promiscuous", data.getPath()))
+	}
+	if !data.ModeTrunk.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:mode/trunk", data.getPath()))
+	}
+	if !data.Nonegotiate.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:nonegotiate", data.getPath()))
+	}
+	if !data.AccessVlan.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:access/vlan/vlan", data.getPath()))
+	}
+	if !data.TrunkAllowedVlans.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:trunk/allowed/vlan/vlans", data.getPath()))
+	}
+	if !data.TrunkNativeVlanTag.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:trunk/native/vlan/tag", data.getPath()))
+	}
+	if !data.TrunkNativeVlan.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-switch:trunk/native/vlan/vlan-id", data.getPath()))
+	}
+	if !data.Host.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/host", data.getPath()))
+	}
+	return deletePaths
 }

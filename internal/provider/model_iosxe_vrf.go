@@ -20,6 +20,28 @@ import (
 type VRF struct {
 	Device                         types.String                        `tfsdk:"device"`
 	Id                             types.String                        `tfsdk:"id"`
+	DeleteMode                     types.String                        `tfsdk:"delete_mode"`
+	Name                           types.String                        `tfsdk:"name"`
+	Description                    types.String                        `tfsdk:"description"`
+	Rd                             types.String                        `tfsdk:"rd"`
+	AddressFamilyIpv4              types.Bool                          `tfsdk:"address_family_ipv4"`
+	AddressFamilyIpv6              types.Bool                          `tfsdk:"address_family_ipv6"`
+	VpnId                          types.String                        `tfsdk:"vpn_id"`
+	RouteTargetImport              []VRFRouteTargetImport              `tfsdk:"route_target_import"`
+	RouteTargetExport              []VRFRouteTargetExport              `tfsdk:"route_target_export"`
+	Ipv4RouteTargetImport          []VRFIpv4RouteTargetImport          `tfsdk:"ipv4_route_target_import"`
+	Ipv4RouteTargetImportStitching []VRFIpv4RouteTargetImportStitching `tfsdk:"ipv4_route_target_import_stitching"`
+	Ipv4RouteTargetExport          []VRFIpv4RouteTargetExport          `tfsdk:"ipv4_route_target_export"`
+	Ipv4RouteTargetExportStitching []VRFIpv4RouteTargetExportStitching `tfsdk:"ipv4_route_target_export_stitching"`
+	Ipv6RouteTargetImport          []VRFIpv6RouteTargetImport          `tfsdk:"ipv6_route_target_import"`
+	Ipv6RouteTargetImportStitching []VRFIpv6RouteTargetImportStitching `tfsdk:"ipv6_route_target_import_stitching"`
+	Ipv6RouteTargetExport          []VRFIpv6RouteTargetExport          `tfsdk:"ipv6_route_target_export"`
+	Ipv6RouteTargetExportStitching []VRFIpv6RouteTargetExportStitching `tfsdk:"ipv6_route_target_export_stitching"`
+}
+
+type VRFData struct {
+	Device                         types.String                        `tfsdk:"device"`
+	Id                             types.String                        `tfsdk:"id"`
 	Name                           types.String                        `tfsdk:"name"`
 	Description                    types.String                        `tfsdk:"description"`
 	Rd                             types.String                        `tfsdk:"rd"`
@@ -75,6 +97,10 @@ type VRFIpv6RouteTargetExportStitching struct {
 }
 
 func (data VRF) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/vrf/definition=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
+}
+
+func (data VRFData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/vrf/definition=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
@@ -615,7 +641,7 @@ func (data *VRF) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *VRF) fromBody(ctx context.Context, res gjson.Result) {
+func (data *VRFData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -1087,4 +1113,74 @@ func (data *VRF) getEmptyLeafsDelete(ctx context.Context) []string {
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *VRF) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Description.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/description", data.getPath()))
+	}
+	if !data.Rd.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/rd", data.getPath()))
+	}
+	if !data.AddressFamilyIpv4.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv4", data.getPath()))
+	}
+	if !data.AddressFamilyIpv6.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv6", data.getPath()))
+	}
+	if !data.VpnId.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/vpn/id", data.getPath()))
+	}
+	for i := range data.RouteTargetImport {
+		keyValues := [...]string{data.RouteTargetImport[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/route-target/import=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.RouteTargetExport {
+		keyValues := [...]string{data.RouteTargetExport[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/route-target/export=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv4RouteTargetImport {
+		keyValues := [...]string{data.Ipv4RouteTargetImport[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv4/route-target/import-route-target/without-stitching=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv4RouteTargetImportStitching {
+		keyValues := [...]string{data.Ipv4RouteTargetImportStitching[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv4/route-target/import-route-target/with-stitching=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv4RouteTargetExport {
+		keyValues := [...]string{data.Ipv4RouteTargetExport[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv4/route-target/export-route-target/without-stitching=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv4RouteTargetExportStitching {
+		keyValues := [...]string{data.Ipv4RouteTargetExportStitching[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv4/route-target/export-route-target/with-stitching=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv6RouteTargetImport {
+		keyValues := [...]string{data.Ipv6RouteTargetImport[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv6/route-target/import-route-target/without-stitching=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv6RouteTargetImportStitching {
+		keyValues := [...]string{data.Ipv6RouteTargetImportStitching[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv6/route-target/import-route-target/with-stitching=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv6RouteTargetExport {
+		keyValues := [...]string{data.Ipv6RouteTargetExport[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv6/route-target/export-route-target/without-stitching=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv6RouteTargetExportStitching {
+		keyValues := [...]string{data.Ipv6RouteTargetExportStitching[i].Value.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/address-family/ipv6/route-target/export-route-target/with-stitching=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

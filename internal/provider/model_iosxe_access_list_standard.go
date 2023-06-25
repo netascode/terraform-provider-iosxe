@@ -23,6 +23,13 @@ type AccessListStandard struct {
 	Name    types.String                `tfsdk:"name"`
 	Entries []AccessListStandardEntries `tfsdk:"entries"`
 }
+
+type AccessListStandardData struct {
+	Device  types.String                `tfsdk:"device"`
+	Id      types.String                `tfsdk:"id"`
+	Name    types.String                `tfsdk:"name"`
+	Entries []AccessListStandardEntries `tfsdk:"entries"`
+}
 type AccessListStandardEntries struct {
 	Sequence         types.Int64  `tfsdk:"sequence"`
 	Remark           types.String `tfsdk:"remark"`
@@ -37,6 +44,10 @@ type AccessListStandardEntries struct {
 }
 
 func (data AccessListStandard) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/access-list/Cisco-IOS-XE-acl:standard=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
+}
+
+func (data AccessListStandardData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/access-list/Cisco-IOS-XE-acl:standard=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
@@ -192,7 +203,7 @@ func (data *AccessListStandard) updateFromBody(ctx context.Context, res gjson.Re
 	}
 }
 
-func (data *AccessListStandard) fromBody(ctx context.Context, res gjson.Result) {
+func (data *AccessListStandardData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -277,11 +288,21 @@ func (data *AccessListStandard) getEmptyLeafsDelete(ctx context.Context) []strin
 	for i := range data.Entries {
 		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.ValueInt64(), 10)}
 		if !data.Entries[i].DenyAny.IsNull() && !data.Entries[i].DenyAny.ValueBool() {
-			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/deny-permit/deny/deny/std-ace/source-choice/any-case/any", data.getPath(), strings.Join(keyValues[:], ",")))
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/deny/std-ace/any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 		if !data.Entries[i].PermitAny.IsNull() && !data.Entries[i].PermitAny.ValueBool() {
-			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/deny-permit/permit/permit/std-ace/source-choice/any-case/any", data.getPath(), strings.Join(keyValues[:], ",")))
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/permit/std-ace/any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *AccessListStandard) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	for i := range data.Entries {
+		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-list-seq-rule=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

@@ -27,7 +27,23 @@ type Username struct {
 	Secret             types.String `tfsdk:"secret"`
 }
 
+type UsernameData struct {
+	Device             types.String `tfsdk:"device"`
+	Id                 types.String `tfsdk:"id"`
+	Name               types.String `tfsdk:"name"`
+	Privilege          types.Int64  `tfsdk:"privilege"`
+	Description        types.String `tfsdk:"description"`
+	PasswordEncryption types.String `tfsdk:"password_encryption"`
+	Password           types.String `tfsdk:"password"`
+	SecretEncryption   types.String `tfsdk:"secret_encryption"`
+	Secret             types.String `tfsdk:"secret"`
+}
+
 func (data Username) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/username=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
+}
+
+func (data UsernameData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/username=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
@@ -110,7 +126,7 @@ func (data *Username) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *Username) fromBody(ctx context.Context, res gjson.Result) {
+func (data *UsernameData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -143,4 +159,27 @@ func (data *Username) getDeletedListItems(ctx context.Context, state Username) [
 func (data *Username) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
+}
+
+func (data *Username) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Privilege.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/privilege", data.getPath()))
+	}
+	if !data.Description.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/description", data.getPath()))
+	}
+	if !data.PasswordEncryption.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/password/encryption", data.getPath()))
+	}
+	if !data.Password.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/password/password", data.getPath()))
+	}
+	if !data.SecretEncryption.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/secret/encryption", data.getPath()))
+	}
+	if !data.Secret.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/secret/secret", data.getPath()))
+	}
+	return deletePaths
 }

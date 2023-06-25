@@ -29,27 +29,27 @@ func TestAccDataSourceIosxeBGPL2VPNEVPNNeighbor(t *testing.T) {
 
 const testAccDataSourceIosxeBGPL2VPNEVPNNeighborPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      "id" = "65000"
-  }
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
+	attributes = {
+		"id" = "65000"
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/l2vpn=evpn"
-  attributes = {
-      "af-name" = "evpn"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/l2vpn=evpn"
+	attributes = {
+		"af-name" = "evpn"
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 resource "iosxe_restconf" "PreReq2" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/neighbor=3.3.3.3"
-  attributes = {
-      "id" = "3.3.3.3"
-      "remote-as" = "65000"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/neighbor=3.3.3.3"
+	attributes = {
+		"id" = "3.3.3.3"
+		"remote-as" = "65000"
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -57,17 +57,18 @@ resource "iosxe_restconf" "PreReq2" {
 const testAccDataSourceIosxeBGPL2VPNEVPNNeighborConfig = `
 
 resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
-  asn = "65000"
-  ip = "3.3.3.3"
-  activate = true
-  send_community = "both"
-  route_reflector_client = false
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+	delete_mode = "attributes"
+	asn = "65000"
+	ip = "3.3.3.3"
+	activate = true
+	send_community = "both"
+	route_reflector_client = false
+	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 }
 
 data "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
-  asn = "65000"
-  ip = "3.3.3.3"
-  depends_on = [iosxe_bgp_l2vpn_evpn_neighbor.test]
+	asn = "65000"
+	ip = "3.3.3.3"
+	depends_on = [iosxe_bgp_l2vpn_evpn_neighbor.test]
 }
 `

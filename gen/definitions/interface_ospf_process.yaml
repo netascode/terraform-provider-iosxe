@@ -2,6 +2,7 @@
 name: Interface OSPF Process
 path: Cisco-IOS-XE-native:native/interface/%s=%v/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v
 augment_path: Cisco-IOS-XE-native:native/interface/GigabitEthernet=%v/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v
+no_delete_attributes: true
 doc_category: OSPF
 attributes:
   - yang_name: type

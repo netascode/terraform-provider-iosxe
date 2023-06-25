@@ -48,22 +48,22 @@ func TestAccIosxeLogging(t *testing.T) {
 
 const testAccIosxeLoggingPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-      "address-family/ipv6" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+		"address-family/ipv6" = ""
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-      "vrf/forwarding" = "VRF1"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+		"vrf/forwarding" = "VRF1"
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -108,7 +108,7 @@ func testAccIosxeLoggingConfig_all() string {
 			ipv6_host = "2001::1"
 			vrf = "VRF1"
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

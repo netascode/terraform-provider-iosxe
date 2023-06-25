@@ -28,12 +28,13 @@ func TestAccDataSourceIosxeDHCP(t *testing.T) {
 const testAccDataSourceIosxeDHCPConfig = `
 
 resource "iosxe_dhcp" "test" {
-  relay_information_trust_all = false
-  relay_information_option_default = false
-  relay_information_option_vpn = true
+	delete_mode = "attributes"
+	relay_information_trust_all = false
+	relay_information_option_default = false
+	relay_information_option_vpn = true
 }
 
 data "iosxe_dhcp" "test" {
-  depends_on = [iosxe_dhcp.test]
+	depends_on = [iosxe_dhcp.test]
 }
 `

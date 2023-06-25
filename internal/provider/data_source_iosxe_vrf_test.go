@@ -42,48 +42,49 @@ func TestAccDataSourceIosxeVRF(t *testing.T) {
 const testAccDataSourceIosxeVRFConfig = `
 
 resource "iosxe_vrf" "test" {
-  name = "VRF22"
-  description = "VRF22 description"
-  rd = "22:22"
-  address_family_ipv4 = true
-  address_family_ipv6 = true
-  vpn_id = "22:22"
-  route_target_import = [{
-    value = "22:22"
-    stitching = false
-  }]
-  route_target_export = [{
-    value = "22:22"
-    stitching = false
-  }]
-  ipv4_route_target_import = [{
-    value = "22:22"
-  }]
-  ipv4_route_target_import_stitching = [{
-    value = "22:22"
-  }]
-  ipv4_route_target_export = [{
-    value = "22:22"
-  }]
-  ipv4_route_target_export_stitching = [{
-    value = "22:22"
-  }]
-  ipv6_route_target_import = [{
-    value = "22:22"
-  }]
-  ipv6_route_target_import_stitching = [{
-    value = "22:22"
-  }]
-  ipv6_route_target_export = [{
-    value = "22:22"
-  }]
-  ipv6_route_target_export_stitching = [{
-    value = "22:22"
-  }]
+	delete_mode = "attributes"
+	name = "VRF22"
+	description = "VRF22 description"
+	rd = "22:22"
+	address_family_ipv4 = true
+	address_family_ipv6 = true
+	vpn_id = "22:22"
+	route_target_import = [{
+		value = "22:22"
+		stitching = false
+	}]
+	route_target_export = [{
+		value = "22:22"
+		stitching = false
+	}]
+	ipv4_route_target_import = [{
+		value = "22:22"
+	}]
+	ipv4_route_target_import_stitching = [{
+		value = "22:22"
+	}]
+	ipv4_route_target_export = [{
+		value = "22:22"
+	}]
+	ipv4_route_target_export_stitching = [{
+		value = "22:22"
+	}]
+	ipv6_route_target_import = [{
+		value = "22:22"
+	}]
+	ipv6_route_target_import_stitching = [{
+		value = "22:22"
+	}]
+	ipv6_route_target_export = [{
+		value = "22:22"
+	}]
+	ipv6_route_target_export_stitching = [{
+		value = "22:22"
+	}]
 }
 
 data "iosxe_vrf" "test" {
-  name = "VRF22"
-  depends_on = [iosxe_vrf.test]
+	name = "VRF22"
+	depends_on = [iosxe_vrf.test]
 }
 `

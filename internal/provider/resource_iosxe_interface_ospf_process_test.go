@@ -31,10 +31,10 @@ func TestAccIosxeInterfaceOSPFProcess(t *testing.T) {
 
 const testAccIosxeInterfaceOSPFProcessPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=1"
-  attributes = {
-      "id" = "1"
-  }
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=1"
+	attributes = {
+		"id" = "1"
+	}
 }
 
 `
@@ -59,7 +59,7 @@ func testAccIosxeInterfaceOSPFProcessConfig_all() string {
 		area = [{
 			area_id = "1"
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

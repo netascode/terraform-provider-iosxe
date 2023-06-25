@@ -83,7 +83,7 @@ func (d *BGPNeighborDataSource) Configure(_ context.Context, req datasource.Conf
 }
 
 func (d *BGPNeighborDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config BGPNeighbor
+	var config BGPNeighborData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -101,7 +101,7 @@ func (d *BGPNeighborDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = BGPNeighbor{Device: config.Device}
+		config = BGPNeighborData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

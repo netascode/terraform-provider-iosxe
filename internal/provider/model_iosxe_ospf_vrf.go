@@ -20,6 +20,28 @@ import (
 type OSPFVRF struct {
 	Device                            types.String            `tfsdk:"device"`
 	Id                                types.String            `tfsdk:"id"`
+	DeleteMode                        types.String            `tfsdk:"delete_mode"`
+	ProcessId                         types.Int64             `tfsdk:"process_id"`
+	Vrf                               types.String            `tfsdk:"vrf"`
+	BfdAllInterfaces                  types.Bool              `tfsdk:"bfd_all_interfaces"`
+	DefaultInformationOriginate       types.Bool              `tfsdk:"default_information_originate"`
+	DefaultInformationOriginateAlways types.Bool              `tfsdk:"default_information_originate_always"`
+	DefaultMetric                     types.Int64             `tfsdk:"default_metric"`
+	Distance                          types.Int64             `tfsdk:"distance"`
+	DomainTag                         types.Int64             `tfsdk:"domain_tag"`
+	MplsLdpAutoconfig                 types.Bool              `tfsdk:"mpls_ldp_autoconfig"`
+	MplsLdpSync                       types.Bool              `tfsdk:"mpls_ldp_sync"`
+	Neighbor                          []OSPFVRFNeighbor       `tfsdk:"neighbor"`
+	Network                           []OSPFVRFNetwork        `tfsdk:"network"`
+	Priority                          types.Int64             `tfsdk:"priority"`
+	RouterId                          types.String            `tfsdk:"router_id"`
+	Shutdown                          types.Bool              `tfsdk:"shutdown"`
+	SummaryAddress                    []OSPFVRFSummaryAddress `tfsdk:"summary_address"`
+}
+
+type OSPFVRFData struct {
+	Device                            types.String            `tfsdk:"device"`
+	Id                                types.String            `tfsdk:"id"`
 	ProcessId                         types.Int64             `tfsdk:"process_id"`
 	Vrf                               types.String            `tfsdk:"vrf"`
 	BfdAllInterfaces                  types.Bool              `tfsdk:"bfd_all_interfaces"`
@@ -53,6 +75,10 @@ type OSPFVRFSummaryAddress struct {
 }
 
 func (data OSPFVRF) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id-vrf=%v,%s", url.QueryEscape(fmt.Sprintf("%v", data.ProcessId.ValueInt64())), url.QueryEscape(fmt.Sprintf("%v", data.Vrf.ValueString())))
+}
+
+func (data OSPFVRFData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id-vrf=%v,%s", url.QueryEscape(fmt.Sprintf("%v", data.ProcessId.ValueInt64())), url.QueryEscape(fmt.Sprintf("%v", data.Vrf.ValueString())))
 }
 
@@ -366,7 +392,7 @@ func (data *OSPFVRF) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *OSPFVRF) fromBody(ctx context.Context, res gjson.Result) {
+func (data *OSPFVRFData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -565,4 +591,57 @@ func (data *OSPFVRF) getEmptyLeafsDelete(ctx context.Context) []string {
 	}
 
 	return emptyLeafsDelete
+}
+
+func (data *OSPFVRF) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.BfdAllInterfaces.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/bfd/all-interfaces", data.getPath()))
+	}
+	if !data.DefaultInformationOriginate.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/default-information/originate", data.getPath()))
+	}
+	if !data.DefaultInformationOriginateAlways.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/default-information/originate/always", data.getPath()))
+	}
+	if !data.DefaultMetric.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/default-metric", data.getPath()))
+	}
+	if !data.Distance.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/distance/distance", data.getPath()))
+	}
+	if !data.DomainTag.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/domain-tag", data.getPath()))
+	}
+	if !data.MplsLdpAutoconfig.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mpls/ldp/autoconfig", data.getPath()))
+	}
+	if !data.MplsLdpSync.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mpls/ldp/sync", data.getPath()))
+	}
+	for i := range data.Neighbor {
+		keyValues := [...]string{data.Neighbor[i].Ip.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/neighbor=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Network {
+		keyValues := [...]string{data.Network[i].Ip.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/network=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	if !data.Priority.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/priority", data.getPath()))
+	}
+	if !data.RouterId.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/router-id", data.getPath()))
+	}
+	if !data.Shutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	for i := range data.SummaryAddress {
+		keyValues := [...]string{data.SummaryAddress[i].Ip.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/summary-address=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

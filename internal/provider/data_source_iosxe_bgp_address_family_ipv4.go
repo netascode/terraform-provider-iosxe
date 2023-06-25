@@ -67,7 +67,7 @@ func (d *BGPAddressFamilyIPv4DataSource) Configure(_ context.Context, req dataso
 }
 
 func (d *BGPAddressFamilyIPv4DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config BGPAddressFamilyIPv4
+	var config BGPAddressFamilyIPv4Data
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -85,7 +85,7 @@ func (d *BGPAddressFamilyIPv4DataSource) Read(ctx context.Context, req datasourc
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = BGPAddressFamilyIPv4{Device: config.Device}
+		config = BGPAddressFamilyIPv4Data{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

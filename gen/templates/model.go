@@ -22,6 +22,23 @@ import (
 type {{camelCase .Name}} struct {
 	Device types.String `tfsdk:"device"`
 	Id     types.String `tfsdk:"id"`
+{{- if and (not .NoDelete) (not .NoDeleteAttributes)}}
+	DeleteMode types.String `tfsdk:"delete_mode"`
+{{- end}}
+{{- range .Attributes}}
+{{- if eq .Type "List"}}
+	{{toGoName .TfName}} []{{$name}}{{toGoName .TfName}} `tfsdk:"{{.TfName}}"`
+{{- else if or (eq .Type "StringList") (eq .Type "Int64List")}}
+	{{toGoName .TfName}} types.List `tfsdk:"{{.TfName}}"`
+{{- else}}
+	{{toGoName .TfName}} types.{{.Type}} `tfsdk:"{{.TfName}}"`
+{{- end}}
+{{- end}}
+}
+
+type {{camelCase .Name}}Data struct {
+	Device types.String `tfsdk:"device"`
+	Id     types.String `tfsdk:"id"`
 {{- range .Attributes}}
 {{- if eq .Type "List"}}
 	{{toGoName .TfName}} []{{$name}}{{toGoName .TfName}} `tfsdk:"{{.TfName}}"`
@@ -70,6 +87,14 @@ type {{$name}}{{$cname}}{{toGoName .TfName}} struct {
 {{- end}}
 
 func (data {{camelCase .Name}}) getPath() string {
+{{- if hasId .Attributes}}
+	return fmt.Sprintf("{{.Path}}"{{range .Attributes}}{{if or .Id .Reference}}, url.QueryEscape(fmt.Sprintf("%v", data.{{toGoName .TfName}}.Value{{.Type}}())){{end}}{{end}})
+{{- else}}
+	return "{{.Path}}"
+{{- end}}
+}
+
+func (data {{camelCase .Name}}Data) getPath() string {
 {{- if hasId .Attributes}}
 	return fmt.Sprintf("{{.Path}}"{{range .Attributes}}{{if or .Id .Reference}}, url.QueryEscape(fmt.Sprintf("%v", data.{{toGoName .TfName}}.Value{{.Type}}())){{end}}{{end}})
 {{- else}}
@@ -154,28 +179,30 @@ func (data {{camelCase .Name}}) toBody(ctx context.Context) string {
 			{{- if eq .Type "List"}}
 			{{- $clist := toJsonPath .YangName .XPath }}
 			if len(item.{{toGoName .TfName}}) > 0 {
-				body, _ = sjson.Set(body, "{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", []interface{}{})
+				body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{toJsonPath .YangName .XPath}}", []interface{}{})
 				for cindex, citem := range item.{{toGoName .TfName}} {
 					{{- range .Attributes}}
 					if !citem.{{toGoName .TfName}}.IsNull() && !citem.{{toGoName .TfName}}.IsUnknown() {
 						{{- if eq .Type "Int64"}}
-						body, _ = sjson.Set(body, "{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(citem.{{toGoName .TfName}}.ValueInt64(), 10))
+						body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatInt(citem.{{toGoName .TfName}}.ValueInt64(), 10))
+						{{- else if eq .Type "Float64"}}
+						body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", strconv.FormatFloat(item.{{toGoName .TfName}}.ValueFloat64(), 'f', 1, 64))
 						{{- else if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 						if citem.{{toGoName .TfName}}.ValueBool() {
-							body, _ = sjson.Set(body, "{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
+							body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", map[string]string{})
 						}
 						{{- else if and (eq .Type "Bool") (eq .TypeYangBool "boolean")}}
-						body, _ = sjson.Set(body, "{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", citem.{{toGoName .TfName}}.ValueBool())
+						body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", citem.{{toGoName .TfName}}.ValueBool())
 						{{- else if eq .Type "String"}}
-						body, _ = sjson.Set(body, "{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", citem.{{toGoName .TfName}}.ValueString())
+						body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", citem.{{toGoName .TfName}}.ValueString())
 						{{- else if eq .Type "StringList"}}
 						var values []string
 						citem.{{toGoName .TfName}}.ElementsAs(ctx, &values, false)
-						body, _ = sjson.Set(body, "{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", values)
+						body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", values)
 						{{- else if eq .Type "Int64List"}}
 						var values []int
 						citem.{{toGoName .TfName}}.ElementsAs(ctx, &values, false)
-						body, _ = sjson.Set(body, "{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", values)
+						body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"{{$list}}"+"."+strconv.Itoa(index)+"."+"{{$clist}}"+"."+strconv.Itoa(cindex)+"."+"{{toJsonPath .YangName .XPath}}", values)
 						{{- end}}
 					}
 					{{- end}}
@@ -247,7 +274,7 @@ func (data *{{camelCase .Name}}) updateFromBody(ctx context.Context, res gjson.R
 	{{- $list := (toGoName .TfName)}}
 	{{- $listPath := (toJsonPath .YangName .XPath)}}
 	for i := range data.{{$list}} {
-		keys := [...]string{ {{range .Attributes}}{{if .Id}}"{{.YangName}}", {{end}}{{end}} }
+		keys := [...]string{ {{range .Attributes}}{{if .Id}}"{{getXPath .YangName .XPath}}", {{end}}{{end}} }
 		keyValues := [...]string{ {{range .Attributes}}{{if .Id}}{{if eq .Type "Int64"}}strconv.FormatInt(data.{{$list}}[i].{{toGoName .TfName}}.ValueInt64(), 10), {{else if eq .Type "Bool"}}strconv.FormatBool(data.{{$list}}[i].{{toGoName .TfName}}.ValueBool()), {{else}}data.{{$list}}[i].{{toGoName .TfName}}.Value{{.Type}}(), {{end}}{{end}}{{end}} }
 
 		var r gjson.Result
@@ -322,7 +349,7 @@ func (data *{{camelCase .Name}}) updateFromBody(ctx context.Context, res gjson.R
 		{{- $clist := (toGoName .TfName)}}
 		{{- $clistPath := (toJsonPath .YangName .XPath)}}
 		for ci := range data.{{$list}}[i].{{$clist}} {
-			keys := [...]string{ {{range .Attributes}}{{if .Id}}"{{.YangName}}", {{end}}{{end}} }
+			keys := [...]string{ {{range .Attributes}}{{if .Id}}"{{getXPath .YangName .XPath}}", {{end}}{{end}} }
 			keyValues := [...]string{ {{range .Attributes}}{{if .Id}}{{if eq .Type "Int64"}}strconv.FormatInt(data.{{$list}}[i].{{$clist}}[ci].{{toGoName .TfName}}.ValueInt64(), 10), {{else if eq .Type "Bool"}}strconv.FormatBool(data.{{$list}}[i].{{$clist}}[ci].{{toGoName .TfName}}.ValueBool()), {{else}}data.{{$list}}[i].{{$clist}}[ci].{{toGoName .TfName}}.Value{{.Type}}(), {{end}}{{end}}{{end}} }
 
 			var cr gjson.Result
@@ -406,7 +433,7 @@ func (data *{{camelCase .Name}}) updateFromBody(ctx context.Context, res gjson.R
 	{{- end}}
 }
 
-func (data *{{camelCase .Name}}) fromBody(ctx context.Context, res gjson.Result) {
+func (data *{{camelCase .Name}}Data) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -613,7 +640,7 @@ func (data *{{camelCase .Name}}) getDeletedListItems(ctx context.Context, state 
 						}
 					}
 					if !found {
-						deletedListItems = append(deletedListItems, fmt.Sprintf("%v/{{.YangName}}=%v/{{.YangName}}%v", state.getPath(), strings.Join(cstateKeyValues[:], ","), strings.Join(stateKeyValues[:], ",")))
+						deletedListItems = append(deletedListItems, fmt.Sprintf("%v/{{getXPath .YangName .XPath}}=%v/{{getXPath .YangName .XPath}}%v", state.getPath(), strings.Join(cstateKeyValues[:], ","), strings.Join(stateKeyValues[:], ",")))
 					}
 				}
 				{{- end}}
@@ -622,7 +649,7 @@ func (data *{{camelCase .Name}}) getDeletedListItems(ctx context.Context, state 
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/{{.YangName}}=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/{{getXPath .YangName .XPath}}=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	{{- end}}
@@ -635,7 +662,7 @@ func (data *{{camelCase .Name}}) getEmptyLeafsDelete(ctx context.Context) []stri
 	{{- range .Attributes}}
 	{{- if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 	if !data.{{toGoName .TfName}}.IsNull() && !data.{{toGoName .TfName}}.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{.YangName}}", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{getXPath .YangName .XPath}}", data.getPath()))
 	}
 	{{- end}}
 	{{- if eq .Type "List"}}
@@ -643,28 +670,28 @@ func (data *{{camelCase .Name}}) getEmptyLeafsDelete(ctx context.Context) []stri
 	{{ range .Attributes}}{{ if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}{{ $hasEmpty = true}}{{ end}}{{- end}}
 	{{ range .Attributes}}{{if eq .Type "List"}}{{ range .Attributes}}{{ if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}{{ $hasEmpty = true}}{{ end}}{{end}}{{end}}{{- end}}
 	{{- if $hasEmpty}}
-	{{- $yangName := .YangName}}
+	{{- $yangName := getXPath .YangName .XPath}}
 	for i := range data.{{toGoName .TfName}} {
 		{{- $list := (toGoName .TfName)}}
 		keyValues := [...]string{ {{range .Attributes}}{{if .Id}}{{if eq .Type "Int64"}}strconv.FormatInt(data.{{$list}}[i].{{toGoName .TfName}}.ValueInt64(), 10), {{else if eq .Type "Bool"}}strconv.FormatBool(data.{{$list}}[i].{{toGoName .TfName}}.ValueBool()), {{else}}data.{{$list}}[i].{{toGoName .TfName}}.Value{{.Type}}(), {{end}}{{end}}{{end}} }
 		{{- range .Attributes}}
 		{{- if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 		if !data.{{$list}}[i].{{toGoName .TfName}}.IsNull() && !data.{{$list}}[i].{{toGoName .TfName}}.ValueBool() {
-			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{$yangName}}=%v/{{.YangName}}", data.getPath(), strings.Join(keyValues[:], ",")))
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{$yangName}}=%v/{{getXPath .YangName .XPath}}", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 		{{- end}}
 		{{- if eq .Type "List"}}
 		{{- $hasEmpty := false}}
 		{{ range .Attributes}}{{ if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}{{ $hasEmpty = true}}{{ end}}{{- end}}
 		{{- if $hasEmpty}}
-		{{- $cyangName := .YangName}}
+		{{- $cyangName := getXPath .YangName .XPath}}
 		for ci := range data.{{$list}}[i].{{toGoName .TfName}} {
 			{{- $clist := (toGoName .TfName)}}
 			ckeyValues := [...]string{ {{range .Attributes}}{{if .Id}}{{if eq .Type "Int64"}}strconv.FormatInt(data.{{$list}}[i].{{$clist}}[ci].{{toGoName .TfName}}.ValueInt64(), 10), {{else if eq .Type "Bool"}}strconv.FormatBool(data.{{$list}}[i].{{$clist}}[ci].{{toGoName .TfName}}.ValueBool()), {{else}}data.{{$list}}[i].{{$clist}}[ci].{{toGoName .TfName}}.Value{{.Type}}(), {{end}}{{end}}{{end}} }
 			{{- range .Attributes}}
 			{{- if and (eq .Type "Bool") (ne .TypeYangBool "boolean")}}
 			if !data.{{$list}}[i].{{$clist}}[ci].{{toGoName .TfName}}.IsNull() && !data.{{$list}}[i].{{$clist}}[ci].{{toGoName .TfName}}.ValueBool() {
-				emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{$yangName}}=%v/{{.YangName}}/{{$cyangName}}=%v/{{.YangName}}", data.getPath(), strings.Join(keyValues[:], ","), strings.Join(ckeyValues[:], ",")))
+				emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/{{$yangName}}=%v/{{$cyangName}}=%v/{{getXPath .YangName .XPath}}", data.getPath(), strings.Join(keyValues[:], ","), strings.Join(ckeyValues[:], ",")))
 			}
 			{{- end}}
 			{{- end}}
@@ -677,4 +704,27 @@ func (data *{{camelCase .Name}}) getEmptyLeafsDelete(ctx context.Context) []stri
 	{{- end}}
 	{{- end}}
 	return emptyLeafsDelete
+}
+
+func (data *{{camelCase .Name}}) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	{{- range .Attributes}}
+	{{- if and (not .Reference) (not .Id) (ne .Type "List") (not .NoDelete)}}
+	if !data.{{toGoName .TfName}}.IsNull() {
+		{{- if .DeleteParent}}
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/{{removeLastPathElement (getXPath .YangName .XPath)}}", data.getPath()))
+		{{- else}}
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/{{getXPath .YangName .XPath}}", data.getPath()))
+		{{- end}}
+	}
+	{{- else if and (eq .Type "List") (not .NoDelete)}}
+	for i := range data.{{toGoName .TfName}} {
+		{{- $list := (toGoName .TfName)}}
+		keyValues := [...]string{ {{range .Attributes}}{{if .Id}}{{if eq .Type "Int64"}}strconv.FormatInt(data.{{$list}}[i].{{toGoName .TfName}}.ValueInt64(), 10), {{else if eq .Type "Bool"}}strconv.FormatBool(data.{{$list}}[i].{{toGoName .TfName}}.ValueBool()), {{else}}data.{{$list}}[i].{{toGoName .TfName}}.Value{{.Type}}(), {{end}}{{end}}{{end}} }
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/{{getXPath .YangName .XPath}}=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	{{- end}}
+	{{- end}}
+	return deletePaths
 }

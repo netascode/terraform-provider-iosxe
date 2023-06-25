@@ -13,6 +13,7 @@ attributes:
     example: 3.3.3.3
   - yang_name: remote-as
     example: 65000
+    no_delete: true
   - yang_name: description
     example: BGP Neighbor Description
   - yang_name: shutdown

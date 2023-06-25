@@ -21,6 +21,12 @@ type PrefixList struct {
 	Id       types.String         `tfsdk:"id"`
 	Prefixes []PrefixListPrefixes `tfsdk:"prefixes"`
 }
+
+type PrefixListData struct {
+	Device   types.String         `tfsdk:"device"`
+	Id       types.String         `tfsdk:"id"`
+	Prefixes []PrefixListPrefixes `tfsdk:"prefixes"`
+}
 type PrefixListPrefixes struct {
 	Name   types.String `tfsdk:"name"`
 	Seq    types.Int64  `tfsdk:"seq"`
@@ -31,6 +37,10 @@ type PrefixListPrefixes struct {
 }
 
 func (data PrefixList) getPath() string {
+	return "Cisco-IOS-XE-native:native/ip/prefix-lists"
+}
+
+func (data PrefixListData) getPath() string {
 	return "Cisco-IOS-XE-native:native/ip/prefix-lists"
 }
 
@@ -134,7 +144,7 @@ func (data *PrefixList) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *PrefixList) fromBody(ctx context.Context, res gjson.Result) {
+func (data *PrefixListData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -207,4 +217,14 @@ func (data *PrefixList) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 
 	return emptyLeafsDelete
+}
+
+func (data *PrefixList) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	for i := range data.Prefixes {
+		keyValues := [...]string{data.Prefixes[i].Name.ValueString(), strconv.FormatInt(data.Prefixes[i].Seq.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/prefixes=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

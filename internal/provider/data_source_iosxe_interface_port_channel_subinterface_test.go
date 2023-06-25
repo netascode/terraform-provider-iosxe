@@ -39,19 +39,27 @@ func TestAccDataSourceIosxeInterfacePortChannelSubinterface(t *testing.T) {
 
 const testAccDataSourceIosxeInterfacePortChannelSubinterfacePrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/interface/Port-channel=10"
-  attributes = {
-      "name" = "10"
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Port-channel=10"
+	attributes = {
+		"name" = "10"
+	}
+}
+
+resource "iosxe_restconf" "PreReq2" {
+	path = "Cisco-IOS-XE-native:native/interface/Port-channel-subinterface/Port-channel=10.666"
+	attributes = {
+		"name" = "10.666"
+	}
+	depends_on = [iosxe_restconf.PreReq1, ]
 }
 
 `
@@ -59,29 +67,30 @@ resource "iosxe_restconf" "PreReq1" {
 const testAccDataSourceIosxeInterfacePortChannelSubinterfaceConfig = `
 
 resource "iosxe_interface_port_channel_subinterface" "test" {
-  name = "10.666"
-  description = "My Interface Description"
-  shutdown = false
-  ip_proxy_arp = false
-  ip_redirects = false
-  unreachables = false
-  vrf_forwarding = "VRF1"
-  ipv4_address = "192.0.2.2"
-  ipv4_address_mask = "255.255.255.0"
-  encapsulation_dot1q_vlan_id = 666
-  ip_access_group_in = "1"
-  ip_access_group_in_enable = true
-  ip_access_group_out = "1"
-  ip_access_group_out_enable = true
-  helper_addresses = [{
-    address = "10.10.10.10"
-    global = false
-  }]
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+	delete_mode = "attributes"
+	name = "10.666"
+	description = "My Interface Description"
+	shutdown = false
+	ip_proxy_arp = false
+	ip_redirects = false
+	unreachables = false
+	vrf_forwarding = "VRF1"
+	ipv4_address = "192.0.2.2"
+	ipv4_address_mask = "255.255.255.0"
+	encapsulation_dot1q_vlan_id = 666
+	ip_access_group_in = "1"
+	ip_access_group_in_enable = true
+	ip_access_group_out = "1"
+	ip_access_group_out_enable = true
+	helper_addresses = [{
+		address = "10.10.10.10"
+		global = false
+	}]
+	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 }
 
 data "iosxe_interface_port_channel_subinterface" "test" {
-  name = "10.666"
-  depends_on = [iosxe_interface_port_channel_subinterface.test]
+	name = "10.666"
+	depends_on = [iosxe_interface_port_channel_subinterface.test]
 }
 `

@@ -79,17 +79,19 @@ var templates = []t{
 }
 
 type YamlConfig struct {
-	Name              string                `yaml:"name"`
-	Path              string                `yaml:"path"`
-	AugmentPath       string                `yaml:"augment_path"`
-	NoDelete          bool                  `yaml:"no_delete"`
-	ExcludeTest       bool                  `yaml:"exclude_test"`
-	NoAugmentConfig   bool                  `yaml:"no_augment_config"`
-	DsDescription     string                `yaml:"ds_description"`
-	ResDescription    string                `yaml:"res_description"`
-	DocCategory       string                `yaml:"doc_category"`
-	Attributes        []YamlConfigAttribute `yaml:"attributes"`
-	TestPrerequisites []YamlTest            `yaml:"test_prerequisites"`
+	Name                    string                `yaml:"name"`
+	Path                    string                `yaml:"path"`
+	AugmentPath             string                `yaml:"augment_path"`
+	NoDelete                bool                  `yaml:"no_delete"`
+	NoDeleteAttributes      bool                  `yaml:"no_delete_attributes"`
+	DefaultDeleteAttributes bool                  `yaml:"default_delete_attributes"`
+	ExcludeTest             bool                  `yaml:"exclude_test"`
+	NoAugmentConfig         bool                  `yaml:"no_augment_config"`
+	DsDescription           string                `yaml:"ds_description"`
+	ResDescription          string                `yaml:"res_description"`
+	DocCategory             string                `yaml:"doc_category"`
+	Attributes              []YamlConfigAttribute `yaml:"attributes"`
+	TestPrerequisites       []YamlTest            `yaml:"test_prerequisites"`
 }
 
 type YamlConfigAttribute struct {
@@ -119,6 +121,9 @@ type YamlConfigAttribute struct {
 	StringMaxLength int64                 `yaml:"string_max_length"`
 	DefaultValue    string                `yaml:"default_value"`
 	RequiresReplace bool                  `yaml:"requires_replace"`
+	NoAugmentConfig bool                  `yaml:"no_augment_config"`
+	DeleteParent    bool                  `yaml:"delete_parent"`
+	NoDelete        bool                  `yaml:"no_delete"`
 	Attributes      []YamlConfigAttribute `yaml:"attributes"`
 }
 
@@ -225,6 +230,19 @@ func IsLast(index int, len int) bool {
 	return index+1 == len
 }
 
+// Templating helper function to remove last element of path
+func RemoveLastPathElement(p string) string {
+	return path.Dir(p)
+}
+
+// Templating helper function to get xpath if available
+func GetXPath(yangPath, xPath string) string {
+	if xPath != "" {
+		return xPath
+	}
+	return yangPath
+}
+
 func contains(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
@@ -236,14 +254,16 @@ func contains(s []string, str string) bool {
 
 // Map of templating functions
 var functions = template.FuncMap{
-	"toGoName":       ToGoName,
-	"toJsonPath":     ToJsonPath,
-	"camelCase":      CamelCase,
-	"snakeCase":      SnakeCase,
-	"hasId":          HasId,
-	"getExamplePath": GetExamplePath,
-	"isLast":         IsLast,
-	"sprintf":        fmt.Sprintf,
+	"toGoName":              ToGoName,
+	"toJsonPath":            ToJsonPath,
+	"camelCase":             CamelCase,
+	"snakeCase":             SnakeCase,
+	"hasId":                 HasId,
+	"getExamplePath":        GetExamplePath,
+	"isLast":                IsLast,
+	"sprintf":               fmt.Sprintf,
+	"removeLastPathElement": RemoveLastPathElement,
+	"getXPath":              GetXPath,
 }
 
 func resolvePath(e *yang.Entry, path string) *yang.Entry {
@@ -411,14 +431,26 @@ func augmentConfig(config *YamlConfig, modelPaths []string) {
 	addKeys(e, config)
 
 	for ia := range config.Attributes {
-		if config.Attributes[ia].Id || config.Attributes[ia].Reference {
+		if config.Attributes[ia].Id || config.Attributes[ia].Reference || config.Attributes[ia].NoAugmentConfig {
 			continue
 		}
 		parseAttribute(e, &config.Attributes[ia])
 		if config.Attributes[ia].Type == "List" {
 			el := resolvePath(e, config.Attributes[ia].YangName)
 			for iaa := range config.Attributes[ia].Attributes {
+				if config.Attributes[ia].Attributes[iaa].NoAugmentConfig {
+					continue
+				}
 				parseAttribute(el, &config.Attributes[ia].Attributes[iaa])
+				if config.Attributes[ia].Attributes[iaa].Type == "List" {
+					ell := resolvePath(el, config.Attributes[ia].Attributes[iaa].YangName)
+					for iaaa := range config.Attributes[ia].Attributes[iaa].Attributes {
+						if config.Attributes[ia].Attributes[iaa].Attributes[iaaa].NoAugmentConfig {
+							continue
+						}
+						parseAttribute(ell, &config.Attributes[ia].Attributes[iaa].Attributes[iaaa])
+					}
+				}
 			}
 		}
 	}

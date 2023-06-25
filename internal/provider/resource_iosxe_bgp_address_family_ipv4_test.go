@@ -32,10 +32,10 @@ func TestAccIosxeBGPAddressFamilyIPv4(t *testing.T) {
 
 const testAccIosxeBGPAddressFamilyIPv4PrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      "id" = "65000"
-  }
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
+	attributes = {
+		"id" = "65000"
+	}
 }
 
 `
@@ -55,7 +55,7 @@ func testAccIosxeBGPAddressFamilyIPv4Config_all() string {
 	resource "iosxe_bgp_address_family_ipv4" "test" {
 		asn = "65000"
 		af_name = "unicast"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

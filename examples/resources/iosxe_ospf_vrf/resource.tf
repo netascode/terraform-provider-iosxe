@@ -1,5 +1,5 @@
 resource "iosxe_ospf_vrf" "example" {
-  process_id                           = 1
+  process_id                           = 2
   vrf                                  = "VRF1"
   bfd_all_interfaces                   = true
   default_information_originate        = true

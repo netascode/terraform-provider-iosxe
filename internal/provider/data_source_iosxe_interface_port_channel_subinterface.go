@@ -135,7 +135,7 @@ func (d *InterfacePortChannelSubinterfaceDataSource) Configure(_ context.Context
 }
 
 func (d *InterfacePortChannelSubinterfaceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfacePortChannelSubinterface
+	var config InterfacePortChannelSubinterfaceData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -153,7 +153,7 @@ func (d *InterfacePortChannelSubinterfaceDataSource) Read(ctx context.Context, r
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfacePortChannelSubinterface{Device: config.Device}
+		config = InterfacePortChannelSubinterfaceData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

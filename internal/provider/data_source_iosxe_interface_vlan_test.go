@@ -43,12 +43,12 @@ func TestAccDataSourceIosxeInterfaceVLAN(t *testing.T) {
 
 const testAccDataSourceIosxeInterfaceVLANPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+	}
 }
 
 `
@@ -56,31 +56,32 @@ resource "iosxe_restconf" "PreReq0" {
 const testAccDataSourceIosxeInterfaceVLANConfig = `
 
 resource "iosxe_interface_vlan" "test" {
-  name = 10
-  autostate = false
-  description = "My Interface Description"
-  shutdown = false
-  ip_proxy_arp = false
-  ip_redirects = false
-  unreachables = false
-  vrf_forwarding = "VRF1"
-  ipv4_address = "10.1.1.1"
-  ipv4_address_mask = "255.255.255.0"
-  ip_dhcp_relay_source_interface = "Loopback100"
-  ip_access_group_in = "1"
-  ip_access_group_in_enable = true
-  ip_access_group_out = "1"
-  ip_access_group_out_enable = true
-  helper_addresses = [{
-    address = "10.10.10.10"
-    global = false
-    vrf = "VRF1"
-  }]
-  depends_on = [iosxe_restconf.PreReq0, ]
+	delete_mode = "attributes"
+	name = 10
+	autostate = false
+	description = "My Interface Description"
+	shutdown = false
+	ip_proxy_arp = false
+	ip_redirects = false
+	unreachables = false
+	vrf_forwarding = "VRF1"
+	ipv4_address = "10.1.1.1"
+	ipv4_address_mask = "255.255.255.0"
+	ip_dhcp_relay_source_interface = "Loopback100"
+	ip_access_group_in = "1"
+	ip_access_group_in_enable = true
+	ip_access_group_out = "1"
+	ip_access_group_out_enable = true
+	helper_addresses = [{
+		address = "10.10.10.10"
+		global = false
+		vrf = "VRF1"
+	}]
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 data "iosxe_interface_vlan" "test" {
-  name = 10
-  depends_on = [iosxe_interface_vlan.test]
+	name = 10
+	depends_on = [iosxe_interface_vlan.test]
 }
 `

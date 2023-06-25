@@ -54,26 +54,6 @@ func (d *MSDPVRFDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 				MarkdownDescription: "Configure MSDP Originator ID",
 				Computed:            true,
 			},
-			"peers": schema.ListNestedAttribute{
-				MarkdownDescription: "Configure an MSDP peer",
-				Computed:            true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"addr": schema.StringAttribute{
-							MarkdownDescription: "",
-							Computed:            true,
-						},
-						"remote_as": schema.Int64Attribute{
-							MarkdownDescription: "Configured AS number",
-							Computed:            true,
-						},
-						"connect_source_loopback": schema.Int64Attribute{
-							MarkdownDescription: "Loopback interface",
-							Computed:            true,
-						},
-					},
-				},
-			},
 			"passwords": schema.ListNestedAttribute{
 				MarkdownDescription: "MSDP peer on which the password is to be set",
 				Computed:            true,
@@ -94,6 +74,26 @@ func (d *MSDPVRFDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 					},
 				},
 			},
+			"peers": schema.ListNestedAttribute{
+				MarkdownDescription: "Configure an MSDP peer",
+				Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"addr": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"remote_as": schema.Int64Attribute{
+							MarkdownDescription: "Configured AS number",
+							Computed:            true,
+						},
+						"connect_source_loopback": schema.Int64Attribute{
+							MarkdownDescription: "Loopback interface",
+							Computed:            true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -107,7 +107,7 @@ func (d *MSDPVRFDataSource) Configure(_ context.Context, req datasource.Configur
 }
 
 func (d *MSDPVRFDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config MSDPVRF
+	var config MSDPVRFData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -125,7 +125,7 @@ func (d *MSDPVRFDataSource) Read(ctx context.Context, req datasource.ReadRequest
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = MSDPVRF{Device: config.Device}
+		config = MSDPVRFData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

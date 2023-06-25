@@ -24,6 +24,14 @@ type StaticRoute struct {
 	Mask     types.String          `tfsdk:"mask"`
 	NextHops []StaticRouteNextHops `tfsdk:"next_hops"`
 }
+
+type StaticRouteData struct {
+	Device   types.String          `tfsdk:"device"`
+	Id       types.String          `tfsdk:"id"`
+	Prefix   types.String          `tfsdk:"prefix"`
+	Mask     types.String          `tfsdk:"mask"`
+	NextHops []StaticRouteNextHops `tfsdk:"next_hops"`
+}
 type StaticRouteNextHops struct {
 	NextHop   types.String `tfsdk:"next_hop"`
 	Metric    types.Int64  `tfsdk:"metric"`
@@ -34,6 +42,10 @@ type StaticRouteNextHops struct {
 }
 
 func (data StaticRoute) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/route/ip-route-interface-forwarding-list=%s,%s", url.QueryEscape(fmt.Sprintf("%v", data.Prefix.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Mask.ValueString())))
+}
+
+func (data StaticRouteData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/route/ip-route-interface-forwarding-list=%s,%s", url.QueryEscape(fmt.Sprintf("%v", data.Prefix.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Mask.ValueString())))
 }
 
@@ -165,7 +177,7 @@ func (data *StaticRoute) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *StaticRoute) fromBody(ctx context.Context, res gjson.Result) {
+func (data *StaticRouteData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -245,4 +257,14 @@ func (data *StaticRoute) getEmptyLeafsDelete(ctx context.Context) []string {
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *StaticRoute) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	for i := range data.NextHops {
+		keyValues := [...]string{data.NextHops[i].NextHop.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/fwd-list=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

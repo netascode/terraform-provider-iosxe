@@ -86,6 +86,8 @@ resource "iosxe_vrf" "example" {
 
 - `address_family_ipv4` (Boolean) Address family
 - `address_family_ipv6` (Boolean) Address family
+- `delete_mode` (String) Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.
+  - Choices: `all`, `attributes`
 - `description` (String) VRF specific description
 - `device` (String) A device name from the provider configuration.
 - `ipv4_route_target_export` (Attributes List) Export Target-VPN community (see [below for nested schema](#nestedatt--ipv4_route_target_export))

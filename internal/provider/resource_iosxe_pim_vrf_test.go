@@ -48,23 +48,23 @@ func TestAccIosxePIMVRF(t *testing.T) {
 
 const testAccIosxePIMVRFPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-      "vrf/forwarding" = "VRF1"
-      "ip/address/primary/address" = "200.200.200.200"
-      "ip/address/primary/mask" = "255.255.255.255"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+		"vrf/forwarding" = "VRF1"
+		"ip/address/primary/address" = "200.200.200.200"
+		"ip/address/primary/mask" = "255.255.255.255"
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -104,7 +104,7 @@ func testAccIosxePIMVRFConfig_all() string {
 			priority = 10
 			bidir = false
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

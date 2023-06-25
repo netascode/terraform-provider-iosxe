@@ -20,6 +20,23 @@ import (
 type BGPIPv4UnicastVRFNeighbor struct {
 	Device               types.String                         `tfsdk:"device"`
 	Id                   types.String                         `tfsdk:"id"`
+	DeleteMode           types.String                         `tfsdk:"delete_mode"`
+	Asn                  types.String                         `tfsdk:"asn"`
+	Vrf                  types.String                         `tfsdk:"vrf"`
+	Ip                   types.String                         `tfsdk:"ip"`
+	RemoteAs             types.String                         `tfsdk:"remote_as"`
+	Description          types.String                         `tfsdk:"description"`
+	Shutdown             types.Bool                           `tfsdk:"shutdown"`
+	UpdateSourceLoopback types.String                         `tfsdk:"update_source_loopback"`
+	Activate             types.Bool                           `tfsdk:"activate"`
+	SendCommunity        types.String                         `tfsdk:"send_community"`
+	RouteReflectorClient types.Bool                           `tfsdk:"route_reflector_client"`
+	RouteMaps            []BGPIPv4UnicastVRFNeighborRouteMaps `tfsdk:"route_maps"`
+}
+
+type BGPIPv4UnicastVRFNeighborData struct {
+	Device               types.String                         `tfsdk:"device"`
+	Id                   types.String                         `tfsdk:"id"`
 	Asn                  types.String                         `tfsdk:"asn"`
 	Vrf                  types.String                         `tfsdk:"vrf"`
 	Ip                   types.String                         `tfsdk:"ip"`
@@ -38,6 +55,10 @@ type BGPIPv4UnicastVRFNeighborRouteMaps struct {
 }
 
 func (data BGPIPv4UnicastVRFNeighbor) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv4=unicast/vrf=%s/ipv4-unicast/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Vrf.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
+}
+
+func (data BGPIPv4UnicastVRFNeighborData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv4=unicast/vrf=%s/ipv4-unicast/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Vrf.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
 }
 
@@ -191,7 +212,7 @@ func (data *BGPIPv4UnicastVRFNeighbor) updateFromBody(ctx context.Context, res g
 	}
 }
 
-func (data *BGPIPv4UnicastVRFNeighbor) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BGPIPv4UnicastVRFNeighborData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -282,4 +303,29 @@ func (data *BGPIPv4UnicastVRFNeighbor) getEmptyLeafsDelete(ctx context.Context) 
 	}
 
 	return emptyLeafsDelete
+}
+
+func (data *BGPIPv4UnicastVRFNeighbor) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Description.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/description", data.getPath()))
+	}
+	if !data.Shutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.UpdateSourceLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/update-source/interface/Loopback", data.getPath()))
+	}
+	if !data.SendCommunity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/send-community/send-community-where", data.getPath()))
+	}
+	if !data.RouteReflectorClient.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
+	}
+	for i := range data.RouteMaps {
+		keyValues := [...]string{data.RouteMaps[i].InOut.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/route-map=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

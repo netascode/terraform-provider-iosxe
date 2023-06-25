@@ -23,6 +23,13 @@ type AccessListExtended struct {
 	Name    types.String                `tfsdk:"name"`
 	Entries []AccessListExtendedEntries `tfsdk:"entries"`
 }
+
+type AccessListExtendedData struct {
+	Device  types.String                `tfsdk:"device"`
+	Id      types.String                `tfsdk:"id"`
+	Name    types.String                `tfsdk:"name"`
+	Entries []AccessListExtendedEntries `tfsdk:"entries"`
+}
 type AccessListExtendedEntries struct {
 	Sequence                   types.Int64  `tfsdk:"sequence"`
 	Remark                     types.String `tfsdk:"remark"`
@@ -63,6 +70,10 @@ type AccessListExtendedEntries struct {
 }
 
 func (data AccessListExtended) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/access-list/Cisco-IOS-XE-acl:extended=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
+}
+
+func (data AccessListExtendedData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/access-list/Cisco-IOS-XE-acl:extended=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
@@ -474,7 +485,7 @@ func (data *AccessListExtended) updateFromBody(ctx context.Context, res gjson.Re
 	}
 }
 
-func (data *AccessListExtended) fromBody(ctx context.Context, res gjson.Result) {
+func (data *AccessListExtendedData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -653,10 +664,10 @@ func (data *AccessListExtended) getEmptyLeafsDelete(ctx context.Context) []strin
 	for i := range data.Entries {
 		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.ValueInt64(), 10)}
 		if !data.Entries[i].SourceAny.IsNull() && !data.Entries[i].SourceAny.ValueBool() {
-			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/source-choice/any-case/any", data.getPath(), strings.Join(keyValues[:], ",")))
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 		if !data.Entries[i].DestinationAny.IsNull() && !data.Entries[i].DestinationAny.ValueBool() {
-			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/destination-choice/any-case/dst-any", data.getPath(), strings.Join(keyValues[:], ",")))
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/dst-any", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 		if !data.Entries[i].Ack.IsNull() && !data.Entries[i].Ack.ValueBool() {
 			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/access-list-seq-rule=%v/ace-rule/ack", data.getPath(), strings.Join(keyValues[:], ",")))
@@ -684,4 +695,14 @@ func (data *AccessListExtended) getEmptyLeafsDelete(ctx context.Context) []strin
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *AccessListExtended) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	for i := range data.Entries {
+		keyValues := [...]string{strconv.FormatInt(data.Entries[i].Sequence.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-list-seq-rule=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

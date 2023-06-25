@@ -32,10 +32,10 @@ func TestAccDataSourceIosxeInterfacePIM(t *testing.T) {
 
 const testAccDataSourceIosxeInterfacePIMPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+	}
 }
 
 `
@@ -43,22 +43,22 @@ resource "iosxe_restconf" "PreReq0" {
 const testAccDataSourceIosxeInterfacePIMConfig = `
 
 resource "iosxe_interface_pim" "test" {
-  type = "Loopback"
-  name = "100"
-  passive = false
-  dense_mode = false
-  sparse_mode = true
-  sparse_dense_mode = false
-  bfd = false
-  border = false
-  bsr_border = false
-  dr_priority = 10
-  depends_on = [iosxe_restconf.PreReq0, ]
+	type = "Loopback"
+	name = "100"
+	passive = false
+	dense_mode = false
+	sparse_mode = true
+	sparse_dense_mode = false
+	bfd = false
+	border = false
+	bsr_border = false
+	dr_priority = 10
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 data "iosxe_interface_pim" "test" {
-  type = "Loopback"
-  name = "100"
-  depends_on = [iosxe_interface_pim.test]
+	type = "Loopback"
+	name = "100"
+	depends_on = [iosxe_interface_pim.test]
 }
 `

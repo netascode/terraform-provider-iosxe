@@ -15,18 +15,18 @@ This resource can manage the MSDP configuration.
 ```terraform
 resource "iosxe_msdp" "example" {
   originator_id = "Loopback100"
-  peers = [
-    {
-      addr                    = "10.1.1.1"
-      remote_as               = 65000
-      connect_source_loopback = 100
-    }
-  ]
   passwords = [
     {
       addr       = "10.1.1.1"
       encryption = 0
       password   = "Cisco123"
+    }
+  ]
+  peers = [
+    {
+      addr                    = "10.1.1.1"
+      remote_as               = 65000
+      connect_source_loopback = 100
     }
   ]
 }
@@ -37,6 +37,8 @@ resource "iosxe_msdp" "example" {
 
 ### Optional
 
+- `delete_mode` (String) Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.
+  - Choices: `all`, `attributes`
 - `device` (String) A device name from the provider configuration.
 - `originator_id` (String) Configure MSDP Originator ID
 - `passwords` (Attributes List) MSDP peer on which the password is to be set (see [below for nested schema](#nestedatt--passwords))

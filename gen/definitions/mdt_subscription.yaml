@@ -1,6 +1,7 @@
 ---
 name: MDT Subscription
 path: Cisco-IOS-XE-mdt-cfg:mdt-config-data/mdt-subscription=%s
+no_delete_attributes: true
 doc_category: MDT
 attributes:
   - yang_name: subscription-id

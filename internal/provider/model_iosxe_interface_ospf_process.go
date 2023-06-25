@@ -25,11 +25,24 @@ type InterfaceOSPFProcess struct {
 	ProcessId types.Int64                `tfsdk:"process_id"`
 	Area      []InterfaceOSPFProcessArea `tfsdk:"area"`
 }
+
+type InterfaceOSPFProcessData struct {
+	Device    types.String               `tfsdk:"device"`
+	Id        types.String               `tfsdk:"id"`
+	Type      types.String               `tfsdk:"type"`
+	Name      types.String               `tfsdk:"name"`
+	ProcessId types.Int64                `tfsdk:"process_id"`
+	Area      []InterfaceOSPFProcessArea `tfsdk:"area"`
+}
 type InterfaceOSPFProcessArea struct {
 	AreaId types.String `tfsdk:"area_id"`
 }
 
 func (data InterfaceOSPFProcess) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v", url.QueryEscape(fmt.Sprintf("%v", data.Type.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.ProcessId.ValueInt64())))
+}
+
+func (data InterfaceOSPFProcessData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=%v", url.QueryEscape(fmt.Sprintf("%v", data.Type.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.ProcessId.ValueInt64())))
 }
 
@@ -101,7 +114,7 @@ func (data *InterfaceOSPFProcess) updateFromBody(ctx context.Context, res gjson.
 	}
 }
 
-func (data *InterfaceOSPFProcess) fromBody(ctx context.Context, res gjson.Result) {
+func (data *InterfaceOSPFProcessData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -153,4 +166,14 @@ func (data *InterfaceOSPFProcess) getEmptyLeafsDelete(ctx context.Context) []str
 	emptyLeafsDelete := make([]string, 0)
 
 	return emptyLeafsDelete
+}
+
+func (data *InterfaceOSPFProcess) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	for i := range data.Area {
+		keyValues := [...]string{data.Area[i].AreaId.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/area=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

@@ -41,6 +41,32 @@ type Logging struct {
 	Ipv6Hosts           []LoggingIpv6Hosts           `tfsdk:"ipv6_hosts"`
 	Ipv6VrfHosts        []LoggingIpv6VrfHosts        `tfsdk:"ipv6_vrf_hosts"`
 }
+
+type LoggingData struct {
+	Device              types.String                 `tfsdk:"device"`
+	Id                  types.String                 `tfsdk:"id"`
+	MonitorSeverity     types.String                 `tfsdk:"monitor_severity"`
+	BufferedSize        types.Int64                  `tfsdk:"buffered_size"`
+	BufferedSeverity    types.String                 `tfsdk:"buffered_severity"`
+	ConsoleSeverity     types.String                 `tfsdk:"console_severity"`
+	Facility            types.String                 `tfsdk:"facility"`
+	HistorySize         types.Int64                  `tfsdk:"history_size"`
+	HistorySeverity     types.String                 `tfsdk:"history_severity"`
+	Trap                types.Bool                   `tfsdk:"trap"`
+	TrapSeverity        types.String                 `tfsdk:"trap_severity"`
+	OriginIdType        types.String                 `tfsdk:"origin_id_type"`
+	OriginIdName        types.String                 `tfsdk:"origin_id_name"`
+	FileName            types.String                 `tfsdk:"file_name"`
+	FileMaxSize         types.Int64                  `tfsdk:"file_max_size"`
+	FileMinSize         types.Int64                  `tfsdk:"file_min_size"`
+	FileSeverity        types.String                 `tfsdk:"file_severity"`
+	SourceInterface     types.String                 `tfsdk:"source_interface"`
+	SourceInterfacesVrf []LoggingSourceInterfacesVrf `tfsdk:"source_interfaces_vrf"`
+	Ipv4Hosts           []LoggingIpv4Hosts           `tfsdk:"ipv4_hosts"`
+	Ipv4VrfHosts        []LoggingIpv4VrfHosts        `tfsdk:"ipv4_vrf_hosts"`
+	Ipv6Hosts           []LoggingIpv6Hosts           `tfsdk:"ipv6_hosts"`
+	Ipv6VrfHosts        []LoggingIpv6VrfHosts        `tfsdk:"ipv6_vrf_hosts"`
+}
 type LoggingSourceInterfacesVrf struct {
 	Vrf           types.String `tfsdk:"vrf"`
 	InterfaceName types.String `tfsdk:"interface_name"`
@@ -61,6 +87,10 @@ type LoggingIpv6VrfHosts struct {
 }
 
 func (data Logging) getPath() string {
+	return "Cisco-IOS-XE-native:native/logging"
+}
+
+func (data LoggingData) getPath() string {
 	return "Cisco-IOS-XE-native:native/logging"
 }
 
@@ -430,7 +460,7 @@ func (data *Logging) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *Logging) fromBody(ctx context.Context, res gjson.Result) {
+func (data *LoggingData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -700,4 +730,82 @@ func (data *Logging) getEmptyLeafsDelete(ctx context.Context) []string {
 	}
 
 	return emptyLeafsDelete
+}
+
+func (data *Logging) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.MonitorSeverity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/monitor-config/common-config/monitor/severity", data.getPath()))
+	}
+	if !data.BufferedSize.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/buffered/size-value", data.getPath()))
+	}
+	if !data.BufferedSeverity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/buffered/severity-level", data.getPath()))
+	}
+	if !data.ConsoleSeverity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/console-config/common-config/console/severity", data.getPath()))
+	}
+	if !data.Facility.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/facility", data.getPath()))
+	}
+	if !data.HistorySize.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/history/size", data.getPath()))
+	}
+	if !data.HistorySeverity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/history/severity-level", data.getPath()))
+	}
+	if !data.Trap.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/trap", data.getPath()))
+	}
+	if !data.TrapSeverity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/trap/severity", data.getPath()))
+	}
+	if !data.OriginIdType.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/origin-id/type-value", data.getPath()))
+	}
+	if !data.OriginIdName.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/origin-id/string", data.getPath()))
+	}
+	if !data.FileName.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/file/name", data.getPath()))
+	}
+	if !data.FileMaxSize.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/file/max-size", data.getPath()))
+	}
+	if !data.FileMinSize.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/file/min-size", data.getPath()))
+	}
+	if !data.FileSeverity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/file/severity", data.getPath()))
+	}
+	if !data.SourceInterface.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/source-interface-conf/interface-name-non-vrf", data.getPath()))
+	}
+	for i := range data.SourceInterfacesVrf {
+		keyValues := [...]string{data.SourceInterfacesVrf[i].Vrf.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/source-interface-conf/source-interface-vrf=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv4Hosts {
+		keyValues := [...]string{data.Ipv4Hosts[i].Ipv4Host.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/host/ipv4-host-list=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv4VrfHosts {
+		keyValues := [...]string{data.Ipv4VrfHosts[i].Ipv4Host.ValueString(), data.Ipv4VrfHosts[i].Vrf.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/host/ipv4-host-vrf-list=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv6Hosts {
+		keyValues := [...]string{data.Ipv6Hosts[i].Ipv6Host.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/host/ipv6/ipv6-host-list=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Ipv6VrfHosts {
+		keyValues := [...]string{data.Ipv6VrfHosts[i].Ipv6Host.ValueString(), data.Ipv6VrfHosts[i].Vrf.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/host/ipv6/ipv6-host-vrf-list=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

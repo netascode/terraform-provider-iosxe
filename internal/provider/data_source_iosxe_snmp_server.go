@@ -275,7 +275,7 @@ func (d *SNMPServerDataSource) Configure(_ context.Context, req datasource.Confi
 }
 
 func (d *SNMPServerDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config SNMPServer
+	var config SNMPServerData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -293,7 +293,7 @@ func (d *SNMPServerDataSource) Read(ctx context.Context, req datasource.ReadRequ
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = SNMPServer{Device: config.Device}
+		config = SNMPServerData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

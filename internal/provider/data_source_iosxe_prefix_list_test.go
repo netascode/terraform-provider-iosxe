@@ -31,17 +31,17 @@ func TestAccDataSourceIosxePrefixList(t *testing.T) {
 const testAccDataSourceIosxePrefixListConfig = `
 
 resource "iosxe_prefix_list" "test" {
-  prefixes = [{
-    name = "PREFIX_LIST_1"
-    seq = 10
-    action = "permit"
-    ip = "10.0.0.0/8"
-    ge = 24
-    le = 32
-  }]
+	prefixes = [{
+		name = "PREFIX_LIST_1"
+		seq = 10
+		action = "permit"
+		ip = "10.0.0.0/8"
+		ge = 24
+		le = 32
+	}]
 }
 
 data "iosxe_prefix_list" "test" {
-  depends_on = [iosxe_prefix_list.test]
+	depends_on = [iosxe_prefix_list.test]
 }
 `

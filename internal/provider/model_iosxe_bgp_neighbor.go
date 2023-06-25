@@ -17,6 +17,18 @@ import (
 type BGPNeighbor struct {
 	Device               types.String `tfsdk:"device"`
 	Id                   types.String `tfsdk:"id"`
+	DeleteMode           types.String `tfsdk:"delete_mode"`
+	Asn                  types.String `tfsdk:"asn"`
+	Ip                   types.String `tfsdk:"ip"`
+	RemoteAs             types.String `tfsdk:"remote_as"`
+	Description          types.String `tfsdk:"description"`
+	Shutdown             types.Bool   `tfsdk:"shutdown"`
+	UpdateSourceLoopback types.String `tfsdk:"update_source_loopback"`
+}
+
+type BGPNeighborData struct {
+	Device               types.String `tfsdk:"device"`
+	Id                   types.String `tfsdk:"id"`
 	Asn                  types.String `tfsdk:"asn"`
 	Ip                   types.String `tfsdk:"ip"`
 	RemoteAs             types.String `tfsdk:"remote_as"`
@@ -26,6 +38,10 @@ type BGPNeighbor struct {
 }
 
 func (data BGPNeighbor) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
+}
+
+func (data BGPNeighborData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
 }
 
@@ -98,7 +114,7 @@ func (data *BGPNeighbor) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *BGPNeighbor) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BGPNeighborData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -130,4 +146,18 @@ func (data *BGPNeighbor) getEmptyLeafsDelete(ctx context.Context) []string {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	return emptyLeafsDelete
+}
+
+func (data *BGPNeighbor) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Description.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/description", data.getPath()))
+	}
+	if !data.Shutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.UpdateSourceLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/update-source/interface/Loopback", data.getPath()))
+	}
+	return deletePaths
 }

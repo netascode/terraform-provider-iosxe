@@ -107,7 +107,7 @@ func (d *LoggingIPv4HostVRFTransportDataSource) Configure(_ context.Context, req
 }
 
 func (d *LoggingIPv4HostVRFTransportDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config LoggingIPv4HostVRFTransport
+	var config LoggingIPv4HostVRFTransportData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -125,7 +125,7 @@ func (d *LoggingIPv4HostVRFTransportDataSource) Read(ctx context.Context, req da
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = LoggingIPv4HostVRFTransport{Device: config.Device}
+		config = LoggingIPv4HostVRFTransportData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

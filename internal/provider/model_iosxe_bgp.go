@@ -18,6 +18,16 @@ import (
 type BGP struct {
 	Device             types.String `tfsdk:"device"`
 	Id                 types.String `tfsdk:"id"`
+	DeleteMode         types.String `tfsdk:"delete_mode"`
+	Asn                types.String `tfsdk:"asn"`
+	DefaultIpv4Unicast types.Bool   `tfsdk:"default_ipv4_unicast"`
+	LogNeighborChanges types.Bool   `tfsdk:"log_neighbor_changes"`
+	RouterIdLoopback   types.Int64  `tfsdk:"router_id_loopback"`
+}
+
+type BGPData struct {
+	Device             types.String `tfsdk:"device"`
+	Id                 types.String `tfsdk:"id"`
 	Asn                types.String `tfsdk:"asn"`
 	DefaultIpv4Unicast types.Bool   `tfsdk:"default_ipv4_unicast"`
 	LogNeighborChanges types.Bool   `tfsdk:"log_neighbor_changes"`
@@ -25,6 +35,10 @@ type BGP struct {
 }
 
 func (data BGP) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())))
+}
+
+func (data BGPData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())))
 }
 
@@ -87,7 +101,7 @@ func (data *BGP) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *BGP) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BGPData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -115,4 +129,18 @@ func (data *BGP) getDeletedListItems(ctx context.Context, state BGP) []string {
 func (data *BGP) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
+}
+
+func (data *BGP) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.DefaultIpv4Unicast.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/bgp/default/ipv4-unicast", data.getPath()))
+	}
+	if !data.LogNeighborChanges.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/bgp/log-neighbor-changes", data.getPath()))
+	}
+	if !data.RouterIdLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/bgp/router-id/interface/Loopback", data.getPath()))
+	}
+	return deletePaths
 }

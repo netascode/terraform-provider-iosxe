@@ -26,10 +26,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 )
 
-// Ensure provider defined types fully satisfy framework interfaces
-var _ resource.Resource = &{{camelCase .Name}}Resource{}
-var _ resource.ResourceWithImportState = &{{camelCase .Name}}Resource{}
-
 func New{{camelCase .Name}}Resource() resource.Resource {
 	return &{{camelCase .Name}}Resource{}
 }
@@ -38,7 +34,7 @@ type {{camelCase .Name}}Resource struct {
 	clients map[string]*restconf.Client
 }
 
-func (r *{{camelCase .Name}}Resource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *{{camelCase .Name}}Resource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_{{snakeCase .Name}}"
 }
 
@@ -59,6 +55,15 @@ func (r *{{camelCase .Name}}Resource) Schema(ctx context.Context, req resource.S
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			{{- if and (not .NoDelete) (not .NoDeleteAttributes)}}
+			"delete_mode": schema.StringAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.").AddStringEnumDescription("all", "attributes").String,
+				Optional:            true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("all", "attributes"),
+				},
+			},
+			{{- end}}
 			{{- range  .Attributes}}
 			"{{.TfName}}": schema.{{if eq .Type "List"}}ListNested{{else if or (eq .Type "StringList") (eq .Type "Int64List")}}List{{else}}{{.Type}}{{end}}Attribute{
 				MarkdownDescription: helpers.NewAttributeDescription("{{.Description}}")
@@ -418,13 +423,39 @@ func (r *{{camelCase .Name}}Resource) Delete(ctx context.Context, req resource.D
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.ValueString()))
-{{ if not .NoDelete}}
-	res, err := r.clients[state.Device.ValueString()].DeleteData(state.Id.ValueString())
-	if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
-		return
+
+	{{- if or .DefaultDeleteAttributes .NoDelete}}
+    deleteMode := "attributes"
+	{{- else}}
+	deleteMode := "all"
+	{{- end}}
+	{{- if and (not .NoDelete) (not .NoDeleteAttributes)}}
+	if state.DeleteMode.ValueString() == "all" {
+		deleteMode = "all"
+	} else if state.DeleteMode.ValueString() == "attributes" {
+		deleteMode = "attributes"
 	}
-{{ end}}
+	{{- end}}
+
+	if deleteMode == "all" {
+		res, err := r.clients[state.Device.ValueString()].DeleteData(state.Id.ValueString())
+		if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
+		}
+	} else {
+		deletePaths := state.getDeletePaths(ctx)
+		tflog.Debug(ctx, fmt.Sprintf("Paths to delete: %+v", deletePaths))
+
+		for _, i := range deletePaths {
+			res, err := r.clients[state.Device.ValueString()].DeleteData(i)
+			if err != nil && res.StatusCode != 404 {
+				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+				return
+			}
+		}
+	}
+
 	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.Id.ValueString()))
 
 	resp.State.RemoveResource(ctx)

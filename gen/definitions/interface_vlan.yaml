@@ -25,10 +25,12 @@ attributes:
   - yang_name: ip/address-choice/address/address/address-choice/fixed-case/primary/address
     xpath: ip/address/primary/address
     tf_name: ipv4_address
+    delete_parent: true
     example: 10.1.1.1
   - yang_name: ip/address-choice/address/address/address-choice/fixed-case/primary/mask
     xpath: ip/address/primary/mask
     tf_name: ipv4_address_mask
+    delete_parent: true
     example: 255.255.255.0
   - yang_name: ip/address-choice/unnumbered/unnumbered
     xpath: ip/unnumbered
@@ -41,6 +43,7 @@ attributes:
   - yang_name: ip/access-group/in/apply-type/apply-intf/acl/acl-name
     xpath: ip/access-group/in/acl/acl-name
     tf_name: ip_access_group_in
+    delete_parent: true
     example: 1
   - yang_name: ip/access-group/in/apply-type/apply-intf/acl/in
     xpath: ip/access-group/in/acl/in
@@ -49,6 +52,7 @@ attributes:
   - yang_name: ip/access-group/out/apply-type/apply-intf/acl/acl-name
     xpath: ip/access-group/out/acl/acl-name
     tf_name: ip_access_group_out
+    delete_parent: true
     example: 1
   - yang_name: ip/access-group/out/apply-type/apply-intf/acl/out
     xpath: ip/access-group/out/acl/out

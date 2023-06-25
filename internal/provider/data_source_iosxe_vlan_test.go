@@ -29,13 +29,13 @@ func TestAccDataSourceIosxeVLAN(t *testing.T) {
 const testAccDataSourceIosxeVLANConfig = `
 
 resource "iosxe_vlan" "test" {
-  vlan_id = 123
-  name = "Vlan123"
-  shutdown = false
+	vlan_id = 123
+	name = "Vlan123"
+	shutdown = false
 }
 
 data "iosxe_vlan" "test" {
-  vlan_id = 123
-  depends_on = [iosxe_vlan.test]
+	vlan_id = 123
+	depends_on = [iosxe_vlan.test]
 }
 `

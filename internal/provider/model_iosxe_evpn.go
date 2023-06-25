@@ -17,6 +17,24 @@ import (
 type EVPN struct {
 	Device                  types.String `tfsdk:"device"`
 	Id                      types.String `tfsdk:"id"`
+	DeleteMode              types.String `tfsdk:"delete_mode"`
+	ReplicationTypeIngress  types.Bool   `tfsdk:"replication_type_ingress"`
+	ReplicationTypeStatic   types.Bool   `tfsdk:"replication_type_static"`
+	ReplicationTypeP2mp     types.Bool   `tfsdk:"replication_type_p2mp"`
+	ReplicationTypeMp2mp    types.Bool   `tfsdk:"replication_type_mp2mp"`
+	MacDuplicationLimit     types.Int64  `tfsdk:"mac_duplication_limit"`
+	MacDuplicationTime      types.Int64  `tfsdk:"mac_duplication_time"`
+	IpDuplicationLimit      types.Int64  `tfsdk:"ip_duplication_limit"`
+	IpDuplicationTime       types.Int64  `tfsdk:"ip_duplication_time"`
+	RouterIdLoopback        types.Int64  `tfsdk:"router_id_loopback"`
+	DefaultGatewayAdvertise types.Bool   `tfsdk:"default_gateway_advertise"`
+	LoggingPeerState        types.Bool   `tfsdk:"logging_peer_state"`
+	RouteTargetAutoVni      types.Bool   `tfsdk:"route_target_auto_vni"`
+}
+
+type EVPNData struct {
+	Device                  types.String `tfsdk:"device"`
+	Id                      types.String `tfsdk:"id"`
 	ReplicationTypeIngress  types.Bool   `tfsdk:"replication_type_ingress"`
 	ReplicationTypeStatic   types.Bool   `tfsdk:"replication_type_static"`
 	ReplicationTypeP2mp     types.Bool   `tfsdk:"replication_type_p2mp"`
@@ -32,6 +50,10 @@ type EVPN struct {
 }
 
 func (data EVPN) getPath() string {
+	return "Cisco-IOS-XE-native:native/l2vpn/Cisco-IOS-XE-l2vpn:evpn_cont/evpn"
+}
+
+func (data EVPNData) getPath() string {
 	return "Cisco-IOS-XE-native:native/l2vpn/Cisco-IOS-XE-l2vpn:evpn_cont/evpn"
 }
 
@@ -196,7 +218,7 @@ func (data *EVPN) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *EVPN) fromBody(ctx context.Context, res gjson.Result) {
+func (data *EVPNData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -261,16 +283,16 @@ func (data *EVPN) getDeletedListItems(ctx context.Context, state EVPN) []string 
 func (data *EVPN) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	if !data.ReplicationTypeIngress.IsNull() && !data.ReplicationTypeIngress.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/ingress/ingress", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/ingress", data.getPath()))
 	}
 	if !data.ReplicationTypeStatic.IsNull() && !data.ReplicationTypeStatic.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/static/static", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/static", data.getPath()))
 	}
 	if !data.ReplicationTypeP2mp.IsNull() && !data.ReplicationTypeP2mp.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/p2mp/p2mp", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/p2mp", data.getPath()))
 	}
 	if !data.ReplicationTypeMp2mp.IsNull() && !data.ReplicationTypeMp2mp.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/replication-type-choice/mp2mp/mp2mp", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/replication-type/mp2mp", data.getPath()))
 	}
 	if !data.DefaultGatewayAdvertise.IsNull() && !data.DefaultGatewayAdvertise.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/default-gateway/advertise", data.getPath()))
@@ -282,4 +304,45 @@ func (data *EVPN) getEmptyLeafsDelete(ctx context.Context) []string {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-target/auto/vni", data.getPath()))
 	}
 	return emptyLeafsDelete
+}
+
+func (data *EVPN) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.ReplicationTypeIngress.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/replication-type/ingress", data.getPath()))
+	}
+	if !data.ReplicationTypeStatic.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/replication-type/static", data.getPath()))
+	}
+	if !data.ReplicationTypeP2mp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/replication-type/p2mp", data.getPath()))
+	}
+	if !data.ReplicationTypeMp2mp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/replication-type/mp2mp", data.getPath()))
+	}
+	if !data.MacDuplicationLimit.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mac/duplication/limit", data.getPath()))
+	}
+	if !data.MacDuplicationTime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mac/duplication/time", data.getPath()))
+	}
+	if !data.IpDuplicationLimit.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/duplication/limit", data.getPath()))
+	}
+	if !data.IpDuplicationTime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/duplication/time", data.getPath()))
+	}
+	if !data.RouterIdLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/router-id/interface/Loopback", data.getPath()))
+	}
+	if !data.DefaultGatewayAdvertise.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/default-gateway/advertise", data.getPath()))
+	}
+	if !data.LoggingPeerState.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/logging/peer/state", data.getPath()))
+	}
+	if !data.RouteTargetAutoVni.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/route-target/auto/vni", data.getPath()))
+	}
+	return deletePaths
 }

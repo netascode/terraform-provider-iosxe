@@ -119,6 +119,8 @@ resource "iosxe_template" "example" {
 - `cts_manual_policy_static_trusted` (Boolean) Trust the Source Group Tags (SGT) that the peer uses for sending
 - `cts_manual_propagate_sgt` (Boolean) CTS SGT Propagation configuration
 - `cts_role_based_enforcement` (Boolean) Enable Role-based Access Control enforcement
+- `delete_mode` (String) Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.
+  - Choices: `all`, `attributes`
 - `device` (String) A device name from the provider configuration.
 - `device_tracking` (Boolean) Configure device-tracking on the interface
 - `device_tracking_attach_policy` (Attributes List) policy name for device tracking (see [below for nested schema](#nestedatt--device_tracking_attach_policy))

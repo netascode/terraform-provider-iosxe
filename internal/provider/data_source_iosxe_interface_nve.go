@@ -115,7 +115,7 @@ func (d *InterfaceNVEDataSource) Configure(_ context.Context, req datasource.Con
 }
 
 func (d *InterfaceNVEDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfaceNVE
+	var config InterfaceNVEData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -133,7 +133,7 @@ func (d *InterfaceNVEDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceNVE{Device: config.Device}
+		config = InterfaceNVEData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

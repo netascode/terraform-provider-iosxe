@@ -16,6 +16,33 @@ import (
 type Service struct {
 	Device                              types.String `tfsdk:"device"`
 	Id                                  types.String `tfsdk:"id"`
+	DeleteMode                          types.String `tfsdk:"delete_mode"`
+	Pad                                 types.Bool   `tfsdk:"pad"`
+	PasswordEncryption                  types.Bool   `tfsdk:"password_encryption"`
+	PasswordRecovery                    types.Bool   `tfsdk:"password_recovery"`
+	Timestamps                          types.Bool   `tfsdk:"timestamps"`
+	TimestampsDebug                     types.Bool   `tfsdk:"timestamps_debug"`
+	TimestampsDebugDatetime             types.Bool   `tfsdk:"timestamps_debug_datetime"`
+	TimestampsDebugDatetimeMsec         types.Bool   `tfsdk:"timestamps_debug_datetime_msec"`
+	TimestampsDebugDatetimeLocaltime    types.Bool   `tfsdk:"timestamps_debug_datetime_localtime"`
+	TimestampsDebugDatetimeShowTimezone types.Bool   `tfsdk:"timestamps_debug_datetime_show_timezone"`
+	TimestampsDebugDatetimeYear         types.Bool   `tfsdk:"timestamps_debug_datetime_year"`
+	TimestampsDebugUptime               types.Bool   `tfsdk:"timestamps_debug_uptime"`
+	TimestampsLog                       types.Bool   `tfsdk:"timestamps_log"`
+	TimestampsLogDatetime               types.Bool   `tfsdk:"timestamps_log_datetime"`
+	TimestampsLogDatetimeMsec           types.Bool   `tfsdk:"timestamps_log_datetime_msec"`
+	TimestampsLogDatetimeLocaltime      types.Bool   `tfsdk:"timestamps_log_datetime_localtime"`
+	TimestampsLogDatetimeShowTimezone   types.Bool   `tfsdk:"timestamps_log_datetime_show_timezone"`
+	TimestampsLogDatetimeYear           types.Bool   `tfsdk:"timestamps_log_datetime_year"`
+	TimestampsLogUptime                 types.Bool   `tfsdk:"timestamps_log_uptime"`
+	Dhcp                                types.Bool   `tfsdk:"dhcp"`
+	TcpKeepalivesIn                     types.Bool   `tfsdk:"tcp_keepalives_in"`
+	TcpKeepalivesOut                    types.Bool   `tfsdk:"tcp_keepalives_out"`
+}
+
+type ServiceData struct {
+	Device                              types.String `tfsdk:"device"`
+	Id                                  types.String `tfsdk:"id"`
 	Pad                                 types.Bool   `tfsdk:"pad"`
 	PasswordEncryption                  types.Bool   `tfsdk:"password_encryption"`
 	PasswordRecovery                    types.Bool   `tfsdk:"password_recovery"`
@@ -40,6 +67,10 @@ type Service struct {
 }
 
 func (data Service) getPath() string {
+	return "Cisco-IOS-XE-native:native/service"
+}
+
+func (data ServiceData) getPath() string {
 	return "Cisco-IOS-XE-native:native/service"
 }
 
@@ -352,7 +383,7 @@ func (data *Service) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *Service) fromBody(ctx context.Context, res gjson.Result) {
+func (data *ServiceData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -529,4 +560,72 @@ func (data *Service) getEmptyLeafsDelete(ctx context.Context) []string {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/tcp-keepalives-out", data.getPath()))
 	}
 	return emptyLeafsDelete
+}
+
+func (data *Service) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Pad.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/pad-conf/pad", data.getPath()))
+	}
+	if !data.PasswordEncryption.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/password-encryption", data.getPath()))
+	}
+	if !data.PasswordRecovery.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/password-recovery", data.getPath()))
+	}
+	if !data.Timestamps.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps", data.getPath()))
+	}
+	if !data.TimestampsDebug.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/debug-config", data.getPath()))
+	}
+	if !data.TimestampsDebugDatetime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/debug-config/datetime", data.getPath()))
+	}
+	if !data.TimestampsDebugDatetimeMsec.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/debug-config/datetime/msec", data.getPath()))
+	}
+	if !data.TimestampsDebugDatetimeLocaltime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/debug-config/datetime/localtime", data.getPath()))
+	}
+	if !data.TimestampsDebugDatetimeShowTimezone.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/debug-config/datetime/show-timezone", data.getPath()))
+	}
+	if !data.TimestampsDebugDatetimeYear.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/debug-config/datetime/year", data.getPath()))
+	}
+	if !data.TimestampsDebugUptime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/debug-config/uptime", data.getPath()))
+	}
+	if !data.TimestampsLog.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/log-config", data.getPath()))
+	}
+	if !data.TimestampsLogDatetime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/log-config/datetime", data.getPath()))
+	}
+	if !data.TimestampsLogDatetimeMsec.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/log-config/datetime/msec", data.getPath()))
+	}
+	if !data.TimestampsLogDatetimeLocaltime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/log-config/datetime/localtime", data.getPath()))
+	}
+	if !data.TimestampsLogDatetimeShowTimezone.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/log-config/datetime/show-timezone", data.getPath()))
+	}
+	if !data.TimestampsLogDatetimeYear.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/log-config/datetime/year", data.getPath()))
+	}
+	if !data.TimestampsLogUptime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps/log-config/uptime", data.getPath()))
+	}
+	if !data.Dhcp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/dhcp", data.getPath()))
+	}
+	if !data.TcpKeepalivesIn.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/tcp-keepalives-in", data.getPath()))
+	}
+	if !data.TcpKeepalivesOut.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/tcp-keepalives-out", data.getPath()))
+	}
+	return deletePaths
 }

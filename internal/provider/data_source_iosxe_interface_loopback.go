@@ -111,7 +111,7 @@ func (d *InterfaceLoopbackDataSource) Configure(_ context.Context, req datasourc
 }
 
 func (d *InterfaceLoopbackDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfaceLoopback
+	var config InterfaceLoopbackData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -129,7 +129,7 @@ func (d *InterfaceLoopbackDataSource) Read(ctx context.Context, req datasource.R
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceLoopback{Device: config.Device}
+		config = InterfaceLoopbackData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

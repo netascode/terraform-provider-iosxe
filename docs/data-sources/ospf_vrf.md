@@ -14,7 +14,7 @@ This data source can read the OSPF VRF configuration.
 
 ```terraform
 data "iosxe_ospf_vrf" "example" {
-  process_id = 1
+  process_id = 2
   vrf        = "VRF1"
 }
 ```

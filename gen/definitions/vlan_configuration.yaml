@@ -1,6 +1,7 @@
 ---
 name: VLAN Configuration
 path: Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:configuration=%v
+no_delete_attributes: true
 exclude_test: true
 doc_category: Switching
 attributes:

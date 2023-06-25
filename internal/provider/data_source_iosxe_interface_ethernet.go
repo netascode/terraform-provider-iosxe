@@ -179,7 +179,7 @@ func (d *InterfaceEthernetDataSource) Configure(_ context.Context, req datasourc
 }
 
 func (d *InterfaceEthernetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfaceEthernet
+	var config InterfaceEthernetData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -197,7 +197,7 @@ func (d *InterfaceEthernetDataSource) Read(ctx context.Context, req datasource.R
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceEthernet{Device: config.Device}
+		config = InterfaceEthernetData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

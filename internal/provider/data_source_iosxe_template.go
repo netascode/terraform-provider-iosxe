@@ -371,7 +371,7 @@ func (d *TemplateDataSource) Configure(_ context.Context, req datasource.Configu
 }
 
 func (d *TemplateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config Template
+	var config TemplateData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -389,7 +389,7 @@ func (d *TemplateDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = Template{Device: config.Device}
+		config = TemplateData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

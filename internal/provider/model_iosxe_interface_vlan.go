@@ -20,6 +20,29 @@ import (
 type InterfaceVLAN struct {
 	Device                     types.String                   `tfsdk:"device"`
 	Id                         types.String                   `tfsdk:"id"`
+	DeleteMode                 types.String                   `tfsdk:"delete_mode"`
+	Name                       types.Int64                    `tfsdk:"name"`
+	Autostate                  types.Bool                     `tfsdk:"autostate"`
+	Description                types.String                   `tfsdk:"description"`
+	Shutdown                   types.Bool                     `tfsdk:"shutdown"`
+	IpProxyArp                 types.Bool                     `tfsdk:"ip_proxy_arp"`
+	IpRedirects                types.Bool                     `tfsdk:"ip_redirects"`
+	Unreachables               types.Bool                     `tfsdk:"unreachables"`
+	VrfForwarding              types.String                   `tfsdk:"vrf_forwarding"`
+	Ipv4Address                types.String                   `tfsdk:"ipv4_address"`
+	Ipv4AddressMask            types.String                   `tfsdk:"ipv4_address_mask"`
+	Unnumbered                 types.String                   `tfsdk:"unnumbered"`
+	IpDhcpRelaySourceInterface types.String                   `tfsdk:"ip_dhcp_relay_source_interface"`
+	IpAccessGroupIn            types.String                   `tfsdk:"ip_access_group_in"`
+	IpAccessGroupInEnable      types.Bool                     `tfsdk:"ip_access_group_in_enable"`
+	IpAccessGroupOut           types.String                   `tfsdk:"ip_access_group_out"`
+	IpAccessGroupOutEnable     types.Bool                     `tfsdk:"ip_access_group_out_enable"`
+	HelperAddresses            []InterfaceVLANHelperAddresses `tfsdk:"helper_addresses"`
+}
+
+type InterfaceVLANData struct {
+	Device                     types.String                   `tfsdk:"device"`
+	Id                         types.String                   `tfsdk:"id"`
 	Name                       types.Int64                    `tfsdk:"name"`
 	Autostate                  types.Bool                     `tfsdk:"autostate"`
 	Description                types.String                   `tfsdk:"description"`
@@ -45,6 +68,10 @@ type InterfaceVLANHelperAddresses struct {
 }
 
 func (data InterfaceVLAN) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Vlan=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueInt64())))
+}
+
+func (data InterfaceVLANData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Vlan=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueInt64())))
 }
 
@@ -284,7 +311,7 @@ func (data *InterfaceVLAN) updateFromBody(ctx context.Context, res gjson.Result)
 	}
 }
 
-func (data *InterfaceVLAN) fromBody(ctx context.Context, res gjson.Result) {
+func (data *InterfaceVLANData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -405,17 +432,72 @@ func (data *InterfaceVLAN) getEmptyLeafsDelete(ctx context.Context) []string {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	if !data.IpAccessGroupInEnable.IsNull() && !data.IpAccessGroupInEnable.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/apply-type/apply-intf/acl/in", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/acl/in", data.getPath()))
 	}
 	if !data.IpAccessGroupOutEnable.IsNull() && !data.IpAccessGroupOutEnable.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/apply-type/apply-intf/acl/out", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/acl/out", data.getPath()))
 	}
 
 	for i := range data.HelperAddresses {
 		keyValues := [...]string{data.HelperAddresses[i].Address.ValueString()}
 		if !data.HelperAddresses[i].Global.IsNull() && !data.HelperAddresses[i].Global.ValueBool() {
-			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/helper-address=%v/helper-choice/global/global", data.getPath(), strings.Join(keyValues[:], ",")))
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/helper-address=%v/global", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *InterfaceVLAN) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Autostate.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/autostate", data.getPath()))
+	}
+	if !data.Description.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/description", data.getPath()))
+	}
+	if !data.Shutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.IpProxyArp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/proxy-arp", data.getPath()))
+	}
+	if !data.IpRedirects.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/redirects", data.getPath()))
+	}
+	if !data.Unreachables.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/Cisco-IOS-XE-icmp:unreachables", data.getPath()))
+	}
+	if !data.VrfForwarding.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/vrf/forwarding", data.getPath()))
+	}
+	if !data.Ipv4Address.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/address/primary", data.getPath()))
+	}
+	if !data.Ipv4AddressMask.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/address/primary", data.getPath()))
+	}
+	if !data.Unnumbered.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/unnumbered", data.getPath()))
+	}
+	if !data.IpDhcpRelaySourceInterface.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/dhcp/Cisco-IOS-XE-dhcp:relay/source-interface", data.getPath()))
+	}
+	if !data.IpAccessGroupIn.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/in/acl", data.getPath()))
+	}
+	if !data.IpAccessGroupInEnable.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/in/acl/in", data.getPath()))
+	}
+	if !data.IpAccessGroupOut.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/out/acl", data.getPath()))
+	}
+	if !data.IpAccessGroupOutEnable.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/out/acl/out", data.getPath()))
+	}
+	for i := range data.HelperAddresses {
+		keyValues := [...]string{data.HelperAddresses[i].Address.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/helper-address=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

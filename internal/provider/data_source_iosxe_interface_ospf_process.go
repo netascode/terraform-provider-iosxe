@@ -83,7 +83,7 @@ func (d *InterfaceOSPFProcessDataSource) Configure(_ context.Context, req dataso
 }
 
 func (d *InterfaceOSPFProcessDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfaceOSPFProcess
+	var config InterfaceOSPFProcessData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -101,7 +101,7 @@ func (d *InterfaceOSPFProcessDataSource) Read(ctx context.Context, req datasourc
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceOSPFProcess{Device: config.Device}
+		config = InterfaceOSPFProcessData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

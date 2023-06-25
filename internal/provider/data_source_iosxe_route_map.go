@@ -193,6 +193,26 @@ func (d *RouteMapDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 							MarkdownDescription: "tracking object",
 							Computed:            true,
 						},
+						"match_as_paths_legacy": schema.ListAttribute{
+							MarkdownDescription: "AS path access-list (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)",
+							ElementType:         types.Int64Type,
+							Computed:            true,
+						},
+						"match_community_lists_legacy": schema.ListAttribute{
+							MarkdownDescription: "Named Access List (DEPRECATED- please use community-list in Cisco-IOS-XE-bgp.yang)",
+							ElementType:         types.StringType,
+							Computed:            true,
+						},
+						"match_extcommunity_lists_legacy": schema.ListAttribute{
+							MarkdownDescription: "Named Access List (DEPRECATED- please use extcommunity-list in Cisco-IOS-XE-bgp.yang)",
+							ElementType:         types.StringType,
+							Computed:            true,
+						},
+						"match_local_preferences_legacy": schema.ListAttribute{
+							MarkdownDescription: "",
+							ElementType:         types.Int64Type,
+							Computed:            true,
+						},
 						"match_as_paths": schema.ListAttribute{
 							MarkdownDescription: "AS path access-list",
 							ElementType:         types.Int64Type,
@@ -263,8 +283,9 @@ func (d *RouteMapDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 							MarkdownDescription: "",
 							Computed:            true,
 						},
-						"set_ipv6_address": schema.StringAttribute{
+						"set_ipv6_address": schema.ListAttribute{
 							MarkdownDescription: "IPv6 prefix-list",
+							ElementType:         types.StringType,
 							Computed:            true,
 						},
 						"set_ipv6_default_global_next_hop": schema.StringAttribute{
@@ -327,6 +348,68 @@ func (d *RouteMapDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						},
 						"set_vrf": schema.StringAttribute{
 							MarkdownDescription: "VPN Routing/Forwarding instance name",
+							Computed:            true,
+						},
+						"set_as_path_prepend_as_legacy": schema.StringAttribute{
+							MarkdownDescription: "<1-65535>;;AS number (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)",
+							Computed:            true,
+						},
+						"set_as_path_prepend_last_as_legacy": schema.Int64Attribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"set_as_path_tag_legacy": schema.BoolAttribute{
+							MarkdownDescription: "Set the tag as an AS-path attribute (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)",
+							Computed:            true,
+						},
+						"set_community_none_legacy": schema.BoolAttribute{
+							MarkdownDescription: "No community attribute (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)",
+							Computed:            true,
+						},
+						"set_communities_legacy": schema.ListAttribute{
+							MarkdownDescription: "",
+							ElementType:         types.StringType,
+							Computed:            true,
+						},
+						"set_communities_additive_legacy": schema.BoolAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"set_community_list_delete_legacy": schema.BoolAttribute{
+							MarkdownDescription: "Delete matching communities (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)",
+							Computed:            true,
+						},
+						"set_community_list_standard_legacy": schema.Int64Attribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"set_community_list_expanded_legacy": schema.Int64Attribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"set_community_list_name_legacy": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"set_extcomunity_rt_legacy": schema.ListAttribute{
+							MarkdownDescription: "",
+							ElementType:         types.StringType,
+							Computed:            true,
+						},
+						"set_extcomunity_soo_legacy": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"set_extcomunity_vpn_distinguisher_legacy": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"set_local_preference_legacy": schema.Int64Attribute{
+							MarkdownDescription: "Preference value (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)",
+							Computed:            true,
+						},
+						"set_weight_legacy": schema.Int64Attribute{
+							MarkdownDescription: "BGP weight for routing table (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)",
 							Computed:            true,
 						},
 						"set_as_path_prepend_as": schema.StringAttribute{
@@ -411,7 +494,7 @@ func (d *RouteMapDataSource) Configure(_ context.Context, req datasource.Configu
 }
 
 func (d *RouteMapDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config RouteMap
+	var config RouteMapData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -429,7 +512,7 @@ func (d *RouteMapDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = RouteMap{Device: config.Device}
+		config = RouteMapData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

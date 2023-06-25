@@ -17,6 +17,17 @@ import (
 type BGPL2VPNEVPNNeighbor struct {
 	Device               types.String `tfsdk:"device"`
 	Id                   types.String `tfsdk:"id"`
+	DeleteMode           types.String `tfsdk:"delete_mode"`
+	Asn                  types.String `tfsdk:"asn"`
+	Ip                   types.String `tfsdk:"ip"`
+	Activate             types.Bool   `tfsdk:"activate"`
+	SendCommunity        types.String `tfsdk:"send_community"`
+	RouteReflectorClient types.Bool   `tfsdk:"route_reflector_client"`
+}
+
+type BGPL2VPNEVPNNeighborData struct {
+	Device               types.String `tfsdk:"device"`
+	Id                   types.String `tfsdk:"id"`
 	Asn                  types.String `tfsdk:"asn"`
 	Ip                   types.String `tfsdk:"ip"`
 	Activate             types.Bool   `tfsdk:"activate"`
@@ -25,6 +36,10 @@ type BGPL2VPNEVPNNeighbor struct {
 }
 
 func (data BGPL2VPNEVPNNeighbor) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
+}
+
+func (data BGPL2VPNEVPNNeighborData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
 }
 
@@ -95,7 +110,7 @@ func (data *BGPL2VPNEVPNNeighbor) updateFromBody(ctx context.Context, res gjson.
 	}
 }
 
-func (data *BGPL2VPNEVPNNeighbor) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BGPL2VPNEVPNNeighborData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -129,4 +144,15 @@ func (data *BGPL2VPNEVPNNeighbor) getEmptyLeafsDelete(ctx context.Context) []str
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
 	}
 	return emptyLeafsDelete
+}
+
+func (data *BGPL2VPNEVPNNeighbor) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.SendCommunity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/send-community/send-community-where", data.getPath()))
+	}
+	if !data.RouteReflectorClient.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
+	}
+	return deletePaths
 }

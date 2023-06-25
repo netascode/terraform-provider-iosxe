@@ -18,6 +18,15 @@ import (
 )
 
 type BGPAddressFamilyIPv4VRF struct {
+	Device     types.String                  `tfsdk:"device"`
+	Id         types.String                  `tfsdk:"id"`
+	DeleteMode types.String                  `tfsdk:"delete_mode"`
+	Asn        types.String                  `tfsdk:"asn"`
+	AfName     types.String                  `tfsdk:"af_name"`
+	Vrfs       []BGPAddressFamilyIPv4VRFVrfs `tfsdk:"vrfs"`
+}
+
+type BGPAddressFamilyIPv4VRFData struct {
 	Device types.String                  `tfsdk:"device"`
 	Id     types.String                  `tfsdk:"id"`
 	Asn    types.String                  `tfsdk:"asn"`
@@ -32,6 +41,10 @@ type BGPAddressFamilyIPv4VRFVrfs struct {
 }
 
 func (data BGPAddressFamilyIPv4VRF) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv4=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.AfName.ValueString())))
+}
+
+func (data BGPAddressFamilyIPv4VRFData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv4=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.AfName.ValueString())))
 }
 
@@ -145,7 +158,7 @@ func (data *BGPAddressFamilyIPv4VRF) updateFromBody(ctx context.Context, res gjs
 	}
 }
 
-func (data *BGPAddressFamilyIPv4VRF) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BGPAddressFamilyIPv4VRFData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -224,4 +237,14 @@ func (data *BGPAddressFamilyIPv4VRF) getEmptyLeafsDelete(ctx context.Context) []
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *BGPAddressFamilyIPv4VRF) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	for i := range data.Vrfs {
+		keyValues := [...]string{data.Vrfs[i].Name.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/vrf=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

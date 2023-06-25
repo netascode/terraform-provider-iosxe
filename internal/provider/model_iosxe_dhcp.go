@@ -19,6 +19,19 @@ import (
 type DHCP struct {
 	Device                               types.String        `tfsdk:"device"`
 	Id                                   types.String        `tfsdk:"id"`
+	DeleteMode                           types.String        `tfsdk:"delete_mode"`
+	CompatibilitySuboptionLinkSelection  types.String        `tfsdk:"compatibility_suboption_link_selection"`
+	CompatibilitySuboptionServerOverride types.String        `tfsdk:"compatibility_suboption_server_override"`
+	RelayInformationTrustAll             types.Bool          `tfsdk:"relay_information_trust_all"`
+	RelayInformationOptionDefault        types.Bool          `tfsdk:"relay_information_option_default"`
+	RelayInformationOptionVpn            types.Bool          `tfsdk:"relay_information_option_vpn"`
+	Snooping                             types.Bool          `tfsdk:"snooping"`
+	SnoopingVlans                        []DHCPSnoopingVlans `tfsdk:"snooping_vlans"`
+}
+
+type DHCPData struct {
+	Device                               types.String        `tfsdk:"device"`
+	Id                                   types.String        `tfsdk:"id"`
 	CompatibilitySuboptionLinkSelection  types.String        `tfsdk:"compatibility_suboption_link_selection"`
 	CompatibilitySuboptionServerOverride types.String        `tfsdk:"compatibility_suboption_server_override"`
 	RelayInformationTrustAll             types.Bool          `tfsdk:"relay_information_trust_all"`
@@ -32,6 +45,10 @@ type DHCPSnoopingVlans struct {
 }
 
 func (data DHCP) getPath() string {
+	return "Cisco-IOS-XE-native:native/ip/dhcp"
+}
+
+func (data DHCPData) getPath() string {
 	return "Cisco-IOS-XE-native:native/ip/dhcp"
 }
 
@@ -167,7 +184,7 @@ func (data *DHCP) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *DHCP) fromBody(ctx context.Context, res gjson.Result) {
+func (data *DHCPData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -257,4 +274,32 @@ func (data *DHCP) getEmptyLeafsDelete(ctx context.Context) []string {
 	}
 
 	return emptyLeafsDelete
+}
+
+func (data *DHCP) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.CompatibilitySuboptionLinkSelection.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:compatibility/suboption/link-selection", data.getPath()))
+	}
+	if !data.CompatibilitySuboptionServerOverride.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:compatibility/suboption/server-override", data.getPath()))
+	}
+	if !data.RelayInformationTrustAll.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/trust-all", data.getPath()))
+	}
+	if !data.RelayInformationOptionDefault.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/option/option-default", data.getPath()))
+	}
+	if !data.RelayInformationOptionVpn.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:relay/information/option/vpn", data.getPath()))
+	}
+	if !data.Snooping.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:snooping", data.getPath()))
+	}
+	for i := range data.SnoopingVlans {
+		keyValues := [...]string{strconv.FormatInt(data.SnoopingVlans[i].VlanId.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-dhcp:snooping-conf/snooping/vlan=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

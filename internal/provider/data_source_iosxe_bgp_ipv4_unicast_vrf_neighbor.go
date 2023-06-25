@@ -115,7 +115,7 @@ func (d *BGPIPv4UnicastVRFNeighborDataSource) Configure(_ context.Context, req d
 }
 
 func (d *BGPIPv4UnicastVRFNeighborDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config BGPIPv4UnicastVRFNeighbor
+	var config BGPIPv4UnicastVRFNeighborData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -133,7 +133,7 @@ func (d *BGPIPv4UnicastVRFNeighborDataSource) Read(ctx context.Context, req data
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = BGPIPv4UnicastVRFNeighbor{Device: config.Device}
+		config = BGPIPv4UnicastVRFNeighborData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

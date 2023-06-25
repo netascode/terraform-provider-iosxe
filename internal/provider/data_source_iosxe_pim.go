@@ -155,7 +155,7 @@ func (d *PIMDataSource) Configure(_ context.Context, req datasource.ConfigureReq
 }
 
 func (d *PIMDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config PIM
+	var config PIMData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -173,7 +173,7 @@ func (d *PIMDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = PIM{Device: config.Device}
+		config = PIMData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

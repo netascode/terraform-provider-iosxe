@@ -47,13 +47,13 @@ func TestAccIosxePIM(t *testing.T) {
 
 const testAccIosxePIMPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-      "ip/address/primary/address" = "200.200.200.200"
-      "ip/address/primary/mask" = "255.255.255.255"
-      "ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+		"ip/address/primary/address" = "200.200.200.200"
+		"ip/address/primary/mask" = "255.255.255.255"
+		"ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode" = ""
+	}
 }
 
 `
@@ -91,7 +91,7 @@ func testAccIosxePIMConfig_all() string {
 			priority = 10
 			bidir = false
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

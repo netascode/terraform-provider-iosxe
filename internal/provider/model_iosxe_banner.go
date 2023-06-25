@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -15,6 +16,16 @@ import (
 type Banner struct {
 	Device              types.String `tfsdk:"device"`
 	Id                  types.String `tfsdk:"id"`
+	DeleteMode          types.String `tfsdk:"delete_mode"`
+	ExecBanner          types.String `tfsdk:"exec_banner"`
+	LoginBanner         types.String `tfsdk:"login_banner"`
+	PromptTimeoutBanner types.String `tfsdk:"prompt_timeout_banner"`
+	MotdBanner          types.String `tfsdk:"motd_banner"`
+}
+
+type BannerData struct {
+	Device              types.String `tfsdk:"device"`
+	Id                  types.String `tfsdk:"id"`
 	ExecBanner          types.String `tfsdk:"exec_banner"`
 	LoginBanner         types.String `tfsdk:"login_banner"`
 	PromptTimeoutBanner types.String `tfsdk:"prompt_timeout_banner"`
@@ -22,6 +33,10 @@ type Banner struct {
 }
 
 func (data Banner) getPath() string {
+	return "Cisco-IOS-XE-native:native/banner"
+}
+
+func (data BannerData) getPath() string {
 	return "Cisco-IOS-XE-native:native/banner"
 }
 
@@ -80,7 +95,7 @@ func (data *Banner) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *Banner) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BannerData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -107,4 +122,21 @@ func (data *Banner) getDeletedListItems(ctx context.Context, state Banner) []str
 func (data *Banner) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
+}
+
+func (data *Banner) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.ExecBanner.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/exec/banner", data.getPath()))
+	}
+	if !data.LoginBanner.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/login/banner", data.getPath()))
+	}
+	if !data.PromptTimeoutBanner.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/prompt-timeout/banner", data.getPath()))
+	}
+	if !data.MotdBanner.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/motd/banner", data.getPath()))
+	}
+	return deletePaths
 }

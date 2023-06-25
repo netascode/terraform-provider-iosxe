@@ -19,6 +19,54 @@ import (
 type SNMPServer struct {
 	Device                                        types.String                `tfsdk:"device"`
 	Id                                            types.String                `tfsdk:"id"`
+	DeleteMode                                    types.String                `tfsdk:"delete_mode"`
+	ChassisId                                     types.String                `tfsdk:"chassis_id"`
+	Contact                                       types.String                `tfsdk:"contact"`
+	IfindexPersist                                types.Bool                  `tfsdk:"ifindex_persist"`
+	Location                                      types.String                `tfsdk:"location"`
+	Packetsize                                    types.Int64                 `tfsdk:"packetsize"`
+	QueueLength                                   types.Int64                 `tfsdk:"queue_length"`
+	EnableLoggingGetop                            types.Bool                  `tfsdk:"enable_logging_getop"`
+	EnableLoggingSetop                            types.Bool                  `tfsdk:"enable_logging_setop"`
+	EnableInforms                                 types.Bool                  `tfsdk:"enable_informs"`
+	EnableTraps                                   types.Bool                  `tfsdk:"enable_traps"`
+	EnableTrapsSnmpAuthentication                 types.Bool                  `tfsdk:"enable_traps_snmp_authentication"`
+	EnableTrapsSnmpColdstart                      types.Bool                  `tfsdk:"enable_traps_snmp_coldstart"`
+	EnableTrapsSnmpLinkdown                       types.Bool                  `tfsdk:"enable_traps_snmp_linkdown"`
+	EnableTrapsSnmpLinkup                         types.Bool                  `tfsdk:"enable_traps_snmp_linkup"`
+	EnableTrapsSnmpWarmstart                      types.Bool                  `tfsdk:"enable_traps_snmp_warmstart"`
+	SourceInterfaceInformsGigabitEthernet         types.String                `tfsdk:"source_interface_informs_gigabit_ethernet"`
+	SourceInterfaceInformsTenGigabitEthernet      types.String                `tfsdk:"source_interface_informs_ten_gigabit_ethernet"`
+	SourceInterfaceInformsFortyGigabitEthernet    types.String                `tfsdk:"source_interface_informs_forty_gigabit_ethernet"`
+	SourceInterfaceInformsHundredGigE             types.String                `tfsdk:"source_interface_informs_hundred_gig_e"`
+	SourceInterfaceInformsLoopback                types.Int64                 `tfsdk:"source_interface_informs_loopback"`
+	SourceInterfaceInformsPortChannel             types.Int64                 `tfsdk:"source_interface_informs_port_channel"`
+	SourceInterfaceInformsPortChannelSubinterface types.String                `tfsdk:"source_interface_informs_port_channel_subinterface"`
+	SourceInterfaceInformsVlan                    types.Int64                 `tfsdk:"source_interface_informs_vlan"`
+	SourceInterfaceTrapsGigabitEthernet           types.String                `tfsdk:"source_interface_traps_gigabit_ethernet"`
+	SourceInterfaceTrapsTenGigabitEthernet        types.String                `tfsdk:"source_interface_traps_ten_gigabit_ethernet"`
+	SourceInterfaceTrapsFortyGigabitEthernet      types.String                `tfsdk:"source_interface_traps_forty_gigabit_ethernet"`
+	SourceInterfaceTrapsHundredGigE               types.String                `tfsdk:"source_interface_traps_hundred_gig_e"`
+	SourceInterfaceTrapsLoopback                  types.Int64                 `tfsdk:"source_interface_traps_loopback"`
+	SourceInterfaceTrapsPortChannel               types.Int64                 `tfsdk:"source_interface_traps_port_channel"`
+	SourceInterfaceTrapsPortChannelSubinterface   types.String                `tfsdk:"source_interface_traps_port_channel_subinterface"`
+	SourceInterfaceTrapsVlan                      types.Int64                 `tfsdk:"source_interface_traps_vlan"`
+	TrapSourceGigabitEthernet                     types.String                `tfsdk:"trap_source_gigabit_ethernet"`
+	TrapSourceTenGigabitEthernet                  types.String                `tfsdk:"trap_source_ten_gigabit_ethernet"`
+	TrapSourceFortyGigabitEthernet                types.String                `tfsdk:"trap_source_forty_gigabit_ethernet"`
+	TrapSourceHundredGigE                         types.String                `tfsdk:"trap_source_hundred_gig_e"`
+	TrapSourceLoopback                            types.Int64                 `tfsdk:"trap_source_loopback"`
+	TrapSourcePortChannel                         types.Int64                 `tfsdk:"trap_source_port_channel"`
+	TrapSourcePortChannelSubinterface             types.String                `tfsdk:"trap_source_port_channel_subinterface"`
+	TrapSourceVlan                                types.Int64                 `tfsdk:"trap_source_vlan"`
+	SnmpCommunities                               []SNMPServerSnmpCommunities `tfsdk:"snmp_communities"`
+	Contexts                                      []SNMPServerContexts        `tfsdk:"contexts"`
+	Views                                         []SNMPServerViews           `tfsdk:"views"`
+}
+
+type SNMPServerData struct {
+	Device                                        types.String                `tfsdk:"device"`
+	Id                                            types.String                `tfsdk:"id"`
 	ChassisId                                     types.String                `tfsdk:"chassis_id"`
 	Contact                                       types.String                `tfsdk:"contact"`
 	IfindexPersist                                types.Bool                  `tfsdk:"ifindex_persist"`
@@ -79,6 +127,10 @@ type SNMPServerViews struct {
 }
 
 func (data SNMPServer) getPath() string {
+	return "Cisco-IOS-XE-native:native/snmp-server"
+}
+
+func (data SNMPServerData) getPath() string {
 	return "Cisco-IOS-XE-native:native/snmp-server"
 }
 
@@ -628,7 +680,7 @@ func (data *SNMPServer) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *SNMPServer) fromBody(ctx context.Context, res gjson.Result) {
+func (data *SNMPServerData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -937,4 +989,141 @@ func (data *SNMPServer) getEmptyLeafsDelete(ctx context.Context) []string {
 	}
 
 	return emptyLeafsDelete
+}
+
+func (data *SNMPServer) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.ChassisId.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:chassis-id", data.getPath()))
+	}
+	if !data.Contact.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:contact", data.getPath()))
+	}
+	if !data.IfindexPersist.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:ifindex/persist", data.getPath()))
+	}
+	if !data.Location.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:location", data.getPath()))
+	}
+	if !data.Packetsize.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:packetsize", data.getPath()))
+	}
+	if !data.QueueLength.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:queue-length", data.getPath()))
+	}
+	if !data.EnableLoggingGetop.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/logging/getop", data.getPath()))
+	}
+	if !data.EnableLoggingSetop.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/logging/setop", data.getPath()))
+	}
+	if !data.EnableInforms.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/informs", data.getPath()))
+	}
+	if !data.EnableTraps.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpAuthentication.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/authentication", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpColdstart.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/coldstart", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpLinkdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkdown", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpLinkup.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/linkup", data.getPath()))
+	}
+	if !data.EnableTrapsSnmpWarmstart.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:enable/enable-choice/traps/snmp/warmstart", data.getPath()))
+	}
+	if !data.SourceInterfaceInformsGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/informs/GigabitEthernet", data.getPath()))
+	}
+	if !data.SourceInterfaceInformsTenGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/informs/TenGigabitEthernet", data.getPath()))
+	}
+	if !data.SourceInterfaceInformsFortyGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/informs/FortyGigabitEthernet", data.getPath()))
+	}
+	if !data.SourceInterfaceInformsHundredGigE.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/informs/HundredGigE", data.getPath()))
+	}
+	if !data.SourceInterfaceInformsLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/informs/Loopback", data.getPath()))
+	}
+	if !data.SourceInterfaceInformsPortChannel.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/informs/Port-channel", data.getPath()))
+	}
+	if !data.SourceInterfaceInformsPortChannelSubinterface.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/informs/Port-channel-subinterface/Port-channel", data.getPath()))
+	}
+	if !data.SourceInterfaceInformsVlan.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/informs/Vlan", data.getPath()))
+	}
+	if !data.SourceInterfaceTrapsGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/traps/GigabitEthernet", data.getPath()))
+	}
+	if !data.SourceInterfaceTrapsTenGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/traps/TenGigabitEthernet", data.getPath()))
+	}
+	if !data.SourceInterfaceTrapsFortyGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/traps/FortyGigabitEthernet", data.getPath()))
+	}
+	if !data.SourceInterfaceTrapsHundredGigE.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/traps/HundredGigE", data.getPath()))
+	}
+	if !data.SourceInterfaceTrapsLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/traps/Loopback", data.getPath()))
+	}
+	if !data.SourceInterfaceTrapsPortChannel.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/traps/Port-channel", data.getPath()))
+	}
+	if !data.SourceInterfaceTrapsPortChannelSubinterface.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/traps/Port-channel-subinterface/Port-channel", data.getPath()))
+	}
+	if !data.SourceInterfaceTrapsVlan.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:source-interface/traps/Vlan", data.getPath()))
+	}
+	if !data.TrapSourceGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:trap-source/GigabitEthernet", data.getPath()))
+	}
+	if !data.TrapSourceTenGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:trap-source/TenGigabitEthernet", data.getPath()))
+	}
+	if !data.TrapSourceFortyGigabitEthernet.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:trap-source/FortyGigabitEthernet", data.getPath()))
+	}
+	if !data.TrapSourceHundredGigE.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:trap-source/HundredGigE", data.getPath()))
+	}
+	if !data.TrapSourceLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:trap-source/Loopback", data.getPath()))
+	}
+	if !data.TrapSourcePortChannel.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:trap-source/Port-channel", data.getPath()))
+	}
+	if !data.TrapSourcePortChannelSubinterface.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:trap-source/Port-channel-subinterface/Port-channel", data.getPath()))
+	}
+	if !data.TrapSourceVlan.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:trap-source/Vlan", data.getPath()))
+	}
+	for i := range data.SnmpCommunities {
+		keyValues := [...]string{data.SnmpCommunities[i].Name.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:community-config=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Contexts {
+		keyValues := [...]string{data.Contexts[i].Name.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:context=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Views {
+		keyValues := [...]string{data.Views[i].Name.ValueString(), data.Views[i].Mib.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-snmp:view=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

@@ -20,6 +20,80 @@ import (
 type Template struct {
 	Device                                             types.String                                 `tfsdk:"device"`
 	Id                                                 types.String                                 `tfsdk:"id"`
+	DeleteMode                                         types.String                                 `tfsdk:"delete_mode"`
+	TemplateName                                       types.String                                 `tfsdk:"template_name"`
+	Dot1xPae                                           types.String                                 `tfsdk:"dot1x_pae"`
+	Dot1xMaxReauthReq                                  types.Int64                                  `tfsdk:"dot1x_max_reauth_req"`
+	Dot1xMaxReq                                        types.Int64                                  `tfsdk:"dot1x_max_req"`
+	ServicePolicyInput                                 types.String                                 `tfsdk:"service_policy_input"`
+	ServicePolicyOutput                                types.String                                 `tfsdk:"service_policy_output"`
+	SourceTemplate                                     types.String                                 `tfsdk:"source_template"`
+	SwitchportModeTrunk                                types.Bool                                   `tfsdk:"switchport_mode_trunk"`
+	SwitchportModeAccess                               types.Bool                                   `tfsdk:"switchport_mode_access"`
+	SwitchportNonegotiate                              types.Bool                                   `tfsdk:"switchport_nonegotiate"`
+	SwitchportBlockUnicast                             types.Bool                                   `tfsdk:"switchport_block_unicast"`
+	SwitchportPortSecurity                             types.Bool                                   `tfsdk:"switchport_port_security"`
+	SwitchportPortSecurityAgingStatic                  types.Bool                                   `tfsdk:"switchport_port_security_aging_static"`
+	SwitchportPortSecurityAgingTime                    types.Int64                                  `tfsdk:"switchport_port_security_aging_time"`
+	SwitchportPortSecurityAgingType                    types.Bool                                   `tfsdk:"switchport_port_security_aging_type"`
+	SwitchportPortSecurityAgingTypeInactivity          types.Bool                                   `tfsdk:"switchport_port_security_aging_type_inactivity"`
+	SwitchportPortSecurityMaximumRange                 []TemplateSwitchportPortSecurityMaximumRange `tfsdk:"switchport_port_security_maximum_range"`
+	SwitchportPortSecurityViolationProtect             types.Bool                                   `tfsdk:"switchport_port_security_violation_protect"`
+	SwitchportPortSecurityViolationRestrict            types.Bool                                   `tfsdk:"switchport_port_security_violation_restrict"`
+	SwitchportPortSecurityViolationShutdown            types.Bool                                   `tfsdk:"switchport_port_security_violation_shutdown"`
+	SwitchportAccessVlan                               types.Int64                                  `tfsdk:"switchport_access_vlan"`
+	SwitchportVoiceVlan                                types.Int64                                  `tfsdk:"switchport_voice_vlan"`
+	SwitchportPrivateVlanHostAssociationPrimaryRange   types.Int64                                  `tfsdk:"switchport_private_vlan_host_association_primary_range"`
+	SwitchportPrivateVlanHostAssociationSecondaryRange types.Int64                                  `tfsdk:"switchport_private_vlan_host_association_secondary_range"`
+	SwitchportTrunkAllowedVlans                        types.String                                 `tfsdk:"switchport_trunk_allowed_vlans"`
+	SwitchportTrunkNativeVlanTag                       types.Bool                                   `tfsdk:"switchport_trunk_native_vlan_tag"`
+	SwitchportTrunkNativeVlanVlanId                    types.Int64                                  `tfsdk:"switchport_trunk_native_vlan_vlan_id"`
+	Mab                                                types.Bool                                   `tfsdk:"mab"`
+	MabEap                                             types.Bool                                   `tfsdk:"mab_eap"`
+	AccessSessionClosed                                types.Bool                                   `tfsdk:"access_session_closed"`
+	AccessSessionMonitor                               types.Bool                                   `tfsdk:"access_session_monitor"`
+	AccessSessionPortControl                           types.String                                 `tfsdk:"access_session_port_control"`
+	AccessSessionControlDirection                      types.String                                 `tfsdk:"access_session_control_direction"`
+	AccessSessionHostMode                              types.String                                 `tfsdk:"access_session_host_mode"`
+	AccessSessionInterfaceTemplateSticky               types.Bool                                   `tfsdk:"access_session_interface_template_sticky"`
+	AccessSessionInterfaceTemplateStickyTimer          types.Int64                                  `tfsdk:"access_session_interface_template_sticky_timer"`
+	AuthenticationPeriodic                             types.Bool                                   `tfsdk:"authentication_periodic"`
+	AuthenticationTimerReauthenticateServer            types.Bool                                   `tfsdk:"authentication_timer_reauthenticate_server"`
+	AuthenticationTimerReauthenticateRange             types.Int64                                  `tfsdk:"authentication_timer_reauthenticate_range"`
+	SpanningTreeBpduguardEnable                        types.Bool                                   `tfsdk:"spanning_tree_bpduguard_enable"`
+	SpanningTreeServicePolicy                          types.Bool                                   `tfsdk:"spanning_tree_service_policy"`
+	SpanningTreePortfast                               types.Bool                                   `tfsdk:"spanning_tree_portfast"`
+	SpanningTreePortfastDisable                        types.Bool                                   `tfsdk:"spanning_tree_portfast_disable"`
+	SpanningTreePortfastEdge                           types.Bool                                   `tfsdk:"spanning_tree_portfast_edge"`
+	SpanningTreePortfastNetwork                        types.Bool                                   `tfsdk:"spanning_tree_portfast_network"`
+	StormControlBroadcastLevelPpsThreshold             types.String                                 `tfsdk:"storm_control_broadcast_level_pps_threshold"`
+	StormControlBroadcastLevelBpsThreshold             types.Float64                                `tfsdk:"storm_control_broadcast_level_bps_threshold"`
+	StormControlBroadcastLevelThreshold                types.Float64                                `tfsdk:"storm_control_broadcast_level_threshold"`
+	StormControlMulticastLevelPpsThreshold             types.String                                 `tfsdk:"storm_control_multicast_level_pps_threshold"`
+	StormControlMulticastLevelBpsThreshold             types.Float64                                `tfsdk:"storm_control_multicast_level_bps_threshold"`
+	StormControlMulticastLevelThreshold                types.Float64                                `tfsdk:"storm_control_multicast_level_threshold"`
+	StormControlActionShutdown                         types.Bool                                   `tfsdk:"storm_control_action_shutdown"`
+	StormControlActionTrap                             types.Bool                                   `tfsdk:"storm_control_action_trap"`
+	LoadInterval                                       types.Int64                                  `tfsdk:"load_interval"`
+	IpDhcpSnoopingLimitRate                            types.Int64                                  `tfsdk:"ip_dhcp_snooping_limit_rate"`
+	IpDhcpSnoopingTrust                                types.Bool                                   `tfsdk:"ip_dhcp_snooping_trust"`
+	IpAccessGroup                                      []TemplateIpAccessGroup                      `tfsdk:"ip_access_group"`
+	SubscriberAgingInactivityTimerValue                types.Int64                                  `tfsdk:"subscriber_aging_inactivity_timer_value"`
+	SubscriberAgingInactivityTimerProbe                types.Bool                                   `tfsdk:"subscriber_aging_inactivity_timer_probe"`
+	SubscriberAgingProbe                               types.Bool                                   `tfsdk:"subscriber_aging_probe"`
+	DeviceTracking                                     types.Bool                                   `tfsdk:"device_tracking"`
+	DeviceTrackingAttachPolicy                         []TemplateDeviceTrackingAttachPolicy         `tfsdk:"device_tracking_attach_policy"`
+	DeviceTrackingVlanRange                            types.String                                 `tfsdk:"device_tracking_vlan_range"`
+	CtsManual                                          types.Bool                                   `tfsdk:"cts_manual"`
+	CtsManualPolicyStaticSgt                           types.Int64                                  `tfsdk:"cts_manual_policy_static_sgt"`
+	CtsManualPolicyStaticTrusted                       types.Bool                                   `tfsdk:"cts_manual_policy_static_trusted"`
+	CtsManualPropagateSgt                              types.Bool                                   `tfsdk:"cts_manual_propagate_sgt"`
+	CtsRoleBasedEnforcement                            types.Bool                                   `tfsdk:"cts_role_based_enforcement"`
+}
+
+type TemplateData struct {
+	Device                                             types.String                                 `tfsdk:"device"`
+	Id                                                 types.String                                 `tfsdk:"id"`
 	TemplateName                                       types.String                                 `tfsdk:"template_name"`
 	Dot1xPae                                           types.String                                 `tfsdk:"dot1x_pae"`
 	Dot1xMaxReauthReq                                  types.Int64                                  `tfsdk:"dot1x_max_reauth_req"`
@@ -104,6 +178,10 @@ type TemplateDeviceTrackingAttachPolicy struct {
 }
 
 func (data Template) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/template/Cisco-IOS-XE-template:template_details=%v", url.QueryEscape(fmt.Sprintf("%v", data.TemplateName.ValueString())))
+}
+
+func (data TemplateData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/template/Cisco-IOS-XE-template:template_details=%v", url.QueryEscape(fmt.Sprintf("%v", data.TemplateName.ValueString())))
 }
 
@@ -999,7 +1077,7 @@ func (data *Template) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *Template) fromBody(ctx context.Context, res gjson.Result) {
+func (data *TemplateData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -1458,7 +1536,7 @@ func (data *Template) getEmptyLeafsDelete(ctx context.Context) []string {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/authentication/periodic", data.getPath()))
 	}
 	if !data.AuthenticationTimerReauthenticateServer.IsNull() && !data.AuthenticationTimerReauthenticateServer.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/authentication/timer/reauthenticate/value/server/server", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/authentication/timer/reauthenticate/server", data.getPath()))
 	}
 	if !data.SpanningTreeBpduguardEnable.IsNull() && !data.SpanningTreeBpduguardEnable.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/spanning-tree/bpduguard/enable", data.getPath()))
@@ -1489,10 +1567,10 @@ func (data *Template) getEmptyLeafsDelete(ctx context.Context) []string {
 	}
 
 	if !data.SubscriberAgingInactivityTimerProbe.IsNull() && !data.SubscriberAgingInactivityTimerProbe.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/timer-probe/inactivity-timer/inactivity-timer/probe", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/inactivity-timer/probe", data.getPath()))
 	}
 	if !data.SubscriberAgingProbe.IsNull() && !data.SubscriberAgingProbe.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/timer-probe/probe/probe", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/subscriber/aging/probe", data.getPath()))
 	}
 	if !data.DeviceTracking.IsNull() && !data.DeviceTracking.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/device-tracking", data.getPath()))
@@ -1505,4 +1583,216 @@ func (data *Template) getEmptyLeafsDelete(ctx context.Context) []string {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/cts/manual/policy/static/trusted", data.getPath()))
 	}
 	return emptyLeafsDelete
+}
+
+func (data *Template) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Dot1xPae.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/dot1x/pae", data.getPath()))
+	}
+	if !data.Dot1xMaxReauthReq.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/dot1x/max-reauth-req", data.getPath()))
+	}
+	if !data.Dot1xMaxReq.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/dot1x/max-req", data.getPath()))
+	}
+	if !data.ServicePolicyInput.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/service-policy/input/policy-map-name", data.getPath()))
+	}
+	if !data.ServicePolicyOutput.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/service-policy/output/policy-map-name", data.getPath()))
+	}
+	if !data.SourceTemplate.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/source/template", data.getPath()))
+	}
+	if !data.SwitchportModeTrunk.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/mode/trunk", data.getPath()))
+	}
+	if !data.SwitchportModeAccess.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/mode/access", data.getPath()))
+	}
+	if !data.SwitchportNonegotiate.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/nonegotiate", data.getPath()))
+	}
+	if !data.SwitchportBlockUnicast.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/block/unicast", data.getPath()))
+	}
+	if !data.SwitchportPortSecurity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security", data.getPath()))
+	}
+	if !data.SwitchportPortSecurityAgingStatic.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security/aging/static", data.getPath()))
+	}
+	if !data.SwitchportPortSecurityAgingTime.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security/aging/time", data.getPath()))
+	}
+	if !data.SwitchportPortSecurityAgingType.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security/aging/type", data.getPath()))
+	}
+	if !data.SwitchportPortSecurityAgingTypeInactivity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security/aging/type/inactivity", data.getPath()))
+	}
+	for i := range data.SwitchportPortSecurityMaximumRange {
+		keyValues := [...]string{strconv.FormatInt(data.SwitchportPortSecurityMaximumRange[i].Range.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security/maximum/range=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	if !data.SwitchportPortSecurityViolationProtect.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security/violation/protect", data.getPath()))
+	}
+	if !data.SwitchportPortSecurityViolationRestrict.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security/violation/restrict", data.getPath()))
+	}
+	if !data.SwitchportPortSecurityViolationShutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/port-security/violation/shutdown", data.getPath()))
+	}
+	if !data.SwitchportAccessVlan.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/access/vlan", data.getPath()))
+	}
+	if !data.SwitchportVoiceVlan.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/voice/vlan", data.getPath()))
+	}
+	if !data.SwitchportPrivateVlanHostAssociationPrimaryRange.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/private-vlan/host-association/primary-range", data.getPath()))
+	}
+	if !data.SwitchportPrivateVlanHostAssociationSecondaryRange.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/private-vlan/host-association/secondary-range", data.getPath()))
+	}
+	if !data.SwitchportTrunkAllowedVlans.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/trunk/allowed/vlan/vlans", data.getPath()))
+	}
+	if !data.SwitchportTrunkNativeVlanTag.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/trunk/native/vlan/tag", data.getPath()))
+	}
+	if !data.SwitchportTrunkNativeVlanVlanId.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/trunk/native/vlan/vlan-id", data.getPath()))
+	}
+	if !data.Mab.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mab", data.getPath()))
+	}
+	if !data.MabEap.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mab/eap", data.getPath()))
+	}
+	if !data.AccessSessionClosed.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-session/closed", data.getPath()))
+	}
+	if !data.AccessSessionMonitor.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-session/monitor", data.getPath()))
+	}
+	if !data.AccessSessionPortControl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-session/port-control", data.getPath()))
+	}
+	if !data.AccessSessionControlDirection.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-session/control-direction", data.getPath()))
+	}
+	if !data.AccessSessionHostMode.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-session/host-mode", data.getPath()))
+	}
+	if !data.AccessSessionInterfaceTemplateSticky.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-session/interface-template/sticky", data.getPath()))
+	}
+	if !data.AccessSessionInterfaceTemplateStickyTimer.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/access-session/interface-template/sticky/timer", data.getPath()))
+	}
+	if !data.AuthenticationPeriodic.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/authentication/periodic", data.getPath()))
+	}
+	if !data.AuthenticationTimerReauthenticateServer.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/authentication/timer/reauthenticate/server", data.getPath()))
+	}
+	if !data.AuthenticationTimerReauthenticateRange.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/authentication/timer/reauthenticate/range", data.getPath()))
+	}
+	if !data.SpanningTreeBpduguardEnable.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/bpduguard/enable", data.getPath()))
+	}
+	if !data.SpanningTreeServicePolicy.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/service-policy", data.getPath()))
+	}
+	if !data.SpanningTreePortfast.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/portfast", data.getPath()))
+	}
+	if !data.SpanningTreePortfastDisable.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/portfast/disable", data.getPath()))
+	}
+	if !data.SpanningTreePortfastEdge.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/portfast/edge", data.getPath()))
+	}
+	if !data.SpanningTreePortfastNetwork.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/portfast/network", data.getPath()))
+	}
+	if !data.StormControlBroadcastLevelPpsThreshold.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/storm-control/broadcast/level/pps/threshold", data.getPath()))
+	}
+	if !data.StormControlBroadcastLevelBpsThreshold.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/storm-control/broadcast/level/bps/threshold", data.getPath()))
+	}
+	if !data.StormControlBroadcastLevelThreshold.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/storm-control/broadcast/level/threshold", data.getPath()))
+	}
+	if !data.StormControlMulticastLevelPpsThreshold.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/storm-control/multicast/level/pps/threshold", data.getPath()))
+	}
+	if !data.StormControlMulticastLevelBpsThreshold.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/storm-control/multicast/level/bps/threshold", data.getPath()))
+	}
+	if !data.StormControlMulticastLevelThreshold.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/storm-control/multicast/level/threshold", data.getPath()))
+	}
+	if !data.StormControlActionShutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/storm-control/action/shutdown", data.getPath()))
+	}
+	if !data.StormControlActionTrap.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/storm-control/action/trap", data.getPath()))
+	}
+	if !data.LoadInterval.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/load-interval", data.getPath()))
+	}
+	if !data.IpDhcpSnoopingLimitRate.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/dhcp/snooping/limit/rate", data.getPath()))
+	}
+	if !data.IpDhcpSnoopingTrust.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/dhcp/snooping/trust", data.getPath()))
+	}
+	for i := range data.IpAccessGroup {
+		keyValues := [...]string{data.IpAccessGroup[i].Direction.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	if !data.SubscriberAgingInactivityTimerValue.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/subscriber/aging/inactivity-timer/value", data.getPath()))
+	}
+	if !data.SubscriberAgingInactivityTimerProbe.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/subscriber/aging/inactivity-timer/probe", data.getPath()))
+	}
+	if !data.SubscriberAgingProbe.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/subscriber/aging/probe", data.getPath()))
+	}
+	if !data.DeviceTracking.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/device-tracking", data.getPath()))
+	}
+	for i := range data.DeviceTrackingAttachPolicy {
+		keyValues := [...]string{data.DeviceTrackingAttachPolicy[i].PolicyName.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/device-tracking/attach-policy/policy-name=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	if !data.DeviceTrackingVlanRange.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/device-tracking/vlan/vlan-range", data.getPath()))
+	}
+	if !data.CtsManual.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/cts/manual", data.getPath()))
+	}
+	if !data.CtsManualPolicyStaticSgt.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/cts/manual/policy/static/sgt", data.getPath()))
+	}
+	if !data.CtsManualPolicyStaticTrusted.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/cts/manual/policy/static/trusted", data.getPath()))
+	}
+	if !data.CtsManualPropagateSgt.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/cts/manual/propagate/sgt", data.getPath()))
+	}
+	if !data.CtsRoleBasedEnforcement.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/cts/role-based/enforcement", data.getPath()))
+	}
+	return deletePaths
 }

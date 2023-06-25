@@ -143,7 +143,7 @@ func (d *InterfaceVLANDataSource) Configure(_ context.Context, req datasource.Co
 }
 
 func (d *InterfaceVLANDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfaceVLAN
+	var config InterfaceVLANData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -161,7 +161,7 @@ func (d *InterfaceVLANDataSource) Read(ctx context.Context, req datasource.ReadR
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceVLAN{Device: config.Device}
+		config = InterfaceVLANData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

@@ -20,6 +20,14 @@ import (
 type SNMPServerGroup struct {
 	Device     types.String                `tfsdk:"device"`
 	Id         types.String                `tfsdk:"id"`
+	DeleteMode types.String                `tfsdk:"delete_mode"`
+	Name       types.String                `tfsdk:"name"`
+	V3Security []SNMPServerGroupV3Security `tfsdk:"v3_security"`
+}
+
+type SNMPServerGroupData struct {
+	Device     types.String                `tfsdk:"device"`
+	Id         types.String                `tfsdk:"id"`
 	Name       types.String                `tfsdk:"name"`
 	V3Security []SNMPServerGroupV3Security `tfsdk:"v3_security"`
 }
@@ -36,6 +44,10 @@ type SNMPServerGroupV3Security struct {
 }
 
 func (data SNMPServerGroup) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/snmp-server/Cisco-IOS-XE-snmp:group=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
+}
+
+func (data SNMPServerGroupData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/snmp-server/Cisco-IOS-XE-snmp:group=%s", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
@@ -171,7 +183,7 @@ func (data *SNMPServerGroup) updateFromBody(ctx context.Context, res gjson.Resul
 	}
 }
 
-func (data *SNMPServerGroup) fromBody(ctx context.Context, res gjson.Result) {
+func (data *SNMPServerGroupData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -237,7 +249,7 @@ func (data *SNMPServerGroup) getDeletedListItems(ctx context.Context, state SNMP
 			}
 		}
 		if !found {
-			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/security-model/v3/v3/security-level-list=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
+			deletedListItems = append(deletedListItems, fmt.Sprintf("%v/v3/security-level-list=%v", state.getPath(), strings.Join(stateKeyValues[:], ",")))
 		}
 	}
 	return deletedListItems
@@ -247,4 +259,14 @@ func (data *SNMPServerGroup) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 
 	return emptyLeafsDelete
+}
+
+func (data *SNMPServerGroup) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	for i := range data.V3Security {
+		keyValues := [...]string{data.V3Security[i].SecurityLevel.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/security-level-list=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

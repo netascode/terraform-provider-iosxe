@@ -16,7 +16,7 @@ func TestAccIosxeOSPFVRF(t *testing.T) {
 			{
 				Config: testAccIosxeOSPFVRFPrerequisitesConfig + testAccIosxeOSPFVRFConfig_all(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "process_id", "1"),
+					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "process_id", "2"),
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "vrf", "VRF1"),
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "bfd_all_interfaces", "true"),
 					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "default_information_originate", "true"),
@@ -40,7 +40,7 @@ func TestAccIosxeOSPFVRF(t *testing.T) {
 			{
 				ResourceName:  "iosxe_ospf_vrf.test",
 				ImportState:   true,
-				ImportStateId: "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id-vrf=1,VRF1",
+				ImportStateId: "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id-vrf=2,VRF1",
 			},
 		},
 	})
@@ -48,12 +48,12 @@ func TestAccIosxeOSPFVRF(t *testing.T) {
 
 const testAccIosxeOSPFVRFPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+	}
 }
 
 `
@@ -61,7 +61,7 @@ resource "iosxe_restconf" "PreReq0" {
 func testAccIosxeOSPFVRFConfig_minimum() string {
 	return `
 	resource "iosxe_ospf_vrf" "test" {
-		process_id = 1
+		process_id = 2
 		vrf = "VRF1"
 		depends_on = [iosxe_restconf.PreReq0, ]
 	}
@@ -71,7 +71,7 @@ func testAccIosxeOSPFVRFConfig_minimum() string {
 func testAccIosxeOSPFVRFConfig_all() string {
 	return `
 	resource "iosxe_ospf_vrf" "test" {
-		process_id = 1
+		process_id = 2
 		vrf = "VRF1"
 		bfd_all_interfaces = true
 		default_information_originate = true
@@ -96,7 +96,7 @@ func testAccIosxeOSPFVRFConfig_all() string {
 			ip = "3.3.3.0"
 			mask = "255.255.255.0"
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

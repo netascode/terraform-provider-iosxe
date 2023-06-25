@@ -79,7 +79,7 @@ func (d *VLANConfigurationDataSource) Configure(_ context.Context, req datasourc
 }
 
 func (d *VLANConfigurationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config VLANConfiguration
+	var config VLANConfigurationData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -97,7 +97,7 @@ func (d *VLANConfigurationDataSource) Read(ctx context.Context, req datasource.R
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = VLANConfiguration{Device: config.Device}
+		config = VLANConfigurationData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

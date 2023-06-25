@@ -57,39 +57,39 @@ func TestAccIosxe{{camelCase .Name}}(t *testing.T) {
 const testAccIosxe{{camelCase .Name}}PrerequisitesConfig = `
 {{- range $index, $item := .TestPrerequisites}}
 resource "iosxe_restconf" "PreReq{{$index}}" {
-  path = "{{.Path}}"
-  {{- if .NoDelete}}
-  delete = false
-  {{- end}}
-  attributes = {
-    {{- range  .Attributes}}
-      "{{.Name}}" = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
-    {{- end}}
-  }
-  {{- if .Lists}}
-  lists = [
-  {{- range .Lists}}
-    {
-      name = "{{.Name}}"
-	  key = "{{.Key}}"
-      items = [
-        {{- range .Items}}
-          {
-            attributes = {
-			{{- range .Attributes}}
-				"{{.Name}}" = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
-			{{- end}}
-            }
-          },
-        {{- end}}
-      ] 
-    },
-  {{- end}}
-  ]
-  {{- end}}
-  {{- if .Dependencies}}
-  depends_on = [{{range .Dependencies}}iosxe_restconf.PreReq{{.}}, {{end}}]
-  {{- end}}
+	path = "{{.Path}}"
+	{{- if .NoDelete}}
+	delete = false
+	{{- end}}
+	attributes = {
+		{{- range  .Attributes}}
+		"{{.Name}}" = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
+		{{- end}}
+	}
+	{{- if .Lists}}
+	lists = [
+		{{- range .Lists}}
+		{
+			name = "{{.Name}}"
+			key = "{{.Key}}"
+			items = [
+				{{- range .Items}}
+				{
+					attributes = {
+						{{- range .Attributes}}
+						"{{.Name}}" = {{if .Reference}}{{.Reference}}{{else}}"{{.Value}}"{{end}}
+						{{- end}}
+					}
+				},
+				{{- end}}
+			] 
+		},
+		{{- end}}
+	]
+	{{- end}}
+	{{- if .Dependencies}}
+	depends_on = [{{range .Dependencies}}iosxe_restconf.PreReq{{.}}, {{end}}]
+	{{- end}}
 }
 {{ end}}
 `
@@ -113,7 +113,7 @@ func testAccIosxe{{camelCase .Name}}Config_minimum() string {
 				{{- end}}
 			}]
 		{{- else}}
-		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
 		{{- end}}
 		{{- end}}
 		{{- end}}
@@ -133,25 +133,28 @@ func testAccIosxe{{camelCase .Name}}Config_minimum() string {
 func testAccIosxe{{camelCase .Name}}Config_all() string {
 	return `
 	resource "iosxe_{{snakeCase $name}}" "test" {
+	{{- if and (not .NoDelete) (not .NoDeleteAttributes) .DefaultDeleteAttributes}}
+		delete_mode = "all"
+	{{- end}}
 	{{- range  .Attributes}}
 	{{- if not .ExcludeTest}}
 	{{- if eq .Type "List"}}
 		{{.TfName}} = [{
-			{{- range  .Attributes}}
-			{{- if not .ExcludeTest}}
-			{{- if eq .Type "List"}}
-				{{.TfName}} = [{
-					{{- range  .Attributes}}
-					{{- if not .ExcludeTest}}
-					{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
-					{{- end}}
-					{{- end}}
-				}]
-			{{- else}}
+		{{- range  .Attributes}}
+		{{- if not .ExcludeTest}}
+		{{- if eq .Type "List"}}
+			{{.TfName}} = [{
+				{{- range  .Attributes}}
+				{{- if not .ExcludeTest}}
+				{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+				{{- end}}
+				{{- end}}
+			}]
+		{{- else}}
 			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
-			{{- end}}
-			{{- end}}
-			{{- end}}
+		{{- end}}
+		{{- end}}
+		{{- end}}
 		}]
 	{{- else}}
 		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
@@ -159,7 +162,7 @@ func testAccIosxe{{camelCase .Name}}Config_all() string {
 	{{- end}}
 	{{- end}}
 	{{- if .TestPrerequisites}}
-  		depends_on = [{{range $index, $item := .TestPrerequisites}}iosxe_restconf.PreReq{{$index}}, {{end}}]
+		depends_on = [{{range $index, $item := .TestPrerequisites}}iosxe_restconf.PreReq{{$index}}, {{end}}]
 	{{- end}}
 	}
 	`

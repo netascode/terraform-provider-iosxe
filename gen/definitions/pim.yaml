@@ -12,12 +12,16 @@ attributes:
   - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/interface-choice/Loopback/Loopback
     xpath: Cisco-IOS-XE-multicast:bsr-candidate/Loopback
     tf_name: bsr_candidate_loopback
+    delete_parent: true
     example: 100
   - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/mask
+    delete_parent: true
     example: 30
   - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/priority
+    delete_parent: true
     example: 10
   - yang_name: Cisco-IOS-XE-multicast:bsr-candidate/accept-rp-candidate
+    delete_parent: true
     exclude_test: true
     example: 10
   - yang_name: Cisco-IOS-XE-multicast:ssm/range

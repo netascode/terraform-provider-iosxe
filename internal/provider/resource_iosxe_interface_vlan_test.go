@@ -49,12 +49,12 @@ func TestAccIosxeInterfaceVLAN(t *testing.T) {
 
 const testAccIosxeInterfaceVLANPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+	}
 }
 
 `
@@ -91,7 +91,7 @@ func testAccIosxeInterfaceVLANConfig_all() string {
 			global = false
 			vrf = "VRF1"
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

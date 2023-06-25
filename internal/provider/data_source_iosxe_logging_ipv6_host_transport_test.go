@@ -28,20 +28,21 @@ func TestAccDataSourceIosxeLoggingIPv6HostTransport(t *testing.T) {
 const testAccDataSourceIosxeLoggingIPv6HostTransportConfig = `
 
 resource "iosxe_logging_ipv6_host_transport" "test" {
-  ipv6_host = "2001::1"
-  transport_udp_ports = [{
-    port_number = 10000
-  }]
-  transport_tcp_ports = [{
-    port_number = 10001
-  }]
-  transport_tls_ports = [{
-    port_number = 10002
-  }]
+	delete_mode = "attributes"
+	ipv6_host = "2001::1"
+	transport_udp_ports = [{
+		port_number = 10000
+	}]
+	transport_tcp_ports = [{
+		port_number = 10001
+	}]
+	transport_tls_ports = [{
+		port_number = 10002
+	}]
 }
 
 data "iosxe_logging_ipv6_host_transport" "test" {
-  ipv6_host = "2001::1"
-  depends_on = [iosxe_logging_ipv6_host_transport.test]
+	ipv6_host = "2001::1"
+	depends_on = [iosxe_logging_ipv6_host_transport.test]
 }
 `

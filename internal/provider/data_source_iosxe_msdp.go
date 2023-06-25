@@ -50,26 +50,6 @@ func (d *MSDPDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				MarkdownDescription: "Configure MSDP Originator ID",
 				Computed:            true,
 			},
-			"peers": schema.ListNestedAttribute{
-				MarkdownDescription: "Configure an MSDP peer",
-				Computed:            true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"addr": schema.StringAttribute{
-							MarkdownDescription: "",
-							Computed:            true,
-						},
-						"remote_as": schema.Int64Attribute{
-							MarkdownDescription: "Configured AS number",
-							Computed:            true,
-						},
-						"connect_source_loopback": schema.Int64Attribute{
-							MarkdownDescription: "Loopback interface",
-							Computed:            true,
-						},
-					},
-				},
-			},
 			"passwords": schema.ListNestedAttribute{
 				MarkdownDescription: "MSDP peer on which the password is to be set",
 				Computed:            true,
@@ -90,6 +70,26 @@ func (d *MSDPDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 					},
 				},
 			},
+			"peers": schema.ListNestedAttribute{
+				MarkdownDescription: "Configure an MSDP peer",
+				Computed:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"addr": schema.StringAttribute{
+							MarkdownDescription: "",
+							Computed:            true,
+						},
+						"remote_as": schema.Int64Attribute{
+							MarkdownDescription: "Configured AS number",
+							Computed:            true,
+						},
+						"connect_source_loopback": schema.Int64Attribute{
+							MarkdownDescription: "Loopback interface",
+							Computed:            true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -103,7 +103,7 @@ func (d *MSDPDataSource) Configure(_ context.Context, req datasource.ConfigureRe
 }
 
 func (d *MSDPDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config MSDP
+	var config MSDPData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -121,7 +121,7 @@ func (d *MSDPDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = MSDP{Device: config.Device}
+		config = MSDPData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

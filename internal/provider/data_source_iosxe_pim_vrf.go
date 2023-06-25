@@ -159,7 +159,7 @@ func (d *PIMVRFDataSource) Configure(_ context.Context, req datasource.Configure
 }
 
 func (d *PIMVRFDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config PIMVRF
+	var config PIMVRFData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -177,7 +177,7 @@ func (d *PIMVRFDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = PIMVRF{Device: config.Device}
+		config = PIMVRFData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

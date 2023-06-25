@@ -75,7 +75,7 @@ func (d *BannerDataSource) Configure(_ context.Context, req datasource.Configure
 }
 
 func (d *BannerDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config Banner
+	var config BannerData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -93,7 +93,7 @@ func (d *BannerDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = Banner{Device: config.Device}
+		config = BannerData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

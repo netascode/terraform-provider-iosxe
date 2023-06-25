@@ -20,6 +20,16 @@ import (
 type LoggingIPv4HostTransport struct {
 	Device            types.String                                `tfsdk:"device"`
 	Id                types.String                                `tfsdk:"id"`
+	DeleteMode        types.String                                `tfsdk:"delete_mode"`
+	Ipv4Host          types.String                                `tfsdk:"ipv4_host"`
+	TransportUdpPorts []LoggingIPv4HostTransportTransportUdpPorts `tfsdk:"transport_udp_ports"`
+	TransportTcpPorts []LoggingIPv4HostTransportTransportTcpPorts `tfsdk:"transport_tcp_ports"`
+	TransportTlsPorts []LoggingIPv4HostTransportTransportTlsPorts `tfsdk:"transport_tls_ports"`
+}
+
+type LoggingIPv4HostTransportData struct {
+	Device            types.String                                `tfsdk:"device"`
+	Id                types.String                                `tfsdk:"id"`
 	Ipv4Host          types.String                                `tfsdk:"ipv4_host"`
 	TransportUdpPorts []LoggingIPv4HostTransportTransportUdpPorts `tfsdk:"transport_udp_ports"`
 	TransportTcpPorts []LoggingIPv4HostTransportTransportTcpPorts `tfsdk:"transport_tcp_ports"`
@@ -37,6 +47,10 @@ type LoggingIPv4HostTransportTransportTlsPorts struct {
 }
 
 func (data LoggingIPv4HostTransport) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/logging/host/ipv4-host-transport-list=%s", url.QueryEscape(fmt.Sprintf("%v", data.Ipv4Host.ValueString())))
+}
+
+func (data LoggingIPv4HostTransportData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/logging/host/ipv4-host-transport-list=%s", url.QueryEscape(fmt.Sprintf("%v", data.Ipv4Host.ValueString())))
 }
 
@@ -190,7 +204,7 @@ func (data *LoggingIPv4HostTransport) updateFromBody(ctx context.Context, res gj
 	}
 }
 
-func (data *LoggingIPv4HostTransport) fromBody(ctx context.Context, res gjson.Result) {
+func (data *LoggingIPv4HostTransportData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -317,4 +331,24 @@ func (data *LoggingIPv4HostTransport) getEmptyLeafsDelete(ctx context.Context) [
 	emptyLeafsDelete := make([]string, 0)
 
 	return emptyLeafsDelete
+}
+
+func (data *LoggingIPv4HostTransport) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	for i := range data.TransportUdpPorts {
+		keyValues := [...]string{strconv.FormatInt(data.TransportUdpPorts[i].PortNumber.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/transport/udp/port-config=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.TransportTcpPorts {
+		keyValues := [...]string{strconv.FormatInt(data.TransportTcpPorts[i].PortNumber.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/transport/tcp/port-config=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.TransportTlsPorts {
+		keyValues := [...]string{strconv.FormatInt(data.TransportTlsPorts[i].PortNumber.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/transport/tls/port=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

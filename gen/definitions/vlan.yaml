@@ -1,6 +1,7 @@
 ---
 name: VLAN
 path: Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=%v
+no_delete_attributes: true
 exclude_test: true
 doc_category: Switching
 attributes:
@@ -15,7 +16,7 @@ attributes:
     example: false
   - yang_name: private-vlan/association
     exclude_test: true
-    example: ''
+    example: ""
   - yang_name: private-vlan/community
     exclude_test: true
     example: false

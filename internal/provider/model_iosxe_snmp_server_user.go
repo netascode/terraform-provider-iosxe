@@ -18,6 +18,32 @@ import (
 type SNMPServerUser struct {
 	Device                          types.String `tfsdk:"device"`
 	Id                              types.String `tfsdk:"id"`
+	DeleteMode                      types.String `tfsdk:"delete_mode"`
+	Username                        types.String `tfsdk:"username"`
+	Grpname                         types.String `tfsdk:"grpname"`
+	V3AuthAlgorithm                 types.String `tfsdk:"v3_auth_algorithm"`
+	V3AuthPassword                  types.String `tfsdk:"v3_auth_password"`
+	V3AuthPrivAesAlgorithm          types.String `tfsdk:"v3_auth_priv_aes_algorithm"`
+	V3AuthPrivAesPassword           types.String `tfsdk:"v3_auth_priv_aes_password"`
+	V3AuthPrivAesAccessIpv6Acl      types.String `tfsdk:"v3_auth_priv_aes_access_ipv6_acl"`
+	V3AuthPrivAesAccessStandardAcl  types.Int64  `tfsdk:"v3_auth_priv_aes_access_standard_acl"`
+	V3AuthPrivAesAccessAclName      types.String `tfsdk:"v3_auth_priv_aes_access_acl_name"`
+	V3AuthPrivDesPassword           types.String `tfsdk:"v3_auth_priv_des_password"`
+	V3AuthPrivDesAccessIpv6Acl      types.String `tfsdk:"v3_auth_priv_des_access_ipv6_acl"`
+	V3AuthPrivDesAccessStandardAcl  types.Int64  `tfsdk:"v3_auth_priv_des_access_standard_acl"`
+	V3AuthPrivDesAccessAclName      types.String `tfsdk:"v3_auth_priv_des_access_acl_name"`
+	V3AuthPrivDes3Password          types.String `tfsdk:"v3_auth_priv_des3_password"`
+	V3AuthPrivDes3AccessIpv6Acl     types.String `tfsdk:"v3_auth_priv_des3_access_ipv6_acl"`
+	V3AuthPrivDes3AccessStandardAcl types.Int64  `tfsdk:"v3_auth_priv_des3_access_standard_acl"`
+	V3AuthPrivDes3AccessAclName     types.String `tfsdk:"v3_auth_priv_des3_access_acl_name"`
+	V3AuthAccessIpv6Acl             types.String `tfsdk:"v3_auth_access_ipv6_acl"`
+	V3AuthAccessStandardAcl         types.Int64  `tfsdk:"v3_auth_access_standard_acl"`
+	V3AuthAccessAclName             types.String `tfsdk:"v3_auth_access_acl_name"`
+}
+
+type SNMPServerUserData struct {
+	Device                          types.String `tfsdk:"device"`
+	Id                              types.String `tfsdk:"id"`
 	Username                        types.String `tfsdk:"username"`
 	Grpname                         types.String `tfsdk:"grpname"`
 	V3AuthAlgorithm                 types.String `tfsdk:"v3_auth_algorithm"`
@@ -41,6 +67,10 @@ type SNMPServerUser struct {
 }
 
 func (data SNMPServerUser) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/snmp-server/Cisco-IOS-XE-snmp:user/names=%s,%s", url.QueryEscape(fmt.Sprintf("%v", data.Username.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Grpname.ValueString())))
+}
+
+func (data SNMPServerUserData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/snmp-server/Cisco-IOS-XE-snmp:user/names=%s,%s", url.QueryEscape(fmt.Sprintf("%v", data.Username.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Grpname.ValueString())))
 }
 
@@ -227,7 +257,7 @@ func (data *SNMPServerUser) updateFromBody(ctx context.Context, res gjson.Result
 	}
 }
 
-func (data *SNMPServerUser) fromBody(ctx context.Context, res gjson.Result) {
+func (data *SNMPServerUserData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -296,4 +326,63 @@ func (data *SNMPServerUser) getDeletedListItems(ctx context.Context, state SNMPS
 func (data *SNMPServerUser) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
+}
+
+func (data *SNMPServerUser) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.V3AuthAlgorithm.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/algorithm", data.getPath()))
+	}
+	if !data.V3AuthPassword.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/password", data.getPath()))
+	}
+	if !data.V3AuthPrivAesAlgorithm.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/aes/algorithm", data.getPath()))
+	}
+	if !data.V3AuthPrivAesPassword.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/aes/password", data.getPath()))
+	}
+	if !data.V3AuthPrivAesAccessIpv6Acl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/aes/access-config/ipv6-acl", data.getPath()))
+	}
+	if !data.V3AuthPrivAesAccessStandardAcl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/aes/access-config/standard-acl", data.getPath()))
+	}
+	if !data.V3AuthPrivAesAccessAclName.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/aes/access-config/acl-name", data.getPath()))
+	}
+	if !data.V3AuthPrivDesPassword.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/des/password", data.getPath()))
+	}
+	if !data.V3AuthPrivDesAccessIpv6Acl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/des/access-config/ipv6-acl", data.getPath()))
+	}
+	if !data.V3AuthPrivDesAccessStandardAcl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/des/access-config/standard-acl", data.getPath()))
+	}
+	if !data.V3AuthPrivDesAccessAclName.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/des/access-config/acl-name", data.getPath()))
+	}
+	if !data.V3AuthPrivDes3Password.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/des3/password", data.getPath()))
+	}
+	if !data.V3AuthPrivDes3AccessIpv6Acl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/des3/access-config/ipv6-acl", data.getPath()))
+	}
+	if !data.V3AuthPrivDes3AccessStandardAcl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/des3/access-config/standard-acl", data.getPath()))
+	}
+	if !data.V3AuthPrivDes3AccessAclName.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/priv-config/des3/access-config/acl-name", data.getPath()))
+	}
+	if !data.V3AuthAccessIpv6Acl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/access-config/ipv6-acl", data.getPath()))
+	}
+	if !data.V3AuthAccessStandardAcl.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/access-config/standard-acl", data.getPath()))
+	}
+	if !data.V3AuthAccessAclName.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/v3/auth-config/access-config/acl-name", data.getPath()))
+	}
+	return deletePaths
 }

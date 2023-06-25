@@ -18,6 +18,25 @@ import (
 type InterfaceLoopback struct {
 	Device                 types.String `tfsdk:"device"`
 	Id                     types.String `tfsdk:"id"`
+	DeleteMode             types.String `tfsdk:"delete_mode"`
+	Name                   types.Int64  `tfsdk:"name"`
+	Description            types.String `tfsdk:"description"`
+	Shutdown               types.Bool   `tfsdk:"shutdown"`
+	IpProxyArp             types.Bool   `tfsdk:"ip_proxy_arp"`
+	IpRedirects            types.Bool   `tfsdk:"ip_redirects"`
+	Unreachables           types.Bool   `tfsdk:"unreachables"`
+	VrfForwarding          types.String `tfsdk:"vrf_forwarding"`
+	Ipv4Address            types.String `tfsdk:"ipv4_address"`
+	Ipv4AddressMask        types.String `tfsdk:"ipv4_address_mask"`
+	IpAccessGroupIn        types.String `tfsdk:"ip_access_group_in"`
+	IpAccessGroupInEnable  types.Bool   `tfsdk:"ip_access_group_in_enable"`
+	IpAccessGroupOut       types.String `tfsdk:"ip_access_group_out"`
+	IpAccessGroupOutEnable types.Bool   `tfsdk:"ip_access_group_out_enable"`
+}
+
+type InterfaceLoopbackData struct {
+	Device                 types.String `tfsdk:"device"`
+	Id                     types.String `tfsdk:"id"`
 	Name                   types.Int64  `tfsdk:"name"`
 	Description            types.String `tfsdk:"description"`
 	Shutdown               types.Bool   `tfsdk:"shutdown"`
@@ -34,6 +53,10 @@ type InterfaceLoopback struct {
 }
 
 func (data InterfaceLoopback) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Loopback=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueInt64())))
+}
+
+func (data InterfaceLoopbackData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/Loopback=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueInt64())))
 }
 
@@ -188,7 +211,7 @@ func (data *InterfaceLoopback) updateFromBody(ctx context.Context, res gjson.Res
 	}
 }
 
-func (data *InterfaceLoopback) fromBody(ctx context.Context, res gjson.Result) {
+func (data *InterfaceLoopbackData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -254,10 +277,51 @@ func (data *InterfaceLoopback) getEmptyLeafsDelete(ctx context.Context) []string
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	if !data.IpAccessGroupInEnable.IsNull() && !data.IpAccessGroupInEnable.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/apply-type/apply-intf/acl/in", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/acl/in", data.getPath()))
 	}
 	if !data.IpAccessGroupOutEnable.IsNull() && !data.IpAccessGroupOutEnable.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/apply-type/apply-intf/acl/out", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/acl/out", data.getPath()))
 	}
 	return emptyLeafsDelete
+}
+
+func (data *InterfaceLoopback) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Description.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/description", data.getPath()))
+	}
+	if !data.Shutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.IpProxyArp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/proxy-arp", data.getPath()))
+	}
+	if !data.IpRedirects.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/redirects", data.getPath()))
+	}
+	if !data.Unreachables.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/Cisco-IOS-XE-icmp:unreachables", data.getPath()))
+	}
+	if !data.VrfForwarding.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/vrf/forwarding", data.getPath()))
+	}
+	if !data.Ipv4Address.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/address/primary/address", data.getPath()))
+	}
+	if !data.Ipv4AddressMask.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/address/primary/mask", data.getPath()))
+	}
+	if !data.IpAccessGroupIn.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/in/acl", data.getPath()))
+	}
+	if !data.IpAccessGroupInEnable.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/in/acl/in", data.getPath()))
+	}
+	if !data.IpAccessGroupOut.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/out/acl", data.getPath()))
+	}
+	if !data.IpAccessGroupOutEnable.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/out/acl/out", data.getPath()))
+	}
+	return deletePaths
 }

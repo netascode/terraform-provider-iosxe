@@ -30,6 +30,20 @@ type MDTSubscription struct {
 	FilterXpath          types.String               `tfsdk:"filter_xpath"`
 	Receivers            []MDTSubscriptionReceivers `tfsdk:"receivers"`
 }
+
+type MDTSubscriptionData struct {
+	Device               types.String               `tfsdk:"device"`
+	Id                   types.String               `tfsdk:"id"`
+	SubscriptionId       types.Int64                `tfsdk:"subscription_id"`
+	Stream               types.String               `tfsdk:"stream"`
+	Encoding             types.String               `tfsdk:"encoding"`
+	SourceVrf            types.String               `tfsdk:"source_vrf"`
+	SourceAddress        types.String               `tfsdk:"source_address"`
+	UpdatePolicyPeriodic types.Int64                `tfsdk:"update_policy_periodic"`
+	UpdatePolicyOnChange types.Bool                 `tfsdk:"update_policy_on_change"`
+	FilterXpath          types.String               `tfsdk:"filter_xpath"`
+	Receivers            []MDTSubscriptionReceivers `tfsdk:"receivers"`
+}
 type MDTSubscriptionReceivers struct {
 	Address  types.String `tfsdk:"address"`
 	Port     types.Int64  `tfsdk:"port"`
@@ -37,6 +51,10 @@ type MDTSubscriptionReceivers struct {
 }
 
 func (data MDTSubscription) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-mdt-cfg:mdt-config-data/mdt-subscription=%s", url.QueryEscape(fmt.Sprintf("%v", data.SubscriptionId.ValueInt64())))
+}
+
+func (data MDTSubscriptionData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-mdt-cfg:mdt-config-data/mdt-subscription=%s", url.QueryEscape(fmt.Sprintf("%v", data.SubscriptionId.ValueInt64())))
 }
 
@@ -182,7 +200,7 @@ func (data *MDTSubscription) updateFromBody(ctx context.Context, res gjson.Resul
 	}
 }
 
-func (data *MDTSubscription) fromBody(ctx context.Context, res gjson.Result) {
+func (data *MDTSubscriptionData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -269,4 +287,35 @@ func (data *MDTSubscription) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 
 	return emptyLeafsDelete
+}
+
+func (data *MDTSubscription) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Stream.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/base/stream", data.getPath()))
+	}
+	if !data.Encoding.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/base/encoding", data.getPath()))
+	}
+	if !data.SourceVrf.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/base/source-vrf", data.getPath()))
+	}
+	if !data.SourceAddress.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/base/source-address", data.getPath()))
+	}
+	if !data.UpdatePolicyPeriodic.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/base/period", data.getPath()))
+	}
+	if !data.UpdatePolicyOnChange.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/base/no-synch-on-start", data.getPath()))
+	}
+	if !data.FilterXpath.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/base/xpath", data.getPath()))
+	}
+	for i := range data.Receivers {
+		keyValues := [...]string{data.Receivers[i].Address.ValueString(), strconv.FormatInt(data.Receivers[i].Port.ValueInt64(), 10)}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mdt-receivers=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

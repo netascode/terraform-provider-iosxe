@@ -33,12 +33,12 @@ func TestAccIosxeBGP(t *testing.T) {
 
 const testAccIosxeBGPPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-      "ip/address/primary/address" = "200.200.200.200"
-      "ip/address/primary/mask" = "255.255.255.255"
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+		"ip/address/primary/address" = "200.200.200.200"
+		"ip/address/primary/mask" = "255.255.255.255"
+	}
 }
 
 `
@@ -59,7 +59,7 @@ func testAccIosxeBGPConfig_all() string {
 		default_ipv4_unicast = false
 		log_neighbor_changes = true
 		router_id_loopback = 100
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

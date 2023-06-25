@@ -31,21 +31,21 @@ func TestAccDataSourceIosxeStaticRoute(t *testing.T) {
 const testAccDataSourceIosxeStaticRouteConfig = `
 
 resource "iosxe_static_route" "test" {
-  prefix = "5.5.5.5"
-  mask = "255.255.255.255"
-  next_hops = [{
-    next_hop = "6.6.6.6"
-    metric = 10
-    global = false
-    name = "Route1"
-    permanent = true
-    tag = 100
-  }]
+	prefix = "5.5.5.5"
+	mask = "255.255.255.255"
+	next_hops = [{
+		next_hop = "6.6.6.6"
+		metric = 10
+		global = false
+		name = "Route1"
+		permanent = true
+		tag = 100
+	}]
 }
 
 data "iosxe_static_route" "test" {
-  prefix = "5.5.5.5"
-  mask = "255.255.255.255"
-  depends_on = [iosxe_static_route.test]
+	prefix = "5.5.5.5"
+	mask = "255.255.255.255"
+	depends_on = [iosxe_static_route.test]
 }
 `

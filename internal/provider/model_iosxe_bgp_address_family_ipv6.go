@@ -15,6 +15,14 @@ import (
 )
 
 type BGPAddressFamilyIPv6 struct {
+	Device     types.String `tfsdk:"device"`
+	Id         types.String `tfsdk:"id"`
+	DeleteMode types.String `tfsdk:"delete_mode"`
+	Asn        types.String `tfsdk:"asn"`
+	AfName     types.String `tfsdk:"af_name"`
+}
+
+type BGPAddressFamilyIPv6Data struct {
 	Device types.String `tfsdk:"device"`
 	Id     types.String `tfsdk:"id"`
 	Asn    types.String `tfsdk:"asn"`
@@ -22,6 +30,10 @@ type BGPAddressFamilyIPv6 struct {
 }
 
 func (data BGPAddressFamilyIPv6) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/ipv6=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.AfName.ValueString())))
+}
+
+func (data BGPAddressFamilyIPv6Data) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/ipv6=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.AfName.ValueString())))
 }
 
@@ -56,7 +68,7 @@ func (data *BGPAddressFamilyIPv6) updateFromBody(ctx context.Context, res gjson.
 	}
 }
 
-func (data *BGPAddressFamilyIPv6) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BGPAddressFamilyIPv6Data) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -71,4 +83,9 @@ func (data *BGPAddressFamilyIPv6) getDeletedListItems(ctx context.Context, state
 func (data *BGPAddressFamilyIPv6) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
+}
+
+func (data *BGPAddressFamilyIPv6) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	return deletePaths
 }

@@ -20,6 +20,35 @@ import (
 type InterfaceEthernet struct {
 	Device                     types.String                       `tfsdk:"device"`
 	Id                         types.String                       `tfsdk:"id"`
+	DeleteMode                 types.String                       `tfsdk:"delete_mode"`
+	Type                       types.String                       `tfsdk:"type"`
+	Name                       types.String                       `tfsdk:"name"`
+	MediaType                  types.String                       `tfsdk:"media_type"`
+	Switchport                 types.Bool                         `tfsdk:"switchport"`
+	Description                types.String                       `tfsdk:"description"`
+	Shutdown                   types.Bool                         `tfsdk:"shutdown"`
+	IpProxyArp                 types.Bool                         `tfsdk:"ip_proxy_arp"`
+	IpRedirects                types.Bool                         `tfsdk:"ip_redirects"`
+	Unreachables               types.Bool                         `tfsdk:"unreachables"`
+	VrfForwarding              types.String                       `tfsdk:"vrf_forwarding"`
+	Ipv4Address                types.String                       `tfsdk:"ipv4_address"`
+	Ipv4AddressMask            types.String                       `tfsdk:"ipv4_address_mask"`
+	Unnumbered                 types.String                       `tfsdk:"unnumbered"`
+	EncapsulationDot1qVlanId   types.Int64                        `tfsdk:"encapsulation_dot1q_vlan_id"`
+	ChannelGroupNumber         types.Int64                        `tfsdk:"channel_group_number"`
+	ChannelGroupMode           types.String                       `tfsdk:"channel_group_mode"`
+	IpDhcpRelaySourceInterface types.String                       `tfsdk:"ip_dhcp_relay_source_interface"`
+	IpAccessGroupIn            types.String                       `tfsdk:"ip_access_group_in"`
+	IpAccessGroupInEnable      types.Bool                         `tfsdk:"ip_access_group_in_enable"`
+	IpAccessGroupOut           types.String                       `tfsdk:"ip_access_group_out"`
+	IpAccessGroupOutEnable     types.Bool                         `tfsdk:"ip_access_group_out_enable"`
+	HelperAddresses            []InterfaceEthernetHelperAddresses `tfsdk:"helper_addresses"`
+	SourceTemplate             []InterfaceEthernetSourceTemplate  `tfsdk:"source_template"`
+}
+
+type InterfaceEthernetData struct {
+	Device                     types.String                       `tfsdk:"device"`
+	Id                         types.String                       `tfsdk:"id"`
 	Type                       types.String                       `tfsdk:"type"`
 	Name                       types.String                       `tfsdk:"name"`
 	MediaType                  types.String                       `tfsdk:"media_type"`
@@ -55,6 +84,10 @@ type InterfaceEthernetSourceTemplate struct {
 }
 
 func (data InterfaceEthernet) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v", url.QueryEscape(fmt.Sprintf("%v", data.Type.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
+}
+
+func (data InterfaceEthernetData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/%s=%v", url.QueryEscape(fmt.Sprintf("%v", data.Type.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueString())))
 }
 
@@ -377,7 +410,7 @@ func (data *InterfaceEthernet) updateFromBody(ctx context.Context, res gjson.Res
 	}
 }
 
-func (data *InterfaceEthernet) fromBody(ctx context.Context, res gjson.Result) {
+func (data *InterfaceEthernetData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -551,16 +584,16 @@ func (data *InterfaceEthernet) getEmptyLeafsDelete(ctx context.Context) []string
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
 	if !data.IpAccessGroupInEnable.IsNull() && !data.IpAccessGroupInEnable.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/apply-type/apply-intf/acl/in", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/in/acl/in", data.getPath()))
 	}
 	if !data.IpAccessGroupOutEnable.IsNull() && !data.IpAccessGroupOutEnable.ValueBool() {
-		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/apply-type/apply-intf/acl/out", data.getPath()))
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/access-group/out/acl/out", data.getPath()))
 	}
 
 	for i := range data.HelperAddresses {
 		keyValues := [...]string{data.HelperAddresses[i].Address.ValueString()}
 		if !data.HelperAddresses[i].Global.IsNull() && !data.HelperAddresses[i].Global.ValueBool() {
-			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/helper-address=%v/helper-choice/global/global", data.getPath(), strings.Join(keyValues[:], ",")))
+			emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/ip/helper-address=%v/global", data.getPath(), strings.Join(keyValues[:], ",")))
 		}
 	}
 
@@ -571,4 +604,76 @@ func (data *InterfaceEthernet) getEmptyLeafsDelete(ctx context.Context) []string
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *InterfaceEthernet) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.MediaType.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/media-type", data.getPath()))
+	}
+	if !data.Switchport.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport-conf/switchport", data.getPath()))
+	}
+	if !data.Description.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/description", data.getPath()))
+	}
+	if !data.Shutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.IpProxyArp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/proxy-arp", data.getPath()))
+	}
+	if !data.IpRedirects.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/redirects", data.getPath()))
+	}
+	if !data.Unreachables.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/Cisco-IOS-XE-icmp:unreachables", data.getPath()))
+	}
+	if !data.VrfForwarding.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/vrf/forwarding", data.getPath()))
+	}
+	if !data.Ipv4Address.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/address/primary", data.getPath()))
+	}
+	if !data.Ipv4AddressMask.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/address/primary", data.getPath()))
+	}
+	if !data.Unnumbered.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/unnumbered", data.getPath()))
+	}
+	if !data.EncapsulationDot1qVlanId.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/encapsulation/dot1Q/vlan-id", data.getPath()))
+	}
+	if !data.ChannelGroupNumber.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-ethernet:channel-group/number", data.getPath()))
+	}
+	if !data.ChannelGroupMode.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-ethernet:channel-group/mode", data.getPath()))
+	}
+	if !data.IpDhcpRelaySourceInterface.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/dhcp/Cisco-IOS-XE-dhcp:relay/source-interface", data.getPath()))
+	}
+	if !data.IpAccessGroupIn.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/in/acl", data.getPath()))
+	}
+	if !data.IpAccessGroupInEnable.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/in/acl/in", data.getPath()))
+	}
+	if !data.IpAccessGroupOut.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/out/acl", data.getPath()))
+	}
+	if !data.IpAccessGroupOutEnable.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/access-group/out/acl/out", data.getPath()))
+	}
+	for i := range data.HelperAddresses {
+		keyValues := [...]string{data.HelperAddresses[i].Address.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/helper-address=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.SourceTemplate {
+		keyValues := [...]string{data.SourceTemplate[i].TemplateName.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/source/template/template-name=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

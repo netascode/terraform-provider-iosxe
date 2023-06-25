@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -19,10 +20,6 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-// Ensure provider defined types fully satisfy framework interfaces
-var _ resource.Resource = &MSDPVRFResource{}
-var _ resource.ResourceWithImportState = &MSDPVRFResource{}
-
 func NewMSDPVRFResource() resource.Resource {
 	return &MSDPVRFResource{}
 }
@@ -31,7 +28,7 @@ type MSDPVRFResource struct {
 	clients map[string]*restconf.Client
 }
 
-func (r *MSDPVRFResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *MSDPVRFResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_msdp_vrf"
 }
 
@@ -52,6 +49,13 @@ func (r *MSDPVRFResource) Schema(ctx context.Context, req resource.SchemaRequest
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"delete_mode": schema.StringAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.").AddStringEnumDescription("all", "attributes").String,
+				Optional:            true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("all", "attributes"),
+				},
+			},
 			"vrf": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("").String,
 				Required:            true,
@@ -62,6 +66,29 @@ func (r *MSDPVRFResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"originator_id": schema.StringAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure MSDP Originator ID").String,
 				Optional:            true,
+			},
+			"passwords": schema.ListNestedAttribute{
+				MarkdownDescription: helpers.NewAttributeDescription("MSDP peer on which the password is to be set").String,
+				Optional:            true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"addr": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Required:            true,
+						},
+						"encryption": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 7).String,
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(0, 7),
+							},
+						},
+						"password": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Required:            true,
+						},
+					},
+				},
 			},
 			"peers": schema.ListNestedAttribute{
 				MarkdownDescription: helpers.NewAttributeDescription("Configure an MSDP peer").String,
@@ -85,29 +112,6 @@ func (r *MSDPVRFResource) Schema(ctx context.Context, req resource.SchemaRequest
 							Validators: []validator.Int64{
 								int64validator.Between(0, 2147483647),
 							},
-						},
-					},
-				},
-			},
-			"passwords": schema.ListNestedAttribute{
-				MarkdownDescription: helpers.NewAttributeDescription("MSDP peer on which the password is to be set").String,
-				Optional:            true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"addr": schema.StringAttribute{
-							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Required:            true,
-						},
-						"encryption": schema.Int64Attribute{
-							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(0, 7).String,
-							Optional:            true,
-							Validators: []validator.Int64{
-								int64validator.Between(0, 7),
-							},
-						},
-						"password": schema.StringAttribute{
-							MarkdownDescription: helpers.NewAttributeDescription("").String,
-							Required:            true,
 						},
 					},
 				},
@@ -285,11 +289,30 @@ func (r *MSDPVRFResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.ValueString()))
+	deleteMode := "all"
+	if state.DeleteMode.ValueString() == "all" {
+		deleteMode = "all"
+	} else if state.DeleteMode.ValueString() == "attributes" {
+		deleteMode = "attributes"
+	}
 
-	res, err := r.clients[state.Device.ValueString()].DeleteData(state.Id.ValueString())
-	if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
-		return
+	if deleteMode == "all" {
+		res, err := r.clients[state.Device.ValueString()].DeleteData(state.Id.ValueString())
+		if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
+		}
+	} else {
+		deletePaths := state.getDeletePaths(ctx)
+		tflog.Debug(ctx, fmt.Sprintf("Paths to delete: %+v", deletePaths))
+
+		for _, i := range deletePaths {
+			res, err := r.clients[state.Device.ValueString()].DeleteData(i)
+			if err != nil && res.StatusCode != 404 {
+				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+				return
+			}
+		}
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.Id.ValueString()))

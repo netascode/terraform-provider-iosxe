@@ -28,21 +28,21 @@ func TestAccDataSourceIosxeBGPAddressFamilyIPv4VRF(t *testing.T) {
 
 const testAccDataSourceIosxeBGPAddressFamilyIPv4VRFPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "rd" = "1:1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"rd" = "1:1"
+		"address-family/ipv4" = ""
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      "id" = "65000"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
+	attributes = {
+		"id" = "65000"
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -50,20 +50,21 @@ resource "iosxe_restconf" "PreReq1" {
 const testAccDataSourceIosxeBGPAddressFamilyIPv4VRFConfig = `
 
 resource "iosxe_bgp_address_family_ipv4_vrf" "test" {
-  asn = "65000"
-  af_name = "unicast"
-  vrfs = [{
-    name = "VRF1"
-    advertise_l2vpn_evpn = true
-    redistribute_connected = true
-    redistribute_static = true
-  }]
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+	delete_mode = "attributes"
+	asn = "65000"
+	af_name = "unicast"
+	vrfs = [{
+		name = "VRF1"
+		advertise_l2vpn_evpn = true
+		redistribute_connected = true
+		redistribute_static = true
+	}]
+	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 
 data "iosxe_bgp_address_family_ipv4_vrf" "test" {
-  asn = "65000"
-  af_name = "unicast"
-  depends_on = [iosxe_bgp_address_family_ipv4_vrf.test]
+	asn = "65000"
+	af_name = "unicast"
+	depends_on = [iosxe_bgp_address_family_ipv4_vrf.test]
 }
 `

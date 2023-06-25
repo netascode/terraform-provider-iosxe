@@ -29,17 +29,17 @@ func TestAccDataSourceIosxeAccessListStandard(t *testing.T) {
 const testAccDataSourceIosxeAccessListStandardConfig = `
 
 resource "iosxe_access_list_standard" "test" {
-  name = "SACL1"
-  entries = [{
-    sequence = 10
-    remark = "Description"
-    deny_prefix = "10.0.0.0"
-    deny_prefix_mask = "0.0.0.255"
-  }]
+	name = "SACL1"
+	entries = [{
+		sequence = 10
+		remark = "Description"
+		deny_prefix = "10.0.0.0"
+		deny_prefix_mask = "0.0.0.255"
+	}]
 }
 
 data "iosxe_access_list_standard" "test" {
-  name = "SACL1"
-  depends_on = [iosxe_access_list_standard.test]
+	name = "SACL1"
+	depends_on = [iosxe_access_list_standard.test]
 }
 `

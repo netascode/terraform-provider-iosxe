@@ -21,10 +21,6 @@ import (
 	"github.com/netascode/terraform-provider-iosxe/internal/provider/helpers"
 )
 
-// Ensure provider defined types fully satisfy framework interfaces
-var _ resource.Resource = &RouteMapResource{}
-var _ resource.ResourceWithImportState = &RouteMapResource{}
-
 func NewRouteMapResource() resource.Resource {
 	return &RouteMapResource{}
 }
@@ -33,7 +29,7 @@ type RouteMapResource struct {
 	clients map[string]*restconf.Client
 }
 
-func (r *RouteMapResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *RouteMapResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_route_map"
 }
 
@@ -222,6 +218,26 @@ func (r *RouteMapResource) Schema(ctx context.Context, req resource.SchemaReques
 								int64validator.Between(1, 1000),
 							},
 						},
+						"match_as_paths_legacy": schema.ListAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("AS path access-list (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)").String,
+							ElementType:         types.Int64Type,
+							Optional:            true,
+						},
+						"match_community_lists_legacy": schema.ListAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Named Access List (DEPRECATED- please use community-list in Cisco-IOS-XE-bgp.yang)").String,
+							ElementType:         types.StringType,
+							Optional:            true,
+						},
+						"match_extcommunity_lists_legacy": schema.ListAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Named Access List (DEPRECATED- please use extcommunity-list in Cisco-IOS-XE-bgp.yang)").String,
+							ElementType:         types.StringType,
+							Optional:            true,
+						},
+						"match_local_preferences_legacy": schema.ListAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							ElementType:         types.Int64Type,
+							Optional:            true,
+						},
 						"match_as_paths": schema.ListAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("AS path access-list").String,
 							ElementType:         types.Int64Type,
@@ -295,8 +311,9 @@ func (r *RouteMapResource) Schema(ctx context.Context, req resource.SchemaReques
 								int64validator.Between(0, 99),
 							},
 						},
-						"set_ipv6_address": schema.StringAttribute{
+						"set_ipv6_address": schema.ListAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("IPv6 prefix-list").String,
+							ElementType:         types.StringType,
 							Optional:            true,
 						},
 						"set_ipv6_default_global_next_hop": schema.StringAttribute{
@@ -388,6 +405,89 @@ func (r *RouteMapResource) Schema(ctx context.Context, req resource.SchemaReques
 						"set_vrf": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("VPN Routing/Forwarding instance name").String,
 							Optional:            true,
+						},
+						"set_as_path_prepend_as_legacy": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("<1-65535>;;AS number (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)").String,
+							Optional:            true,
+						},
+						"set_as_path_prepend_last_as_legacy": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 10).String,
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 10),
+							},
+						},
+						"set_as_path_tag_legacy": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Set the tag as an AS-path attribute (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)").String,
+							Optional:            true,
+						},
+						"set_community_none_legacy": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("No community attribute (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)").String,
+							Optional:            true,
+						},
+						"set_communities_legacy": schema.ListAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							ElementType:         types.StringType,
+							Optional:            true,
+						},
+						"set_communities_additive_legacy": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+						},
+						"set_community_list_delete_legacy": schema.BoolAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Delete matching communities (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)").String,
+							Optional:            true,
+						},
+						"set_community_list_standard_legacy": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(1, 99).String,
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(1, 99),
+							},
+						},
+						"set_community_list_expanded_legacy": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").AddIntegerRangeDescription(100, 500).String,
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(100, 500),
+							},
+						},
+						"set_community_list_name_legacy": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+						},
+						"set_extcomunity_rt_legacy": schema.ListAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							ElementType:         types.StringType,
+							Optional:            true,
+						},
+						"set_extcomunity_soo_legacy": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
+						},
+						"set_extcomunity_vpn_distinguisher_legacy": schema.StringAttribute{
+							MarkdownDescription: helpers.NewAttributeDescription("").String,
+							Optional:            true,
+							Validators: []validator.String{
+								stringvalidator.RegexMatches(regexp.MustCompile(`(([0-9]+\.[0-9]+)|([0-9]+)|((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))):[0-9]+`), ""),
+							},
+						},
+						"set_local_preference_legacy": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("Preference value (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)").AddIntegerRangeDescription(0, 4294967295).String,
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(0, 4294967295),
+							},
+						},
+						"set_weight_legacy": schema.Int64Attribute{
+							MarkdownDescription: helpers.NewAttributeDescription("BGP weight for routing table (DEPRECATED - please use route-map configuration in Cisco-IOS-XE-bgp.yang)").AddIntegerRangeDescription(0, 65535).String,
+							Optional:            true,
+							Validators: []validator.Int64{
+								int64validator.Between(0, 65535),
+							},
 						},
 						"set_as_path_prepend_as": schema.StringAttribute{
 							MarkdownDescription: helpers.NewAttributeDescription("<1-65535>;;AS number").String,
@@ -652,11 +752,25 @@ func (r *RouteMapResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.ValueString()))
+	deleteMode := "all"
 
-	res, err := r.clients[state.Device.ValueString()].DeleteData(state.Id.ValueString())
-	if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
-		return
+	if deleteMode == "all" {
+		res, err := r.clients[state.Device.ValueString()].DeleteData(state.Id.ValueString())
+		if err != nil && res.StatusCode != 404 && res.StatusCode != 400 {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+			return
+		}
+	} else {
+		deletePaths := state.getDeletePaths(ctx)
+		tflog.Debug(ctx, fmt.Sprintf("Paths to delete: %+v", deletePaths))
+
+		for _, i := range deletePaths {
+			res, err := r.clients[state.Device.ValueString()].DeleteData(i)
+			if err != nil && res.StatusCode != 404 {
+				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+				return
+			}
+		}
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Delete finished successfully", state.Id.ValueString()))

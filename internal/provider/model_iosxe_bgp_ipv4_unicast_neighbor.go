@@ -20,6 +20,18 @@ import (
 type BGPIPv4UnicastNeighbor struct {
 	Device               types.String                      `tfsdk:"device"`
 	Id                   types.String                      `tfsdk:"id"`
+	DeleteMode           types.String                      `tfsdk:"delete_mode"`
+	Asn                  types.String                      `tfsdk:"asn"`
+	Ip                   types.String                      `tfsdk:"ip"`
+	Activate             types.Bool                        `tfsdk:"activate"`
+	SendCommunity        types.String                      `tfsdk:"send_community"`
+	RouteReflectorClient types.Bool                        `tfsdk:"route_reflector_client"`
+	RouteMaps            []BGPIPv4UnicastNeighborRouteMaps `tfsdk:"route_maps"`
+}
+
+type BGPIPv4UnicastNeighborData struct {
+	Device               types.String                      `tfsdk:"device"`
+	Id                   types.String                      `tfsdk:"id"`
 	Asn                  types.String                      `tfsdk:"asn"`
 	Ip                   types.String                      `tfsdk:"ip"`
 	Activate             types.Bool                        `tfsdk:"activate"`
@@ -33,6 +45,10 @@ type BGPIPv4UnicastNeighborRouteMaps struct {
 }
 
 func (data BGPIPv4UnicastNeighbor) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/ipv4=unicast/ipv4-unicast/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
+}
+
+func (data BGPIPv4UnicastNeighborData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/ipv4=unicast/ipv4-unicast/neighbor=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.Ip.ValueString())))
 }
 
@@ -148,7 +164,7 @@ func (data *BGPIPv4UnicastNeighbor) updateFromBody(ctx context.Context, res gjso
 	}
 }
 
-func (data *BGPIPv4UnicastNeighbor) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BGPIPv4UnicastNeighborData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -222,4 +238,20 @@ func (data *BGPIPv4UnicastNeighbor) getEmptyLeafsDelete(ctx context.Context) []s
 	}
 
 	return emptyLeafsDelete
+}
+
+func (data *BGPIPv4UnicastNeighbor) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.SendCommunity.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/send-community/send-community-where", data.getPath()))
+	}
+	if !data.RouteReflectorClient.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/route-reflector-client", data.getPath()))
+	}
+	for i := range data.RouteMaps {
+		keyValues := [...]string{data.RouteMaps[i].InOut.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/route-map=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

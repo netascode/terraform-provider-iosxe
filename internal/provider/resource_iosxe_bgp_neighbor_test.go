@@ -34,17 +34,17 @@ func TestAccIosxeBGPNeighbor(t *testing.T) {
 
 const testAccIosxeBGPNeighborPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      "id" = "65000"
-  }
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
+	attributes = {
+		"id" = "65000"
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+	}
 }
 
 `
@@ -68,7 +68,7 @@ func testAccIosxeBGPNeighborConfig_all() string {
 		description = "BGP Neighbor Description"
 		shutdown = false
 		update_source_loopback = "100"
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 	}
 	`
 }

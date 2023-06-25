@@ -43,12 +43,12 @@ func TestAccIosxeSystem(t *testing.T) {
 
 const testAccIosxeSystemPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+	}
 }
 
 `
@@ -80,7 +80,7 @@ func testAccIosxeSystemConfig_all() string {
 			vrf = "VRF1"
 			distributed = true
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

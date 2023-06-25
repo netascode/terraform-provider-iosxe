@@ -35,6 +35,8 @@ resource "iosxe_evpn" "example" {
 ### Optional
 
 - `default_gateway_advertise` (Boolean) Advertise Default Gateway MAC/IP routes
+- `delete_mode` (String) Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.
+  - Choices: `all`, `attributes`
 - `device` (String) A device name from the provider configuration.
 - `ip_duplication_limit` (Number) Number of IP moves within specified time interval
   - Range: `2`-`1000`

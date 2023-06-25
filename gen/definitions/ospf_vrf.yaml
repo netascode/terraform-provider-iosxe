@@ -5,7 +5,7 @@ doc_category: OSPF
 attributes:
   - yang_name: id
     tf_name: process_id
-    example: 1
+    example: 2
   - yang_name: vrf
     example: VRF1
   - yang_name: bfd/all-interfaces

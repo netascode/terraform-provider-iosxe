@@ -43,11 +43,10 @@ func TestAccDataSourceIosxeRouteMap(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_source_protocol_static", "true"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_tags.0", "100"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_track", "1"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_as_paths.0", "10"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_community_lists.0", "COMM1"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_community_list_exact_match", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_extcommunity_lists.0", "EXTCOMM1"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_local_preferences.0", "100"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_as_paths_legacy.0", "10"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_community_lists_legacy.0", "COMM1"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_extcommunity_lists_legacy.0", "EXTCOMM1"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.match_local_preferences_legacy.0", "100"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_default_interfaces.0", "GigabitEthernet1"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_global", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_interfaces.0", "GigabitEthernet1"),
@@ -57,7 +56,7 @@ func TestAccDataSourceIosxeRouteMap(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_ip_global_next_hop_address.0", "1.2.3.4"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_ip_next_hop_address.0", "1.2.3.4"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_ip_qos_group", "1"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_ipv6_address", "PFL2"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_ipv6_address.0", "PFL2"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_ipv6_default_global_next_hop", "2001::1"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_ipv6_default_next_hop.0", "2001::1"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_ipv6_next_hop.0", "2001::1"),
@@ -69,19 +68,18 @@ func TestAccDataSourceIosxeRouteMap(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_metric_mtu", "1500"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_metric_type", "external"),
 					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_tag", "100"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_as_path_prepend_as", "65001 65001"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_as_path_prepend_last_as", "5"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_as_path_tag", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_communities.0", "1:2"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_communities_additive", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_community_list_delete", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_community_list_name", "COMML1"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_extcomunity_rt.0", "10:10"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_extcomunity_soo", "10:10"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_extcomunity_vpn_distinguisher", "10:10"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_extcomunity_vpn_distinguisher_additive", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_local_preference", "110"),
-					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_weight", "10000"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_as_path_prepend_as_legacy", "65001 65001"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_as_path_prepend_last_as_legacy", "5"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_as_path_tag_legacy", "true"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_communities_legacy.0", "1:2"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_communities_additive_legacy", "true"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_community_list_delete_legacy", "true"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_community_list_name_legacy", "COMML1"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_extcomunity_rt_legacy.0", "10:10"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_extcomunity_soo_legacy", "10:10"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_extcomunity_vpn_distinguisher_legacy", "10:10"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_local_preference_legacy", "110"),
+					resource.TestCheckResourceAttr("data.iosxe_route_map.test", "entries.0.set_weight_legacy", "10000"),
 				),
 			},
 		},
@@ -91,79 +89,77 @@ func TestAccDataSourceIosxeRouteMap(t *testing.T) {
 const testAccDataSourceIosxeRouteMapConfig = `
 
 resource "iosxe_route_map" "test" {
-  name = "RM1"
-  entries = [{
-    seq = 10
-    operation = "permit"
-    description = "Entry 10"
-    continue = false
-    match_interfaces = ["GigabitEthernet1"]
-    match_ip_address_access_lists = ["ACL1"]
-    match_ip_next_hop_access_lists = ["ACL1"]
-    match_ipv6_address_access_lists = "ACL1"
-    match_ipv6_next_hop_access_lists = "ACL1"
-    match_route_type_external = true
-    match_route_type_external_type_1 = true
-    match_route_type_external_type_2 = true
-    match_route_type_internal = true
-    match_route_type_level_1 = true
-    match_route_type_level_2 = true
-    match_route_type_local = true
-    match_source_protocol_bgp = ["65000"]
-    match_source_protocol_connected = true
-    match_source_protocol_eigrp = ["10"]
-    match_source_protocol_isis = true
-    match_source_protocol_lisp = true
-    match_source_protocol_ospf = ["10"]
-    match_source_protocol_ospfv3 = ["10"]
-    match_source_protocol_rip = true
-    match_source_protocol_static = true
-    match_tags = [100]
-    match_track = 1
-    match_as_paths = [10]
-    match_community_lists = ["COMM1"]
-    match_community_list_exact_match = true
-    match_extcommunity_lists = ["EXTCOMM1"]
-    match_local_preferences = [100]
-    set_default_interfaces = ["GigabitEthernet1"]
-    set_global = false
-    set_interfaces = ["GigabitEthernet1"]
-    set_ip_address = "PFL1"
-    set_ip_default_global_next_hop_address = ["1.2.3.4"]
-    set_ip_default_next_hop_address = ["1.2.3.4"]
-    set_ip_global_next_hop_address = ["1.2.3.4"]
-    set_ip_next_hop_address = ["1.2.3.4"]
-    set_ip_qos_group = 1
-    set_ipv6_address = "PFL2"
-    set_ipv6_default_global_next_hop = "2001::1"
-    set_ipv6_default_next_hop = ["2001::1"]
-    set_ipv6_next_hop = ["2001::1"]
-    set_level_1 = true
-    set_metric_value = 110
-    set_metric_delay = "10"
-    set_metric_reliability = 90
-    set_metric_loading = 10
-    set_metric_mtu = 1500
-    set_metric_type = "external"
-    set_tag = 100
-    set_as_path_prepend_as = "65001 65001"
-    set_as_path_prepend_last_as = 5
-    set_as_path_tag = true
-    set_communities = ["1:2"]
-    set_communities_additive = true
-    set_community_list_delete = true
-    set_community_list_name = "COMML1"
-    set_extcomunity_rt = ["10:10"]
-    set_extcomunity_soo = "10:10"
-    set_extcomunity_vpn_distinguisher = "10:10"
-    set_extcomunity_vpn_distinguisher_additive = true
-    set_local_preference = 110
-    set_weight = 10000
-  }]
+	name = "RM1"
+	entries = [{
+		seq = 10
+		operation = "permit"
+		description = "Entry 10"
+		continue = false
+		match_interfaces = ["GigabitEthernet1"]
+		match_ip_address_access_lists = ["ACL1"]
+		match_ip_next_hop_access_lists = ["ACL1"]
+		match_ipv6_address_access_lists = "ACL1"
+		match_ipv6_next_hop_access_lists = "ACL1"
+		match_route_type_external = true
+		match_route_type_external_type_1 = true
+		match_route_type_external_type_2 = true
+		match_route_type_internal = true
+		match_route_type_level_1 = true
+		match_route_type_level_2 = true
+		match_route_type_local = true
+		match_source_protocol_bgp = ["65000"]
+		match_source_protocol_connected = true
+		match_source_protocol_eigrp = ["10"]
+		match_source_protocol_isis = true
+		match_source_protocol_lisp = true
+		match_source_protocol_ospf = ["10"]
+		match_source_protocol_ospfv3 = ["10"]
+		match_source_protocol_rip = true
+		match_source_protocol_static = true
+		match_tags = [100]
+		match_track = 1
+		match_as_paths_legacy = [10]
+		match_community_lists_legacy = ["COMM1"]
+		match_extcommunity_lists_legacy = ["EXTCOMM1"]
+		match_local_preferences_legacy = [100]
+		set_default_interfaces = ["GigabitEthernet1"]
+		set_global = false
+		set_interfaces = ["GigabitEthernet1"]
+		set_ip_address = "PFL1"
+		set_ip_default_global_next_hop_address = ["1.2.3.4"]
+		set_ip_default_next_hop_address = ["1.2.3.4"]
+		set_ip_global_next_hop_address = ["1.2.3.4"]
+		set_ip_next_hop_address = ["1.2.3.4"]
+		set_ip_qos_group = 1
+		set_ipv6_address = ["PFL2"]
+		set_ipv6_default_global_next_hop = "2001::1"
+		set_ipv6_default_next_hop = ["2001::1"]
+		set_ipv6_next_hop = ["2001::1"]
+		set_level_1 = true
+		set_metric_value = 110
+		set_metric_delay = "10"
+		set_metric_reliability = 90
+		set_metric_loading = 10
+		set_metric_mtu = 1500
+		set_metric_type = "external"
+		set_tag = 100
+		set_as_path_prepend_as_legacy = "65001 65001"
+		set_as_path_prepend_last_as_legacy = 5
+		set_as_path_tag_legacy = true
+		set_communities_legacy = ["1:2"]
+		set_communities_additive_legacy = true
+		set_community_list_delete_legacy = true
+		set_community_list_name_legacy = "COMML1"
+		set_extcomunity_rt_legacy = ["10:10"]
+		set_extcomunity_soo_legacy = "10:10"
+		set_extcomunity_vpn_distinguisher_legacy = "10:10"
+		set_local_preference_legacy = 110
+		set_weight_legacy = 10000
+	}]
 }
 
 data "iosxe_route_map" "test" {
-  name = "RM1"
-  depends_on = [iosxe_route_map.test]
+	name = "RM1"
+	depends_on = [iosxe_route_map.test]
 }
 `

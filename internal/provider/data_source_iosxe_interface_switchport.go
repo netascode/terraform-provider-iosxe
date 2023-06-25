@@ -115,7 +115,7 @@ func (d *InterfaceSwitchportDataSource) Configure(_ context.Context, req datasou
 }
 
 func (d *InterfaceSwitchportDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfaceSwitchport
+	var config InterfaceSwitchportData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -133,7 +133,7 @@ func (d *InterfaceSwitchportDataSource) Read(ctx context.Context, req datasource
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceSwitchport{Device: config.Device}
+		config = InterfaceSwitchportData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

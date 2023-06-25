@@ -20,6 +20,19 @@ import (
 type InterfaceNVE struct {
 	Device                      types.String          `tfsdk:"device"`
 	Id                          types.String          `tfsdk:"id"`
+	DeleteMode                  types.String          `tfsdk:"delete_mode"`
+	Name                        types.Int64           `tfsdk:"name"`
+	Description                 types.String          `tfsdk:"description"`
+	Shutdown                    types.Bool            `tfsdk:"shutdown"`
+	HostReachabilityProtocolBgp types.Bool            `tfsdk:"host_reachability_protocol_bgp"`
+	SourceInterfaceLoopback     types.Int64           `tfsdk:"source_interface_loopback"`
+	VniVrfs                     []InterfaceNVEVniVrfs `tfsdk:"vni_vrfs"`
+	Vnis                        []InterfaceNVEVnis    `tfsdk:"vnis"`
+}
+
+type InterfaceNVEData struct {
+	Device                      types.String          `tfsdk:"device"`
+	Id                          types.String          `tfsdk:"id"`
 	Name                        types.Int64           `tfsdk:"name"`
 	Description                 types.String          `tfsdk:"description"`
 	Shutdown                    types.Bool            `tfsdk:"shutdown"`
@@ -39,6 +52,10 @@ type InterfaceNVEVnis struct {
 }
 
 func (data InterfaceNVE) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/nve=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueInt64())))
+}
+
+func (data InterfaceNVEData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/interface/nve=%v", url.QueryEscape(fmt.Sprintf("%v", data.Name.ValueInt64())))
 }
 
@@ -221,7 +238,7 @@ func (data *InterfaceNVE) updateFromBody(ctx context.Context, res gjson.Result) 
 	}
 }
 
-func (data *InterfaceNVE) fromBody(ctx context.Context, res gjson.Result) {
+func (data *InterfaceNVEData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -348,4 +365,31 @@ func (data *InterfaceNVE) getEmptyLeafsDelete(ctx context.Context) []string {
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *InterfaceNVE) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Description.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/description", data.getPath()))
+	}
+	if !data.Shutdown.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
+	}
+	if !data.HostReachabilityProtocolBgp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/host-reachability/protocol/bgp", data.getPath()))
+	}
+	if !data.SourceInterfaceLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/source-interface/Loopback", data.getPath()))
+	}
+	for i := range data.VniVrfs {
+		keyValues := [...]string{data.VniVrfs[i].VniRange.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/member-in-one-line/member/vni=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.Vnis {
+		keyValues := [...]string{data.Vnis[i].VniRange.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/member/vni=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

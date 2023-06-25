@@ -35,34 +35,34 @@ func TestAccIosxeBGPIPv4UnicastNeighbor(t *testing.T) {
 
 const testAccIosxeBGPIPv4UnicastNeighborPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      "id" = "65000"
-  }
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
+	attributes = {
+		"id" = "65000"
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/ipv4=unicast"
-  attributes = {
-      "af-name" = "unicast"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/ipv4=unicast"
+	attributes = {
+		"af-name" = "unicast"
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 resource "iosxe_restconf" "PreReq2" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/neighbor=3.3.3.3"
-  attributes = {
-      "id" = "3.3.3.3"
-      "remote-as" = "65000"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/neighbor=3.3.3.3"
+	attributes = {
+		"id" = "3.3.3.3"
+		"remote-as" = "65000"
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 resource "iosxe_restconf" "PreReq3" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+	}
 }
 
 `
@@ -89,7 +89,7 @@ func testAccIosxeBGPIPv4UnicastNeighborConfig_all() string {
 			in_out = "in"
 			route_map_name = "RM1"
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
 	}
 	`
 }

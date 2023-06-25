@@ -42,23 +42,23 @@ func TestAccDataSourceIosxePIMVRF(t *testing.T) {
 
 const testAccDataSourceIosxePIMVRFPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-      "vrf/forwarding" = "VRF1"
-      "ip/address/primary/address" = "200.200.200.200"
-      "ip/address/primary/mask" = "255.255.255.255"
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+		"vrf/forwarding" = "VRF1"
+		"ip/address/primary/address" = "200.200.200.200"
+		"ip/address/primary/mask" = "255.255.255.255"
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 `
@@ -66,34 +66,35 @@ resource "iosxe_restconf" "PreReq1" {
 const testAccDataSourceIosxePIMVRFConfig = `
 
 resource "iosxe_pim_vrf" "test" {
-  vrf = "VRF1"
-  autorp = false
-  autorp_listener = false
-  bsr_candidate_loopback = 100
-  bsr_candidate_mask = 30
-  bsr_candidate_priority = 10
-  ssm_range = "10"
-  ssm_default = false
-  rp_address = "19.19.19.19"
-  rp_address_override = false
-  rp_address_bidir = false
-  rp_addresses = [{
-    access_list = "10"
-    rp_address = "10.10.10.10"
-    override = false
-    bidir = false
-  }]
-  rp_candidates = [{
-    interface = "Loopback100"
-    interval = 100
-    priority = 10
-    bidir = false
-  }]
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+	delete_mode = "attributes"
+	vrf = "VRF1"
+	autorp = false
+	autorp_listener = false
+	bsr_candidate_loopback = 100
+	bsr_candidate_mask = 30
+	bsr_candidate_priority = 10
+	ssm_range = "10"
+	ssm_default = false
+	rp_address = "19.19.19.19"
+	rp_address_override = false
+	rp_address_bidir = false
+	rp_addresses = [{
+		access_list = "10"
+		rp_address = "10.10.10.10"
+		override = false
+		bidir = false
+	}]
+	rp_candidates = [{
+		interface = "Loopback100"
+		interval = 100
+		priority = 10
+		bidir = false
+	}]
+	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 
 data "iosxe_pim_vrf" "test" {
-  vrf = "VRF1"
-  depends_on = [iosxe_pim_vrf.test]
+	vrf = "VRF1"
+	depends_on = [iosxe_pim_vrf.test]
 }
 `

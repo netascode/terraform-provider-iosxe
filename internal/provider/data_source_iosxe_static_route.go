@@ -99,7 +99,7 @@ func (d *StaticRouteDataSource) Configure(_ context.Context, req datasource.Conf
 }
 
 func (d *StaticRouteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config StaticRoute
+	var config StaticRouteData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -117,7 +117,7 @@ func (d *StaticRouteDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = StaticRoute{Device: config.Device}
+		config = StaticRouteData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

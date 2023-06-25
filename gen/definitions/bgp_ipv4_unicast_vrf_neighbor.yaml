@@ -17,6 +17,7 @@ attributes:
     example: 3.3.3.3
   - yang_name: remote-as
     example: 65000
+    no_delete: true
   - yang_name: description
     example: BGP Neighbor Description
   - yang_name: shutdown
@@ -28,6 +29,7 @@ attributes:
     example: 100
   - yang_name: activate
     example: true
+    no_delete: true
   - yang_name: send-community/send-community-where
     tf_name: send_community
     example: both

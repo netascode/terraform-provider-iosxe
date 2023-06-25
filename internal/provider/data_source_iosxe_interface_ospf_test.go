@@ -34,22 +34,23 @@ func TestAccDataSourceIosxeInterfaceOSPF(t *testing.T) {
 const testAccDataSourceIosxeInterfaceOSPFConfig = `
 
 resource "iosxe_interface_ospf" "test" {
-  type = "GigabitEthernet"
-  name = "3"
-  cost = 10
-  dead_interval = 30
-  hello_interval = 5
-  mtu_ignore = false
-  network_type_broadcast = false
-  network_type_non_broadcast = false
-  network_type_point_to_multipoint = false
-  network_type_point_to_point = true
-  priority = 10
+	delete_mode = "attributes"
+	type = "GigabitEthernet"
+	name = "3"
+	cost = 10
+	dead_interval = 30
+	hello_interval = 5
+	mtu_ignore = false
+	network_type_broadcast = false
+	network_type_non_broadcast = false
+	network_type_point_to_multipoint = false
+	network_type_point_to_point = true
+	priority = 10
 }
 
 data "iosxe_interface_ospf" "test" {
-  type = "GigabitEthernet"
-  name = "3"
-  depends_on = [iosxe_interface_ospf.test]
+	type = "GigabitEthernet"
+	name = "3"
+	depends_on = [iosxe_interface_ospf.test]
 }
 `

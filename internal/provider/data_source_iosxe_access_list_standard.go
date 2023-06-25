@@ -111,7 +111,7 @@ func (d *AccessListStandardDataSource) Configure(_ context.Context, req datasour
 }
 
 func (d *AccessListStandardDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config AccessListStandard
+	var config AccessListStandardData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -129,7 +129,7 @@ func (d *AccessListStandardDataSource) Read(ctx context.Context, req datasource.
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = AccessListStandard{Device: config.Device}
+		config = AccessListStandardData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

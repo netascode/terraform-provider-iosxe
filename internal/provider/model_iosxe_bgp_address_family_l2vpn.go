@@ -15,6 +15,14 @@ import (
 )
 
 type BGPAddressFamilyL2VPN struct {
+	Device     types.String `tfsdk:"device"`
+	Id         types.String `tfsdk:"id"`
+	DeleteMode types.String `tfsdk:"delete_mode"`
+	Asn        types.String `tfsdk:"asn"`
+	AfName     types.String `tfsdk:"af_name"`
+}
+
+type BGPAddressFamilyL2VPNData struct {
 	Device types.String `tfsdk:"device"`
 	Id     types.String `tfsdk:"id"`
 	Asn    types.String `tfsdk:"asn"`
@@ -22,6 +30,10 @@ type BGPAddressFamilyL2VPN struct {
 }
 
 func (data BGPAddressFamilyL2VPN) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.AfName.ValueString())))
+}
+
+func (data BGPAddressFamilyL2VPNData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=%s", url.QueryEscape(fmt.Sprintf("%v", data.Asn.ValueString())), url.QueryEscape(fmt.Sprintf("%v", data.AfName.ValueString())))
 }
 
@@ -56,7 +68,7 @@ func (data *BGPAddressFamilyL2VPN) updateFromBody(ctx context.Context, res gjson
 	}
 }
 
-func (data *BGPAddressFamilyL2VPN) fromBody(ctx context.Context, res gjson.Result) {
+func (data *BGPAddressFamilyL2VPNData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -71,4 +83,9 @@ func (data *BGPAddressFamilyL2VPN) getDeletedListItems(ctx context.Context, stat
 func (data *BGPAddressFamilyL2VPN) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
+}
+
+func (data *BGPAddressFamilyL2VPN) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	return deletePaths
 }

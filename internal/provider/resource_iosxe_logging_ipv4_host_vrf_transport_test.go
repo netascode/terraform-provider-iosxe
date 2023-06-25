@@ -34,13 +34,13 @@ func TestAccIosxeLoggingIPv4HostVRFTransport(t *testing.T) {
 
 const testAccIosxeLoggingIPv4HostVRFTransportPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-      "address-family/ipv6" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+		"address-family/ipv6" = ""
+	}
 }
 
 `
@@ -69,7 +69,7 @@ func testAccIosxeLoggingIPv4HostVRFTransportConfig_all() string {
 		transport_tls_ports = [{
 			port_number = 10002
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

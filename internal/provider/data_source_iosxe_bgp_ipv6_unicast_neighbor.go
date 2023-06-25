@@ -95,7 +95,7 @@ func (d *BGPIPv6UnicastNeighborDataSource) Configure(_ context.Context, req data
 }
 
 func (d *BGPIPv6UnicastNeighborDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config BGPIPv6UnicastNeighbor
+	var config BGPIPv6UnicastNeighborData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -113,7 +113,7 @@ func (d *BGPIPv6UnicastNeighborDataSource) Read(ctx context.Context, req datasou
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = BGPIPv6UnicastNeighbor{Device: config.Device}
+		config = BGPIPv6UnicastNeighborData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

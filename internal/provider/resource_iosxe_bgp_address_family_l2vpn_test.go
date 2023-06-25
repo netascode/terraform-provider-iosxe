@@ -32,10 +32,10 @@ func TestAccIosxeBGPAddressFamilyL2VPN(t *testing.T) {
 
 const testAccIosxeBGPAddressFamilyL2VPNPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      "id" = "65000"
-  }
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
+	attributes = {
+		"id" = "65000"
+	}
 }
 
 `
@@ -55,7 +55,7 @@ func testAccIosxeBGPAddressFamilyL2VPNConfig_all() string {
 	resource "iosxe_bgp_address_family_l2vpn" "test" {
 		asn = "65000"
 		af_name = "evpn"
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

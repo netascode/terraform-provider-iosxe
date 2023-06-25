@@ -51,41 +51,42 @@ func TestAccDataSourceIosxeSNMPServer(t *testing.T) {
 const testAccDataSourceIosxeSNMPServerConfig = `
 
 resource "iosxe_snmp_server" "test" {
-  chassis_id = "R1"
-  contact = "Contact1"
-  ifindex_persist = true
-  location = "Location1"
-  packetsize = 2000
-  queue_length = 100
-  enable_logging_getop = true
-  enable_logging_setop = true
-  enable_traps = true
-  enable_traps_snmp_authentication = true
-  enable_traps_snmp_coldstart = true
-  enable_traps_snmp_linkdown = true
-  enable_traps_snmp_linkup = true
-  enable_traps_snmp_warmstart = true
-  source_interface_informs_gigabit_ethernet = "1"
-  source_interface_traps_gigabit_ethernet = "1"
-  trap_source_gigabit_ethernet = "1"
-  snmp_communities = [{
-    name = "COM1"
-    view = "VIEW1"
-    permission = "ro"
-    ipv6 = "ACL1"
-    access_list_name = "1"
-  }]
-  contexts = [{
-    name = "CON1"
-  }]
-  views = [{
-    name = "VIEW1"
-    mib = "interfaces"
-    inc_exl = "included"
-  }]
+	delete_mode = "attributes"
+	chassis_id = "R1"
+	contact = "Contact1"
+	ifindex_persist = true
+	location = "Location1"
+	packetsize = 2000
+	queue_length = 100
+	enable_logging_getop = true
+	enable_logging_setop = true
+	enable_traps = true
+	enable_traps_snmp_authentication = true
+	enable_traps_snmp_coldstart = true
+	enable_traps_snmp_linkdown = true
+	enable_traps_snmp_linkup = true
+	enable_traps_snmp_warmstart = true
+	source_interface_informs_gigabit_ethernet = "1"
+	source_interface_traps_gigabit_ethernet = "1"
+	trap_source_gigabit_ethernet = "1"
+	snmp_communities = [{
+		name = "COM1"
+		view = "VIEW1"
+		permission = "ro"
+		ipv6 = "ACL1"
+		access_list_name = "1"
+	}]
+	contexts = [{
+		name = "CON1"
+	}]
+	views = [{
+		name = "VIEW1"
+		mib = "interfaces"
+		inc_exl = "included"
+	}]
 }
 
 data "iosxe_snmp_server" "test" {
-  depends_on = [iosxe_snmp_server.test]
+	depends_on = [iosxe_snmp_server.test]
 }
 `

@@ -135,7 +135,7 @@ func (d *SystemDataSource) Configure(_ context.Context, req datasource.Configure
 }
 
 func (d *SystemDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config System
+	var config SystemData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -153,7 +153,7 @@ func (d *SystemDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = System{Device: config.Device}
+		config = SystemData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

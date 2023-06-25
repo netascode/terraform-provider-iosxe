@@ -75,7 +75,7 @@ func (d *BGPDataSource) Configure(_ context.Context, req datasource.ConfigureReq
 }
 
 func (d *BGPDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config BGP
+	var config BGPData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -93,7 +93,7 @@ func (d *BGPDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = BGP{Device: config.Device}
+		config = BGPData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

@@ -34,29 +34,29 @@ func TestAccIosxeBGPAddressFamilyIPv6VRF(t *testing.T) {
 
 const testAccIosxeBGPAddressFamilyIPv6VRFPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/ipv6"
-  attributes = {
-      "unicast-routing" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/ipv6"
+	attributes = {
+		"unicast-routing" = ""
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "rd" = "1:1"
-      "address-family/ipv6" = ""
-  }
-  depends_on = [iosxe_restconf.PreReq0, ]
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"rd" = "1:1"
+		"address-family/ipv6" = ""
+	}
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 resource "iosxe_restconf" "PreReq2" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      "id" = "65000"
-  }
-  depends_on = [iosxe_restconf.PreReq1, ]
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
+	attributes = {
+		"id" = "65000"
+	}
+	depends_on = [iosxe_restconf.PreReq1, ]
 }
 
 `
@@ -82,7 +82,7 @@ func testAccIosxeBGPAddressFamilyIPv6VRFConfig_all() string {
 			redistribute_connected = true
 			redistribute_static = true
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
+		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
 	}
 	`
 }

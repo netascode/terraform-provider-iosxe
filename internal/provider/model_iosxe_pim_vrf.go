@@ -20,6 +20,26 @@ import (
 type PIMVRF struct {
 	Device                        types.String         `tfsdk:"device"`
 	Id                            types.String         `tfsdk:"id"`
+	DeleteMode                    types.String         `tfsdk:"delete_mode"`
+	Vrf                           types.String         `tfsdk:"vrf"`
+	Autorp                        types.Bool           `tfsdk:"autorp"`
+	AutorpListener                types.Bool           `tfsdk:"autorp_listener"`
+	BsrCandidateLoopback          types.Int64          `tfsdk:"bsr_candidate_loopback"`
+	BsrCandidateMask              types.Int64          `tfsdk:"bsr_candidate_mask"`
+	BsrCandidatePriority          types.Int64          `tfsdk:"bsr_candidate_priority"`
+	BsrCandidateAcceptRpCandidate types.String         `tfsdk:"bsr_candidate_accept_rp_candidate"`
+	SsmRange                      types.String         `tfsdk:"ssm_range"`
+	SsmDefault                    types.Bool           `tfsdk:"ssm_default"`
+	RpAddress                     types.String         `tfsdk:"rp_address"`
+	RpAddressOverride             types.Bool           `tfsdk:"rp_address_override"`
+	RpAddressBidir                types.Bool           `tfsdk:"rp_address_bidir"`
+	RpAddresses                   []PIMVRFRpAddresses  `tfsdk:"rp_addresses"`
+	RpCandidates                  []PIMVRFRpCandidates `tfsdk:"rp_candidates"`
+}
+
+type PIMVRFData struct {
+	Device                        types.String         `tfsdk:"device"`
+	Id                            types.String         `tfsdk:"id"`
 	Vrf                           types.String         `tfsdk:"vrf"`
 	Autorp                        types.Bool           `tfsdk:"autorp"`
 	AutorpListener                types.Bool           `tfsdk:"autorp_listener"`
@@ -50,6 +70,10 @@ type PIMVRFRpCandidates struct {
 }
 
 func (data PIMVRF) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/pim/Cisco-IOS-XE-multicast:vrf=%v", url.QueryEscape(fmt.Sprintf("%v", data.Vrf.ValueString())))
+}
+
+func (data PIMVRFData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/ip/pim/Cisco-IOS-XE-multicast:vrf=%v", url.QueryEscape(fmt.Sprintf("%v", data.Vrf.ValueString())))
 }
 
@@ -346,7 +370,7 @@ func (data *PIMVRF) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *PIMVRF) fromBody(ctx context.Context, res gjson.Result) {
+func (data *PIMVRFData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -532,4 +556,52 @@ func (data *PIMVRF) getEmptyLeafsDelete(ctx context.Context) []string {
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *PIMVRF) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Autorp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/autorp-container/autorp", data.getPath()))
+	}
+	if !data.AutorpListener.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/autorp-container/listener", data.getPath()))
+	}
+	if !data.BsrCandidateLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/bsr-candidate", data.getPath()))
+	}
+	if !data.BsrCandidateMask.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/bsr-candidate", data.getPath()))
+	}
+	if !data.BsrCandidatePriority.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/bsr-candidate", data.getPath()))
+	}
+	if !data.BsrCandidateAcceptRpCandidate.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/bsr-candidate", data.getPath()))
+	}
+	if !data.SsmRange.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ssm/range", data.getPath()))
+	}
+	if !data.SsmDefault.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ssm/default", data.getPath()))
+	}
+	if !data.RpAddress.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/rp-address-conf/address", data.getPath()))
+	}
+	if !data.RpAddressOverride.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/rp-address-conf/override", data.getPath()))
+	}
+	if !data.RpAddressBidir.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/rp-address-conf/bidir", data.getPath()))
+	}
+	for i := range data.RpAddresses {
+		keyValues := [...]string{data.RpAddresses[i].AccessList.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/rp-address-list=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.RpCandidates {
+		keyValues := [...]string{data.RpCandidates[i].Interface.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/rp-candidate=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

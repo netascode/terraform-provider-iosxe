@@ -28,17 +28,17 @@ func TestAccDataSourceIosxeBGPNeighbor(t *testing.T) {
 
 const testAccDataSourceIosxeBGPNeighborPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
-  attributes = {
-      "id" = "65000"
-  }
+	path = "Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000"
+	attributes = {
+		"id" = "65000"
+	}
 }
 
 resource "iosxe_restconf" "PreReq1" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+	}
 }
 
 `
@@ -46,18 +46,19 @@ resource "iosxe_restconf" "PreReq1" {
 const testAccDataSourceIosxeBGPNeighborConfig = `
 
 resource "iosxe_bgp_neighbor" "test" {
-  asn = "65000"
-  ip = "3.3.3.3"
-  remote_as = "65000"
-  description = "BGP Neighbor Description"
-  shutdown = false
-  update_source_loopback = "100"
-  depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+	delete_mode = "attributes"
+	asn = "65000"
+	ip = "3.3.3.3"
+	remote_as = "65000"
+	description = "BGP Neighbor Description"
+	shutdown = false
+	update_source_loopback = "100"
+	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
 }
 
 data "iosxe_bgp_neighbor" "test" {
-  asn = "65000"
-  ip = "3.3.3.3"
-  depends_on = [iosxe_bgp_neighbor.test]
+	asn = "65000"
+	ip = "3.3.3.3"
+	depends_on = [iosxe_bgp_neighbor.test]
 }
 `

@@ -1,6 +1,7 @@
 ---
 name: Static Route
 path: Cisco-IOS-XE-native:native/ip/route/ip-route-interface-forwarding-list=%s,%s
+no_delete_attributes: true
 doc_category: Routing
 attributes:
   - yang_name: prefix

@@ -123,7 +123,7 @@ func (d *EVPNInstanceDataSource) Configure(_ context.Context, req datasource.Con
 }
 
 func (d *EVPNInstanceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config EVPNInstance
+	var config EVPNInstanceData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -141,7 +141,7 @@ func (d *EVPNInstanceDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = EVPNInstance{Device: config.Device}
+		config = EVPNInstanceData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

@@ -103,7 +103,7 @@ func (d *InterfaceOSPFDataSource) Configure(_ context.Context, req datasource.Co
 }
 
 func (d *InterfaceOSPFDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfaceOSPF
+	var config InterfaceOSPFData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -121,7 +121,7 @@ func (d *InterfaceOSPFDataSource) Read(ctx context.Context, req datasource.ReadR
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfaceOSPF{Device: config.Device}
+		config = InterfaceOSPFData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))

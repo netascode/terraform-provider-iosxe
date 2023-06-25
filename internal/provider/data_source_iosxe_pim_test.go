@@ -42,13 +42,13 @@ func TestAccDataSourceIosxePIM(t *testing.T) {
 
 const testAccDataSourceIosxePIMPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
-  attributes = {
-      "name" = "100"
-      "ip/address/primary/address" = "200.200.200.200"
-      "ip/address/primary/mask" = "255.255.255.255"
-      "ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=100"
+	attributes = {
+		"name" = "100"
+		"ip/address/primary/address" = "200.200.200.200"
+		"ip/address/primary/mask" = "255.255.255.255"
+		"ip/pim/Cisco-IOS-XE-multicast:pim-mode-choice-cfg/sparse-mode" = ""
+	}
 }
 
 `
@@ -56,32 +56,33 @@ resource "iosxe_restconf" "PreReq0" {
 const testAccDataSourceIosxePIMConfig = `
 
 resource "iosxe_pim" "test" {
-  autorp = false
-  autorp_listener = false
-  bsr_candidate_loopback = 100
-  bsr_candidate_mask = 30
-  bsr_candidate_priority = 10
-  ssm_range = "10"
-  ssm_default = false
-  rp_address = "9.9.9.9"
-  rp_address_override = false
-  rp_address_bidir = false
-  rp_addresses = [{
-    access_list = "10"
-    rp_address = "10.10.10.10"
-    override = false
-    bidir = false
-  }]
-  rp_candidates = [{
-    interface = "Loopback100"
-    interval = 100
-    priority = 10
-    bidir = false
-  }]
-  depends_on = [iosxe_restconf.PreReq0, ]
+	delete_mode = "attributes"
+	autorp = false
+	autorp_listener = false
+	bsr_candidate_loopback = 100
+	bsr_candidate_mask = 30
+	bsr_candidate_priority = 10
+	ssm_range = "10"
+	ssm_default = false
+	rp_address = "9.9.9.9"
+	rp_address_override = false
+	rp_address_bidir = false
+	rp_addresses = [{
+		access_list = "10"
+		rp_address = "10.10.10.10"
+		override = false
+		bidir = false
+	}]
+	rp_candidates = [{
+		interface = "Loopback100"
+		interval = 100
+		priority = 10
+		bidir = false
+	}]
+	depends_on = [iosxe_restconf.PreReq0, ]
 }
 
 data "iosxe_pim" "test" {
-  depends_on = [iosxe_pim.test]
+	depends_on = [iosxe_pim.test]
 }
 `

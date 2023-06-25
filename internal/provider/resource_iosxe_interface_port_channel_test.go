@@ -45,12 +45,12 @@ func TestAccIosxeInterfacePortChannel(t *testing.T) {
 
 const testAccIosxeInterfacePortChannelPrerequisitesConfig = `
 resource "iosxe_restconf" "PreReq0" {
-  path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
-  delete = false
-  attributes = {
-      "name" = "VRF1"
-      "address-family/ipv4" = ""
-  }
+	path = "Cisco-IOS-XE-native:native/vrf/definition=VRF1"
+	delete = false
+	attributes = {
+		"name" = "VRF1"
+		"address-family/ipv4" = ""
+	}
 }
 
 `
@@ -85,7 +85,7 @@ func testAccIosxeInterfacePortChannelConfig_all() string {
 			address = "10.10.10.10"
 			global = false
 		}]
-  		depends_on = [iosxe_restconf.PreReq0, ]
+		depends_on = [iosxe_restconf.PreReq0, ]
 	}
 	`
 }

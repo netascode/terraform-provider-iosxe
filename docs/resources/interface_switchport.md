@@ -43,6 +43,8 @@ resource "iosxe_interface_switchport" "example" {
 ### Optional
 
 - `access_vlan` (String)
+- `delete_mode` (String) Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.
+  - Choices: `all`, `attributes`
 - `device` (String) A device name from the provider configuration.
 - `host` (Boolean) Set port host
 - `mode_access` (Boolean) Set trunking mode to ACCESS unconditionally

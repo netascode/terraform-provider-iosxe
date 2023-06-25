@@ -14,6 +14,7 @@ attributes:
     example: 3.3.3.3
   - yang_name: activate
     example: true
+    no_delete: true
   - yang_name: send-community/send-community-where
     tf_name: send_community
     example: both

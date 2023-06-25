@@ -25,7 +25,21 @@ type VLANConfiguration struct {
 	EvpnInstanceVni types.Int64  `tfsdk:"evpn_instance_vni"`
 }
 
+type VLANConfigurationData struct {
+	Device          types.String `tfsdk:"device"`
+	Id              types.String `tfsdk:"id"`
+	VlanId          types.Int64  `tfsdk:"vlan_id"`
+	Vni             types.Int64  `tfsdk:"vni"`
+	AccessVfi       types.String `tfsdk:"access_vfi"`
+	EvpnInstance    types.Int64  `tfsdk:"evpn_instance"`
+	EvpnInstanceVni types.Int64  `tfsdk:"evpn_instance_vni"`
+}
+
 func (data VLANConfiguration) getPath() string {
+	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:configuration=%v", url.QueryEscape(fmt.Sprintf("%v", data.VlanId.ValueInt64())))
+}
+
+func (data VLANConfigurationData) getPath() string {
 	return fmt.Sprintf("Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:configuration=%v", url.QueryEscape(fmt.Sprintf("%v", data.VlanId.ValueInt64())))
 }
 
@@ -92,7 +106,7 @@ func (data *VLANConfiguration) updateFromBody(ctx context.Context, res gjson.Res
 	}
 }
 
-func (data *VLANConfiguration) fromBody(ctx context.Context, res gjson.Result) {
+func (data *VLANConfigurationData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -119,4 +133,21 @@ func (data *VLANConfiguration) getDeletedListItems(ctx context.Context, state VL
 func (data *VLANConfiguration) getEmptyLeafsDelete(ctx context.Context) []string {
 	emptyLeafsDelete := make([]string, 0)
 	return emptyLeafsDelete
+}
+
+func (data *VLANConfiguration) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Vni.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/member/vni", data.getPath()))
+	}
+	if !data.AccessVfi.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/member/access-vfi", data.getPath()))
+	}
+	if !data.EvpnInstance.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/member/evpn-instance/evpn-instance", data.getPath()))
+	}
+	if !data.EvpnInstanceVni.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/member/evpn-instance/vni", data.getPath()))
+	}
+	return deletePaths
 }

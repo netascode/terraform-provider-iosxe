@@ -1,6 +1,7 @@
 ---
 name: Access List Extended
 path: Cisco-IOS-XE-native:native/ip/access-list/Cisco-IOS-XE-acl:extended=%v
+no_delete_attributes: true
 doc_category: System
 attributes:
   - yang_name: name

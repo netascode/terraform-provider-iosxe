@@ -57,6 +57,8 @@ resource "iosxe_pim" "example" {
   - Range: `0`-`32`
 - `bsr_candidate_priority` (Number) Priority value for candidate bootstrap router
   - Range: `0`-`255`
+- `delete_mode` (String) Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.
+  - Choices: `all`, `attributes`
 - `device` (String) A device name from the provider configuration.
 - `rp_address` (String) IP address of Rendezvous-point for group
 - `rp_address_bidir` (Boolean) Group range treated in bidirectional shared-tree mode

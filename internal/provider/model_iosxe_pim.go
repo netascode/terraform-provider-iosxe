@@ -19,6 +19,25 @@ import (
 type PIM struct {
 	Device                        types.String      `tfsdk:"device"`
 	Id                            types.String      `tfsdk:"id"`
+	DeleteMode                    types.String      `tfsdk:"delete_mode"`
+	Autorp                        types.Bool        `tfsdk:"autorp"`
+	AutorpListener                types.Bool        `tfsdk:"autorp_listener"`
+	BsrCandidateLoopback          types.Int64       `tfsdk:"bsr_candidate_loopback"`
+	BsrCandidateMask              types.Int64       `tfsdk:"bsr_candidate_mask"`
+	BsrCandidatePriority          types.Int64       `tfsdk:"bsr_candidate_priority"`
+	BsrCandidateAcceptRpCandidate types.String      `tfsdk:"bsr_candidate_accept_rp_candidate"`
+	SsmRange                      types.String      `tfsdk:"ssm_range"`
+	SsmDefault                    types.Bool        `tfsdk:"ssm_default"`
+	RpAddress                     types.String      `tfsdk:"rp_address"`
+	RpAddressOverride             types.Bool        `tfsdk:"rp_address_override"`
+	RpAddressBidir                types.Bool        `tfsdk:"rp_address_bidir"`
+	RpAddresses                   []PIMRpAddresses  `tfsdk:"rp_addresses"`
+	RpCandidates                  []PIMRpCandidates `tfsdk:"rp_candidates"`
+}
+
+type PIMData struct {
+	Device                        types.String      `tfsdk:"device"`
+	Id                            types.String      `tfsdk:"id"`
 	Autorp                        types.Bool        `tfsdk:"autorp"`
 	AutorpListener                types.Bool        `tfsdk:"autorp_listener"`
 	BsrCandidateLoopback          types.Int64       `tfsdk:"bsr_candidate_loopback"`
@@ -48,6 +67,10 @@ type PIMRpCandidates struct {
 }
 
 func (data PIM) getPath() string {
+	return "Cisco-IOS-XE-native:native/ip/pim"
+}
+
+func (data PIMData) getPath() string {
 	return "Cisco-IOS-XE-native:native/ip/pim"
 }
 
@@ -336,7 +359,7 @@ func (data *PIM) updateFromBody(ctx context.Context, res gjson.Result) {
 	}
 }
 
-func (data *PIM) fromBody(ctx context.Context, res gjson.Result) {
+func (data *PIMData) fromBody(ctx context.Context, res gjson.Result) {
 	prefix := helpers.LastElement(data.getPath()) + "."
 	if res.Get(helpers.LastElement(data.getPath())).IsArray() {
 		prefix += "0."
@@ -522,4 +545,52 @@ func (data *PIM) getEmptyLeafsDelete(ctx context.Context) []string {
 		}
 	}
 	return emptyLeafsDelete
+}
+
+func (data *PIM) getDeletePaths(ctx context.Context) []string {
+	var deletePaths []string
+	if !data.Autorp.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:autorp-container/autorp", data.getPath()))
+	}
+	if !data.AutorpListener.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:autorp-container/listener", data.getPath()))
+	}
+	if !data.BsrCandidateLoopback.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:bsr-candidate", data.getPath()))
+	}
+	if !data.BsrCandidateMask.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:bsr-candidate", data.getPath()))
+	}
+	if !data.BsrCandidatePriority.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:bsr-candidate", data.getPath()))
+	}
+	if !data.BsrCandidateAcceptRpCandidate.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:bsr-candidate", data.getPath()))
+	}
+	if !data.SsmRange.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:ssm/range", data.getPath()))
+	}
+	if !data.SsmDefault.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:ssm/default", data.getPath()))
+	}
+	if !data.RpAddress.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-conf/address", data.getPath()))
+	}
+	if !data.RpAddressOverride.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-conf/override", data.getPath()))
+	}
+	if !data.RpAddressBidir.IsNull() {
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-conf/bidir", data.getPath()))
+	}
+	for i := range data.RpAddresses {
+		keyValues := [...]string{data.RpAddresses[i].AccessList.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-address-list=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	for i := range data.RpCandidates {
+		keyValues := [...]string{data.RpCandidates[i].Interface.ValueString()}
+
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/Cisco-IOS-XE-multicast:rp-candidate=%v", data.getPath(), strings.Join(keyValues[:], ",")))
+	}
+	return deletePaths
 }

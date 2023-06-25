@@ -99,7 +99,7 @@ func (d *InterfacePIMDataSource) Configure(_ context.Context, req datasource.Con
 }
 
 func (d *InterfacePIMDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var config InterfacePIM
+	var config InterfacePIMData
 
 	// Read config
 	diags := req.Config.Get(ctx, &config)
@@ -117,7 +117,7 @@ func (d *InterfacePIMDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 	res, err := d.clients[config.Device.ValueString()].GetData(config.getPath())
 	if res.StatusCode == 404 {
-		config = InterfacePIM{Device: config.Device}
+		config = InterfacePIMData{Device: config.Device}
 	} else {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to retrieve object, got error: %s", err))
