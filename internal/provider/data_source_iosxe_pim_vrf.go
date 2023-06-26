@@ -94,6 +94,10 @@ func (d *PIMVRFDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				MarkdownDescription: "Group range treated in bidirectional shared-tree mode",
 				Computed:            true,
 			},
+			"cache_rpf_oif": schema.BoolAttribute{
+				MarkdownDescription: "Cache outgoing interface RPF info",
+				Computed:            true,
+			},
 			"rp_addresses": schema.ListNestedAttribute{
 				MarkdownDescription: "PIM RP-address (Rendezvous Point)",
 				Computed:            true,

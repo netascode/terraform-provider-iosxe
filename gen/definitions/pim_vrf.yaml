@@ -41,6 +41,10 @@ attributes:
   - yang_name: rp-address-conf/bidir
     tf_name: rp_address_bidir
     example: false
+  - yang_name: cache/rpf-oif
+    example: true
+    no_delete: true
+    exclude_example: true
   - yang_name: rp-address-list
     tf_name: rp_addresses
     type: List
@@ -57,7 +61,6 @@ attributes:
   - yang_name: rp-candidate
     tf_name: rp_candidates
     type: List
-    exclude_test: true
     attributes:
       - yang_name: interface
         example: Loopback100

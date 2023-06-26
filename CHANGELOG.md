@@ -1,6 +1,8 @@
 ## 0.1.18 (unreleased)
 
 - Validate if referenced `device` exists in provider configuration
+- Add `delete_mode` attribute to resources
+- Add `cache_rpf_oif` attribute to `iosxe_pim_vrf` resource and data source
 
 ## 0.1.17
 

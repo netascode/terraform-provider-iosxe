@@ -33,6 +33,7 @@ type PIMVRF struct {
 	RpAddress                     types.String         `tfsdk:"rp_address"`
 	RpAddressOverride             types.Bool           `tfsdk:"rp_address_override"`
 	RpAddressBidir                types.Bool           `tfsdk:"rp_address_bidir"`
+	CacheRpfOif                   types.Bool           `tfsdk:"cache_rpf_oif"`
 	RpAddresses                   []PIMVRFRpAddresses  `tfsdk:"rp_addresses"`
 	RpCandidates                  []PIMVRFRpCandidates `tfsdk:"rp_candidates"`
 }
@@ -52,6 +53,7 @@ type PIMVRFData struct {
 	RpAddress                     types.String         `tfsdk:"rp_address"`
 	RpAddressOverride             types.Bool           `tfsdk:"rp_address_override"`
 	RpAddressBidir                types.Bool           `tfsdk:"rp_address_bidir"`
+	CacheRpfOif                   types.Bool           `tfsdk:"cache_rpf_oif"`
 	RpAddresses                   []PIMVRFRpAddresses  `tfsdk:"rp_addresses"`
 	RpCandidates                  []PIMVRFRpCandidates `tfsdk:"rp_candidates"`
 }
@@ -132,6 +134,11 @@ func (data PIMVRF) toBody(ctx context.Context) string {
 	if !data.RpAddressBidir.IsNull() && !data.RpAddressBidir.IsUnknown() {
 		if data.RpAddressBidir.ValueBool() {
 			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"rp-address-conf.bidir", map[string]string{})
+		}
+	}
+	if !data.CacheRpfOif.IsNull() && !data.CacheRpfOif.IsUnknown() {
+		if data.CacheRpfOif.ValueBool() {
+			body, _ = sjson.Set(body, helpers.LastElement(data.getPath())+"."+"cache.rpf-oif", map[string]string{})
 		}
 	}
 	if len(data.RpAddresses) > 0 {
@@ -262,6 +269,15 @@ func (data *PIMVRF) updateFromBody(ctx context.Context, res gjson.Result) {
 		}
 	} else {
 		data.RpAddressBidir = types.BoolNull()
+	}
+	if value := res.Get(prefix + "cache.rpf-oif"); !data.CacheRpfOif.IsNull() {
+		if value.Exists() {
+			data.CacheRpfOif = types.BoolValue(true)
+		} else {
+			data.CacheRpfOif = types.BoolValue(false)
+		}
+	} else {
+		data.CacheRpfOif = types.BoolNull()
 	}
 	for i := range data.RpAddresses {
 		keys := [...]string{"access-list"}
@@ -418,6 +434,11 @@ func (data *PIMVRFData) fromBody(ctx context.Context, res gjson.Result) {
 	} else {
 		data.RpAddressBidir = types.BoolValue(false)
 	}
+	if value := res.Get(prefix + "cache.rpf-oif"); value.Exists() {
+		data.CacheRpfOif = types.BoolValue(true)
+	} else {
+		data.CacheRpfOif = types.BoolValue(false)
+	}
 	if value := res.Get(prefix + "rp-address-list"); value.Exists() {
 		data.RpAddresses = make([]PIMVRFRpAddresses, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -537,6 +558,9 @@ func (data *PIMVRF) getEmptyLeafsDelete(ctx context.Context) []string {
 	}
 	if !data.RpAddressBidir.IsNull() && !data.RpAddressBidir.ValueBool() {
 		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/rp-address-conf/bidir", data.getPath()))
+	}
+	if !data.CacheRpfOif.IsNull() && !data.CacheRpfOif.ValueBool() {
+		emptyLeafsDelete = append(emptyLeafsDelete, fmt.Sprintf("%v/cache/rpf-oif", data.getPath()))
 	}
 
 	for i := range data.RpAddresses {

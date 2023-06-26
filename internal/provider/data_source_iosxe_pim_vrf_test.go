@@ -26,10 +26,15 @@ func TestAccDataSourceIosxePIMVRF(t *testing.T) {
 					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_address", "19.19.19.19"),
 					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_address_override", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_address_bidir", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "cache_rpf_oif", "true"),
 					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_addresses.0.access_list", "10"),
 					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_addresses.0.rp_address", "10.10.10.10"),
 					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_addresses.0.override", "false"),
 					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_addresses.0.bidir", "false"),
+					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_candidates.0.interface", "Loopback100"),
+					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_candidates.0.interval", "100"),
+					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_candidates.0.priority", "10"),
+					resource.TestCheckResourceAttr("data.iosxe_pim_vrf.test", "rp_candidates.0.bidir", "false"),
 				),
 			},
 		},
@@ -74,10 +79,17 @@ resource "iosxe_pim_vrf" "test" {
 	rp_address = "19.19.19.19"
 	rp_address_override = false
 	rp_address_bidir = false
+	cache_rpf_oif = true
 	rp_addresses = [{
 		access_list = "10"
 		rp_address = "10.10.10.10"
 		override = false
+		bidir = false
+	}]
+	rp_candidates = [{
+		interface = "Loopback100"
+		interval = 100
+		priority = 10
 		bidir = false
 	}]
 	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]

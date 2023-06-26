@@ -37,6 +37,7 @@ data "iosxe_pim_vrf" "example" {
 - `bsr_candidate_loopback` (Number) Loopback interface
 - `bsr_candidate_mask` (Number) Hash Mask length for RP selection
 - `bsr_candidate_priority` (Number) Priority value for candidate bootstrap router
+- `cache_rpf_oif` (Boolean) Cache outgoing interface RPF info
 - `id` (String) The path of the retrieved object.
 - `rp_address` (String) IP address of Rendezvous-point for group
 - `rp_address_bidir` (Boolean) Group range treated in bidirectional shared-tree mode
