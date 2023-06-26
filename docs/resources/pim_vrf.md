@@ -33,14 +33,6 @@ resource "iosxe_pim_vrf" "example" {
       bidir       = false
     }
   ]
-  rp_candidates = [
-    {
-      interface = "Loopback100"
-      interval  = 100
-      priority  = 10
-      bidir     = false
-    }
-  ]
 }
 ```
 

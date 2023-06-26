@@ -20,7 +20,6 @@ import (
 type SNMPServerGroup struct {
 	Device     types.String                `tfsdk:"device"`
 	Id         types.String                `tfsdk:"id"`
-	DeleteMode types.String                `tfsdk:"delete_mode"`
 	Name       types.String                `tfsdk:"name"`
 	V3Security []SNMPServerGroupV3Security `tfsdk:"v3_security"`
 }

@@ -20,7 +20,6 @@ import (
 type InterfaceEthernet struct {
 	Device                     types.String                       `tfsdk:"device"`
 	Id                         types.String                       `tfsdk:"id"`
-	DeleteMode                 types.String                       `tfsdk:"delete_mode"`
 	Type                       types.String                       `tfsdk:"type"`
 	Name                       types.String                       `tfsdk:"name"`
 	MediaType                  types.String                       `tfsdk:"media_type"`

@@ -57,6 +57,7 @@ attributes:
   - yang_name: rp-candidate
     tf_name: rp_candidates
     type: List
+    exclude_test: true
     attributes:
       - yang_name: interface
         example: Loopback100

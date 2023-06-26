@@ -33,7 +33,6 @@ func TestAccDataSourceIosxeSNMPServerGroup(t *testing.T) {
 const testAccDataSourceIosxeSNMPServerGroupConfig = `
 
 resource "iosxe_snmp_server_group" "test" {
-	delete_mode = "attributes"
 	name = "GROUP1"
 	v3_security = [{
 		security_level = "priv"

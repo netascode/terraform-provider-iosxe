@@ -54,7 +54,6 @@ resource "iosxe_restconf" "PreReq0" {
 const testAccDataSourceIosxeInterfaceEthernetConfig = `
 
 resource "iosxe_interface_ethernet" "test" {
-	delete_mode = "attributes"
 	type = "GigabitEthernet"
 	name = "3"
 	description = "My Interface Description"
