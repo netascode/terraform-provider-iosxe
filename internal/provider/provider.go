@@ -17,6 +17,10 @@ import (
 	"github.com/netascode/go-restconf"
 )
 
+const (
+	YangPatch = false
+)
+
 // IosxeProvider defines the provider implementation.
 type IosxeProvider struct {
 	// version is set to the provider version on release, "dev" when the

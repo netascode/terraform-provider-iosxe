@@ -123,23 +123,34 @@ func (r *VLANResource) Create(ctx context.Context, req resource.CreateRequest, r
 	// Create object
 	body := plan.toBody(ctx)
 
-	res, err := r.clients[plan.Device.ValueString()].PatchData(plan.getPathShort(), body)
-	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
-		_, err = r.clients[plan.Device.ValueString()].PutData(plan.getPath(), body)
-	}
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
-		return
-	}
-
 	emptyLeafsDelete := plan.getEmptyLeafsDelete(ctx)
 	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
 
-	for _, i := range emptyLeafsDelete {
-		res, err := r.clients[plan.Device.ValueString()].DeleteData(i)
-		if err != nil && res.StatusCode != 404 {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+	if YangPatch {
+		edits := []restconf.YangPatchEdit{restconf.NewYangPatchEdit("merge", plan.getPath(), restconf.Body{Str: body})}
+		for _, i := range emptyLeafsDelete {
+			edits = append(edits, restconf.NewYangPatchEdit("remove", i, restconf.Body{}))
+		}
+		_, err := r.clients[plan.Device.ValueString()].YangPatchData("", "1", "", edits)
+		if err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object, got error: %s", err))
 			return
+		}
+	} else {
+		res, err := r.clients[plan.Device.ValueString()].PatchData(plan.getPathShort(), body)
+		if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
+			_, err = r.clients[plan.Device.ValueString()].PutData(plan.getPath(), body)
+		}
+		if err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
+			return
+		}
+		for _, i := range emptyLeafsDelete {
+			res, err := r.clients[plan.Device.ValueString()].DeleteData(i)
+			if err != nil && res.StatusCode != 404 {
+				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+				return
+			}
 		}
 	}
 
@@ -211,34 +222,48 @@ func (r *VLANResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Update", plan.Id.ValueString()))
 
 	body := plan.toBody(ctx)
-	res, err := r.clients[plan.Device.ValueString()].PatchData(plan.getPathShort(), body)
-	if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
-		_, err = r.clients[plan.Device.ValueString()].PutData(plan.getPath(), body)
-	}
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
-		return
-	}
 
 	deletedListItems := plan.getDeletedListItems(ctx, state)
 	tflog.Debug(ctx, fmt.Sprintf("List items to delete: %+v", deletedListItems))
 
-	for _, i := range deletedListItems {
-		res, err := r.clients[state.Device.ValueString()].DeleteData(i)
-		if err != nil && res.StatusCode != 404 {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
-			return
-		}
-	}
-
 	emptyLeafsDelete := plan.getEmptyLeafsDelete(ctx)
 	tflog.Debug(ctx, fmt.Sprintf("List of empty leafs to delete: %+v", emptyLeafsDelete))
 
-	for _, i := range emptyLeafsDelete {
-		res, err := r.clients[plan.Device.ValueString()].DeleteData(i)
-		if err != nil && res.StatusCode != 404 {
-			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+	if YangPatch {
+		edits := []restconf.YangPatchEdit{restconf.NewYangPatchEdit("merge", plan.getPath(), restconf.Body{Str: body})}
+		for _, i := range deletedListItems {
+			edits = append(edits, restconf.NewYangPatchEdit("remove", i, restconf.Body{}))
+		}
+		for _, i := range emptyLeafsDelete {
+			edits = append(edits, restconf.NewYangPatchEdit("remove", i, restconf.Body{}))
+		}
+		_, err := r.clients[plan.Device.ValueString()].YangPatchData("", "1", "", edits)
+		if err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to update object, got error: %s", err))
 			return
+		}
+	} else {
+		res, err := r.clients[plan.Device.ValueString()].PatchData(plan.getPathShort(), body)
+		if len(res.Errors.Error) > 0 && res.Errors.Error[0].ErrorMessage == "patch to a nonexistent resource" {
+			_, err = r.clients[plan.Device.ValueString()].PutData(plan.getPath(), body)
+		}
+		if err != nil {
+			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to configure object (PATCH), got error: %s", err))
+			return
+		}
+		for _, i := range deletedListItems {
+			res, err := r.clients[state.Device.ValueString()].DeleteData(i)
+			if err != nil && res.StatusCode != 404 {
+				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+				return
+			}
+		}
+		for _, i := range emptyLeafsDelete {
+			res, err := r.clients[plan.Device.ValueString()].DeleteData(i)
+			if err != nil && res.StatusCode != 404 {
+				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+				return
+			}
 		}
 	}
 
@@ -276,11 +301,23 @@ func (r *VLANResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 		deletePaths := state.getDeletePaths(ctx)
 		tflog.Debug(ctx, fmt.Sprintf("Paths to delete: %+v", deletePaths))
 
-		for _, i := range deletePaths {
-			res, err := r.clients[state.Device.ValueString()].DeleteData(i)
-			if err != nil && res.StatusCode != 404 {
+		if YangPatch {
+			edits := []restconf.YangPatchEdit{}
+			for _, i := range deletePaths {
+				edits = append(edits, restconf.NewYangPatchEdit("remove", i, restconf.Body{}))
+			}
+			_, err := r.clients[state.Device.ValueString()].YangPatchData("", "1", "", edits)
+			if err != nil {
 				resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
 				return
+			}
+		} else {
+			for _, i := range deletePaths {
+				res, err := r.clients[state.Device.ValueString()].DeleteData(i)
+				if err != nil && res.StatusCode != 404 {
+					resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to delete object, got error: %s", err))
+					return
+				}
 			}
 		}
 	}
