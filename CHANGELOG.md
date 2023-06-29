@@ -1,4 +1,4 @@
-## 0.1.18 (unreleased)
+## 0.2.0
 
 - Validate if referenced `device` exists in provider configuration
 - Add `delete_mode` attribute to resources
