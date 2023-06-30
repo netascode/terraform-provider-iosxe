@@ -62,7 +62,7 @@ func (r *RestconfResource) Schema(ctx context.Context, req resource.SchemaReques
 				Default:             booldefault.StaticBool(true),
 			},
 			"attributes": schema.MapAttribute{
-				MarkdownDescription: "Map of key-value pairs which represents the attributes and its values.",
+				MarkdownDescription: "Map of key-value pairs which represents the YANG leafs and its values.",
 				Optional:            true,
 				Computed:            true,
 				ElementType:         types.StringType,

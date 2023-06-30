@@ -46,7 +46,7 @@ resource "iosxe_restconf" "nested_list" {
 
 ### Optional
 
-- `attributes` (Map of String) Map of key-value pairs which represents the attributes and its values.
+- `attributes` (Map of String) Map of key-value pairs which represents the YANG leafs and its values.
 - `delete` (Boolean) Delete object during destroy operation. Default value is `true`.
 - `device` (String) A device name from the provider configuration.
 - `lists` (Attributes List) YANG lists. (see [below for nested schema](#nestedatt--lists))
