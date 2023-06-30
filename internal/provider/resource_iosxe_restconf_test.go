@@ -41,7 +41,7 @@ func TestAccIosxeRestconf(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("iosxe_restconf.nested", "attributes.hostname", "R1"),
 					resource.TestCheckResourceAttr("iosxe_restconf.nested", "lists.0.name", "route-map"),
-					resource.TestCheckResourceAttr("iosxe_restconf.nested", "lists.0.items.0.attributes.name", "test123"),
+					resource.TestCheckResourceAttr("iosxe_restconf.nested", "lists.0.items.0.name", "test123"),
 				),
 			},
 		},
@@ -81,9 +81,7 @@ func testAccIosxeRestconfConfig_nested() string {
 				key = "name"
 				items = [
 					{
-						attributes = {
-							name = "test123"
-						}
+						name = "test123"
 					}
 				]
 			}

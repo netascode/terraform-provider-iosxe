@@ -13,10 +13,10 @@ resource "iosxe_restconf" "nested_list" {
   lists = [{
     name = "vrf"
     key  = "name"
-    items = [{
-      attributes = {
+    items = [
+      {
         name = "VRF1"
       }
-    }]
+    ]
   }]
 }

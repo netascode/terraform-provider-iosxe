@@ -80,19 +80,10 @@ func (r *RestconfResource) Schema(ctx context.Context, req resource.SchemaReques
 							MarkdownDescription: "YANG list key attribute. In case of multiple keys, those should be separated by a comma (`,`).",
 							Optional:            true,
 						},
-						"items": schema.ListNestedAttribute{
-							MarkdownDescription: "Items of YANG lists.",
+						"items": schema.ListAttribute{
+							MarkdownDescription: "List of maps of key-value pairs which represents the YANG leafs and its values.",
 							Optional:            true,
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"attributes": schema.MapAttribute{
-										MarkdownDescription: "Map of key-value pairs which represents the attributes and its values.",
-										Optional:            true,
-										Computed:            true,
-										ElementType:         types.StringType,
-									},
-								},
-							},
+							ElementType:         types.MapType{ElemType: types.StringType},
 						},
 						"values": schema.ListAttribute{
 							MarkdownDescription: "YANG leaf-list values.",

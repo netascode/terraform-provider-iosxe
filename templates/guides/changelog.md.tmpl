@@ -7,6 +7,10 @@ description: |-
 
 # Changelog
 
+## 0.3.0 (unreleased)
+
+- BREAKING CHANGE: Remove `attributes` map of list items in `iosxe_restconf` resource
+
 ## 0.2.0
 
 - Validate if referenced `device` exists in provider configuration

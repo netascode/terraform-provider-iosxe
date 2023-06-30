@@ -22,14 +22,10 @@ type Restconf struct {
 }
 
 type RestconfList struct {
-	Name   types.String       `tfsdk:"name"`
-	Key    types.String       `tfsdk:"key"`
-	Items  []RestconfListItem `tfsdk:"items"`
-	Values types.List         `tfsdk:"values"`
-}
-
-type RestconfListItem struct {
-	Attributes types.Map `tfsdk:"attributes"`
+	Name   types.String `tfsdk:"name"`
+	Key    types.String `tfsdk:"key"`
+	Items  []types.Map  `tfsdk:"items"`
+	Values types.List   `tfsdk:"values"`
 }
 
 type RestconfDataSourceModel struct {
@@ -70,7 +66,7 @@ func (data Restconf) toBody(ctx context.Context) string {
 			body, _ = sjson.Set(body, helpers.LastElement(data.Path.ValueString())+"."+listName, []interface{}{})
 			for ii := range data.Lists[i].Items {
 				var listAttributes map[string]string
-				data.Lists[i].Items[ii].Attributes.ElementsAs(ctx, &listAttributes, false)
+				data.Lists[i].Items[ii].ElementsAs(ctx, &listAttributes, false)
 				attrs := restconf.Body{}
 				for attr, value := range listAttributes {
 					attrs = attrs.Set(attr, value)
@@ -114,7 +110,7 @@ func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
 			for ii := range data.Lists[i].Items {
 				var keyValues []string
 				for _, key := range keys {
-					v, _ := data.Lists[i].Items[ii].Attributes.Elements()[key].ToTerraformValue(ctx)
+					v, _ := data.Lists[i].Items[ii].Elements()[key].ToTerraformValue(ctx)
 					var keyValue string
 					v.As(&keyValue)
 					keyValues = append(keyValues, keyValue)
@@ -141,7 +137,7 @@ func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
 					},
 				)
 
-				attributes := data.Lists[i].Items[ii].Attributes.Elements()
+				attributes := data.Lists[i].Items[ii].Elements()
 				for attr := range attributes {
 					attrPath := strings.ReplaceAll(attr, "/", ".")
 					value := r.Get(attrPath)
@@ -154,7 +150,7 @@ func (data *Restconf) fromBody(ctx context.Context, res gjson.Result) {
 						attributes[attr] = types.StringValue(value.String())
 					}
 				}
-				data.Lists[i].Items[ii].Attributes = types.MapValueMust(types.StringType, attributes)
+				data.Lists[i].Items[ii] = types.MapValueMust(types.StringType, attributes)
 			}
 		} else if len(data.Lists[i].Values.Elements()) > 0 {
 			values := res.Get(prefix + namePath)
@@ -181,7 +177,7 @@ func (data *Restconf) getDeletedListItems(ctx context.Context, state Restconf) [
 			// check if state item is also included in plan, if not delete item
 			for i := range state.Lists[l].Items {
 				var slia map[string]string
-				state.Lists[l].Items[i].Attributes.ElementsAs(ctx, &slia, false)
+				state.Lists[l].Items[i].ElementsAs(ctx, &slia, false)
 
 				// if state key values are empty move on to next item
 				emptyKey := false
@@ -199,7 +195,7 @@ func (data *Restconf) getDeletedListItems(ctx context.Context, state Restconf) [
 				found := false
 				for dli := range dataList.Items {
 					var dlia map[string]string
-					dataList.Items[dli].Attributes.ElementsAs(ctx, &dlia, false)
+					dataList.Items[dli].ElementsAs(ctx, &dlia, false)
 					for _, key := range keys {
 						if dlia[key] == slia[key] {
 							found = true
