@@ -66,9 +66,7 @@ resource "iosxe_restconf" "PreReq2" {
 			key = "name"
 			items = [
 				{
-					attributes = {
-						"name" = "VRF1"
-					}
+					"name" = "VRF1"
 				},
 			] 
 		},
