@@ -6,13 +6,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/netascode/go-restconf"
@@ -46,13 +44,6 @@ func (r *ServiceResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Computed:            true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"delete_mode": schema.StringAttribute{
-				MarkdownDescription: helpers.NewAttributeDescription("Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.").AddStringEnumDescription("all", "attributes").String,
-				Optional:            true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("all", "attributes"),
 				},
 			},
 			"pad": schema.BoolAttribute{
@@ -337,12 +328,7 @@ func (r *ServiceResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 
 	tflog.Debug(ctx, fmt.Sprintf("%s: Beginning Delete", state.Id.ValueString()))
-	deleteMode := "all"
-	if state.DeleteMode.ValueString() == "all" {
-		deleteMode = "all"
-	} else if state.DeleteMode.ValueString() == "attributes" {
-		deleteMode = "attributes"
-	}
+	deleteMode := "attributes"
 
 	if deleteMode == "all" {
 		res, err := r.clients[state.Device.ValueString()].DeleteData(state.Id.ValueString())

@@ -46,7 +46,6 @@ func TestAccDataSourceIosxeService(t *testing.T) {
 const testAccDataSourceIosxeServiceConfig = `
 
 resource "iosxe_service" "test" {
-	delete_mode = "attributes"
 	pad = true
 	password_encryption = true
 	password_recovery = true

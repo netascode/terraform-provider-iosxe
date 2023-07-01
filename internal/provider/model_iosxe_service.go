@@ -16,7 +16,6 @@ import (
 type Service struct {
 	Device                              types.String `tfsdk:"device"`
 	Id                                  types.String `tfsdk:"id"`
-	DeleteMode                          types.String `tfsdk:"delete_mode"`
 	Pad                                 types.Bool   `tfsdk:"pad"`
 	PasswordEncryption                  types.Bool   `tfsdk:"password_encryption"`
 	PasswordRecovery                    types.Bool   `tfsdk:"password_recovery"`
