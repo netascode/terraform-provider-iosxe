@@ -570,9 +570,6 @@ func (data *Service) getDeletePaths(ctx context.Context) []string {
 	if !data.PasswordEncryption.IsNull() {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/password-encryption", data.getPath()))
 	}
-	if !data.PasswordRecovery.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/password-recovery", data.getPath()))
-	}
 	if !data.Timestamps.IsNull() {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/timestamps", data.getPath()))
 	}

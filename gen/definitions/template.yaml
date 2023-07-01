@@ -1,7 +1,7 @@
 ---
 name: Template
 path: Cisco-IOS-XE-native:native/template/Cisco-IOS-XE-template:template_details=%v
-exclude_test: true
+test_tag: C9000V
 doc_category: System
 attributes:
   - yang_name: template_name

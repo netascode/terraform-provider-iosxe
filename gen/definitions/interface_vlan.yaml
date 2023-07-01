@@ -1,7 +1,7 @@
 ---
 name: Interface VLAN
 path: Cisco-IOS-XE-native:native/interface/Vlan=%v
-exclude_test: true
+test_tag: C9000V
 doc_category: Interface
 attributes:
   - yang_name: name

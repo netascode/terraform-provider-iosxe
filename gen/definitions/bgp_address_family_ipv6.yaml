@@ -2,7 +2,6 @@
 name: BGP Address Family IPv6
 path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/ipv6=%s
 doc_category: BGP
-exclude_test: true
 attributes:
   - yang_name: id
     tf_name: asn
