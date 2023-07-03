@@ -2,7 +2,7 @@
 name: BGP L2VPN EVPN Neighbor
 path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/no-vrf/l2vpn=evpn/l2vpn-evpn/neighbor=%s
 doc_category: BGP
-test_tag: C9000V
+test_tags: [C9000V]
 attributes:
   - yang_name: id
     yang_scope: bgp

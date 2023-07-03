@@ -10,9 +10,9 @@ import (
 )
 
 func TestAccDataSourceIosxe{{camelCase .Name}}(t *testing.T) {
-	{{- if ne .TestTag ""}}
-	if os.Getenv("{{.TestTag}}") == "" {
-        t.Skip("skipping test, set environment variable {{.TestTag}}")
+	{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") == ""{{end}} {
+        t.Skip("skipping test, set environment variable {{range $i, $e := .TestTags}}{{if $i}} or {{end}}{{$e}}{{end}}")
     }
 	{{- end}}
 	resource.Test(t, resource.TestCase{
@@ -23,15 +23,15 @@ func TestAccDataSourceIosxe{{camelCase .Name}}(t *testing.T) {
 				Config: {{if .TestPrerequisites}}testAccDataSourceIosxe{{camelCase .Name}}PrerequisitesConfig+{{end}}testAccDataSourceIosxe{{camelCase .Name}}Config,
 				Check: resource.ComposeTestCheckFunc(
 					{{- $name := .Name }}
-					{{- range  .Attributes}}
+					{{- range .Attributes}}
 					{{- if and (not .Id) (not .Reference) (not .WriteOnly) (not .ExcludeTest)}}
 					{{- if eq .Type "List"}}
 					{{- $list := .TfName }}
-					{{- range  .Attributes}}
+					{{- range .Attributes}}
 					{{- if and (not .WriteOnly) (not .ExcludeTest)}}
 					{{- if eq .Type "List"}}
 					{{- $clist := .TfName }}
-					{{- range  .Attributes}}
+					{{- range .Attributes}}
 					{{- if and (not .WriteOnly) (not .ExcludeTest)}}
 					resource.TestCheckResourceAttr("data.iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{$clist}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
 					{{- end}}
