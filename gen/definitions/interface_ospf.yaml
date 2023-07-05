@@ -21,9 +21,9 @@ attributes:
       - FourHundredGigE
       - Loopback
       - Vlan
-    example: GigabitEthernet
+    example: Loopback
   - yang_name: name
-    example: 3
+    example: 1
   - yang_name: cost
     example: 10
   - yang_name: dead-interval
@@ -50,3 +50,9 @@ attributes:
     example: true
   - yang_name: priority
     example: 10
+
+test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/interface/Loopback=1
+    attributes:
+      - name: name
+        value: 1

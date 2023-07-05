@@ -23,7 +23,6 @@ func TestAccIosxeInterfaceSwitchport(t *testing.T) {
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "nonegotiate", "false"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "access_vlan", "100"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_allowed_vlans", "100,101"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_native_vlan_tag", "false"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_native_vlan", "100"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "host", "false"))
 	resource.Test(t, resource.TestCase{
@@ -64,7 +63,6 @@ func testAccIosxeInterfaceSwitchportConfig_all() string {
 	config += `	nonegotiate = false` + "\n"
 	config += `	access_vlan = "100"` + "\n"
 	config += `	trunk_allowed_vlans = "100,101"` + "\n"
-	config += `	trunk_native_vlan_tag = false` + "\n"
 	config += `	trunk_native_vlan = 100` + "\n"
 	config += `	host = false` + "\n"
 	config += `}` + "\n"

@@ -6,7 +6,7 @@ resource "iosxe_route_map" "example" {
       operation                                = "permit"
       description                              = "Entry 10"
       continue                                 = false
-      match_interfaces                         = ["GigabitEthernet1"]
+      match_interfaces                         = ["Loopback1"]
       match_ip_address_access_lists            = ["ACL1"]
       match_ip_next_hop_access_lists           = ["ACL1"]
       match_ipv6_address_access_lists          = "ACL1"
@@ -33,9 +33,9 @@ resource "iosxe_route_map" "example" {
       match_community_lists_legacy             = ["COMM1"]
       match_extcommunity_lists_legacy          = ["EXTCOMM1"]
       match_local_preferences_legacy           = [100]
-      set_default_interfaces                   = ["GigabitEthernet1"]
+      set_default_interfaces                   = ["Loopback1"]
       set_global                               = false
-      set_interfaces                           = ["GigabitEthernet1"]
+      set_interfaces                           = ["Loopback1"]
       set_ip_address                           = "PFL1"
       set_ip_default_global_next_hop_address   = ["1.2.3.4"]
       set_ip_default_next_hop_address          = ["1.2.3.4"]

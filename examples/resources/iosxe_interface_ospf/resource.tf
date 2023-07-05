@@ -1,6 +1,6 @@
 resource "iosxe_interface_ospf" "example" {
-  type                             = "GigabitEthernet"
-  name                             = "3"
+  type                             = "Loopback"
+  name                             = "1"
   cost                             = 10
   dead_interval                    = 30
   hello_interval                   = 5

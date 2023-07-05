@@ -2,6 +2,7 @@
 name: Interface Ethernet
 path: Cisco-IOS-XE-native:native/interface/%s=%v
 augment_path: Cisco-IOS-XE-native:native/interface/GigabitEthernet=%v
+test_tags: [C8000V]
 no_delete: true
 doc_category: Interface
 attributes:

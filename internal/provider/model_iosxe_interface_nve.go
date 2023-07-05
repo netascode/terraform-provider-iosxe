@@ -375,9 +375,6 @@ func (data *InterfaceNVE) getDeletePaths(ctx context.Context) []string {
 	if !data.Shutdown.IsNull() {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/shutdown", data.getPath()))
 	}
-	if !data.HostReachabilityProtocolBgp.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/host-reachability/protocol/bgp", data.getPath()))
-	}
 	if !data.SourceInterfaceLoopback.IsNull() {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/source-interface/Loopback", data.getPath()))
 	}

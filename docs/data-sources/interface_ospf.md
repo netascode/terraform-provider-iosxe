@@ -14,8 +14,8 @@ This data source can read the Interface OSPF configuration.
 
 ```terraform
 data "iosxe_interface_ospf" "example" {
-  type = "GigabitEthernet"
-  name = "3"
+  type = "Loopback"
+  name = "1"
 }
 ```
 

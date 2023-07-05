@@ -24,30 +24,41 @@ func TestAccIosxeInterfaceOSPF(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccIosxeInterfaceOSPFConfig_all(),
+				Config: testAccIosxeInterfaceOSPFPrerequisitesConfig + testAccIosxeInterfaceOSPFConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_interface_ospf.test",
 				ImportState:   true,
-				ImportStateId: "Cisco-IOS-XE-native:native/interface/GigabitEthernet=3/ip/Cisco-IOS-XE-ospf:router-ospf/ospf",
+				ImportStateId: "Cisco-IOS-XE-native:native/interface/Loopback=1/ip/Cisco-IOS-XE-ospf:router-ospf/ospf",
 			},
 		},
 	})
 }
 
+const testAccIosxeInterfaceOSPFPrerequisitesConfig = `
+resource "iosxe_restconf" "PreReq0" {
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=1"
+	attributes = {
+		"name" = "1"
+	}
+}
+
+`
+
 func testAccIosxeInterfaceOSPFConfig_minimum() string {
 	config := `resource "iosxe_interface_ospf" "test" {` + "\n"
-	config += `	type = "GigabitEthernet"` + "\n"
-	config += `	name = "3"` + "\n"
+	config += `	type = "Loopback"` + "\n"
+	config += `	name = "1"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
 	config += `}` + "\n"
 	return config
 }
 
 func testAccIosxeInterfaceOSPFConfig_all() string {
 	config := `resource "iosxe_interface_ospf" "test" {` + "\n"
-	config += `	type = "GigabitEthernet"` + "\n"
-	config += `	name = "3"` + "\n"
+	config += `	type = "Loopback"` + "\n"
+	config += `	name = "1"` + "\n"
 	config += `	cost = 10` + "\n"
 	config += `	dead_interval = 30` + "\n"
 	config += `	hello_interval = 5` + "\n"
@@ -57,6 +68,7 @@ func testAccIosxeInterfaceOSPFConfig_all() string {
 	config += `	network_type_point_to_multipoint = false` + "\n"
 	config += `	network_type_point_to_point = true` + "\n"
 	config += `	priority = 10` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
 	config += `}` + "\n"
 	return config
 }

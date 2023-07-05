@@ -21,12 +21,16 @@ attributes:
     tf_name: replication_type_mp2mp
     example: false
   - yang_name: mac/duplication/limit
+    delete_parent: true
     example: 10
   - yang_name: mac/duplication/time
+    delete_parent: true
     example: 100
   - yang_name: ip/duplication/limit
+    delete_parent: true
     example: 10
   - yang_name: ip/duplication/time
+    delete_parent: true
     example: 100
   - yang_name: router-id/interface/interface-choice/Loopback/Loopback
     xpath: router-id/interface/Loopback

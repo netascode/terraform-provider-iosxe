@@ -69,6 +69,7 @@ attributes:
     xpath: Cisco-IOS-XE-ntp:source/GigabitEthernet
     tf_name: trap_source_gigabit_ethernet
     example: 1
+    exclude_test: true
   - yang_name: Cisco-IOS-XE-ntp:source/interface-choice/TenGigabitEthernet/TenGigabitEthernet
     xpath: Cisco-IOS-XE-ntp:source/TenGigabitEthernet
     tf_name: trap_source_ten_gigabit_ethernet
@@ -88,7 +89,6 @@ attributes:
     xpath: Cisco-IOS-XE-ntp:source/Loopback
     tf_name: trap_source_loopback
     example: 1
-    exclude_test: true
   - yang_name: Cisco-IOS-XE-ntp:source/interface-choice/Port-channel/Port-channel
     xpath: Cisco-IOS-XE-ntp:source/Port-channel
     tf_name: trap_source_port_channel
@@ -112,7 +112,7 @@ attributes:
         id: true
         example: 1.2.3.4
       - yang_name: source
-        example: GigabitEthernet3
+        example: Loopback1
       - yang_name: key
         example: 1
       - yang_name: prefer
@@ -147,7 +147,7 @@ attributes:
         id: true
         example: 5.2.3.4
       - yang_name: source
-        example: GigabitEthernet3
+        example: Loopback1
       - yang_name: key
         example: 1
       - yang_name: prefer
@@ -187,3 +187,7 @@ test_prerequisites:
     attributes:
       - name: name
         value: SACL1
+  - path: Cisco-IOS-XE-native:native/interface/Loopback=1
+    attributes:
+      - name: name
+        value: 1

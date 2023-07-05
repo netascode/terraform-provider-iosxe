@@ -25,7 +25,6 @@ resource "iosxe_interface_switchport" "example" {
   nonegotiate                   = false
   access_vlan                   = "100"
   trunk_allowed_vlans           = "100,101"
-  trunk_native_vlan_tag         = false
   trunk_native_vlan             = 100
   host                          = false
 }

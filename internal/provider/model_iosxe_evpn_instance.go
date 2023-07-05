@@ -18,7 +18,6 @@ import (
 type EVPNInstance struct {
 	Device                           types.String `tfsdk:"device"`
 	Id                               types.String `tfsdk:"id"`
-	DeleteMode                       types.String `tfsdk:"delete_mode"`
 	EvpnInstanceNum                  types.Int64  `tfsdk:"evpn_instance_num"`
 	VlanBasedReplicationTypeIngress  types.Bool   `tfsdk:"vlan_based_replication_type_ingress"`
 	VlanBasedReplicationTypeStatic   types.Bool   `tfsdk:"vlan_based_replication_type_static"`

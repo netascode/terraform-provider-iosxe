@@ -3,12 +3,16 @@
 package provider
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccIosxeInterfaceEthernet(t *testing.T) {
+	if os.Getenv("C8000V") == "" {
+		t.Skip("skipping test, set environment variable C8000V")
+	}
 	var checks []resource.TestCheckFunc
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "name", "3"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_ethernet.test", "description", "My Interface Description"))

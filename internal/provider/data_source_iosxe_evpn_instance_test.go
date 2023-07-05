@@ -43,7 +43,6 @@ func TestAccDataSourceIosxeEVPNInstance(t *testing.T) {
 
 func testAccDataSourceIosxeEVPNInstanceConfig() string {
 	config := `resource "iosxe_evpn_instance" "test" {` + "\n"
-	config += `	delete_mode = "attributes"` + "\n"
 	config += `	evpn_instance_num = 10` + "\n"
 	config += `	vlan_based_replication_type_ingress = false` + "\n"
 	config += `	vlan_based_replication_type_static = true` + "\n"

@@ -31,23 +31,30 @@ resource "iosxe_restconf" "PreReq0" {
 	}
 }
 
+resource "iosxe_restconf" "PreReq1" {
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=1"
+	attributes = {
+		"name" = "1"
+	}
+}
+
 `
 
 func testAccDataSourceIosxeInterfaceOSPFProcessConfig() string {
 	config := `resource "iosxe_interface_ospf_process" "test" {` + "\n"
-	config += `	type = "GigabitEthernet"` + "\n"
-	config += `	name = "2"` + "\n"
+	config += `	type = "Loopback"` + "\n"
+	config += `	name = "1"` + "\n"
 	config += `	process_id = 1` + "\n"
 	config += `	area = [{` + "\n"
 	config += `		area_id = "1"` + "\n"
 	config += `	}]` + "\n"
-	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
 	config += `}` + "\n"
 
 	config += `
 		data "iosxe_interface_ospf_process" "test" {
-			type = "GigabitEthernet"
-			name = "2"
+			type = "Loopback"
+			name = "1"
 			process_id = 1
 			depends_on = [iosxe_interface_ospf_process.test]
 		}

@@ -1,4 +1,4 @@
 data "iosxe_interface_ospf" "example" {
-  type = "GigabitEthernet"
-  name = "3"
+  type = "Loopback"
+  name = "1"
 }

@@ -15,7 +15,7 @@ func TestAccIosxeRouteMap(t *testing.T) {
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.operation", "permit"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.description", "Entry 10"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.continue", "false"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.match_interfaces.0", "GigabitEthernet1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.match_interfaces.0", "Loopback1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.match_ip_address_access_lists.0", "ACL1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.match_ip_next_hop_access_lists.0", "ACL1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.match_ipv6_address_access_lists", "ACL1"))
@@ -42,9 +42,9 @@ func TestAccIosxeRouteMap(t *testing.T) {
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.match_community_lists_legacy.0", "COMM1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.match_extcommunity_lists_legacy.0", "EXTCOMM1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.match_local_preferences_legacy.0", "100"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.set_default_interfaces.0", "GigabitEthernet1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.set_default_interfaces.0", "Loopback1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.set_global", "false"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.set_interfaces.0", "GigabitEthernet1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.set_interfaces.0", "Loopback1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.set_ip_address", "PFL1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.set_ip_default_global_next_hop_address.0", "1.2.3.4"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_route_map.test", "entries.0.set_ip_default_next_hop_address.0", "1.2.3.4"))
@@ -80,7 +80,7 @@ func TestAccIosxeRouteMap(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccIosxeRouteMapConfig_all(),
+				Config: testAccIosxeRouteMapPrerequisitesConfig + testAccIosxeRouteMapConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
@@ -92,9 +92,20 @@ func TestAccIosxeRouteMap(t *testing.T) {
 	})
 }
 
+const testAccIosxeRouteMapPrerequisitesConfig = `
+resource "iosxe_restconf" "PreReq0" {
+	path = "Cisco-IOS-XE-native:native/interface/Loopback=1"
+	attributes = {
+		"name" = "1"
+	}
+}
+
+`
+
 func testAccIosxeRouteMapConfig_minimum() string {
 	config := `resource "iosxe_route_map" "test" {` + "\n"
 	config += `	name = "RM1"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
 	config += `}` + "\n"
 	return config
 }
@@ -107,7 +118,7 @@ func testAccIosxeRouteMapConfig_all() string {
 	config += `		operation = "permit"` + "\n"
 	config += `		description = "Entry 10"` + "\n"
 	config += `		continue = false` + "\n"
-	config += `		match_interfaces = ["GigabitEthernet1"]` + "\n"
+	config += `		match_interfaces = ["Loopback1"]` + "\n"
 	config += `		match_ip_address_access_lists = ["ACL1"]` + "\n"
 	config += `		match_ip_next_hop_access_lists = ["ACL1"]` + "\n"
 	config += `		match_ipv6_address_access_lists = "ACL1"` + "\n"
@@ -134,9 +145,9 @@ func testAccIosxeRouteMapConfig_all() string {
 	config += `		match_community_lists_legacy = ["COMM1"]` + "\n"
 	config += `		match_extcommunity_lists_legacy = ["EXTCOMM1"]` + "\n"
 	config += `		match_local_preferences_legacy = [100]` + "\n"
-	config += `		set_default_interfaces = ["GigabitEthernet1"]` + "\n"
+	config += `		set_default_interfaces = ["Loopback1"]` + "\n"
 	config += `		set_global = false` + "\n"
-	config += `		set_interfaces = ["GigabitEthernet1"]` + "\n"
+	config += `		set_interfaces = ["Loopback1"]` + "\n"
 	config += `		set_ip_address = "PFL1"` + "\n"
 	config += `		set_ip_default_global_next_hop_address = ["1.2.3.4"]` + "\n"
 	config += `		set_ip_default_next_hop_address = ["1.2.3.4"]` + "\n"
@@ -168,6 +179,7 @@ func testAccIosxeRouteMapConfig_all() string {
 	config += `		set_local_preference_legacy = 110` + "\n"
 	config += `		set_weight_legacy = 10000` + "\n"
 	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
 	config += `}` + "\n"
 	return config
 }

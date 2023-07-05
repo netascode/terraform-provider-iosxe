@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -13,9 +14,15 @@ func TestAccIosxeInterfacePortChannelSubinterface(t *testing.T) {
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "name", "10.666"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "description", "My Interface Description"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "shutdown", "false"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_proxy_arp", "false"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_redirects", "false"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "unreachables", "false"))
+	if os.Getenv("C8000V") != "" {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_proxy_arp", "false"))
+	}
+	if os.Getenv("C8000V") != "" {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_redirects", "false"))
+	}
+	if os.Getenv("C8000V") != "" {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "unreachables", "false"))
+	}
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "vrf_forwarding", "VRF1"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ipv4_address", "192.0.2.2"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ipv4_address_mask", "255.255.255.0"))
@@ -83,9 +90,15 @@ func testAccIosxeInterfacePortChannelSubinterfaceConfig_all() string {
 	config += `	name = "10.666"` + "\n"
 	config += `	description = "My Interface Description"` + "\n"
 	config += `	shutdown = false` + "\n"
-	config += `	ip_proxy_arp = false` + "\n"
-	config += `	ip_redirects = false` + "\n"
-	config += `	unreachables = false` + "\n"
+	if os.Getenv("C8000V") != "" {
+		config += `	ip_proxy_arp = false` + "\n"
+	}
+	if os.Getenv("C8000V") != "" {
+		config += `	ip_redirects = false` + "\n"
+	}
+	if os.Getenv("C8000V") != "" {
+		config += `	unreachables = false` + "\n"
+	}
 	config += `	vrf_forwarding = "VRF1"` + "\n"
 	config += `	ipv4_address = "192.0.2.2"` + "\n"
 	config += `	ipv4_address_mask = "255.255.255.0"` + "\n"

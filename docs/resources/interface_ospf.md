@@ -14,8 +14,8 @@ This resource can manage the Interface OSPF configuration.
 
 ```terraform
 resource "iosxe_interface_ospf" "example" {
-  type                             = "GigabitEthernet"
-  name                             = "3"
+  type                             = "Loopback"
+  name                             = "1"
   cost                             = 10
   dead_interval                    = 30
   hello_interval                   = 5
@@ -65,5 +65,5 @@ resource "iosxe_interface_ospf" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import iosxe_interface_ospf.example "Cisco-IOS-XE-native:native/interface/GigabitEthernet=3/ip/Cisco-IOS-XE-ospf:router-ospf/ospf"
+terraform import iosxe_interface_ospf.example "Cisco-IOS-XE-native:native/interface/Loopback=1/ip/Cisco-IOS-XE-ospf:router-ospf/ospf"
 ```

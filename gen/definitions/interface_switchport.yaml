@@ -58,6 +58,7 @@ attributes:
     example: 100,101
   - yang_name: Cisco-IOS-XE-switch:trunk/native/vlan/tag
     tf_name: trunk_native_vlan_tag
+    exclude_test: true
     example: false
   - yang_name: Cisco-IOS-XE-switch:trunk/native/vlan/vlan-id
     tf_name: trunk_native_vlan

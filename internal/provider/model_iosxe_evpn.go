@@ -321,16 +321,16 @@ func (data *EVPN) getDeletePaths(ctx context.Context) []string {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/replication-type/mp2mp", data.getPath()))
 	}
 	if !data.MacDuplicationLimit.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/mac/duplication/limit", data.getPath()))
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mac/duplication", data.getPath()))
 	}
 	if !data.MacDuplicationTime.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/mac/duplication/time", data.getPath()))
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/mac/duplication", data.getPath()))
 	}
 	if !data.IpDuplicationLimit.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/duplication/limit", data.getPath()))
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/duplication", data.getPath()))
 	}
 	if !data.IpDuplicationTime.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/duplication/time", data.getPath()))
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/ip/duplication", data.getPath()))
 	}
 	if !data.RouterIdLoopback.IsNull() {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/router-id/interface/Loopback", data.getPath()))

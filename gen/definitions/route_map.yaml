@@ -25,7 +25,7 @@ attributes:
         example: 10
       - yang_name: match/interface/interface
         tf_name: match_interfaces
-        example: GigabitEthernet1
+        example: Loopback1
       - yang_name: match/ip/address/access-list
         tf_name: match_ip_address_access_lists
         example: ACL1
@@ -125,12 +125,12 @@ attributes:
         example: 100
       - yang_name: set/default/interface-list
         tf_name: set_default_interfaces
-        example: GigabitEthernet1
+        example: Loopback1
       - yang_name: set/global
         example: false
       - yang_name: set/interface-list
         tf_name: set_interfaces
-        example: GigabitEthernet1
+        example: Loopback1
       - yang_name: set/ip/address/prefix-list
         tf_name: set_ip_address
         example: PFL1
@@ -327,3 +327,9 @@ attributes:
         tf_name: set_weight
         exclude_test: true
         example: 10000
+
+test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/interface/Loopback=1
+    attributes:
+      - name: name
+        value: 1

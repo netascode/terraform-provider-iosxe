@@ -14,8 +14,8 @@ This data source can read the Interface OSPF Process configuration.
 
 ```terraform
 data "iosxe_interface_ospf_process" "example" {
-  type       = "GigabitEthernet"
-  name       = "2"
+  type       = "Loopback"
+  name       = "1"
   process_id = 1
 }
 ```

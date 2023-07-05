@@ -14,8 +14,8 @@ This resource can manage the Interface OSPF Process configuration.
 
 ```terraform
 resource "iosxe_interface_ospf_process" "example" {
-  type       = "GigabitEthernet"
-  name       = "2"
+  type       = "Loopback"
+  name       = "1"
   process_id = 1
   area = [
     {
@@ -57,5 +57,5 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-terraform import iosxe_interface_ospf_process.example "Cisco-IOS-XE-native:native/interface/GigabitEthernet=2/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=1"
+terraform import iosxe_interface_ospf_process.example "Cisco-IOS-XE-native:native/interface/Loopback=1/ip/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=1"
 ```
