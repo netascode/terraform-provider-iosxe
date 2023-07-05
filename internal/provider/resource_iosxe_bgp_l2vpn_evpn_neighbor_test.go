@@ -13,18 +13,18 @@ func TestAccIosxeBGPL2VPNEVPNNeighbor(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "ip", "3.3.3.3"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "activate", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "send_community", "both"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "route_reflector_client", "false"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeBGPL2VPNEVPNNeighborPrerequisitesConfig + testAccIosxeBGPL2VPNEVPNNeighborConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "ip", "3.3.3.3"),
-					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "activate", "true"),
-					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "send_community", "both"),
-					resource.TestCheckResourceAttr("iosxe_bgp_l2vpn_evpn_neighbor.test", "route_reflector_client", "false"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_bgp_l2vpn_evpn_neighbor.test",
@@ -63,24 +63,22 @@ resource "iosxe_restconf" "PreReq2" {
 `
 
 func testAccIosxeBGPL2VPNEVPNNeighborConfig_minimum() string {
-	return `
-	resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
-		asn = "65000"
-		ip = "3.3.3.3"
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
-	}
-	`
+	config := `resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	ip = "3.3.3.3"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeBGPL2VPNEVPNNeighborConfig_all() string {
-	return `
-	resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {
-		asn = "65000"
-		ip = "3.3.3.3"
-		activate = true
-		send_community = "both"
-		route_reflector_client = false
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
-	}
-	`
+	config := `resource "iosxe_bgp_l2vpn_evpn_neighbor" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	ip = "3.3.3.3"` + "\n"
+	config += `	activate = true` + "\n"
+	config += `	send_community = "both"` + "\n"
+	config += `	route_reflector_client = false` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

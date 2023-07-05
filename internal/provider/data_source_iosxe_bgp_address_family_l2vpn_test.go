@@ -13,13 +13,14 @@ func TestAccDataSourceIosxeBGPAddressFamilyL2VPN(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeBGPAddressFamilyL2VPNPrerequisitesConfig + testAccDataSourceIosxeBGPAddressFamilyL2VPNConfig,
-				Check:  resource.ComposeTestCheckFunc(),
+				Config: testAccDataSourceIosxeBGPAddressFamilyL2VPNPrerequisitesConfig + testAccDataSourceIosxeBGPAddressFamilyL2VPNConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -35,18 +36,20 @@ resource "iosxe_restconf" "PreReq0" {
 
 `
 
-const testAccDataSourceIosxeBGPAddressFamilyL2VPNConfig = `
+func testAccDataSourceIosxeBGPAddressFamilyL2VPNConfig() string {
+	config := `resource "iosxe_bgp_address_family_l2vpn" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	asn = "65000"` + "\n"
+	config += `	af_name = "evpn"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_bgp_address_family_l2vpn" "test" {
-	delete_mode = "attributes"
-	asn = "65000"
-	af_name = "evpn"
-	depends_on = [iosxe_restconf.PreReq0, ]
+	config += `
+		data "iosxe_bgp_address_family_l2vpn" "test" {
+			asn = "65000"
+			af_name = "evpn"
+			depends_on = [iosxe_bgp_address_family_l2vpn.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_bgp_address_family_l2vpn" "test" {
-	asn = "65000"
-	af_name = "evpn"
-	depends_on = [iosxe_bgp_address_family_l2vpn.test]
-}
-`

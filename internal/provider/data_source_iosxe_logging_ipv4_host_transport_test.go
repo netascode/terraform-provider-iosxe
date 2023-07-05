@@ -9,40 +9,42 @@ import (
 )
 
 func TestAccDataSourceIosxeLoggingIPv4HostTransport(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging_ipv4_host_transport.test", "transport_udp_ports.0.port_number", "10000"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging_ipv4_host_transport.test", "transport_tcp_ports.0.port_number", "10001"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging_ipv4_host_transport.test", "transport_tls_ports.0.port_number", "10002"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeLoggingIPv4HostTransportConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_logging_ipv4_host_transport.test", "transport_udp_ports.0.port_number", "10000"),
-					resource.TestCheckResourceAttr("data.iosxe_logging_ipv4_host_transport.test", "transport_tcp_ports.0.port_number", "10001"),
-					resource.TestCheckResourceAttr("data.iosxe_logging_ipv4_host_transport.test", "transport_tls_ports.0.port_number", "10002"),
-				),
+				Config: testAccDataSourceIosxeLoggingIPv4HostTransportConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeLoggingIPv4HostTransportConfig = `
+func testAccDataSourceIosxeLoggingIPv4HostTransportConfig() string {
+	config := `resource "iosxe_logging_ipv4_host_transport" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	ipv4_host = "2.2.2.2"` + "\n"
+	config += `	transport_udp_ports = [{` + "\n"
+	config += `		port_number = 10000` + "\n"
+	config += `	}]` + "\n"
+	config += `	transport_tcp_ports = [{` + "\n"
+	config += `		port_number = 10001` + "\n"
+	config += `	}]` + "\n"
+	config += `	transport_tls_ports = [{` + "\n"
+	config += `		port_number = 10002` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_logging_ipv4_host_transport" "test" {
-	delete_mode = "attributes"
-	ipv4_host = "2.2.2.2"
-	transport_udp_ports = [{
-		port_number = 10000
-	}]
-	transport_tcp_ports = [{
-		port_number = 10001
-	}]
-	transport_tls_ports = [{
-		port_number = 10002
-	}]
+	config += `
+		data "iosxe_logging_ipv4_host_transport" "test" {
+			ipv4_host = "2.2.2.2"
+			depends_on = [iosxe_logging_ipv4_host_transport.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_logging_ipv4_host_transport" "test" {
-	ipv4_host = "2.2.2.2"
-	depends_on = [iosxe_logging_ipv4_host_transport.test]
-}
-`

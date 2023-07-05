@@ -13,31 +13,33 @@ func TestAccDataSourceIosxeVLAN(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_vlan.test", "name", "Vlan123"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_vlan.test", "shutdown", "false"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeVLANConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_vlan.test", "name", "Vlan123"),
-					resource.TestCheckResourceAttr("data.iosxe_vlan.test", "shutdown", "false"),
-				),
+				Config: testAccDataSourceIosxeVLANConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeVLANConfig = `
+func testAccDataSourceIosxeVLANConfig() string {
+	config := `resource "iosxe_vlan" "test" {` + "\n"
+	config += `	vlan_id = 123` + "\n"
+	config += `	name = "Vlan123"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_vlan" "test" {
-	vlan_id = 123
-	name = "Vlan123"
-	shutdown = false
+	config += `
+		data "iosxe_vlan" "test" {
+			vlan_id = 123
+			depends_on = [iosxe_vlan.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_vlan" "test" {
-	vlan_id = 123
-	depends_on = [iosxe_vlan.test]
-}
-`

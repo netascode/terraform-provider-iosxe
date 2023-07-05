@@ -9,17 +9,17 @@ import (
 )
 
 func TestAccDataSourceIosxeBGP(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp.test", "default_ipv4_unicast", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp.test", "log_neighbor_changes", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp.test", "router_id_loopback", "100"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeBGPPrerequisitesConfig + testAccDataSourceIosxeBGPConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_bgp.test", "default_ipv4_unicast", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp.test", "log_neighbor_changes", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp.test", "router_id_loopback", "100"),
-				),
+				Config: testAccDataSourceIosxeBGPPrerequisitesConfig + testAccDataSourceIosxeBGPConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -37,19 +37,21 @@ resource "iosxe_restconf" "PreReq0" {
 
 `
 
-const testAccDataSourceIosxeBGPConfig = `
+func testAccDataSourceIosxeBGPConfig() string {
+	config := `resource "iosxe_bgp" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	asn = "65000"` + "\n"
+	config += `	default_ipv4_unicast = false` + "\n"
+	config += `	log_neighbor_changes = true` + "\n"
+	config += `	router_id_loopback = 100` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_bgp" "test" {
-	delete_mode = "attributes"
-	asn = "65000"
-	default_ipv4_unicast = false
-	log_neighbor_changes = true
-	router_id_loopback = 100
-	depends_on = [iosxe_restconf.PreReq0, ]
+	config += `
+		data "iosxe_bgp" "test" {
+			asn = "65000"
+			depends_on = [iosxe_bgp.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_bgp" "test" {
-	asn = "65000"
-	depends_on = [iosxe_bgp.test]
-}
-`

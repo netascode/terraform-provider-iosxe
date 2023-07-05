@@ -9,26 +9,26 @@ import (
 )
 
 func TestAccIosxeClock(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "calendar_valid", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_zone", "CET"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_start_week", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_start_weekday", "Mon"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_start_month", "Jan"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_start_time", "00:00"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_end_week", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_end_weekday", "Mon"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_end_month", "Dec"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_end_time", "00:00"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_offset", "60"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeClockConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_clock.test", "calendar_valid", "true"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_zone", "CET"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring", "true"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_start_week", "1"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_start_weekday", "Mon"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_start_month", "Jan"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_start_time", "00:00"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_end_week", "1"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_end_weekday", "Mon"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_end_month", "Dec"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_end_time", "00:00"),
-					resource.TestCheckResourceAttr("iosxe_clock.test", "summer_time_recurring_offset", "60"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_clock.test",
@@ -40,27 +40,25 @@ func TestAccIosxeClock(t *testing.T) {
 }
 
 func testAccIosxeClockConfig_minimum() string {
-	return `
-	resource "iosxe_clock" "test" {
-	}
-	`
+	config := `resource "iosxe_clock" "test" {` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeClockConfig_all() string {
-	return `
-	resource "iosxe_clock" "test" {
-		calendar_valid = true
-		summer_time_zone = "CET"
-		summer_time_recurring = true
-		summer_time_recurring_start_week = "1"
-		summer_time_recurring_start_weekday = "Mon"
-		summer_time_recurring_start_month = "Jan"
-		summer_time_recurring_start_time = "00:00"
-		summer_time_recurring_end_week = "1"
-		summer_time_recurring_end_weekday = "Mon"
-		summer_time_recurring_end_month = "Dec"
-		summer_time_recurring_end_time = "00:00"
-		summer_time_recurring_offset = 60
-	}
-	`
+	config := `resource "iosxe_clock" "test" {` + "\n"
+	config += `	calendar_valid = true` + "\n"
+	config += `	summer_time_zone = "CET"` + "\n"
+	config += `	summer_time_recurring = true` + "\n"
+	config += `	summer_time_recurring_start_week = "1"` + "\n"
+	config += `	summer_time_recurring_start_weekday = "Mon"` + "\n"
+	config += `	summer_time_recurring_start_month = "Jan"` + "\n"
+	config += `	summer_time_recurring_start_time = "00:00"` + "\n"
+	config += `	summer_time_recurring_end_week = "1"` + "\n"
+	config += `	summer_time_recurring_end_weekday = "Mon"` + "\n"
+	config += `	summer_time_recurring_end_month = "Dec"` + "\n"
+	config += `	summer_time_recurring_end_time = "00:00"` + "\n"
+	config += `	summer_time_recurring_offset = 60` + "\n"
+	config += `}` + "\n"
+	return config
 }

@@ -9,18 +9,18 @@ import (
 )
 
 func TestAccIosxeBanner(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_banner.test", "exec_banner", "My Exec Banner"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_banner.test", "login_banner", "My Login Banner"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_banner.test", "prompt_timeout_banner", "My Prompt-Timeout Banner"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_banner.test", "motd_banner", "My MOTD Banner"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeBannerConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_banner.test", "exec_banner", "My Exec Banner"),
-					resource.TestCheckResourceAttr("iosxe_banner.test", "login_banner", "My Login Banner"),
-					resource.TestCheckResourceAttr("iosxe_banner.test", "prompt_timeout_banner", "My Prompt-Timeout Banner"),
-					resource.TestCheckResourceAttr("iosxe_banner.test", "motd_banner", "My MOTD Banner"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_banner.test",
@@ -32,19 +32,17 @@ func TestAccIosxeBanner(t *testing.T) {
 }
 
 func testAccIosxeBannerConfig_minimum() string {
-	return `
-	resource "iosxe_banner" "test" {
-	}
-	`
+	config := `resource "iosxe_banner" "test" {` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeBannerConfig_all() string {
-	return `
-	resource "iosxe_banner" "test" {
-		exec_banner = "My Exec Banner"
-		login_banner = "My Login Banner"
-		prompt_timeout_banner = "My Prompt-Timeout Banner"
-		motd_banner = "My MOTD Banner"
-	}
-	`
+	config := `resource "iosxe_banner" "test" {` + "\n"
+	config += `	exec_banner = "My Exec Banner"` + "\n"
+	config += `	login_banner = "My Login Banner"` + "\n"
+	config += `	prompt_timeout_banner = "My Prompt-Timeout Banner"` + "\n"
+	config += `	motd_banner = "My MOTD Banner"` + "\n"
+	config += `}` + "\n"
+	return config
 }

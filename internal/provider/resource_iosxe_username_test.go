@@ -9,19 +9,19 @@ import (
 )
 
 func TestAccIosxeUsername(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_username.test", "name", "user1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_username.test", "privilege", "15"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_username.test", "description", "User1 description"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_username.test", "password_encryption", "0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_username.test", "password", "MyPassword"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeUsernameConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_username.test", "name", "user1"),
-					resource.TestCheckResourceAttr("iosxe_username.test", "privilege", "15"),
-					resource.TestCheckResourceAttr("iosxe_username.test", "description", "User1 description"),
-					resource.TestCheckResourceAttr("iosxe_username.test", "password_encryption", "0"),
-					resource.TestCheckResourceAttr("iosxe_username.test", "password", "MyPassword"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_username.test",
@@ -33,21 +33,19 @@ func TestAccIosxeUsername(t *testing.T) {
 }
 
 func testAccIosxeUsernameConfig_minimum() string {
-	return `
-	resource "iosxe_username" "test" {
-		name = "user1"
-	}
-	`
+	config := `resource "iosxe_username" "test" {` + "\n"
+	config += `	name = "user1"` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeUsernameConfig_all() string {
-	return `
-	resource "iosxe_username" "test" {
-		name = "user1"
-		privilege = 15
-		description = "User1 description"
-		password_encryption = "0"
-		password = "MyPassword"
-	}
-	`
+	config := `resource "iosxe_username" "test" {` + "\n"
+	config += `	name = "user1"` + "\n"
+	config += `	privilege = 15` + "\n"
+	config += `	description = "User1 description"` + "\n"
+	config += `	password_encryption = "0"` + "\n"
+	config += `	password = "MyPassword"` + "\n"
+	config += `}` + "\n"
+	return config
 }

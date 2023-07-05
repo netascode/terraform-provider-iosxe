@@ -9,19 +9,19 @@ import (
 )
 
 func TestAccIosxeBGPAddressFamilyIPv6VRF(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "af_name", "unicast"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "vrfs.0.name", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "vrfs.0.advertise_l2vpn_evpn", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "vrfs.0.redistribute_connected", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "vrfs.0.redistribute_static", "true"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeBGPAddressFamilyIPv6VRFPrerequisitesConfig + testAccIosxeBGPAddressFamilyIPv6VRFConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "af_name", "unicast"),
-					resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "vrfs.0.name", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "vrfs.0.advertise_l2vpn_evpn", "true"),
-					resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "vrfs.0.redistribute_connected", "true"),
-					resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv6_vrf.test", "vrfs.0.redistribute_static", "true"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_bgp_address_family_ipv6_vrf.test",
@@ -62,27 +62,25 @@ resource "iosxe_restconf" "PreReq2" {
 `
 
 func testAccIosxeBGPAddressFamilyIPv6VRFConfig_minimum() string {
-	return `
-	resource "iosxe_bgp_address_family_ipv6_vrf" "test" {
-		asn = "65000"
-		af_name = "unicast"
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
-	}
-	`
+	config := `resource "iosxe_bgp_address_family_ipv6_vrf" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	af_name = "unicast"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeBGPAddressFamilyIPv6VRFConfig_all() string {
-	return `
-	resource "iosxe_bgp_address_family_ipv6_vrf" "test" {
-		asn = "65000"
-		af_name = "unicast"
-		vrfs = [{
-			name = "VRF1"
-			advertise_l2vpn_evpn = true
-			redistribute_connected = true
-			redistribute_static = true
-		}]
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
-	}
-	`
+	config := `resource "iosxe_bgp_address_family_ipv6_vrf" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	af_name = "unicast"` + "\n"
+	config += `	vrfs = [{` + "\n"
+	config += `		name = "VRF1"` + "\n"
+	config += `		advertise_l2vpn_evpn = true` + "\n"
+	config += `		redistribute_connected = true` + "\n"
+	config += `		redistribute_static = true` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

@@ -9,18 +9,18 @@ import (
 )
 
 func TestAccIosxeBGP(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp.test", "asn", "65000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp.test", "default_ipv4_unicast", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp.test", "log_neighbor_changes", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp.test", "router_id_loopback", "100"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeBGPPrerequisitesConfig + testAccIosxeBGPConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_bgp.test", "asn", "65000"),
-					resource.TestCheckResourceAttr("iosxe_bgp.test", "default_ipv4_unicast", "false"),
-					resource.TestCheckResourceAttr("iosxe_bgp.test", "log_neighbor_changes", "true"),
-					resource.TestCheckResourceAttr("iosxe_bgp.test", "router_id_loopback", "100"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_bgp.test",
@@ -44,22 +44,20 @@ resource "iosxe_restconf" "PreReq0" {
 `
 
 func testAccIosxeBGPConfig_minimum() string {
-	return `
-	resource "iosxe_bgp" "test" {
-		asn = "65000"
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_bgp" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeBGPConfig_all() string {
-	return `
-	resource "iosxe_bgp" "test" {
-		asn = "65000"
-		default_ipv4_unicast = false
-		log_neighbor_changes = true
-		router_id_loopback = 100
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_bgp" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	default_ipv4_unicast = false` + "\n"
+	config += `	log_neighbor_changes = true` + "\n"
+	config += `	router_id_loopback = 100` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

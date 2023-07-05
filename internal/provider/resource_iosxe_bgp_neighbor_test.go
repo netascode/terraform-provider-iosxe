@@ -9,19 +9,19 @@ import (
 )
 
 func TestAccIosxeBGPNeighbor(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "ip", "3.3.3.3"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "remote_as", "65000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "description", "BGP Neighbor Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "update_source_loopback", "100"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeBGPNeighborPrerequisitesConfig + testAccIosxeBGPNeighborConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "ip", "3.3.3.3"),
-					resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "remote_as", "65000"),
-					resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "description", "BGP Neighbor Description"),
-					resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("iosxe_bgp_neighbor.test", "update_source_loopback", "100"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_bgp_neighbor.test",
@@ -50,25 +50,23 @@ resource "iosxe_restconf" "PreReq1" {
 `
 
 func testAccIosxeBGPNeighborConfig_minimum() string {
-	return `
-	resource "iosxe_bgp_neighbor" "test" {
-		asn = "65000"
-		ip = "3.3.3.3"
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
-	}
-	`
+	config := `resource "iosxe_bgp_neighbor" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	ip = "3.3.3.3"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeBGPNeighborConfig_all() string {
-	return `
-	resource "iosxe_bgp_neighbor" "test" {
-		asn = "65000"
-		ip = "3.3.3.3"
-		remote_as = "65000"
-		description = "BGP Neighbor Description"
-		shutdown = false
-		update_source_loopback = "100"
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
-	}
-	`
+	config := `resource "iosxe_bgp_neighbor" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	ip = "3.3.3.3"` + "\n"
+	config += `	remote_as = "65000"` + "\n"
+	config += `	description = "BGP Neighbor Description"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `	update_source_loopback = "100"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

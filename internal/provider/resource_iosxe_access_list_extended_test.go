@@ -9,32 +9,32 @@ import (
 )
 
 func TestAccIosxeAccessListExtended(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "name", "EACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.sequence", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.remark", "Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.ace_rule_action", "permit"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.ace_rule_protocol", "tcp"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.source_prefix", "10.0.0.0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.source_prefix_mask", "0.0.0.255"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.source_port_equal", "1000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.destination_host", "10.1.1.1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.destination_port_range_from", "1000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.destination_port_range_to", "2000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.ack", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.fin", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.psh", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.rst", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.syn", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.urg", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.dscp", "46"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeAccessListExtendedConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "name", "EACL1"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.sequence", "10"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.remark", "Description"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.ace_rule_action", "permit"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.ace_rule_protocol", "tcp"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.source_prefix", "10.0.0.0"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.source_prefix_mask", "0.0.0.255"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.source_port_equal", "1000"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.destination_host", "10.1.1.1"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.destination_port_range_from", "1000"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.destination_port_range_to", "2000"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.ack", "true"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.fin", "true"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.psh", "true"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.rst", "true"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.syn", "true"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.urg", "true"),
-					resource.TestCheckResourceAttr("iosxe_access_list_extended.test", "entries.0.dscp", "46"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_access_list_extended.test",
@@ -46,36 +46,34 @@ func TestAccIosxeAccessListExtended(t *testing.T) {
 }
 
 func testAccIosxeAccessListExtendedConfig_minimum() string {
-	return `
-	resource "iosxe_access_list_extended" "test" {
-		name = "EACL1"
-	}
-	`
+	config := `resource "iosxe_access_list_extended" "test" {` + "\n"
+	config += `	name = "EACL1"` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeAccessListExtendedConfig_all() string {
-	return `
-	resource "iosxe_access_list_extended" "test" {
-		name = "EACL1"
-		entries = [{
-			sequence = 10
-			remark = "Description"
-			ace_rule_action = "permit"
-			ace_rule_protocol = "tcp"
-			source_prefix = "10.0.0.0"
-			source_prefix_mask = "0.0.0.255"
-			source_port_equal = "1000"
-			destination_host = "10.1.1.1"
-			destination_port_range_from = "1000"
-			destination_port_range_to = "2000"
-			ack = true
-			fin = true
-			psh = true
-			rst = true
-			syn = true
-			urg = true
-			dscp = "46"
-		}]
-	}
-	`
+	config := `resource "iosxe_access_list_extended" "test" {` + "\n"
+	config += `	name = "EACL1"` + "\n"
+	config += `	entries = [{` + "\n"
+	config += `		sequence = 10` + "\n"
+	config += `		remark = "Description"` + "\n"
+	config += `		ace_rule_action = "permit"` + "\n"
+	config += `		ace_rule_protocol = "tcp"` + "\n"
+	config += `		source_prefix = "10.0.0.0"` + "\n"
+	config += `		source_prefix_mask = "0.0.0.255"` + "\n"
+	config += `		source_port_equal = "1000"` + "\n"
+	config += `		destination_host = "10.1.1.1"` + "\n"
+	config += `		destination_port_range_from = "1000"` + "\n"
+	config += `		destination_port_range_to = "2000"` + "\n"
+	config += `		ack = true` + "\n"
+	config += `		fin = true` + "\n"
+	config += `		psh = true` + "\n"
+	config += `		rst = true` + "\n"
+	config += `		syn = true` + "\n"
+	config += `		urg = true` + "\n"
+	config += `		dscp = "46"` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
+	return config
 }

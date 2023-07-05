@@ -13,32 +13,32 @@ func TestAccIosxeInterfaceVLAN(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "name", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "autostate", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "description", "My Interface Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_proxy_arp", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_redirects", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "unreachables", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "vrf_forwarding", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ipv4_address", "10.1.1.1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ipv4_address_mask", "255.255.255.0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_dhcp_relay_source_interface", "Loopback100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_access_group_in", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_access_group_in_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_access_group_out", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_access_group_out_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.address", "10.10.10.10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.global", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.vrf", "VRF1"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeInterfaceVLANPrerequisitesConfig + testAccIosxeInterfaceVLANConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "name", "10"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "autostate", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "description", "My Interface Description"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_proxy_arp", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_redirects", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "unreachables", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "vrf_forwarding", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ipv4_address", "10.1.1.1"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ipv4_address_mask", "255.255.255.0"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_dhcp_relay_source_interface", "Loopback100"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_access_group_in", "1"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_access_group_in_enable", "true"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_access_group_out", "1"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "ip_access_group_out_enable", "true"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.address", "10.10.10.10"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.global", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_vlan.test", "helper_addresses.0.vrf", "VRF1"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_interface_vlan.test",
@@ -62,38 +62,36 @@ resource "iosxe_restconf" "PreReq0" {
 `
 
 func testAccIosxeInterfaceVLANConfig_minimum() string {
-	return `
-	resource "iosxe_interface_vlan" "test" {
-		name = 10
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_interface_vlan" "test" {` + "\n"
+	config += `	name = 10` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeInterfaceVLANConfig_all() string {
-	return `
-	resource "iosxe_interface_vlan" "test" {
-		name = 10
-		autostate = false
-		description = "My Interface Description"
-		shutdown = false
-		ip_proxy_arp = false
-		ip_redirects = false
-		unreachables = false
-		vrf_forwarding = "VRF1"
-		ipv4_address = "10.1.1.1"
-		ipv4_address_mask = "255.255.255.0"
-		ip_dhcp_relay_source_interface = "Loopback100"
-		ip_access_group_in = "1"
-		ip_access_group_in_enable = true
-		ip_access_group_out = "1"
-		ip_access_group_out_enable = true
-		helper_addresses = [{
-			address = "10.10.10.10"
-			global = false
-			vrf = "VRF1"
-		}]
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_interface_vlan" "test" {` + "\n"
+	config += `	name = 10` + "\n"
+	config += `	autostate = false` + "\n"
+	config += `	description = "My Interface Description"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `	ip_proxy_arp = false` + "\n"
+	config += `	ip_redirects = false` + "\n"
+	config += `	unreachables = false` + "\n"
+	config += `	vrf_forwarding = "VRF1"` + "\n"
+	config += `	ipv4_address = "10.1.1.1"` + "\n"
+	config += `	ipv4_address_mask = "255.255.255.0"` + "\n"
+	config += `	ip_dhcp_relay_source_interface = "Loopback100"` + "\n"
+	config += `	ip_access_group_in = "1"` + "\n"
+	config += `	ip_access_group_in_enable = true` + "\n"
+	config += `	ip_access_group_out = "1"` + "\n"
+	config += `	ip_access_group_out_enable = true` + "\n"
+	config += `	helper_addresses = [{` + "\n"
+	config += `		address = "10.10.10.10"` + "\n"
+	config += `		global = false` + "\n"
+	config += `		vrf = "VRF1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

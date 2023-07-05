@@ -9,21 +9,21 @@ import (
 )
 
 func TestAccIosxeMSDP(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_msdp.test", "originator_id", "Loopback100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.addr", "10.1.1.1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.encryption", "0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.password", "Cisco123"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.addr", "10.1.1.1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.remote_as", "65000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.connect_source_loopback", "100"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeMSDPPrerequisitesConfig + testAccIosxeMSDPConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "originator_id", "Loopback100"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.addr", "10.1.1.1"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.encryption", "0"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "passwords.0.password", "Cisco123"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.addr", "10.1.1.1"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.remote_as", "65000"),
-					resource.TestCheckResourceAttr("iosxe_msdp.test", "peers.0.connect_source_loopback", "100"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_msdp.test",
@@ -45,28 +45,26 @@ resource "iosxe_restconf" "PreReq0" {
 `
 
 func testAccIosxeMSDPConfig_minimum() string {
-	return `
-	resource "iosxe_msdp" "test" {
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_msdp" "test" {` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeMSDPConfig_all() string {
-	return `
-	resource "iosxe_msdp" "test" {
-		originator_id = "Loopback100"
-		passwords = [{
-			addr = "10.1.1.1"
-			encryption = 0
-			password = "Cisco123"
-		}]
-		peers = [{
-			addr = "10.1.1.1"
-			remote_as = 65000
-			connect_source_loopback = 100
-		}]
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_msdp" "test" {` + "\n"
+	config += `	originator_id = "Loopback100"` + "\n"
+	config += `	passwords = [{` + "\n"
+	config += `		addr = "10.1.1.1"` + "\n"
+	config += `		encryption = 0` + "\n"
+	config += `		password = "Cisco123"` + "\n"
+	config += `	}]` + "\n"
+	config += `	peers = [{` + "\n"
+	config += `		addr = "10.1.1.1"` + "\n"
+	config += `		remote_as = 65000` + "\n"
+	config += `		connect_source_loopback = 100` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

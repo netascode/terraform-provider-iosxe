@@ -9,48 +9,48 @@ import (
 )
 
 func TestAccIosxeNTP(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "authenticate", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "logging", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "access_group_peer_acl", "SACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "access_group_query_only_acl", "SACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "access_group_serve_acl", "SACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "access_group_serve_only_acl", "SACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "authentication_keys.0.number", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "authentication_keys.0.md5", "060506324F41584B564347"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "authentication_keys.0.encryption_type", "7"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "master", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "master_stratum", "5"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "passive", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "update_calendar", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "trap_source_gigabit_ethernet", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.ip_address", "1.2.3.4"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.source", "GigabitEthernet3"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.key", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.prefer", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.version", "2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.name", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.servers.0.ip_address", "3.4.5.6"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.servers.0.key", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.servers.0.prefer", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.servers.0.version", "2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.ip_address", "5.2.3.4"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.source", "GigabitEthernet3"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.key", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.prefer", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.version", "2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.name", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.peers.0.ip_address", "5.4.5.6"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.peers.0.key", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.peers.0.prefer", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.peers.0.version", "2"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeNTPPrerequisitesConfig + testAccIosxeNTPConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "authenticate", "true"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "logging", "false"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "access_group_peer_acl", "SACL1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "access_group_query_only_acl", "SACL1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "access_group_serve_acl", "SACL1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "access_group_serve_only_acl", "SACL1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "authentication_keys.0.number", "1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "authentication_keys.0.md5", "060506324F41584B564347"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "authentication_keys.0.encryption_type", "7"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "master", "true"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "master_stratum", "5"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "passive", "false"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "update_calendar", "false"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "trap_source_gigabit_ethernet", "1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.ip_address", "1.2.3.4"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.source", "GigabitEthernet3"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.key", "1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.prefer", "true"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "servers.0.version", "2"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.name", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.servers.0.ip_address", "3.4.5.6"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.servers.0.key", "1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.servers.0.prefer", "true"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "server_vrfs.0.servers.0.version", "2"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.ip_address", "5.2.3.4"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.source", "GigabitEthernet3"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.key", "1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.prefer", "true"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peers.0.version", "2"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.name", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.peers.0.ip_address", "5.4.5.6"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.peers.0.key", "1"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.peers.0.prefer", "true"),
-					resource.TestCheckResourceAttr("iosxe_ntp.test", "peer_vrfs.0.peers.0.version", "2"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_ntp.test",
@@ -81,65 +81,63 @@ resource "iosxe_restconf" "PreReq1" {
 `
 
 func testAccIosxeNTPConfig_minimum() string {
-	return `
-	resource "iosxe_ntp" "test" {
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
-	}
-	`
+	config := `resource "iosxe_ntp" "test" {` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeNTPConfig_all() string {
-	return `
-	resource "iosxe_ntp" "test" {
-		authenticate = true
-		logging = false
-		access_group_peer_acl = "SACL1"
-		access_group_query_only_acl = "SACL1"
-		access_group_serve_acl = "SACL1"
-		access_group_serve_only_acl = "SACL1"
-		authentication_keys = [{
-			number = 1
-			md5 = "060506324F41584B564347"
-			encryption_type = 7
-		}]
-		master = true
-		master_stratum = 5
-		passive = false
-		update_calendar = false
-		trap_source_gigabit_ethernet = "1"
-		servers = [{
-			ip_address = "1.2.3.4"
-			source = "GigabitEthernet3"
-			key = 1
-			prefer = true
-			version = 2
-		}]
-		server_vrfs = [{
-			name = "VRF1"
-			servers = [{
-				ip_address = "3.4.5.6"
-				key = 1
-				prefer = true
-				version = 2
-			}]
-		}]
-		peers = [{
-			ip_address = "5.2.3.4"
-			source = "GigabitEthernet3"
-			key = 1
-			prefer = true
-			version = 2
-		}]
-		peer_vrfs = [{
-			name = "VRF1"
-			peers = [{
-				ip_address = "5.4.5.6"
-				key = 1
-				prefer = true
-				version = 2
-			}]
-		}]
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
-	}
-	`
+	config := `resource "iosxe_ntp" "test" {` + "\n"
+	config += `	authenticate = true` + "\n"
+	config += `	logging = false` + "\n"
+	config += `	access_group_peer_acl = "SACL1"` + "\n"
+	config += `	access_group_query_only_acl = "SACL1"` + "\n"
+	config += `	access_group_serve_acl = "SACL1"` + "\n"
+	config += `	access_group_serve_only_acl = "SACL1"` + "\n"
+	config += `	authentication_keys = [{` + "\n"
+	config += `		number = 1` + "\n"
+	config += `		md5 = "060506324F41584B564347"` + "\n"
+	config += `		encryption_type = 7` + "\n"
+	config += `	}]` + "\n"
+	config += `	master = true` + "\n"
+	config += `	master_stratum = 5` + "\n"
+	config += `	passive = false` + "\n"
+	config += `	update_calendar = false` + "\n"
+	config += `	trap_source_gigabit_ethernet = "1"` + "\n"
+	config += `	servers = [{` + "\n"
+	config += `		ip_address = "1.2.3.4"` + "\n"
+	config += `		source = "GigabitEthernet3"` + "\n"
+	config += `		key = 1` + "\n"
+	config += `		prefer = true` + "\n"
+	config += `		version = 2` + "\n"
+	config += `	}]` + "\n"
+	config += `	server_vrfs = [{` + "\n"
+	config += `		name = "VRF1"` + "\n"
+	config += `		servers = [{` + "\n"
+	config += `			ip_address = "3.4.5.6"` + "\n"
+	config += `			key = 1` + "\n"
+	config += `			prefer = true` + "\n"
+	config += `			version = 2` + "\n"
+	config += `		}]` + "\n"
+	config += `	}]` + "\n"
+	config += `	peers = [{` + "\n"
+	config += `		ip_address = "5.2.3.4"` + "\n"
+	config += `		source = "GigabitEthernet3"` + "\n"
+	config += `		key = 1` + "\n"
+	config += `		prefer = true` + "\n"
+	config += `		version = 2` + "\n"
+	config += `	}]` + "\n"
+	config += `	peer_vrfs = [{` + "\n"
+	config += `		name = "VRF1"` + "\n"
+	config += `		peers = [{` + "\n"
+	config += `			ip_address = "5.4.5.6"` + "\n"
+	config += `			key = 1` + "\n"
+	config += `			prefer = true` + "\n"
+	config += `			version = 2` + "\n"
+	config += `		}]` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

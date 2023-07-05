@@ -9,18 +9,18 @@ import (
 )
 
 func TestAccIosxeLoggingIPv4HostTransport(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv4_host_transport.test", "ipv4_host", "2.2.2.2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv4_host_transport.test", "transport_udp_ports.0.port_number", "10000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv4_host_transport.test", "transport_tcp_ports.0.port_number", "10001"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv4_host_transport.test", "transport_tls_ports.0.port_number", "10002"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeLoggingIPv4HostTransportConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_logging_ipv4_host_transport.test", "ipv4_host", "2.2.2.2"),
-					resource.TestCheckResourceAttr("iosxe_logging_ipv4_host_transport.test", "transport_udp_ports.0.port_number", "10000"),
-					resource.TestCheckResourceAttr("iosxe_logging_ipv4_host_transport.test", "transport_tcp_ports.0.port_number", "10001"),
-					resource.TestCheckResourceAttr("iosxe_logging_ipv4_host_transport.test", "transport_tls_ports.0.port_number", "10002"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_logging_ipv4_host_transport.test",
@@ -32,26 +32,24 @@ func TestAccIosxeLoggingIPv4HostTransport(t *testing.T) {
 }
 
 func testAccIosxeLoggingIPv4HostTransportConfig_minimum() string {
-	return `
-	resource "iosxe_logging_ipv4_host_transport" "test" {
-		ipv4_host = "2.2.2.2"
-	}
-	`
+	config := `resource "iosxe_logging_ipv4_host_transport" "test" {` + "\n"
+	config += `	ipv4_host = "2.2.2.2"` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeLoggingIPv4HostTransportConfig_all() string {
-	return `
-	resource "iosxe_logging_ipv4_host_transport" "test" {
-		ipv4_host = "2.2.2.2"
-		transport_udp_ports = [{
-			port_number = 10000
-		}]
-		transport_tcp_ports = [{
-			port_number = 10001
-		}]
-		transport_tls_ports = [{
-			port_number = 10002
-		}]
-	}
-	`
+	config := `resource "iosxe_logging_ipv4_host_transport" "test" {` + "\n"
+	config += `	ipv4_host = "2.2.2.2"` + "\n"
+	config += `	transport_udp_ports = [{` + "\n"
+	config += `		port_number = 10000` + "\n"
+	config += `	}]` + "\n"
+	config += `	transport_tcp_ports = [{` + "\n"
+	config += `		port_number = 10001` + "\n"
+	config += `	}]` + "\n"
+	config += `	transport_tls_ports = [{` + "\n"
+	config += `		port_number = 10002` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
+	return config
 }

@@ -124,6 +124,7 @@ type YamlConfigAttribute struct {
 	NoAugmentConfig bool                  `yaml:"no_augment_config"`
 	DeleteParent    bool                  `yaml:"delete_parent"`
 	NoDelete        bool                  `yaml:"no_delete"`
+	TestTags        []string              `yaml:"test_tags"`
 	Attributes      []YamlConfigAttribute `yaml:"attributes"`
 }
 

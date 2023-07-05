@@ -9,34 +9,36 @@ import (
 )
 
 func TestAccDataSourceIosxeBanner(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_banner.test", "exec_banner", "My Exec Banner"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_banner.test", "login_banner", "My Login Banner"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_banner.test", "prompt_timeout_banner", "My Prompt-Timeout Banner"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_banner.test", "motd_banner", "My MOTD Banner"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeBannerConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_banner.test", "exec_banner", "My Exec Banner"),
-					resource.TestCheckResourceAttr("data.iosxe_banner.test", "login_banner", "My Login Banner"),
-					resource.TestCheckResourceAttr("data.iosxe_banner.test", "prompt_timeout_banner", "My Prompt-Timeout Banner"),
-					resource.TestCheckResourceAttr("data.iosxe_banner.test", "motd_banner", "My MOTD Banner"),
-				),
+				Config: testAccDataSourceIosxeBannerConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeBannerConfig = `
+func testAccDataSourceIosxeBannerConfig() string {
+	config := `resource "iosxe_banner" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	exec_banner = "My Exec Banner"` + "\n"
+	config += `	login_banner = "My Login Banner"` + "\n"
+	config += `	prompt_timeout_banner = "My Prompt-Timeout Banner"` + "\n"
+	config += `	motd_banner = "My MOTD Banner"` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_banner" "test" {
-	delete_mode = "attributes"
-	exec_banner = "My Exec Banner"
-	login_banner = "My Login Banner"
-	prompt_timeout_banner = "My Prompt-Timeout Banner"
-	motd_banner = "My MOTD Banner"
+	config += `
+		data "iosxe_banner" "test" {
+			depends_on = [iosxe_banner.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_banner" "test" {
-	depends_on = [iosxe_banner.test]
-}
-`

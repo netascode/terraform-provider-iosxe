@@ -9,18 +9,18 @@ import (
 )
 
 func TestAccDataSourceIosxeBGPNeighbor(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_neighbor.test", "remote_as", "65000"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_neighbor.test", "description", "BGP Neighbor Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_neighbor.test", "shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_neighbor.test", "update_source_loopback", "100"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeBGPNeighborPrerequisitesConfig + testAccDataSourceIosxeBGPNeighborConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_bgp_neighbor.test", "remote_as", "65000"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_neighbor.test", "description", "BGP Neighbor Description"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_neighbor.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_neighbor.test", "update_source_loopback", "100"),
-				),
+				Config: testAccDataSourceIosxeBGPNeighborPrerequisitesConfig + testAccDataSourceIosxeBGPNeighborConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -43,22 +43,24 @@ resource "iosxe_restconf" "PreReq1" {
 
 `
 
-const testAccDataSourceIosxeBGPNeighborConfig = `
+func testAccDataSourceIosxeBGPNeighborConfig() string {
+	config := `resource "iosxe_bgp_neighbor" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	asn = "65000"` + "\n"
+	config += `	ip = "3.3.3.3"` + "\n"
+	config += `	remote_as = "65000"` + "\n"
+	config += `	description = "BGP Neighbor Description"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `	update_source_loopback = "100"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_bgp_neighbor" "test" {
-	delete_mode = "attributes"
-	asn = "65000"
-	ip = "3.3.3.3"
-	remote_as = "65000"
-	description = "BGP Neighbor Description"
-	shutdown = false
-	update_source_loopback = "100"
-	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+	config += `
+		data "iosxe_bgp_neighbor" "test" {
+			asn = "65000"
+			ip = "3.3.3.3"
+			depends_on = [iosxe_bgp_neighbor.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_bgp_neighbor" "test" {
-	asn = "65000"
-	ip = "3.3.3.3"
-	depends_on = [iosxe_bgp_neighbor.test]
-}
-`

@@ -13,31 +13,33 @@ func TestAccDataSourceIosxeVLANConfiguration(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_vlan_configuration.test", "evpn_instance", "123"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_vlan_configuration.test", "evpn_instance_vni", "10123"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeVLANConfigurationConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_vlan_configuration.test", "evpn_instance", "123"),
-					resource.TestCheckResourceAttr("data.iosxe_vlan_configuration.test", "evpn_instance_vni", "10123"),
-				),
+				Config: testAccDataSourceIosxeVLANConfigurationConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeVLANConfigurationConfig = `
+func testAccDataSourceIosxeVLANConfigurationConfig() string {
+	config := `resource "iosxe_vlan_configuration" "test" {` + "\n"
+	config += `	vlan_id = 123` + "\n"
+	config += `	evpn_instance = 123` + "\n"
+	config += `	evpn_instance_vni = 10123` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_vlan_configuration" "test" {
-	vlan_id = 123
-	evpn_instance = 123
-	evpn_instance_vni = 10123
+	config += `
+		data "iosxe_vlan_configuration" "test" {
+			vlan_id = 123
+			depends_on = [iosxe_vlan_configuration.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_vlan_configuration" "test" {
-	vlan_id = 123
-	depends_on = [iosxe_vlan_configuration.test]
-}
-`

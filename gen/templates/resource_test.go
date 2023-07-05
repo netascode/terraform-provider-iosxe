@@ -11,9 +11,52 @@ import (
 
 func TestAccIosxe{{camelCase .Name}}(t *testing.T) {
 	{{- if len .TestTags}}
-	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") == ""{{end}} {
+	if {{range $i, $e := .TestTags}}{{if $i}} && {{end}}os.Getenv("{{$e}}") == ""{{end}} {
         t.Skip("skipping test, set environment variable {{range $i, $e := .TestTags}}{{if $i}} or {{end}}{{$e}}{{end}}")
     }
+	{{- end}}
+	var checks []resource.TestCheckFunc
+	{{- $name := .Name }}
+	{{- range .Attributes}}
+	{{- if and (not .Reference) (not .WriteOnly) (not .ExcludeTest)}}
+	{{- if eq .Type "List"}}
+	{{- $list := .TfName }}
+	{{- range .Attributes}}
+	{{- if and (not .WriteOnly) (not .ExcludeTest)}}
+	{{- if eq .Type "List"}}
+	{{- $clist := .TfName }}
+	{{- range .Attributes}}
+	{{- if and (not .WriteOnly) (not .ExcludeTest)}}
+	{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{$clist}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"))
+	}
+	{{- else}}
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{$clist}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"))
+	{{- end}}
+	{{- end}}
+	{{- end}}
+	{{- else}}
+	{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"))
+	}
+	{{- else}}
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"))
+	{{- end}}
+	{{- end}}
+	{{- end}}
+	{{- end}}
+	{{- else}}
+	{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"))
+	}
+	{{- else}}
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"))
+	{{- end}}
+	{{- end}}
+	{{- end}}
 	{{- end}}
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
@@ -21,32 +64,7 @@ func TestAccIosxe{{camelCase .Name}}(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: {{if .TestPrerequisites}}testAccIosxe{{camelCase .Name}}PrerequisitesConfig+{{end}}testAccIosxe{{camelCase .Name}}Config_all(),
-				Check: resource.ComposeTestCheckFunc(
-					{{- $name := .Name }}
-					{{- range .Attributes}}
-					{{- if and (not .Reference) (not .WriteOnly) (not .ExcludeTest)}}
-					{{- if eq .Type "List"}}
-					{{- $list := .TfName }}
-					{{- range .Attributes}}
-					{{- if and (not .WriteOnly) (not .ExcludeTest)}}
-					{{- if eq .Type "List"}}
-					{{- $clist := .TfName }}
-					{{- range .Attributes}}
-					{{- if and (not .WriteOnly) (not .ExcludeTest)}}
-					resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{$clist}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
-					{{- end}}
-					{{- end}}
-					{{- else}}
-					resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{$list}}.0.{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
-					{{- end}}
-					{{- end}}
-					{{- end}}
-					{{- else}}
-					resource.TestCheckResourceAttr("iosxe_{{snakeCase $name}}.test", "{{.TfName}}{{if or (eq .Type "StringList") (eq .Type "Int64List")}}.0{{end}}", "{{.Example}}"),
-					{{- end}}
-					{{- end}}
-					{{- end}}
-				),
+				Check: resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_{{snakeCase $name}}.test",
@@ -98,74 +116,108 @@ resource "iosxe_restconf" "PreReq{{$index}}" {
 {{- end}}
 
 func testAccIosxe{{camelCase .Name}}Config_minimum() string {
-	return `
-	resource "iosxe_{{snakeCase $name}}" "test" {
+	config := `resource "iosxe_{{snakeCase $name}}" "test" {` + "\n"
 	{{- range  .Attributes}}
 	{{- if or .Reference .Id .Mandatory}}
 	{{- if eq .Type "List"}}
-		{{.TfName}} = [{
+	config += `	{{.TfName}} = [{` + "\n"
 		{{- range  .Attributes}}
 		{{- if not .ExcludeTest}}
 		{{- if eq .Type "List"}}
-			{{.TfName}} = [{
-				{{- range  .Attributes}}
-				{{- if not .ExcludeTest}}
-				{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
-				{{- end}}
-				{{- end}}
-			}]
+	config += `		{{.TfName}} = [{` + "\n"
+			{{- range  .Attributes}}
+			{{- if not .ExcludeTest}}
+			{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		config += `			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+	}
+			{{- else}}
+	config += `			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+			{{- end}}
+			{{- end}}
+			{{- end}}
+	config += `		}]` + "\n"
 		{{- else}}
-			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+		{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		config += `		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+	}
+		{{- else}}
+	config += `		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
 		{{- end}}
 		{{- end}}
 		{{- end}}
-		}]
+		{{- end}}
+	config += `	}]` + "\n"
 	{{- else}}
-		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+	{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		config += `	{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+	}
+	{{- else}}
+	config += `	{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+	{{- end}}
 	{{- end}}
 	{{- end}}
 	{{- end}}
 	{{- if .TestPrerequisites}}
-		depends_on = [{{range $index, $item := .TestPrerequisites}}iosxe_restconf.PreReq{{$index}}, {{end}}]
+	config += `	depends_on = [{{range $index, $item := .TestPrerequisites}}iosxe_restconf.PreReq{{$index}}, {{end}}]` + "\n"
 	{{- end}}
-	}
-	`
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxe{{camelCase .Name}}Config_all() string {
-	return `
-	resource "iosxe_{{snakeCase $name}}" "test" {
+	config := `resource "iosxe_{{snakeCase $name}}" "test" {` + "\n"
 	{{- if and (not .NoDelete) (not .NoDeleteAttributes) .DefaultDeleteAttributes}}
-		delete_mode = "all"
+	config += `	delete_mode = "all"` + "\n"
 	{{- end}}
 	{{- range  .Attributes}}
 	{{- if not .ExcludeTest}}
 	{{- if eq .Type "List"}}
-		{{.TfName}} = [{
+	config += `	{{.TfName}} = [{` + "\n"
 		{{- range  .Attributes}}
 		{{- if not .ExcludeTest}}
 		{{- if eq .Type "List"}}
-			{{.TfName}} = [{
-				{{- range  .Attributes}}
-				{{- if not .ExcludeTest}}
-				{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
-				{{- end}}
-				{{- end}}
-			}]
+	config += `		{{.TfName}} = [{` + "\n"
+			{{- range  .Attributes}}
+			{{- if not .ExcludeTest}}
+			{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		config += `			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+	}
+			{{- else}}
+	config += `			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+			{{- end}}
+			{{- end}}
+			{{- end}}
+	config += `		}]` + "\n"
 		{{- else}}
-			{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+		{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		config += `		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+	}
+		{{- else}}
+	config += `		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
 		{{- end}}
 		{{- end}}
 		{{- end}}
-		}]
+		{{- end}}
+	config += `	}]` + "\n"
 	{{- else}}
-		{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}
+	{{- if len .TestTags}}
+	if {{range $i, $e := .TestTags}}{{if $i}} || {{end}}os.Getenv("{{$e}}") != ""{{end}} {
+		config += `	{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+	}
+	{{- else}}
+	config += `	{{.TfName}} = {{if eq .Type "String"}}"{{.Example}}"{{else if eq .Type "StringList"}}["{{.Example}}"]{{else if eq .Type "Int64List"}}[{{.Example}}]{{else}}{{.Example}}{{end}}` + "\n"
+	{{- end}}
 	{{- end}}
 	{{- end}}
 	{{- end}}
 	{{- if .TestPrerequisites}}
-		depends_on = [{{range $index, $item := .TestPrerequisites}}iosxe_restconf.PreReq{{$index}}, {{end}}]
+	config += `	depends_on = [{{range $index, $item := .TestPrerequisites}}iosxe_restconf.PreReq{{$index}}, {{end}}]` + "\n"
 	{{- end}}
-	}
-	`
+	config += `}` + "\n"
+	return config
 }

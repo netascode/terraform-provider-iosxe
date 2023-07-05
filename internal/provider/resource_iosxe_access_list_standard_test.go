@@ -9,19 +9,19 @@ import (
 )
 
 func TestAccIosxeAccessListStandard(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "name", "SACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "entries.0.sequence", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "entries.0.remark", "Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "entries.0.deny_prefix", "10.0.0.0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "entries.0.deny_prefix_mask", "0.0.0.255"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeAccessListStandardConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "name", "SACL1"),
-					resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "entries.0.sequence", "10"),
-					resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "entries.0.remark", "Description"),
-					resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "entries.0.deny_prefix", "10.0.0.0"),
-					resource.TestCheckResourceAttr("iosxe_access_list_standard.test", "entries.0.deny_prefix_mask", "0.0.0.255"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_access_list_standard.test",
@@ -33,23 +33,21 @@ func TestAccIosxeAccessListStandard(t *testing.T) {
 }
 
 func testAccIosxeAccessListStandardConfig_minimum() string {
-	return `
-	resource "iosxe_access_list_standard" "test" {
-		name = "SACL1"
-	}
-	`
+	config := `resource "iosxe_access_list_standard" "test" {` + "\n"
+	config += `	name = "SACL1"` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeAccessListStandardConfig_all() string {
-	return `
-	resource "iosxe_access_list_standard" "test" {
-		name = "SACL1"
-		entries = [{
-			sequence = 10
-			remark = "Description"
-			deny_prefix = "10.0.0.0"
-			deny_prefix_mask = "0.0.0.255"
-		}]
-	}
-	`
+	config := `resource "iosxe_access_list_standard" "test" {` + "\n"
+	config += `	name = "SACL1"` + "\n"
+	config += `	entries = [{` + "\n"
+	config += `		sequence = 10` + "\n"
+	config += `		remark = "Description"` + "\n"
+	config += `		deny_prefix = "10.0.0.0"` + "\n"
+	config += `		deny_prefix_mask = "0.0.0.255"` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
+	return config
 }

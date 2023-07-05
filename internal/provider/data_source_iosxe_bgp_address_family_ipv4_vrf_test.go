@@ -9,18 +9,18 @@ import (
 )
 
 func TestAccDataSourceIosxeBGPAddressFamilyIPv4VRF(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_address_family_ipv4_vrf.test", "vrfs.0.name", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_address_family_ipv4_vrf.test", "vrfs.0.advertise_l2vpn_evpn", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_address_family_ipv4_vrf.test", "vrfs.0.redistribute_connected", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_address_family_ipv4_vrf.test", "vrfs.0.redistribute_static", "true"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeBGPAddressFamilyIPv4VRFPrerequisitesConfig + testAccDataSourceIosxeBGPAddressFamilyIPv4VRFConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_bgp_address_family_ipv4_vrf.test", "vrfs.0.name", "VRF1"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_address_family_ipv4_vrf.test", "vrfs.0.advertise_l2vpn_evpn", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_address_family_ipv4_vrf.test", "vrfs.0.redistribute_connected", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_address_family_ipv4_vrf.test", "vrfs.0.redistribute_static", "true"),
-				),
+				Config: testAccDataSourceIosxeBGPAddressFamilyIPv4VRFPrerequisitesConfig + testAccDataSourceIosxeBGPAddressFamilyIPv4VRFConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -47,24 +47,26 @@ resource "iosxe_restconf" "PreReq1" {
 
 `
 
-const testAccDataSourceIosxeBGPAddressFamilyIPv4VRFConfig = `
+func testAccDataSourceIosxeBGPAddressFamilyIPv4VRFConfig() string {
+	config := `resource "iosxe_bgp_address_family_ipv4_vrf" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	asn = "65000"` + "\n"
+	config += `	af_name = "unicast"` + "\n"
+	config += `	vrfs = [{` + "\n"
+	config += `		name = "VRF1"` + "\n"
+	config += `		advertise_l2vpn_evpn = true` + "\n"
+	config += `		redistribute_connected = true` + "\n"
+	config += `		redistribute_static = true` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_bgp_address_family_ipv4_vrf" "test" {
-	delete_mode = "attributes"
-	asn = "65000"
-	af_name = "unicast"
-	vrfs = [{
-		name = "VRF1"
-		advertise_l2vpn_evpn = true
-		redistribute_connected = true
-		redistribute_static = true
-	}]
-	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+	config += `
+		data "iosxe_bgp_address_family_ipv4_vrf" "test" {
+			asn = "65000"
+			af_name = "unicast"
+			depends_on = [iosxe_bgp_address_family_ipv4_vrf.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_bgp_address_family_ipv4_vrf" "test" {
-	asn = "65000"
-	af_name = "unicast"
-	depends_on = [iosxe_bgp_address_family_ipv4_vrf.test]
-}
-`

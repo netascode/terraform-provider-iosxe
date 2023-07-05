@@ -9,31 +9,31 @@ import (
 )
 
 func TestAccDataSourceIosxeInterfaceEthernet(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "description", "My Interface Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_proxy_arp", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_redirects", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "unreachables", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ipv4_address", "15.1.1.1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ipv4_address_mask", "255.255.255.252"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_dhcp_relay_source_interface", "Loopback100"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_access_group_in", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_access_group_in_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_access_group_out", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_access_group_out_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.address", "10.10.10.10"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.global", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.vrf", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "source_template.0.template_name", "TEMP1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "source_template.0.merge", "false"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeInterfaceEthernetPrerequisitesConfig + testAccDataSourceIosxeInterfaceEthernetConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "description", "My Interface Description"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_proxy_arp", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_redirects", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "unreachables", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ipv4_address", "15.1.1.1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ipv4_address_mask", "255.255.255.252"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_dhcp_relay_source_interface", "Loopback100"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_access_group_in", "1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_access_group_in_enable", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_access_group_out", "1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "ip_access_group_out_enable", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.address", "10.10.10.10"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.global", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "helper_addresses.0.vrf", "VRF1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "source_template.0.template_name", "TEMP1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ethernet.test", "source_template.0.merge", "false"),
-				),
+				Config: testAccDataSourceIosxeInterfaceEthernetPrerequisitesConfig + testAccDataSourceIosxeInterfaceEthernetConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -51,38 +51,40 @@ resource "iosxe_restconf" "PreReq0" {
 
 `
 
-const testAccDataSourceIosxeInterfaceEthernetConfig = `
+func testAccDataSourceIosxeInterfaceEthernetConfig() string {
+	config := `resource "iosxe_interface_ethernet" "test" {` + "\n"
+	config += `	type = "GigabitEthernet"` + "\n"
+	config += `	name = "3"` + "\n"
+	config += `	description = "My Interface Description"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `	ip_proxy_arp = false` + "\n"
+	config += `	ip_redirects = false` + "\n"
+	config += `	unreachables = false` + "\n"
+	config += `	ipv4_address = "15.1.1.1"` + "\n"
+	config += `	ipv4_address_mask = "255.255.255.252"` + "\n"
+	config += `	ip_dhcp_relay_source_interface = "Loopback100"` + "\n"
+	config += `	ip_access_group_in = "1"` + "\n"
+	config += `	ip_access_group_in_enable = true` + "\n"
+	config += `	ip_access_group_out = "1"` + "\n"
+	config += `	ip_access_group_out_enable = true` + "\n"
+	config += `	helper_addresses = [{` + "\n"
+	config += `		address = "10.10.10.10"` + "\n"
+	config += `		global = false` + "\n"
+	config += `		vrf = "VRF1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	source_template = [{` + "\n"
+	config += `		template_name = "TEMP1"` + "\n"
+	config += `		merge = false` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_interface_ethernet" "test" {
-	type = "GigabitEthernet"
-	name = "3"
-	description = "My Interface Description"
-	shutdown = false
-	ip_proxy_arp = false
-	ip_redirects = false
-	unreachables = false
-	ipv4_address = "15.1.1.1"
-	ipv4_address_mask = "255.255.255.252"
-	ip_dhcp_relay_source_interface = "Loopback100"
-	ip_access_group_in = "1"
-	ip_access_group_in_enable = true
-	ip_access_group_out = "1"
-	ip_access_group_out_enable = true
-	helper_addresses = [{
-		address = "10.10.10.10"
-		global = false
-		vrf = "VRF1"
-	}]
-	source_template = [{
-		template_name = "TEMP1"
-		merge = false
-	}]
-	depends_on = [iosxe_restconf.PreReq0, ]
+	config += `
+		data "iosxe_interface_ethernet" "test" {
+			type = "GigabitEthernet"
+			name = "3"
+			depends_on = [iosxe_interface_ethernet.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_interface_ethernet" "test" {
-	type = "GigabitEthernet"
-	name = "3"
-	depends_on = [iosxe_interface_ethernet.test]
-}
-`

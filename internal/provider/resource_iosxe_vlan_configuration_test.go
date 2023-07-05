@@ -13,17 +13,17 @@ func TestAccIosxeVLANConfiguration(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "vlan_id", "123"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "evpn_instance", "123"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "evpn_instance_vni", "10123"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeVLANConfigurationConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "vlan_id", "123"),
-					resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "evpn_instance", "123"),
-					resource.TestCheckResourceAttr("iosxe_vlan_configuration.test", "evpn_instance_vni", "10123"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_vlan_configuration.test",
@@ -35,19 +35,17 @@ func TestAccIosxeVLANConfiguration(t *testing.T) {
 }
 
 func testAccIosxeVLANConfigurationConfig_minimum() string {
-	return `
-	resource "iosxe_vlan_configuration" "test" {
-		vlan_id = 123
-	}
-	`
+	config := `resource "iosxe_vlan_configuration" "test" {` + "\n"
+	config += `	vlan_id = 123` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeVLANConfigurationConfig_all() string {
-	return `
-	resource "iosxe_vlan_configuration" "test" {
-		vlan_id = 123
-		evpn_instance = 123
-		evpn_instance_vni = 10123
-	}
-	`
+	config := `resource "iosxe_vlan_configuration" "test" {` + "\n"
+	config += `	vlan_id = 123` + "\n"
+	config += `	evpn_instance = 123` + "\n"
+	config += `	evpn_instance_vni = 10123` + "\n"
+	config += `}` + "\n"
+	return config
 }

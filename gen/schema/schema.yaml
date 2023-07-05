@@ -40,6 +40,7 @@ attribute:
   no_augment_config: bool(required=False)
   delete_parent: bool(required=False)
   no_delete: bool(required=False)
+  test_tags: list(str(), required=False)
   attributes: list(include('attribute'), required=False)
 
 test_prerequisite:

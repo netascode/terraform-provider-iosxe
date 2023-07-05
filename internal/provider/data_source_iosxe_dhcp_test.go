@@ -9,32 +9,34 @@ import (
 )
 
 func TestAccDataSourceIosxeDHCP(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_dhcp.test", "relay_information_trust_all", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_dhcp.test", "relay_information_option_default", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_dhcp.test", "relay_information_option_vpn", "true"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeDHCPConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_dhcp.test", "relay_information_trust_all", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_dhcp.test", "relay_information_option_default", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_dhcp.test", "relay_information_option_vpn", "true"),
-				),
+				Config: testAccDataSourceIosxeDHCPConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeDHCPConfig = `
+func testAccDataSourceIosxeDHCPConfig() string {
+	config := `resource "iosxe_dhcp" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	relay_information_trust_all = false` + "\n"
+	config += `	relay_information_option_default = false` + "\n"
+	config += `	relay_information_option_vpn = true` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_dhcp" "test" {
-	delete_mode = "attributes"
-	relay_information_trust_all = false
-	relay_information_option_default = false
-	relay_information_option_vpn = true
+	config += `
+		data "iosxe_dhcp" "test" {
+			depends_on = [iosxe_dhcp.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_dhcp" "test" {
-	depends_on = [iosxe_dhcp.test]
-}
-`

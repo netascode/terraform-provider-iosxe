@@ -9,20 +9,20 @@ import (
 )
 
 func TestAccIosxePrefixList(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.name", "PREFIX_LIST_1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.seq", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.action", "permit"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.ip", "10.0.0.0/8"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.ge", "24"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.le", "32"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxePrefixListConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.name", "PREFIX_LIST_1"),
-					resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.seq", "10"),
-					resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.action", "permit"),
-					resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.ip", "10.0.0.0/8"),
-					resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.ge", "24"),
-					resource.TestCheckResourceAttr("iosxe_prefix_list.test", "prefixes.0.le", "32"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_prefix_list.test",
@@ -34,23 +34,21 @@ func TestAccIosxePrefixList(t *testing.T) {
 }
 
 func testAccIosxePrefixListConfig_minimum() string {
-	return `
-	resource "iosxe_prefix_list" "test" {
-	}
-	`
+	config := `resource "iosxe_prefix_list" "test" {` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxePrefixListConfig_all() string {
-	return `
-	resource "iosxe_prefix_list" "test" {
-		prefixes = [{
-			name = "PREFIX_LIST_1"
-			seq = 10
-			action = "permit"
-			ip = "10.0.0.0/8"
-			ge = 24
-			le = 32
-		}]
-	}
-	`
+	config := `resource "iosxe_prefix_list" "test" {` + "\n"
+	config += `	prefixes = [{` + "\n"
+	config += `		name = "PREFIX_LIST_1"` + "\n"
+	config += `		seq = 10` + "\n"
+	config += `		action = "permit"` + "\n"
+	config += `		ip = "10.0.0.0/8"` + "\n"
+	config += `		ge = 24` + "\n"
+	config += `		le = 32` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
+	return config
 }

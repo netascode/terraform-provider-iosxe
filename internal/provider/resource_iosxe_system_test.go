@@ -9,28 +9,28 @@ import (
 )
 
 func TestAccIosxeSystem(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "hostname", "ROUTER-1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "ipv6_unicast_routing", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "ip_source_route", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "ip_domain_lookup", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "ip_domain_name", "test.com"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "login_delay", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "login_on_failure", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "login_on_failure_log", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "login_on_success", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "login_on_success_log", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_distributed", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.vrf", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.distributed", "true"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeSystemPrerequisitesConfig + testAccIosxeSystemConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_system.test", "hostname", "ROUTER-1"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "ipv6_unicast_routing", "true"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "ip_source_route", "false"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "ip_domain_lookup", "false"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "ip_domain_name", "test.com"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "login_delay", "10"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "login_on_failure", "true"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "login_on_failure_log", "true"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "login_on_success", "true"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "login_on_success_log", "true"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing", "true"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_distributed", "true"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.vrf", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.distributed", "true"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_system.test",
@@ -54,33 +54,31 @@ resource "iosxe_restconf" "PreReq0" {
 `
 
 func testAccIosxeSystemConfig_minimum() string {
-	return `
-	resource "iosxe_system" "test" {
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_system" "test" {` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeSystemConfig_all() string {
-	return `
-	resource "iosxe_system" "test" {
-		hostname = "ROUTER-1"
-		ipv6_unicast_routing = true
-		ip_source_route = false
-		ip_domain_lookup = false
-		ip_domain_name = "test.com"
-		login_delay = 10
-		login_on_failure = true
-		login_on_failure_log = true
-		login_on_success = true
-		login_on_success_log = true
-		multicast_routing = true
-		multicast_routing_distributed = true
-		multicast_routing_vrfs = [{
-			vrf = "VRF1"
-			distributed = true
-		}]
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_system" "test" {` + "\n"
+	config += `	hostname = "ROUTER-1"` + "\n"
+	config += `	ipv6_unicast_routing = true` + "\n"
+	config += `	ip_source_route = false` + "\n"
+	config += `	ip_domain_lookup = false` + "\n"
+	config += `	ip_domain_name = "test.com"` + "\n"
+	config += `	login_delay = 10` + "\n"
+	config += `	login_on_failure = true` + "\n"
+	config += `	login_on_failure_log = true` + "\n"
+	config += `	login_on_success = true` + "\n"
+	config += `	login_on_success_log = true` + "\n"
+	config += `	multicast_routing = true` + "\n"
+	config += `	multicast_routing_distributed = true` + "\n"
+	config += `	multicast_routing_vrfs = [{` + "\n"
+	config += `		vrf = "VRF1"` + "\n"
+	config += `		distributed = true` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

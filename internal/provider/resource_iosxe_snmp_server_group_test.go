@@ -9,23 +9,23 @@ import (
 )
 
 func TestAccIosxeSNMPServerGroup(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "name", "GROUP1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.security_level", "priv"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.context_node", "CON1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.match_node", "exact"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.read_node", "VIEW1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.write_node", "VIEW2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.notify_node", "VIEW3"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.access_ipv6_acl", "V6ACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.access_acl_name", "ACL1"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeSNMPServerGroupConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "name", "GROUP1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.security_level", "priv"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.context_node", "CON1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.match_node", "exact"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.read_node", "VIEW1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.write_node", "VIEW2"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.notify_node", "VIEW3"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.access_ipv6_acl", "V6ACL1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server_group.test", "v3_security.0.access_acl_name", "ACL1"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_snmp_server_group.test",
@@ -37,27 +37,25 @@ func TestAccIosxeSNMPServerGroup(t *testing.T) {
 }
 
 func testAccIosxeSNMPServerGroupConfig_minimum() string {
-	return `
-	resource "iosxe_snmp_server_group" "test" {
-		name = "GROUP1"
-	}
-	`
+	config := `resource "iosxe_snmp_server_group" "test" {` + "\n"
+	config += `	name = "GROUP1"` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeSNMPServerGroupConfig_all() string {
-	return `
-	resource "iosxe_snmp_server_group" "test" {
-		name = "GROUP1"
-		v3_security = [{
-			security_level = "priv"
-			context_node = "CON1"
-			match_node = "exact"
-			read_node = "VIEW1"
-			write_node = "VIEW2"
-			notify_node = "VIEW3"
-			access_ipv6_acl = "V6ACL1"
-			access_acl_name = "ACL1"
-		}]
-	}
-	`
+	config := `resource "iosxe_snmp_server_group" "test" {` + "\n"
+	config += `	name = "GROUP1"` + "\n"
+	config += `	v3_security = [{` + "\n"
+	config += `		security_level = "priv"` + "\n"
+	config += `		context_node = "CON1"` + "\n"
+	config += `		match_node = "exact"` + "\n"
+	config += `		read_node = "VIEW1"` + "\n"
+	config += `		write_node = "VIEW2"` + "\n"
+	config += `		notify_node = "VIEW3"` + "\n"
+	config += `		access_ipv6_acl = "V6ACL1"` + "\n"
+	config += `		access_acl_name = "ACL1"` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
+	return config
 }

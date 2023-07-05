@@ -9,40 +9,40 @@ import (
 )
 
 func TestAccIosxeSNMPServer(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "chassis_id", "R1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "contact", "Contact1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "ifindex_persist", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "location", "Location1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "packetsize", "2000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "queue_length", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_logging_getop", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_logging_setop", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_authentication", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_coldstart", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_linkdown", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_linkup", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_warmstart", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "source_interface_informs_gigabit_ethernet", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "source_interface_traps_gigabit_ethernet", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "trap_source_gigabit_ethernet", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.name", "COM1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.view", "VIEW1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.permission", "ro"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.ipv6", "ACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.access_list_name", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "contexts.0.name", "CON1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "views.0.name", "VIEW1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "views.0.mib", "interfaces"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_snmp_server.test", "views.0.inc_exl", "included"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeSNMPServerConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "chassis_id", "R1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "contact", "Contact1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "ifindex_persist", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "location", "Location1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "packetsize", "2000"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "queue_length", "100"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_logging_getop", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_logging_setop", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_authentication", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_coldstart", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_linkdown", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_linkup", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "enable_traps_snmp_warmstart", "true"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "source_interface_informs_gigabit_ethernet", "1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "source_interface_traps_gigabit_ethernet", "1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "trap_source_gigabit_ethernet", "1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.name", "COM1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.view", "VIEW1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.permission", "ro"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.ipv6", "ACL1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "snmp_communities.0.access_list_name", "1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "contexts.0.name", "CON1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "views.0.name", "VIEW1"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "views.0.mib", "interfaces"),
-					resource.TestCheckResourceAttr("iosxe_snmp_server.test", "views.0.inc_exl", "included"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_snmp_server.test",
@@ -54,47 +54,45 @@ func TestAccIosxeSNMPServer(t *testing.T) {
 }
 
 func testAccIosxeSNMPServerConfig_minimum() string {
-	return `
-	resource "iosxe_snmp_server" "test" {
-	}
-	`
+	config := `resource "iosxe_snmp_server" "test" {` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeSNMPServerConfig_all() string {
-	return `
-	resource "iosxe_snmp_server" "test" {
-		chassis_id = "R1"
-		contact = "Contact1"
-		ifindex_persist = true
-		location = "Location1"
-		packetsize = 2000
-		queue_length = 100
-		enable_logging_getop = true
-		enable_logging_setop = true
-		enable_traps = true
-		enable_traps_snmp_authentication = true
-		enable_traps_snmp_coldstart = true
-		enable_traps_snmp_linkdown = true
-		enable_traps_snmp_linkup = true
-		enable_traps_snmp_warmstart = true
-		source_interface_informs_gigabit_ethernet = "1"
-		source_interface_traps_gigabit_ethernet = "1"
-		trap_source_gigabit_ethernet = "1"
-		snmp_communities = [{
-			name = "COM1"
-			view = "VIEW1"
-			permission = "ro"
-			ipv6 = "ACL1"
-			access_list_name = "1"
-		}]
-		contexts = [{
-			name = "CON1"
-		}]
-		views = [{
-			name = "VIEW1"
-			mib = "interfaces"
-			inc_exl = "included"
-		}]
-	}
-	`
+	config := `resource "iosxe_snmp_server" "test" {` + "\n"
+	config += `	chassis_id = "R1"` + "\n"
+	config += `	contact = "Contact1"` + "\n"
+	config += `	ifindex_persist = true` + "\n"
+	config += `	location = "Location1"` + "\n"
+	config += `	packetsize = 2000` + "\n"
+	config += `	queue_length = 100` + "\n"
+	config += `	enable_logging_getop = true` + "\n"
+	config += `	enable_logging_setop = true` + "\n"
+	config += `	enable_traps = true` + "\n"
+	config += `	enable_traps_snmp_authentication = true` + "\n"
+	config += `	enable_traps_snmp_coldstart = true` + "\n"
+	config += `	enable_traps_snmp_linkdown = true` + "\n"
+	config += `	enable_traps_snmp_linkup = true` + "\n"
+	config += `	enable_traps_snmp_warmstart = true` + "\n"
+	config += `	source_interface_informs_gigabit_ethernet = "1"` + "\n"
+	config += `	source_interface_traps_gigabit_ethernet = "1"` + "\n"
+	config += `	trap_source_gigabit_ethernet = "1"` + "\n"
+	config += `	snmp_communities = [{` + "\n"
+	config += `		name = "COM1"` + "\n"
+	config += `		view = "VIEW1"` + "\n"
+	config += `		permission = "ro"` + "\n"
+	config += `		ipv6 = "ACL1"` + "\n"
+	config += `		access_list_name = "1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	contexts = [{` + "\n"
+	config += `		name = "CON1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	views = [{` + "\n"
+	config += `		name = "VIEW1"` + "\n"
+	config += `		mib = "interfaces"` + "\n"
+	config += `		inc_exl = "included"` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
+	return config
 }

@@ -9,30 +9,30 @@ import (
 )
 
 func TestAccIosxeInterfacePortChannelSubinterface(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "name", "10.666"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "description", "My Interface Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_proxy_arp", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_redirects", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "unreachables", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "vrf_forwarding", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ipv4_address", "192.0.2.2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ipv4_address_mask", "255.255.255.0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "encapsulation_dot1q_vlan_id", "666"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_access_group_in", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_access_group_in_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_access_group_out", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_access_group_out_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "helper_addresses.0.address", "10.10.10.10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "helper_addresses.0.global", "false"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeInterfacePortChannelSubinterfacePrerequisitesConfig + testAccIosxeInterfacePortChannelSubinterfaceConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "name", "10.666"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "description", "My Interface Description"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_proxy_arp", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_redirects", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "unreachables", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "vrf_forwarding", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ipv4_address", "192.0.2.2"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ipv4_address_mask", "255.255.255.0"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "encapsulation_dot1q_vlan_id", "666"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_access_group_in", "1"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_access_group_in_enable", "true"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_access_group_out", "1"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "ip_access_group_out_enable", "true"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "helper_addresses.0.address", "10.10.10.10"),
-					resource.TestCheckResourceAttr("iosxe_interface_port_channel_subinterface.test", "helper_addresses.0.global", "false"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_interface_port_channel_subinterface.test",
@@ -71,36 +71,34 @@ resource "iosxe_restconf" "PreReq2" {
 `
 
 func testAccIosxeInterfacePortChannelSubinterfaceConfig_minimum() string {
-	return `
-	resource "iosxe_interface_port_channel_subinterface" "test" {
-		name = "10.666"
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
-	}
-	`
+	config := `resource "iosxe_interface_port_channel_subinterface" "test" {` + "\n"
+	config += `	name = "10.666"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeInterfacePortChannelSubinterfaceConfig_all() string {
-	return `
-	resource "iosxe_interface_port_channel_subinterface" "test" {
-		name = "10.666"
-		description = "My Interface Description"
-		shutdown = false
-		ip_proxy_arp = false
-		ip_redirects = false
-		unreachables = false
-		vrf_forwarding = "VRF1"
-		ipv4_address = "192.0.2.2"
-		ipv4_address_mask = "255.255.255.0"
-		encapsulation_dot1q_vlan_id = 666
-		ip_access_group_in = "1"
-		ip_access_group_in_enable = true
-		ip_access_group_out = "1"
-		ip_access_group_out_enable = true
-		helper_addresses = [{
-			address = "10.10.10.10"
-			global = false
-		}]
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]
-	}
-	`
+	config := `resource "iosxe_interface_port_channel_subinterface" "test" {` + "\n"
+	config += `	name = "10.666"` + "\n"
+	config += `	description = "My Interface Description"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `	ip_proxy_arp = false` + "\n"
+	config += `	ip_redirects = false` + "\n"
+	config += `	unreachables = false` + "\n"
+	config += `	vrf_forwarding = "VRF1"` + "\n"
+	config += `	ipv4_address = "192.0.2.2"` + "\n"
+	config += `	ipv4_address_mask = "255.255.255.0"` + "\n"
+	config += `	encapsulation_dot1q_vlan_id = 666` + "\n"
+	config += `	ip_access_group_in = "1"` + "\n"
+	config += `	ip_access_group_in_enable = true` + "\n"
+	config += `	ip_access_group_out = "1"` + "\n"
+	config += `	ip_access_group_out_enable = true` + "\n"
+	config += `	helper_addresses = [{` + "\n"
+	config += `		address = "10.10.10.10"` + "\n"
+	config += `		global = false` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

@@ -9,16 +9,16 @@ import (
 )
 
 func TestAccIosxeInterfaceOSPFProcess(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_ospf_process.test", "process_id", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_ospf_process.test", "area.0.area_id", "1"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeInterfaceOSPFProcessPrerequisitesConfig + testAccIosxeInterfaceOSPFProcessConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_interface_ospf_process.test", "process_id", "1"),
-					resource.TestCheckResourceAttr("iosxe_interface_ospf_process.test", "area.0.area_id", "1"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_interface_ospf_process.test",
@@ -40,26 +40,24 @@ resource "iosxe_restconf" "PreReq0" {
 `
 
 func testAccIosxeInterfaceOSPFProcessConfig_minimum() string {
-	return `
-	resource "iosxe_interface_ospf_process" "test" {
-		type = "GigabitEthernet"
-		name = "2"
-		process_id = 1
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_interface_ospf_process" "test" {` + "\n"
+	config += `	type = "GigabitEthernet"` + "\n"
+	config += `	name = "2"` + "\n"
+	config += `	process_id = 1` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeInterfaceOSPFProcessConfig_all() string {
-	return `
-	resource "iosxe_interface_ospf_process" "test" {
-		type = "GigabitEthernet"
-		name = "2"
-		process_id = 1
-		area = [{
-			area_id = "1"
-		}]
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_interface_ospf_process" "test" {` + "\n"
+	config += `	type = "GigabitEthernet"` + "\n"
+	config += `	name = "2"` + "\n"
+	config += `	process_id = 1` + "\n"
+	config += `	area = [{` + "\n"
+	config += `		area_id = "1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

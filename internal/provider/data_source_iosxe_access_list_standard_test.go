@@ -9,37 +9,39 @@ import (
 )
 
 func TestAccDataSourceIosxeAccessListStandard(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_access_list_standard.test", "entries.0.sequence", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_access_list_standard.test", "entries.0.remark", "Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_access_list_standard.test", "entries.0.deny_prefix", "10.0.0.0"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_access_list_standard.test", "entries.0.deny_prefix_mask", "0.0.0.255"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeAccessListStandardConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_access_list_standard.test", "entries.0.sequence", "10"),
-					resource.TestCheckResourceAttr("data.iosxe_access_list_standard.test", "entries.0.remark", "Description"),
-					resource.TestCheckResourceAttr("data.iosxe_access_list_standard.test", "entries.0.deny_prefix", "10.0.0.0"),
-					resource.TestCheckResourceAttr("data.iosxe_access_list_standard.test", "entries.0.deny_prefix_mask", "0.0.0.255"),
-				),
+				Config: testAccDataSourceIosxeAccessListStandardConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeAccessListStandardConfig = `
+func testAccDataSourceIosxeAccessListStandardConfig() string {
+	config := `resource "iosxe_access_list_standard" "test" {` + "\n"
+	config += `	name = "SACL1"` + "\n"
+	config += `	entries = [{` + "\n"
+	config += `		sequence = 10` + "\n"
+	config += `		remark = "Description"` + "\n"
+	config += `		deny_prefix = "10.0.0.0"` + "\n"
+	config += `		deny_prefix_mask = "0.0.0.255"` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_access_list_standard" "test" {
-	name = "SACL1"
-	entries = [{
-		sequence = 10
-		remark = "Description"
-		deny_prefix = "10.0.0.0"
-		deny_prefix_mask = "0.0.0.255"
-	}]
+	config += `
+		data "iosxe_access_list_standard" "test" {
+			name = "SACL1"
+			depends_on = [iosxe_access_list_standard.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_access_list_standard" "test" {
-	name = "SACL1"
-	depends_on = [iosxe_access_list_standard.test]
-}
-`

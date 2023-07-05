@@ -9,13 +9,14 @@ import (
 )
 
 func TestAccDataSourceIosxeBGPAddressFamilyIPv6(t *testing.T) {
+	var checks []resource.TestCheckFunc
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeBGPAddressFamilyIPv6PrerequisitesConfig + testAccDataSourceIosxeBGPAddressFamilyIPv6Config,
-				Check:  resource.ComposeTestCheckFunc(),
+				Config: testAccDataSourceIosxeBGPAddressFamilyIPv6PrerequisitesConfig + testAccDataSourceIosxeBGPAddressFamilyIPv6Config(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -38,18 +39,20 @@ resource "iosxe_restconf" "PreReq1" {
 
 `
 
-const testAccDataSourceIosxeBGPAddressFamilyIPv6Config = `
+func testAccDataSourceIosxeBGPAddressFamilyIPv6Config() string {
+	config := `resource "iosxe_bgp_address_family_ipv6" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	asn = "65000"` + "\n"
+	config += `	af_name = "unicast"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_bgp_address_family_ipv6" "test" {
-	delete_mode = "attributes"
-	asn = "65000"
-	af_name = "unicast"
-	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+	config += `
+		data "iosxe_bgp_address_family_ipv6" "test" {
+			asn = "65000"
+			af_name = "unicast"
+			depends_on = [iosxe_bgp_address_family_ipv6.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_bgp_address_family_ipv6" "test" {
-	asn = "65000"
-	af_name = "unicast"
-	depends_on = [iosxe_bgp_address_family_ipv6.test]
-}
-`

@@ -13,17 +13,17 @@ func TestAccIosxeVLAN(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_vlan.test", "vlan_id", "123"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_vlan.test", "name", "Vlan123"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_vlan.test", "shutdown", "false"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeVLANConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_vlan.test", "vlan_id", "123"),
-					resource.TestCheckResourceAttr("iosxe_vlan.test", "name", "Vlan123"),
-					resource.TestCheckResourceAttr("iosxe_vlan.test", "shutdown", "false"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_vlan.test",
@@ -35,19 +35,17 @@ func TestAccIosxeVLAN(t *testing.T) {
 }
 
 func testAccIosxeVLANConfig_minimum() string {
-	return `
-	resource "iosxe_vlan" "test" {
-		vlan_id = 123
-	}
-	`
+	config := `resource "iosxe_vlan" "test" {` + "\n"
+	config += `	vlan_id = 123` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeVLANConfig_all() string {
-	return `
-	resource "iosxe_vlan" "test" {
-		vlan_id = 123
-		name = "Vlan123"
-		shutdown = false
-	}
-	`
+	config := `resource "iosxe_vlan" "test" {` + "\n"
+	config += `	vlan_id = 123` + "\n"
+	config += `	name = "Vlan123"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `}` + "\n"
+	return config
 }

@@ -9,67 +9,69 @@ import (
 )
 
 func TestAccDataSourceIosxeService(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "pad", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "password_encryption", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "password_recovery", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime_msec", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime_localtime", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime_show_timezone", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime_year", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_uptime", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime_msec", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime_localtime", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime_show_timezone", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime_year", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_uptime", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "dhcp", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "tcp_keepalives_in", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_service.test", "tcp_keepalives_out", "true"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeServiceConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "pad", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "password_encryption", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "password_recovery", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime_msec", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime_localtime", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime_show_timezone", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_datetime_year", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_debug_uptime", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime_msec", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime_localtime", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime_show_timezone", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_datetime_year", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "timestamps_log_uptime", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "dhcp", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "tcp_keepalives_in", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_service.test", "tcp_keepalives_out", "true"),
-				),
+				Config: testAccDataSourceIosxeServiceConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeServiceConfig = `
+func testAccDataSourceIosxeServiceConfig() string {
+	config := `resource "iosxe_service" "test" {` + "\n"
+	config += `	pad = true` + "\n"
+	config += `	password_encryption = true` + "\n"
+	config += `	password_recovery = true` + "\n"
+	config += `	timestamps = true` + "\n"
+	config += `	timestamps_debug = true` + "\n"
+	config += `	timestamps_debug_datetime = true` + "\n"
+	config += `	timestamps_debug_datetime_msec = true` + "\n"
+	config += `	timestamps_debug_datetime_localtime = true` + "\n"
+	config += `	timestamps_debug_datetime_show_timezone = true` + "\n"
+	config += `	timestamps_debug_datetime_year = true` + "\n"
+	config += `	timestamps_debug_uptime = true` + "\n"
+	config += `	timestamps_log = true` + "\n"
+	config += `	timestamps_log_datetime = true` + "\n"
+	config += `	timestamps_log_datetime_msec = true` + "\n"
+	config += `	timestamps_log_datetime_localtime = true` + "\n"
+	config += `	timestamps_log_datetime_show_timezone = true` + "\n"
+	config += `	timestamps_log_datetime_year = true` + "\n"
+	config += `	timestamps_log_uptime = true` + "\n"
+	config += `	dhcp = true` + "\n"
+	config += `	tcp_keepalives_in = true` + "\n"
+	config += `	tcp_keepalives_out = true` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_service" "test" {
-	pad = true
-	password_encryption = true
-	password_recovery = true
-	timestamps = true
-	timestamps_debug = true
-	timestamps_debug_datetime = true
-	timestamps_debug_datetime_msec = true
-	timestamps_debug_datetime_localtime = true
-	timestamps_debug_datetime_show_timezone = true
-	timestamps_debug_datetime_year = true
-	timestamps_debug_uptime = true
-	timestamps_log = true
-	timestamps_log_datetime = true
-	timestamps_log_datetime_msec = true
-	timestamps_log_datetime_localtime = true
-	timestamps_log_datetime_show_timezone = true
-	timestamps_log_datetime_year = true
-	timestamps_log_uptime = true
-	dhcp = true
-	tcp_keepalives_in = true
-	tcp_keepalives_out = true
+	config += `
+		data "iosxe_service" "test" {
+			depends_on = [iosxe_service.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_service" "test" {
-	depends_on = [iosxe_service.test]
-}
-`

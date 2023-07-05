@@ -9,15 +9,15 @@ import (
 )
 
 func TestAccIosxeBGPAddressFamilyIPv4(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv4.test", "af_name", "unicast"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeBGPAddressFamilyIPv4PrerequisitesConfig + testAccIosxeBGPAddressFamilyIPv4Config_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_bgp_address_family_ipv4.test", "af_name", "unicast"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_bgp_address_family_ipv4.test",
@@ -39,21 +39,19 @@ resource "iosxe_restconf" "PreReq0" {
 `
 
 func testAccIosxeBGPAddressFamilyIPv4Config_minimum() string {
-	return `
-	resource "iosxe_bgp_address_family_ipv4" "test" {
-		asn = "65000"
-		af_name = "unicast"
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_bgp_address_family_ipv4" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	af_name = "unicast"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeBGPAddressFamilyIPv4Config_all() string {
-	return `
-	resource "iosxe_bgp_address_family_ipv4" "test" {
-		asn = "65000"
-		af_name = "unicast"
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_bgp_address_family_ipv4" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	af_name = "unicast"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

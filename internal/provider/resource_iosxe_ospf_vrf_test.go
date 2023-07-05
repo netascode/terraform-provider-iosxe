@@ -9,33 +9,33 @@ import (
 )
 
 func TestAccIosxeOSPFVRF(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "process_id", "2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "vrf", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "bfd_all_interfaces", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "default_information_originate", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "default_information_originate_always", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "default_metric", "21"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "distance", "120"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "domain_tag", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.ip", "2.2.2.2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.priority", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.cost", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "network.0.ip", "3.3.3.0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "network.0.wildcard", "0.0.0.255"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "network.0.area", "0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "priority", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "router_id", "1.2.3.4"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "summary_address.0.ip", "3.3.3.0"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "summary_address.0.mask", "255.255.255.0"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeOSPFVRFPrerequisitesConfig + testAccIosxeOSPFVRFConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "process_id", "2"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "vrf", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "bfd_all_interfaces", "true"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "default_information_originate", "true"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "default_information_originate_always", "true"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "default_metric", "21"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "distance", "120"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "domain_tag", "10"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.ip", "2.2.2.2"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.priority", "10"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "neighbor.0.cost", "100"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "network.0.ip", "3.3.3.0"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "network.0.wildcard", "0.0.0.255"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "network.0.area", "0"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "priority", "100"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "router_id", "1.2.3.4"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "summary_address.0.ip", "3.3.3.0"),
-					resource.TestCheckResourceAttr("iosxe_ospf_vrf.test", "summary_address.0.mask", "255.255.255.0"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_ospf_vrf.test",
@@ -59,44 +59,42 @@ resource "iosxe_restconf" "PreReq0" {
 `
 
 func testAccIosxeOSPFVRFConfig_minimum() string {
-	return `
-	resource "iosxe_ospf_vrf" "test" {
-		process_id = 2
-		vrf = "VRF1"
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_ospf_vrf" "test" {` + "\n"
+	config += `	process_id = 2` + "\n"
+	config += `	vrf = "VRF1"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeOSPFVRFConfig_all() string {
-	return `
-	resource "iosxe_ospf_vrf" "test" {
-		process_id = 2
-		vrf = "VRF1"
-		bfd_all_interfaces = true
-		default_information_originate = true
-		default_information_originate_always = true
-		default_metric = 21
-		distance = 120
-		domain_tag = 10
-		neighbor = [{
-			ip = "2.2.2.2"
-			priority = 10
-			cost = 100
-		}]
-		network = [{
-			ip = "3.3.3.0"
-			wildcard = "0.0.0.255"
-			area = "0"
-		}]
-		priority = 100
-		router_id = "1.2.3.4"
-		shutdown = false
-		summary_address = [{
-			ip = "3.3.3.0"
-			mask = "255.255.255.0"
-		}]
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_ospf_vrf" "test" {` + "\n"
+	config += `	process_id = 2` + "\n"
+	config += `	vrf = "VRF1"` + "\n"
+	config += `	bfd_all_interfaces = true` + "\n"
+	config += `	default_information_originate = true` + "\n"
+	config += `	default_information_originate_always = true` + "\n"
+	config += `	default_metric = 21` + "\n"
+	config += `	distance = 120` + "\n"
+	config += `	domain_tag = 10` + "\n"
+	config += `	neighbor = [{` + "\n"
+	config += `		ip = "2.2.2.2"` + "\n"
+	config += `		priority = 10` + "\n"
+	config += `		cost = 100` + "\n"
+	config += `	}]` + "\n"
+	config += `	network = [{` + "\n"
+	config += `		ip = "3.3.3.0"` + "\n"
+	config += `		wildcard = "0.0.0.255"` + "\n"
+	config += `		area = "0"` + "\n"
+	config += `	}]` + "\n"
+	config += `	priority = 100` + "\n"
+	config += `	router_id = "1.2.3.4"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `	summary_address = [{` + "\n"
+	config += `		ip = "3.3.3.0"` + "\n"
+	config += `		mask = "255.255.255.0"` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

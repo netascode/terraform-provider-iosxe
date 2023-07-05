@@ -9,47 +9,49 @@ import (
 )
 
 func TestAccDataSourceIosxeMDTSubscription(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "stream", "yang-notif-native"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "encoding", "encode-kvgpb"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "source_vrf", "Mgmt-vrf"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "source_address", "1.2.3.4"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "update_policy_on_change", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "filter_xpath", "/ios-events-ios-xe-oper:ospf-neighbor-state-change"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "receivers.0.address", "5.6.7.8"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "receivers.0.port", "57600"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "receivers.0.protocol", "grpc-tcp"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeMDTSubscriptionConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "stream", "yang-notif-native"),
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "encoding", "encode-kvgpb"),
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "source_vrf", "Mgmt-vrf"),
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "source_address", "1.2.3.4"),
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "update_policy_on_change", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "filter_xpath", "/ios-events-ios-xe-oper:ospf-neighbor-state-change"),
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "receivers.0.address", "5.6.7.8"),
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "receivers.0.port", "57600"),
-					resource.TestCheckResourceAttr("data.iosxe_mdt_subscription.test", "receivers.0.protocol", "grpc-tcp"),
-				),
+				Config: testAccDataSourceIosxeMDTSubscriptionConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeMDTSubscriptionConfig = `
+func testAccDataSourceIosxeMDTSubscriptionConfig() string {
+	config := `resource "iosxe_mdt_subscription" "test" {` + "\n"
+	config += `	subscription_id = 101` + "\n"
+	config += `	stream = "yang-notif-native"` + "\n"
+	config += `	encoding = "encode-kvgpb"` + "\n"
+	config += `	source_vrf = "Mgmt-vrf"` + "\n"
+	config += `	source_address = "1.2.3.4"` + "\n"
+	config += `	update_policy_on_change = true` + "\n"
+	config += `	filter_xpath = "/ios-events-ios-xe-oper:ospf-neighbor-state-change"` + "\n"
+	config += `	receivers = [{` + "\n"
+	config += `		address = "5.6.7.8"` + "\n"
+	config += `		port = 57600` + "\n"
+	config += `		protocol = "grpc-tcp"` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_mdt_subscription" "test" {
-	subscription_id = 101
-	stream = "yang-notif-native"
-	encoding = "encode-kvgpb"
-	source_vrf = "Mgmt-vrf"
-	source_address = "1.2.3.4"
-	update_policy_on_change = true
-	filter_xpath = "/ios-events-ios-xe-oper:ospf-neighbor-state-change"
-	receivers = [{
-		address = "5.6.7.8"
-		port = 57600
-		protocol = "grpc-tcp"
-	}]
+	config += `
+		data "iosxe_mdt_subscription" "test" {
+			subscription_id = 101
+			depends_on = [iosxe_mdt_subscription.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_mdt_subscription" "test" {
-	subscription_id = 101
-	depends_on = [iosxe_mdt_subscription.test]
-}
-`

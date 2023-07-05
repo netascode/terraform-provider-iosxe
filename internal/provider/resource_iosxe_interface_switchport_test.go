@@ -13,26 +13,26 @@ func TestAccIosxeInterfaceSwitchport(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_access", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_dot1q_tunnel", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_private_vlan_trunk", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_private_vlan_host", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_private_vlan_promiscuous", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_trunk", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "nonegotiate", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "access_vlan", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_allowed_vlans", "100,101"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_native_vlan_tag", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_native_vlan", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "host", "false"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeInterfaceSwitchportConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_access", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_dot1q_tunnel", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_private_vlan_trunk", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_private_vlan_host", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_private_vlan_promiscuous", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "mode_trunk", "true"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "nonegotiate", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "access_vlan", "100"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_allowed_vlans", "100,101"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_native_vlan_tag", "false"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "trunk_native_vlan", "100"),
-					resource.TestCheckResourceAttr("iosxe_interface_switchport.test", "host", "false"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_interface_switchport.test",
@@ -44,31 +44,29 @@ func TestAccIosxeInterfaceSwitchport(t *testing.T) {
 }
 
 func testAccIosxeInterfaceSwitchportConfig_minimum() string {
-	return `
-	resource "iosxe_interface_switchport" "test" {
-		type = "GigabitEthernet"
-		name = "1/0/3"
-	}
-	`
+	config := `resource "iosxe_interface_switchport" "test" {` + "\n"
+	config += `	type = "GigabitEthernet"` + "\n"
+	config += `	name = "1/0/3"` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeInterfaceSwitchportConfig_all() string {
-	return `
-	resource "iosxe_interface_switchport" "test" {
-		type = "GigabitEthernet"
-		name = "1/0/3"
-		mode_access = false
-		mode_dot1q_tunnel = false
-		mode_private_vlan_trunk = false
-		mode_private_vlan_host = false
-		mode_private_vlan_promiscuous = false
-		mode_trunk = true
-		nonegotiate = false
-		access_vlan = "100"
-		trunk_allowed_vlans = "100,101"
-		trunk_native_vlan_tag = false
-		trunk_native_vlan = 100
-		host = false
-	}
-	`
+	config := `resource "iosxe_interface_switchport" "test" {` + "\n"
+	config += `	type = "GigabitEthernet"` + "\n"
+	config += `	name = "1/0/3"` + "\n"
+	config += `	mode_access = false` + "\n"
+	config += `	mode_dot1q_tunnel = false` + "\n"
+	config += `	mode_private_vlan_trunk = false` + "\n"
+	config += `	mode_private_vlan_host = false` + "\n"
+	config += `	mode_private_vlan_promiscuous = false` + "\n"
+	config += `	mode_trunk = true` + "\n"
+	config += `	nonegotiate = false` + "\n"
+	config += `	access_vlan = "100"` + "\n"
+	config += `	trunk_allowed_vlans = "100,101"` + "\n"
+	config += `	trunk_native_vlan_tag = false` + "\n"
+	config += `	trunk_native_vlan = 100` + "\n"
+	config += `	host = false` + "\n"
+	config += `}` + "\n"
+	return config
 }

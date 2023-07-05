@@ -13,78 +13,78 @@ func TestAccIosxeTemplate(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "template_name", "TEMP1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "dot1x_pae", "both"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "dot1x_max_reauth_req", "3"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "dot1x_max_req", "3"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "service_policy_input", "SP1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "service_policy_output", "SP2"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_mode_trunk", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_mode_access", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_nonegotiate", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_block_unicast", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_aging_static", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_aging_time", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_aging_type", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_aging_type_inactivity", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_maximum_range.0.range", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_maximum_range.0.vlan", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_maximum_range.0.vlan_access", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_violation_protect", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_violation_restrict", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_violation_shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_access_vlan", "200"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_voice_vlan", "201"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_private_vlan_host_association_primary_range", "301"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_private_vlan_host_association_secondary_range", "302"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_trunk_allowed_vlans", "500-599"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "switchport_trunk_native_vlan_vlan_id", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "mab", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "mab_eap", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "access_session_closed", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "access_session_monitor", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "access_session_port_control", "auto"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "access_session_control_direction", "both"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "access_session_host_mode", "single-host"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "access_session_interface_template_sticky", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "access_session_interface_template_sticky_timer", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "authentication_periodic", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "authentication_timer_reauthenticate_server", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_bpduguard_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_portfast", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_portfast_disable", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_portfast_edge", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_portfast_network", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_broadcast_level_pps_threshold", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_broadcast_level_bps_threshold", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_broadcast_level_threshold", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_multicast_level_pps_threshold", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_multicast_level_bps_threshold", "10000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_multicast_level_threshold", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_action_shutdown", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_action_trap", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "load_interval", "30"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "ip_dhcp_snooping_limit_rate", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "ip_dhcp_snooping_trust", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "ip_access_group.0.direction", "in"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "ip_access_group.0.access_list", "ACL1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "subscriber_aging_probe", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "device_tracking", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "device_tracking_vlan_range", "100-199"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "cts_manual", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "cts_manual_policy_static_sgt", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "cts_manual_policy_static_trusted", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "cts_manual_propagate_sgt", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_template.test", "cts_role_based_enforcement", "false"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeTemplateConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_template.test", "template_name", "TEMP1"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "dot1x_pae", "both"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "dot1x_max_reauth_req", "3"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "dot1x_max_req", "3"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "service_policy_input", "SP1"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "service_policy_output", "SP2"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_mode_trunk", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_mode_access", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_nonegotiate", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_block_unicast", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_aging_static", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_aging_time", "100"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_aging_type", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_aging_type_inactivity", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_maximum_range.0.range", "100"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_maximum_range.0.vlan", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_maximum_range.0.vlan_access", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_violation_protect", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_violation_restrict", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_port_security_violation_shutdown", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_access_vlan", "200"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_voice_vlan", "201"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_private_vlan_host_association_primary_range", "301"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_private_vlan_host_association_secondary_range", "302"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_trunk_allowed_vlans", "500-599"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "switchport_trunk_native_vlan_vlan_id", "10"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "mab", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "mab_eap", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "access_session_closed", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "access_session_monitor", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "access_session_port_control", "auto"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "access_session_control_direction", "both"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "access_session_host_mode", "single-host"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "access_session_interface_template_sticky", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "access_session_interface_template_sticky_timer", "100"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "authentication_periodic", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "authentication_timer_reauthenticate_server", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_bpduguard_enable", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_portfast", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_portfast_disable", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_portfast_edge", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "spanning_tree_portfast_network", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_broadcast_level_pps_threshold", "10"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_broadcast_level_bps_threshold", "10"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_broadcast_level_threshold", "10"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_multicast_level_pps_threshold", "10"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_multicast_level_bps_threshold", "10000"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_multicast_level_threshold", "10"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_action_shutdown", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "storm_control_action_trap", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "load_interval", "30"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "ip_dhcp_snooping_limit_rate", "10"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "ip_dhcp_snooping_trust", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "ip_access_group.0.direction", "in"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "ip_access_group.0.access_list", "ACL1"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "subscriber_aging_probe", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "device_tracking", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "device_tracking_vlan_range", "100-199"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "cts_manual", "true"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "cts_manual_policy_static_sgt", "100"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "cts_manual_policy_static_trusted", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "cts_manual_propagate_sgt", "false"),
-					resource.TestCheckResourceAttr("iosxe_template.test", "cts_role_based_enforcement", "false"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_template.test",
@@ -96,84 +96,82 @@ func TestAccIosxeTemplate(t *testing.T) {
 }
 
 func testAccIosxeTemplateConfig_minimum() string {
-	return `
-	resource "iosxe_template" "test" {
-		template_name = "TEMP1"
-	}
-	`
+	config := `resource "iosxe_template" "test" {` + "\n"
+	config += `	template_name = "TEMP1"` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeTemplateConfig_all() string {
-	return `
-	resource "iosxe_template" "test" {
-		template_name = "TEMP1"
-		dot1x_pae = "both"
-		dot1x_max_reauth_req = 3
-		dot1x_max_req = 3
-		service_policy_input = "SP1"
-		service_policy_output = "SP2"
-		switchport_mode_trunk = true
-		switchport_mode_access = false
-		switchport_nonegotiate = false
-		switchport_block_unicast = false
-		switchport_port_security = true
-		switchport_port_security_aging_static = false
-		switchport_port_security_aging_time = 100
-		switchport_port_security_aging_type = true
-		switchport_port_security_aging_type_inactivity = true
-		switchport_port_security_maximum_range = [{
-			range = 100
-			vlan = true
-			vlan_access = true
-		}]
-		switchport_port_security_violation_protect = false
-		switchport_port_security_violation_restrict = false
-		switchport_port_security_violation_shutdown = false
-		switchport_access_vlan = 200
-		switchport_voice_vlan = 201
-		switchport_private_vlan_host_association_primary_range = 301
-		switchport_private_vlan_host_association_secondary_range = 302
-		switchport_trunk_allowed_vlans = "500-599"
-		switchport_trunk_native_vlan_vlan_id = 10
-		mab = true
-		mab_eap = true
-		access_session_closed = true
-		access_session_monitor = true
-		access_session_port_control = "auto"
-		access_session_control_direction = "both"
-		access_session_host_mode = "single-host"
-		access_session_interface_template_sticky = true
-		access_session_interface_template_sticky_timer = 100
-		authentication_periodic = true
-		authentication_timer_reauthenticate_server = true
-		spanning_tree_bpduguard_enable = true
-		spanning_tree_portfast = true
-		spanning_tree_portfast_disable = false
-		spanning_tree_portfast_edge = false
-		spanning_tree_portfast_network = false
-		storm_control_broadcast_level_pps_threshold = "10"
-		storm_control_broadcast_level_bps_threshold = 10
-		storm_control_broadcast_level_threshold = 10
-		storm_control_multicast_level_pps_threshold = "10"
-		storm_control_multicast_level_bps_threshold = 10000
-		storm_control_multicast_level_threshold = 10
-		storm_control_action_shutdown = true
-		storm_control_action_trap = true
-		load_interval = 30
-		ip_dhcp_snooping_limit_rate = 10
-		ip_dhcp_snooping_trust = true
-		ip_access_group = [{
-			direction = "in"
-			access_list = "ACL1"
-		}]
-		subscriber_aging_probe = true
-		device_tracking = true
-		device_tracking_vlan_range = "100-199"
-		cts_manual = true
-		cts_manual_policy_static_sgt = 100
-		cts_manual_policy_static_trusted = false
-		cts_manual_propagate_sgt = false
-		cts_role_based_enforcement = false
-	}
-	`
+	config := `resource "iosxe_template" "test" {` + "\n"
+	config += `	template_name = "TEMP1"` + "\n"
+	config += `	dot1x_pae = "both"` + "\n"
+	config += `	dot1x_max_reauth_req = 3` + "\n"
+	config += `	dot1x_max_req = 3` + "\n"
+	config += `	service_policy_input = "SP1"` + "\n"
+	config += `	service_policy_output = "SP2"` + "\n"
+	config += `	switchport_mode_trunk = true` + "\n"
+	config += `	switchport_mode_access = false` + "\n"
+	config += `	switchport_nonegotiate = false` + "\n"
+	config += `	switchport_block_unicast = false` + "\n"
+	config += `	switchport_port_security = true` + "\n"
+	config += `	switchport_port_security_aging_static = false` + "\n"
+	config += `	switchport_port_security_aging_time = 100` + "\n"
+	config += `	switchport_port_security_aging_type = true` + "\n"
+	config += `	switchport_port_security_aging_type_inactivity = true` + "\n"
+	config += `	switchport_port_security_maximum_range = [{` + "\n"
+	config += `		range = 100` + "\n"
+	config += `		vlan = true` + "\n"
+	config += `		vlan_access = true` + "\n"
+	config += `	}]` + "\n"
+	config += `	switchport_port_security_violation_protect = false` + "\n"
+	config += `	switchport_port_security_violation_restrict = false` + "\n"
+	config += `	switchport_port_security_violation_shutdown = false` + "\n"
+	config += `	switchport_access_vlan = 200` + "\n"
+	config += `	switchport_voice_vlan = 201` + "\n"
+	config += `	switchport_private_vlan_host_association_primary_range = 301` + "\n"
+	config += `	switchport_private_vlan_host_association_secondary_range = 302` + "\n"
+	config += `	switchport_trunk_allowed_vlans = "500-599"` + "\n"
+	config += `	switchport_trunk_native_vlan_vlan_id = 10` + "\n"
+	config += `	mab = true` + "\n"
+	config += `	mab_eap = true` + "\n"
+	config += `	access_session_closed = true` + "\n"
+	config += `	access_session_monitor = true` + "\n"
+	config += `	access_session_port_control = "auto"` + "\n"
+	config += `	access_session_control_direction = "both"` + "\n"
+	config += `	access_session_host_mode = "single-host"` + "\n"
+	config += `	access_session_interface_template_sticky = true` + "\n"
+	config += `	access_session_interface_template_sticky_timer = 100` + "\n"
+	config += `	authentication_periodic = true` + "\n"
+	config += `	authentication_timer_reauthenticate_server = true` + "\n"
+	config += `	spanning_tree_bpduguard_enable = true` + "\n"
+	config += `	spanning_tree_portfast = true` + "\n"
+	config += `	spanning_tree_portfast_disable = false` + "\n"
+	config += `	spanning_tree_portfast_edge = false` + "\n"
+	config += `	spanning_tree_portfast_network = false` + "\n"
+	config += `	storm_control_broadcast_level_pps_threshold = "10"` + "\n"
+	config += `	storm_control_broadcast_level_bps_threshold = 10` + "\n"
+	config += `	storm_control_broadcast_level_threshold = 10` + "\n"
+	config += `	storm_control_multicast_level_pps_threshold = "10"` + "\n"
+	config += `	storm_control_multicast_level_bps_threshold = 10000` + "\n"
+	config += `	storm_control_multicast_level_threshold = 10` + "\n"
+	config += `	storm_control_action_shutdown = true` + "\n"
+	config += `	storm_control_action_trap = true` + "\n"
+	config += `	load_interval = 30` + "\n"
+	config += `	ip_dhcp_snooping_limit_rate = 10` + "\n"
+	config += `	ip_dhcp_snooping_trust = true` + "\n"
+	config += `	ip_access_group = [{` + "\n"
+	config += `		direction = "in"` + "\n"
+	config += `		access_list = "ACL1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	subscriber_aging_probe = true` + "\n"
+	config += `	device_tracking = true` + "\n"
+	config += `	device_tracking_vlan_range = "100-199"` + "\n"
+	config += `	cts_manual = true` + "\n"
+	config += `	cts_manual_policy_static_sgt = 100` + "\n"
+	config += `	cts_manual_policy_static_trusted = false` + "\n"
+	config += `	cts_manual_propagate_sgt = false` + "\n"
+	config += `	cts_role_based_enforcement = false` + "\n"
+	config += `}` + "\n"
+	return config
 }

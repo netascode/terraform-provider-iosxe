@@ -9,29 +9,29 @@ import (
 )
 
 func TestAccDataSourceIosxeInterfacePortChannel(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "description", "My Interface Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_proxy_arp", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_redirects", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "unreachables", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "vrf_forwarding", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address", "192.0.2.1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address_mask", "255.255.255.0"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_in", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_in_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_out", "1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_out_enable", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_dhcp_relay_source_interface", "Loopback100"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "helper_addresses.0.address", "10.10.10.10"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "helper_addresses.0.global", "false"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeInterfacePortChannelPrerequisitesConfig + testAccDataSourceIosxeInterfacePortChannelConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "description", "My Interface Description"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_proxy_arp", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_redirects", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "unreachables", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "vrf_forwarding", "VRF1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address", "192.0.2.1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address_mask", "255.255.255.0"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_in", "1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_in_enable", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_out", "1"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_out_enable", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_dhcp_relay_source_interface", "Loopback100"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "helper_addresses.0.address", "10.10.10.10"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "helper_addresses.0.global", "false"),
-				),
+				Config: testAccDataSourceIosxeInterfacePortChannelPrerequisitesConfig + testAccDataSourceIosxeInterfacePortChannelConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -49,33 +49,35 @@ resource "iosxe_restconf" "PreReq0" {
 
 `
 
-const testAccDataSourceIosxeInterfacePortChannelConfig = `
+func testAccDataSourceIosxeInterfacePortChannelConfig() string {
+	config := `resource "iosxe_interface_port_channel" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	name = 10` + "\n"
+	config += `	description = "My Interface Description"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `	ip_proxy_arp = false` + "\n"
+	config += `	ip_redirects = false` + "\n"
+	config += `	unreachables = false` + "\n"
+	config += `	vrf_forwarding = "VRF1"` + "\n"
+	config += `	ipv4_address = "192.0.2.1"` + "\n"
+	config += `	ipv4_address_mask = "255.255.255.0"` + "\n"
+	config += `	ip_access_group_in = "1"` + "\n"
+	config += `	ip_access_group_in_enable = true` + "\n"
+	config += `	ip_access_group_out = "1"` + "\n"
+	config += `	ip_access_group_out_enable = true` + "\n"
+	config += `	ip_dhcp_relay_source_interface = "Loopback100"` + "\n"
+	config += `	helper_addresses = [{` + "\n"
+	config += `		address = "10.10.10.10"` + "\n"
+	config += `		global = false` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_interface_port_channel" "test" {
-	delete_mode = "attributes"
-	name = 10
-	description = "My Interface Description"
-	shutdown = false
-	ip_proxy_arp = false
-	ip_redirects = false
-	unreachables = false
-	vrf_forwarding = "VRF1"
-	ipv4_address = "192.0.2.1"
-	ipv4_address_mask = "255.255.255.0"
-	ip_access_group_in = "1"
-	ip_access_group_in_enable = true
-	ip_access_group_out = "1"
-	ip_access_group_out_enable = true
-	ip_dhcp_relay_source_interface = "Loopback100"
-	helper_addresses = [{
-		address = "10.10.10.10"
-		global = false
-	}]
-	depends_on = [iosxe_restconf.PreReq0, ]
+	config += `
+		data "iosxe_interface_port_channel" "test" {
+			name = 10
+			depends_on = [iosxe_interface_port_channel.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_interface_port_channel" "test" {
-	name = 10
-	depends_on = [iosxe_interface_port_channel.test]
-}
-`

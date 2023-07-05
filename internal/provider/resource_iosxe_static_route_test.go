@@ -9,22 +9,22 @@ import (
 )
 
 func TestAccIosxeStaticRoute(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_static_route.test", "prefix", "5.5.5.5"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_static_route.test", "mask", "255.255.255.255"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.next_hop", "6.6.6.6"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.metric", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.global", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.name", "Route1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.permanent", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.tag", "100"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeStaticRouteConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_static_route.test", "prefix", "5.5.5.5"),
-					resource.TestCheckResourceAttr("iosxe_static_route.test", "mask", "255.255.255.255"),
-					resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.next_hop", "6.6.6.6"),
-					resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.metric", "10"),
-					resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.global", "false"),
-					resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.name", "Route1"),
-					resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.permanent", "true"),
-					resource.TestCheckResourceAttr("iosxe_static_route.test", "next_hops.0.tag", "100"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_static_route.test",
@@ -36,27 +36,25 @@ func TestAccIosxeStaticRoute(t *testing.T) {
 }
 
 func testAccIosxeStaticRouteConfig_minimum() string {
-	return `
-	resource "iosxe_static_route" "test" {
-		prefix = "5.5.5.5"
-		mask = "255.255.255.255"
-	}
-	`
+	config := `resource "iosxe_static_route" "test" {` + "\n"
+	config += `	prefix = "5.5.5.5"` + "\n"
+	config += `	mask = "255.255.255.255"` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeStaticRouteConfig_all() string {
-	return `
-	resource "iosxe_static_route" "test" {
-		prefix = "5.5.5.5"
-		mask = "255.255.255.255"
-		next_hops = [{
-			next_hop = "6.6.6.6"
-			metric = 10
-			global = false
-			name = "Route1"
-			permanent = true
-			tag = 100
-		}]
-	}
-	`
+	config := `resource "iosxe_static_route" "test" {` + "\n"
+	config += `	prefix = "5.5.5.5"` + "\n"
+	config += `	mask = "255.255.255.255"` + "\n"
+	config += `	next_hops = [{` + "\n"
+	config += `		next_hop = "6.6.6.6"` + "\n"
+	config += `		metric = 10` + "\n"
+	config += `		global = false` + "\n"
+	config += `		name = "Route1"` + "\n"
+	config += `		permanent = true` + "\n"
+	config += `		tag = 100` + "\n"
+	config += `	}]` + "\n"
+	config += `}` + "\n"
+	return config
 }

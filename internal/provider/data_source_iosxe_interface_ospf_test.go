@@ -9,48 +9,50 @@ import (
 )
 
 func TestAccDataSourceIosxeInterfaceOSPF(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "cost", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "dead_interval", "30"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "hello_interval", "5"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "mtu_ignore", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "network_type_broadcast", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "network_type_non_broadcast", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "network_type_point_to_multipoint", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "network_type_point_to_point", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "priority", "10"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeInterfaceOSPFConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "cost", "10"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "dead_interval", "30"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "hello_interval", "5"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "mtu_ignore", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "network_type_broadcast", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "network_type_non_broadcast", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "network_type_point_to_multipoint", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "network_type_point_to_point", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_interface_ospf.test", "priority", "10"),
-				),
+				Config: testAccDataSourceIosxeInterfaceOSPFConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
 }
 
-const testAccDataSourceIosxeInterfaceOSPFConfig = `
+func testAccDataSourceIosxeInterfaceOSPFConfig() string {
+	config := `resource "iosxe_interface_ospf" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	type = "GigabitEthernet"` + "\n"
+	config += `	name = "3"` + "\n"
+	config += `	cost = 10` + "\n"
+	config += `	dead_interval = 30` + "\n"
+	config += `	hello_interval = 5` + "\n"
+	config += `	mtu_ignore = false` + "\n"
+	config += `	network_type_broadcast = false` + "\n"
+	config += `	network_type_non_broadcast = false` + "\n"
+	config += `	network_type_point_to_multipoint = false` + "\n"
+	config += `	network_type_point_to_point = true` + "\n"
+	config += `	priority = 10` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_interface_ospf" "test" {
-	delete_mode = "attributes"
-	type = "GigabitEthernet"
-	name = "3"
-	cost = 10
-	dead_interval = 30
-	hello_interval = 5
-	mtu_ignore = false
-	network_type_broadcast = false
-	network_type_non_broadcast = false
-	network_type_point_to_multipoint = false
-	network_type_point_to_point = true
-	priority = 10
+	config += `
+		data "iosxe_interface_ospf" "test" {
+			type = "GigabitEthernet"
+			name = "3"
+			depends_on = [iosxe_interface_ospf.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_interface_ospf" "test" {
-	type = "GigabitEthernet"
-	name = "3"
-	depends_on = [iosxe_interface_ospf.test]
-}
-`

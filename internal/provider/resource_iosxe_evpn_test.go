@@ -13,26 +13,26 @@ func TestAccIosxeEVPN(t *testing.T) {
 	if os.Getenv("C9000V") == "" {
 		t.Skip("skipping test, set environment variable C9000V")
 	}
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "replication_type_ingress", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "replication_type_static", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "replication_type_p2mp", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "replication_type_mp2mp", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "mac_duplication_limit", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "mac_duplication_time", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "ip_duplication_limit", "10"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "ip_duplication_time", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "router_id_loopback", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "default_gateway_advertise", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "logging_peer_state", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_evpn.test", "route_target_auto_vni", "true"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeEVPNConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "replication_type_ingress", "false"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "replication_type_static", "true"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "replication_type_p2mp", "false"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "replication_type_mp2mp", "false"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "mac_duplication_limit", "10"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "mac_duplication_time", "100"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "ip_duplication_limit", "10"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "ip_duplication_time", "100"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "router_id_loopback", "100"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "default_gateway_advertise", "true"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "logging_peer_state", "true"),
-					resource.TestCheckResourceAttr("iosxe_evpn.test", "route_target_auto_vni", "true"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_evpn.test",
@@ -44,27 +44,25 @@ func TestAccIosxeEVPN(t *testing.T) {
 }
 
 func testAccIosxeEVPNConfig_minimum() string {
-	return `
-	resource "iosxe_evpn" "test" {
-	}
-	`
+	config := `resource "iosxe_evpn" "test" {` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeEVPNConfig_all() string {
-	return `
-	resource "iosxe_evpn" "test" {
-		replication_type_ingress = false
-		replication_type_static = true
-		replication_type_p2mp = false
-		replication_type_mp2mp = false
-		mac_duplication_limit = 10
-		mac_duplication_time = 100
-		ip_duplication_limit = 10
-		ip_duplication_time = 100
-		router_id_loopback = 100
-		default_gateway_advertise = true
-		logging_peer_state = true
-		route_target_auto_vni = true
-	}
-	`
+	config := `resource "iosxe_evpn" "test" {` + "\n"
+	config += `	replication_type_ingress = false` + "\n"
+	config += `	replication_type_static = true` + "\n"
+	config += `	replication_type_p2mp = false` + "\n"
+	config += `	replication_type_mp2mp = false` + "\n"
+	config += `	mac_duplication_limit = 10` + "\n"
+	config += `	mac_duplication_time = 100` + "\n"
+	config += `	ip_duplication_limit = 10` + "\n"
+	config += `	ip_duplication_time = 100` + "\n"
+	config += `	router_id_loopback = 100` + "\n"
+	config += `	default_gateway_advertise = true` + "\n"
+	config += `	logging_peer_state = true` + "\n"
+	config += `	route_target_auto_vni = true` + "\n"
+	config += `}` + "\n"
+	return config
 }

@@ -9,33 +9,33 @@ import (
 )
 
 func TestAccDataSourceIosxeLogging(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "monitor_severity", "informational"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "buffered_size", "16000"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "buffered_severity", "informational"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "console_severity", "informational"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "facility", "local0"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "history_size", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "history_severity", "informational"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "trap", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "trap_severity", "informational"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "origin_id_type", "hostname"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "source_interface", "Loopback0"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "source_interfaces_vrf.0.vrf", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "source_interfaces_vrf.0.interface_name", "Loopback100"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv4_hosts.0.ipv4_host", "1.1.1.1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv4_vrf_hosts.0.ipv4_host", "1.1.1.1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv4_vrf_hosts.0.vrf", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv6_hosts.0.ipv6_host", "2001::1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv6_vrf_hosts.0.ipv6_host", "2001::1"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv6_vrf_hosts.0.vrf", "VRF1"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeLoggingPrerequisitesConfig + testAccDataSourceIosxeLoggingConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "monitor_severity", "informational"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "buffered_size", "16000"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "buffered_severity", "informational"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "console_severity", "informational"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "facility", "local0"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "history_size", "100"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "history_severity", "informational"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "trap", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "trap_severity", "informational"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "origin_id_type", "hostname"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "source_interface", "Loopback0"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "source_interfaces_vrf.0.vrf", "VRF1"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "source_interfaces_vrf.0.interface_name", "Loopback100"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv4_hosts.0.ipv4_host", "1.1.1.1"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv4_vrf_hosts.0.ipv4_host", "1.1.1.1"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv4_vrf_hosts.0.vrf", "VRF1"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv6_hosts.0.ipv6_host", "2001::1"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv6_vrf_hosts.0.ipv6_host", "2001::1"),
-					resource.TestCheckResourceAttr("data.iosxe_logging.test", "ipv6_vrf_hosts.0.vrf", "VRF1"),
-				),
+				Config: testAccDataSourceIosxeLoggingPrerequisitesConfig + testAccDataSourceIosxeLoggingConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -63,42 +63,44 @@ resource "iosxe_restconf" "PreReq1" {
 
 `
 
-const testAccDataSourceIosxeLoggingConfig = `
+func testAccDataSourceIosxeLoggingConfig() string {
+	config := `resource "iosxe_logging" "test" {` + "\n"
+	config += `	monitor_severity = "informational"` + "\n"
+	config += `	buffered_size = 16000` + "\n"
+	config += `	buffered_severity = "informational"` + "\n"
+	config += `	console_severity = "informational"` + "\n"
+	config += `	facility = "local0"` + "\n"
+	config += `	history_size = 100` + "\n"
+	config += `	history_severity = "informational"` + "\n"
+	config += `	trap = true` + "\n"
+	config += `	trap_severity = "informational"` + "\n"
+	config += `	origin_id_type = "hostname"` + "\n"
+	config += `	source_interface = "Loopback0"` + "\n"
+	config += `	source_interfaces_vrf = [{` + "\n"
+	config += `		vrf = "VRF1"` + "\n"
+	config += `		interface_name = "Loopback100"` + "\n"
+	config += `	}]` + "\n"
+	config += `	ipv4_hosts = [{` + "\n"
+	config += `		ipv4_host = "1.1.1.1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	ipv4_vrf_hosts = [{` + "\n"
+	config += `		ipv4_host = "1.1.1.1"` + "\n"
+	config += `		vrf = "VRF1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	ipv6_hosts = [{` + "\n"
+	config += `		ipv6_host = "2001::1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	ipv6_vrf_hosts = [{` + "\n"
+	config += `		ipv6_host = "2001::1"` + "\n"
+	config += `		vrf = "VRF1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_logging" "test" {
-	monitor_severity = "informational"
-	buffered_size = 16000
-	buffered_severity = "informational"
-	console_severity = "informational"
-	facility = "local0"
-	history_size = 100
-	history_severity = "informational"
-	trap = true
-	trap_severity = "informational"
-	origin_id_type = "hostname"
-	source_interface = "Loopback0"
-	source_interfaces_vrf = [{
-		vrf = "VRF1"
-		interface_name = "Loopback100"
-	}]
-	ipv4_hosts = [{
-		ipv4_host = "1.1.1.1"
-	}]
-	ipv4_vrf_hosts = [{
-		ipv4_host = "1.1.1.1"
-		vrf = "VRF1"
-	}]
-	ipv6_hosts = [{
-		ipv6_host = "2001::1"
-	}]
-	ipv6_vrf_hosts = [{
-		ipv6_host = "2001::1"
-		vrf = "VRF1"
-	}]
-	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]
+	config += `
+		data "iosxe_logging" "test" {
+			depends_on = [iosxe_logging.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_logging" "test" {
-	depends_on = [iosxe_logging.test]
-}
-`

@@ -9,19 +9,19 @@ import (
 )
 
 func TestAccIosxeLoggingIPv6HostVRFTransport(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "ipv6_host", "2001::1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "vrf", "VRF1"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "transport_udp_ports.0.port_number", "10000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "transport_tcp_ports.0.port_number", "10001"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "transport_tls_ports.0.port_number", "10002"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeLoggingIPv6HostVRFTransportPrerequisitesConfig + testAccIosxeLoggingIPv6HostVRFTransportConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "ipv6_host", "2001::1"),
-					resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "vrf", "VRF1"),
-					resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "transport_udp_ports.0.port_number", "10000"),
-					resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "transport_tcp_ports.0.port_number", "10001"),
-					resource.TestCheckResourceAttr("iosxe_logging_ipv6_host_vrf_transport.test", "transport_tls_ports.0.port_number", "10002"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_logging_ipv6_host_vrf_transport.test",
@@ -46,30 +46,28 @@ resource "iosxe_restconf" "PreReq0" {
 `
 
 func testAccIosxeLoggingIPv6HostVRFTransportConfig_minimum() string {
-	return `
-	resource "iosxe_logging_ipv6_host_vrf_transport" "test" {
-		ipv6_host = "2001::1"
-		vrf = "VRF1"
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_logging_ipv6_host_vrf_transport" "test" {` + "\n"
+	config += `	ipv6_host = "2001::1"` + "\n"
+	config += `	vrf = "VRF1"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeLoggingIPv6HostVRFTransportConfig_all() string {
-	return `
-	resource "iosxe_logging_ipv6_host_vrf_transport" "test" {
-		ipv6_host = "2001::1"
-		vrf = "VRF1"
-		transport_udp_ports = [{
-			port_number = 10000
-		}]
-		transport_tcp_ports = [{
-			port_number = 10001
-		}]
-		transport_tls_ports = [{
-			port_number = 10002
-		}]
-		depends_on = [iosxe_restconf.PreReq0, ]
-	}
-	`
+	config := `resource "iosxe_logging_ipv6_host_vrf_transport" "test" {` + "\n"
+	config += `	ipv6_host = "2001::1"` + "\n"
+	config += `	vrf = "VRF1"` + "\n"
+	config += `	transport_udp_ports = [{` + "\n"
+	config += `		port_number = 10000` + "\n"
+	config += `	}]` + "\n"
+	config += `	transport_tcp_ports = [{` + "\n"
+	config += `		port_number = 10001` + "\n"
+	config += `	}]` + "\n"
+	config += `	transport_tls_ports = [{` + "\n"
+	config += `		port_number = 10002` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }

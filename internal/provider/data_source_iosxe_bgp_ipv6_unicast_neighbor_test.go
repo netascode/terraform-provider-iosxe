@@ -9,19 +9,19 @@ import (
 )
 
 func TestAccDataSourceIosxeBGPIPv6UnicastNeighbor(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "activate", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "send_community", "both"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "route_reflector_client", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "route_maps.0.in_out", "in"))
+	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "route_maps.0.route_map_name", "RM1"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceIosxeBGPIPv6UnicastNeighborPrerequisitesConfig + testAccDataSourceIosxeBGPIPv6UnicastNeighborConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "activate", "true"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "send_community", "both"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "route_reflector_client", "false"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "route_maps.0.in_out", "in"),
-					resource.TestCheckResourceAttr("data.iosxe_bgp_ipv6_unicast_neighbor.test", "route_maps.0.route_map_name", "RM1"),
-				),
+				Config: testAccDataSourceIosxeBGPIPv6UnicastNeighborPrerequisitesConfig + testAccDataSourceIosxeBGPIPv6UnicastNeighborConfig(),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 		},
 	})
@@ -68,25 +68,27 @@ resource "iosxe_restconf" "PreReq4" {
 
 `
 
-const testAccDataSourceIosxeBGPIPv6UnicastNeighborConfig = `
+func testAccDataSourceIosxeBGPIPv6UnicastNeighborConfig() string {
+	config := `resource "iosxe_bgp_ipv6_unicast_neighbor" "test" {` + "\n"
+	config += `	delete_mode = "attributes"\n`
+	config += `	asn = "65000"` + "\n"
+	config += `	ip = "3.3.3.3"` + "\n"
+	config += `	activate = true` + "\n"
+	config += `	send_community = "both"` + "\n"
+	config += `	route_reflector_client = false` + "\n"
+	config += `	route_maps = [{` + "\n"
+	config += `		in_out = "in"` + "\n"
+	config += `		route_map_name = "RM1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, iosxe_restconf.PreReq4, ]` + "\n"
+	config += `}` + "\n"
 
-resource "iosxe_bgp_ipv6_unicast_neighbor" "test" {
-	delete_mode = "attributes"
-	asn = "65000"
-	ip = "3.3.3.3"
-	activate = true
-	send_community = "both"
-	route_reflector_client = false
-	route_maps = [{
-		in_out = "in"
-		route_map_name = "RM1"
-	}]
-	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, iosxe_restconf.PreReq4, ]
+	config += `
+		data "iosxe_bgp_ipv6_unicast_neighbor" "test" {
+			asn = "65000"
+			ip = "3.3.3.3"
+			depends_on = [iosxe_bgp_ipv6_unicast_neighbor.test]
+		}
+	`
+	return config
 }
-
-data "iosxe_bgp_ipv6_unicast_neighbor" "test" {
-	asn = "65000"
-	ip = "3.3.3.3"
-	depends_on = [iosxe_bgp_ipv6_unicast_neighbor.test]
-}
-`

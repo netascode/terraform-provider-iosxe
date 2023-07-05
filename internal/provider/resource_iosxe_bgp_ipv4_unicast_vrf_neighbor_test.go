@@ -9,24 +9,24 @@ import (
 )
 
 func TestAccIosxeBGPIPv4UnicastVRFNeighbor(t *testing.T) {
+	var checks []resource.TestCheckFunc
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "ip", "3.3.3.3"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "remote_as", "65000"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "description", "BGP Neighbor Description"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "shutdown", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "update_source_loopback", "100"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "activate", "true"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "send_community", "both"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_reflector_client", "false"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_maps.0.in_out", "in"))
+	checks = append(checks, resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_maps.0.route_map_name", "RM1"))
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccIosxeBGPIPv4UnicastVRFNeighborPrerequisitesConfig + testAccIosxeBGPIPv4UnicastVRFNeighborConfig_all(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "ip", "3.3.3.3"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "remote_as", "65000"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "description", "BGP Neighbor Description"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "shutdown", "false"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "update_source_loopback", "100"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "activate", "true"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "send_community", "both"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_reflector_client", "false"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_maps.0.in_out", "in"),
-					resource.TestCheckResourceAttr("iosxe_bgp_ipv4_unicast_vrf_neighbor.test", "route_maps.0.route_map_name", "RM1"),
-				),
+				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
 			{
 				ResourceName:  "iosxe_bgp_ipv4_unicast_vrf_neighbor.test",
@@ -84,34 +84,32 @@ resource "iosxe_restconf" "PreReq3" {
 `
 
 func testAccIosxeBGPIPv4UnicastVRFNeighborConfig_minimum() string {
-	return `
-	resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "test" {
-		asn = "65000"
-		vrf = "VRF1"
-		ip = "3.3.3.3"
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
-	}
-	`
+	config := `resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	vrf = "VRF1"` + "\n"
+	config += `	ip = "3.3.3.3"` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
 
 func testAccIosxeBGPIPv4UnicastVRFNeighborConfig_all() string {
-	return `
-	resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "test" {
-		asn = "65000"
-		vrf = "VRF1"
-		ip = "3.3.3.3"
-		remote_as = "65000"
-		description = "BGP Neighbor Description"
-		shutdown = false
-		update_source_loopback = "100"
-		activate = true
-		send_community = "both"
-		route_reflector_client = false
-		route_maps = [{
-			in_out = "in"
-			route_map_name = "RM1"
-		}]
-		depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]
-	}
-	`
+	config := `resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "test" {` + "\n"
+	config += `	asn = "65000"` + "\n"
+	config += `	vrf = "VRF1"` + "\n"
+	config += `	ip = "3.3.3.3"` + "\n"
+	config += `	remote_as = "65000"` + "\n"
+	config += `	description = "BGP Neighbor Description"` + "\n"
+	config += `	shutdown = false` + "\n"
+	config += `	update_source_loopback = "100"` + "\n"
+	config += `	activate = true` + "\n"
+	config += `	send_community = "both"` + "\n"
+	config += `	route_reflector_client = false` + "\n"
+	config += `	route_maps = [{` + "\n"
+	config += `		in_out = "in"` + "\n"
+	config += `		route_map_name = "RM1"` + "\n"
+	config += `	}]` + "\n"
+	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, iosxe_restconf.PreReq2, iosxe_restconf.PreReq3, ]` + "\n"
+	config += `}` + "\n"
+	return config
 }
