@@ -348,7 +348,12 @@ func parseAttribute(e *yang.Entry, attr *YamlConfigAttribute) {
 			attr.Type = "String"
 			if leaf.Type.Length != nil {
 				attr.StringMinLength = int64(leaf.Type.Length[0].Min.Value)
-				attr.StringMaxLength = int64(leaf.Type.Length[0].Max.Value)
+				max := leaf.Type.Length[0].Max.Value
+				// hack to not introduce unsigned types
+				if max > math.MaxInt64 {
+					max = math.MaxInt64
+				}
+				attr.StringMaxLength = int64(max)
 			}
 			if len(leaf.Type.Pattern) > 0 {
 				attr.StringPatterns = leaf.Type.Pattern

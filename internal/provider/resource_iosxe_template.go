@@ -97,7 +97,7 @@ func (r *TemplateResource) Schema(ctx context.Context, req resource.SchemaReques
 				MarkdownDescription: helpers.NewAttributeDescription("Get config from a template").String,
 				Optional:            true,
 				Validators: []validator.String{
-					stringvalidator.LengthBetween(1, -1),
+					stringvalidator.LengthBetween(1, 9223372036854775807),
 				},
 			},
 			"switchport_mode_trunk": schema.BoolAttribute{

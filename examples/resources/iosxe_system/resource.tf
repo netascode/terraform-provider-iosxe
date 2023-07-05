@@ -10,6 +10,7 @@ resource "iosxe_system" "example" {
   login_on_success              = true
   login_on_success_log          = true
   multicast_routing             = true
+  multicast_routing_switch      = true
   multicast_routing_distributed = true
   multicast_routing_vrfs = [
     {

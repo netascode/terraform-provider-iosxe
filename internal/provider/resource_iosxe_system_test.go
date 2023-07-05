@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -20,10 +21,19 @@ func TestAccIosxeSystem(t *testing.T) {
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "login_on_failure_log", "true"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "login_on_success", "true"))
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "login_on_success_log", "true"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing", "true"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_distributed", "true"))
+	if os.Getenv("C8000V") != "" {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing", "true"))
+	}
+	if os.Getenv("C9000V") != "" {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_switch", "true"))
+	}
+	if os.Getenv("C8000V") != "" {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_distributed", "true"))
+	}
 	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.vrf", "VRF1"))
-	checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.distributed", "true"))
+	if os.Getenv("C8000V") != "" {
+		checks = append(checks, resource.TestCheckResourceAttr("iosxe_system.test", "multicast_routing_vrfs.0.distributed", "true"))
+	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -72,11 +82,20 @@ func testAccIosxeSystemConfig_all() string {
 	config += `	login_on_failure_log = true` + "\n"
 	config += `	login_on_success = true` + "\n"
 	config += `	login_on_success_log = true` + "\n"
-	config += `	multicast_routing = true` + "\n"
-	config += `	multicast_routing_distributed = true` + "\n"
+	if os.Getenv("C8000V") != "" {
+		config += `	multicast_routing = true` + "\n"
+	}
+	if os.Getenv("C9000V") != "" {
+		config += `	multicast_routing_switch = true` + "\n"
+	}
+	if os.Getenv("C8000V") != "" {
+		config += `	multicast_routing_distributed = true` + "\n"
+	}
 	config += `	multicast_routing_vrfs = [{` + "\n"
 	config += `		vrf = "VRF1"` + "\n"
-	config += `		distributed = true` + "\n"
+	if os.Getenv("C8000V") != "" {
+		config += `		distributed = true` + "\n"
+	}
 	config += `	}]` + "\n"
 	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"
 	config += `}` + "\n"

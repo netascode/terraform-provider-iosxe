@@ -47,6 +47,7 @@ attributes:
     xpath: Cisco-IOS-XE-snmp:source-interface/informs/GigabitEthernet
     tf_name: source_interface_informs_gigabit_ethernet
     example: 1
+    exclude_test: true
   - yang_name: Cisco-IOS-XE-snmp:source-interface/informs/interface-choice/TenGigabitEthernet/TenGigabitEthernet
     xpath: Cisco-IOS-XE-snmp:source-interface/informs/TenGigabitEthernet
     tf_name: source_interface_informs_ten_gigabit_ethernet
@@ -66,7 +67,6 @@ attributes:
     xpath: Cisco-IOS-XE-snmp:source-interface/informs/Loopback
     tf_name: source_interface_informs_loopback
     example: 1
-    exclude_test: true
   - yang_name: Cisco-IOS-XE-snmp:source-interface/informs/interface-choice/Port-channel/Port-channel
     xpath: Cisco-IOS-XE-snmp:source-interface/informs/Port-channel
     tf_name: source_interface_informs_port_channel
@@ -86,6 +86,7 @@ attributes:
     xpath: Cisco-IOS-XE-snmp:source-interface/traps/GigabitEthernet
     tf_name: source_interface_traps_gigabit_ethernet
     example: 1
+    exclude_test: true
   - yang_name: Cisco-IOS-XE-snmp:source-interface/traps/interface-choice/TenGigabitEthernet/TenGigabitEthernet
     xpath: Cisco-IOS-XE-snmp:source-interface/traps/TenGigabitEthernet
     tf_name: source_interface_traps_ten_gigabit_ethernet
@@ -105,7 +106,6 @@ attributes:
     xpath: Cisco-IOS-XE-snmp:source-interface/traps/Loopback
     tf_name: source_interface_traps_loopback
     example: 1
-    exclude_test: true
   - yang_name: Cisco-IOS-XE-snmp:source-interface/traps/interface-choice/Port-channel/Port-channel
     xpath: Cisco-IOS-XE-snmp:source-interface/traps/Port-channel
     tf_name: source_interface_traps_port_channel
@@ -125,6 +125,7 @@ attributes:
     xpath: Cisco-IOS-XE-snmp:trap-source/GigabitEthernet
     tf_name: trap_source_gigabit_ethernet
     example: 1
+    exclude_test: true
   - yang_name: Cisco-IOS-XE-snmp:trap-source/interface-choice/TenGigabitEthernet/TenGigabitEthernet
     xpath: Cisco-IOS-XE-snmp:trap-source/TenGigabitEthernet
     tf_name: trap_source_ten_gigabit_ethernet
@@ -144,7 +145,6 @@ attributes:
     xpath: Cisco-IOS-XE-snmp:trap-source/Loopback
     tf_name: trap_source_loopback
     example: 1
-    exclude_test: true
   - yang_name: Cisco-IOS-XE-snmp:trap-source/interface-choice/Port-channel/Port-channel
     xpath: Cisco-IOS-XE-snmp:trap-source/Port-channel
     tf_name: trap_source_port_channel
@@ -194,3 +194,9 @@ attributes:
         id: true
       - yang_name: inc-exl
         example: included
+
+test_prerequisites:
+  - path: Cisco-IOS-XE-native:native/interface/Loopback=1
+    attributes:
+      - name: name
+        value: 1

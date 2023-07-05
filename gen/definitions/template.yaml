@@ -61,8 +61,10 @@ attributes:
     example: 201
   - yang_name: switchport/private-vlan/host-association/primary-range
     example: 301
+    delete_parent: true
   - yang_name: switchport/private-vlan/host-association/secondary-range
     example: 302
+    delete_parent: true
   - yang_name: switchport/trunk/allowed/vlan/vlan-choice/vlans/vlans
     xpath: switchport/trunk/allowed/vlan/vlans
     tf_name: switchport_trunk_allowed_vlans
@@ -108,6 +110,7 @@ attributes:
     example: true
   - yang_name: spanning-tree/portfast
     example: true
+    no_delete: true
   - yang_name: spanning-tree/portfast/disable
     example: false
   - yang_name: spanning-tree/portfast/edge

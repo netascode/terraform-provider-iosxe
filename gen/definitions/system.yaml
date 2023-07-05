@@ -34,13 +34,15 @@ attributes:
     example: true
   - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing
     example: true
+    test_tags: [C8000V]
   - yang_name: ip/Cisco-IOS-XE-multicast:mcr-conf/multicast-routing
     tf_name: multicast_routing_switch
     description: Enable IP multicast forwarding, some XE devices use this option instead of `multicast_routing`.
-    exclude_test: true
     example: true
+    test_tags: [C9000V]
   - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing/distributed
     example: true
+    test_tags: [C8000V]
   - yang_name: ip/Cisco-IOS-XE-multicast:multicast-routing/vrf
     tf_name: multicast_routing_vrfs
     type: List
@@ -51,6 +53,7 @@ attributes:
         id: true
       - yang_name: distributed
         example: true
+        test_tags: [C8000V]
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/vrf/definition=VRF1
     no_delete: true

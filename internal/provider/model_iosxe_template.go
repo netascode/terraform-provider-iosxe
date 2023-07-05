@@ -1653,10 +1653,10 @@ func (data *Template) getDeletePaths(ctx context.Context) []string {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/voice/vlan", data.getPath()))
 	}
 	if !data.SwitchportPrivateVlanHostAssociationPrimaryRange.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/private-vlan/host-association/primary-range", data.getPath()))
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/private-vlan/host-association", data.getPath()))
 	}
 	if !data.SwitchportPrivateVlanHostAssociationSecondaryRange.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/private-vlan/host-association/secondary-range", data.getPath()))
+		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/private-vlan/host-association", data.getPath()))
 	}
 	if !data.SwitchportTrunkAllowedVlans.IsNull() {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/switchport/trunk/allowed/vlan/vlans", data.getPath()))
@@ -1708,9 +1708,6 @@ func (data *Template) getDeletePaths(ctx context.Context) []string {
 	}
 	if !data.SpanningTreeServicePolicy.IsNull() {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/service-policy", data.getPath()))
-	}
-	if !data.SpanningTreePortfast.IsNull() {
-		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/portfast", data.getPath()))
 	}
 	if !data.SpanningTreePortfastDisable.IsNull() {
 		deletePaths = append(deletePaths, fmt.Sprintf("%v/spanning-tree/portfast/disable", data.getPath()))

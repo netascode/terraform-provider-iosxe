@@ -1,6 +1,7 @@
 ---
 name: Interface Port Channel Subinterface
 path: Cisco-IOS-XE-native:native/interface/Port-channel-subinterface/Port-channel=%v
+test_tags: [C8000V]
 doc_category: Interface
 attributes:
   - yang_name: name
@@ -11,13 +12,10 @@ attributes:
     example: false
   - yang_name: ip/proxy-arp
     example: false
-    test_tags: [C8000V]
   - yang_name: ip/redirects
     example: false
-    test_tags: [C8000V]
   - yang_name: ip/Cisco-IOS-XE-icmp:unreachables
     example: false
-    test_tags: [C8000V]
   - yang_name: vrf-choice/vrf/vrf/forwarding
     xpath: vrf/forwarding
     tf_name: vrf_forwarding

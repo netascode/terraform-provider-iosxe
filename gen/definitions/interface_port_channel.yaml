@@ -34,6 +34,7 @@ attributes:
     tf_name: switchport
     exclude_test: true
     example: false
+    test_tags: [C8000V]
   - yang_name: ip/access-group/in/apply-type/apply-intf/acl/acl-name
     xpath: ip/access-group/in/acl/acl-name
     tf_name: ip_access_group_in

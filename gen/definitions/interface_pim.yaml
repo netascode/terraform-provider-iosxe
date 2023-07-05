@@ -49,6 +49,7 @@ attributes:
     example: false
   - yang_name: Cisco-IOS-XE-multicast:dr-priority
     example: 10
+
 test_prerequisites:
   - path: Cisco-IOS-XE-native:native/interface/Loopback=100
     attributes:
