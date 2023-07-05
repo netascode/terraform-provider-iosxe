@@ -79,7 +79,7 @@ resource "iosxe_restconf" "PreReq3" {
 
 func testAccDataSourceIosxeBGPIPv4UnicastVRFNeighborConfig() string {
 	config := `resource "iosxe_bgp_ipv4_unicast_vrf_neighbor" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	asn = "65000"` + "\n"
 	config += `	vrf = "VRF1"` + "\n"
 	config += `	ip = "3.3.3.3"` + "\n"

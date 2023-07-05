@@ -41,7 +41,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 func testAccDataSourceIosxeMSDPConfig() string {
 	config := `resource "iosxe_msdp" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	originator_id = "Loopback100"` + "\n"
 	config += `	passwords = [{` + "\n"
 	config += `		addr = "10.1.1.1"` + "\n"

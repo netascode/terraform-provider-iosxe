@@ -40,7 +40,7 @@ func TestAccDataSourceIosxeInterfaceSwitchport(t *testing.T) {
 
 func testAccDataSourceIosxeInterfaceSwitchportConfig() string {
 	config := `resource "iosxe_interface_switchport" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	type = "GigabitEthernet"` + "\n"
 	config += `	name = "1/0/3"` + "\n"
 	config += `	mode_access = false` + "\n"

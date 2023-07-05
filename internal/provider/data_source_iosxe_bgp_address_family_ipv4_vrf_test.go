@@ -49,7 +49,7 @@ resource "iosxe_restconf" "PreReq1" {
 
 func testAccDataSourceIosxeBGPAddressFamilyIPv4VRFConfig() string {
 	config := `resource "iosxe_bgp_address_family_ipv4_vrf" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	asn = "65000"` + "\n"
 	config += `	af_name = "unicast"` + "\n"
 	config += `	vrfs = [{` + "\n"

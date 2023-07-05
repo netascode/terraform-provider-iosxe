@@ -52,7 +52,7 @@ resource "iosxe_restconf" "PreReq1" {
 
 func testAccDataSourceIosxeMSDPVRFConfig() string {
 	config := `resource "iosxe_msdp_vrf" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	vrf = "VRF1"` + "\n"
 	config += `	originator_id = "Loopback100"` + "\n"
 	config += `	passwords = [{` + "\n"

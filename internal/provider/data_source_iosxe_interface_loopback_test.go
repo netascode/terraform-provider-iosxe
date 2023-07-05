@@ -48,7 +48,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 func testAccDataSourceIosxeInterfaceLoopbackConfig() string {
 	config := `resource "iosxe_interface_loopback" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	name = 100` + "\n"
 	config += `	description = "My Interface Description"` + "\n"
 	config += `	shutdown = false` + "\n"

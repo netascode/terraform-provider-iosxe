@@ -50,7 +50,7 @@ func TestAccDataSourceIosxeSNMPServer(t *testing.T) {
 
 func testAccDataSourceIosxeSNMPServerConfig() string {
 	config := `resource "iosxe_snmp_server" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	chassis_id = "R1"` + "\n"
 	config += `	contact = "Contact1"` + "\n"
 	config += `	ifindex_persist = true` + "\n"

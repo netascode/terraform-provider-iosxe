@@ -55,7 +55,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 func testAccDataSourceIosxePIMConfig() string {
 	config := `resource "iosxe_pim" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	autorp = false` + "\n"
 	config += `	autorp_listener = false` + "\n"
 	config += `	bsr_candidate_loopback = 100` + "\n"

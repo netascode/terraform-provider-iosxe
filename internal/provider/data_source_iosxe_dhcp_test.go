@@ -27,7 +27,7 @@ func TestAccDataSourceIosxeDHCP(t *testing.T) {
 
 func testAccDataSourceIosxeDHCPConfig() string {
 	config := `resource "iosxe_dhcp" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	relay_information_trust_all = false` + "\n"
 	config += `	relay_information_option_default = false` + "\n"
 	config += `	relay_information_option_vpn = true` + "\n"

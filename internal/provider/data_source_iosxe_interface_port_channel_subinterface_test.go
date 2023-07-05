@@ -66,7 +66,7 @@ resource "iosxe_restconf" "PreReq2" {
 
 func testAccDataSourceIosxeInterfacePortChannelSubinterfaceConfig() string {
 	config := `resource "iosxe_interface_port_channel_subinterface" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	name = "10.666"` + "\n"
 	config += `	description = "My Interface Description"` + "\n"
 	config += `	shutdown = false` + "\n"

@@ -53,7 +53,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 func testAccDataSourceIosxeOSPFVRFConfig() string {
 	config := `resource "iosxe_ospf_vrf" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	process_id = 2` + "\n"
 	config += `	vrf = "VRF1"` + "\n"
 	config += `	bfd_all_interfaces = true` + "\n"

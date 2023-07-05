@@ -45,7 +45,7 @@ resource "iosxe_restconf" "PreReq1" {
 
 func testAccDataSourceIosxeBGPNeighborConfig() string {
 	config := `resource "iosxe_bgp_neighbor" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	asn = "65000"` + "\n"
 	config += `	ip = "3.3.3.3"` + "\n"
 	config += `	remote_as = "65000"` + "\n"

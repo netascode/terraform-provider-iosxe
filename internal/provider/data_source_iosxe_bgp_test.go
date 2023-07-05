@@ -39,7 +39,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 func testAccDataSourceIosxeBGPConfig() string {
 	config := `resource "iosxe_bgp" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	asn = "65000"` + "\n"
 	config += `	default_ipv4_unicast = false` + "\n"
 	config += `	log_neighbor_changes = true` + "\n"

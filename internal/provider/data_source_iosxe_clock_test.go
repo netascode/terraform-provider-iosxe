@@ -36,7 +36,7 @@ func TestAccDataSourceIosxeClock(t *testing.T) {
 
 func testAccDataSourceIosxeClockConfig() string {
 	config := `resource "iosxe_clock" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	calendar_valid = true` + "\n"
 	config += `	summer_time_zone = "CET"` + "\n"
 	config += `	summer_time_recurring = true` + "\n"

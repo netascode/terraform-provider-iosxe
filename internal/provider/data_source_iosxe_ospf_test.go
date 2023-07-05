@@ -41,7 +41,7 @@ func TestAccDataSourceIosxeOSPF(t *testing.T) {
 
 func testAccDataSourceIosxeOSPFConfig() string {
 	config := `resource "iosxe_ospf" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	process_id = 1` + "\n"
 	config += `	bfd_all_interfaces = true` + "\n"
 	config += `	default_information_originate = true` + "\n"

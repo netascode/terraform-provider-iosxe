@@ -113,7 +113,7 @@ resource "iosxe_restconf" "PreReq{{$index}}" {
 func testAccDataSourceIosxe{{camelCase .Name}}Config() string {
 	config := `resource "iosxe_{{snakeCase $name}}" "test" {` + "\n"
 	{{- if and (not .NoDelete) (not .NoDeleteAttributes) (not .DefaultDeleteAttributes)}}
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	{{- end}}
 	{{- range  .Attributes}}
 	{{- if not .ExcludeTest}}

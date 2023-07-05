@@ -91,7 +91,7 @@ func TestAccDataSourceIosxeTemplate(t *testing.T) {
 
 func testAccDataSourceIosxeTemplateConfig() string {
 	config := `resource "iosxe_template" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	template_name = "TEMP1"` + "\n"
 	config += `	dot1x_pae = "both"` + "\n"
 	config += `	dot1x_max_reauth_req = 3` + "\n"

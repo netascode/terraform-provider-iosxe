@@ -28,7 +28,7 @@ func TestAccDataSourceIosxeBanner(t *testing.T) {
 
 func testAccDataSourceIosxeBannerConfig() string {
 	config := `resource "iosxe_banner" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	exec_banner = "My Exec Banner"` + "\n"
 	config += `	login_banner = "My Login Banner"` + "\n"
 	config += `	prompt_timeout_banner = "My Prompt-Timeout Banner"` + "\n"

@@ -34,7 +34,7 @@ func TestAccDataSourceIosxeInterfaceNVE(t *testing.T) {
 
 func testAccDataSourceIosxeInterfaceNVEConfig() string {
 	config := `resource "iosxe_interface_nve" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	name = 1` + "\n"
 	config += `	description = "My Interface Description"` + "\n"
 	config += `	shutdown = false` + "\n"

@@ -41,7 +41,7 @@ func TestAccDataSourceIosxeVRF(t *testing.T) {
 
 func testAccDataSourceIosxeVRFConfig() string {
 	config := `resource "iosxe_vrf" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	name = "VRF22"` + "\n"
 	config += `	description = "VRF22 description"` + "\n"
 	config += `	rd = "22:22"` + "\n"

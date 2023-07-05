@@ -77,7 +77,7 @@ resource "iosxe_restconf" "PreReq1" {
 
 func testAccDataSourceIosxeNTPConfig() string {
 	config := `resource "iosxe_ntp" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	authenticate = true` + "\n"
 	config += `	logging = false` + "\n"
 	config += `	access_group_peer_acl = "SACL1"` + "\n"

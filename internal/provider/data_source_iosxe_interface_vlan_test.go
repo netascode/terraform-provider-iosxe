@@ -57,7 +57,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 func testAccDataSourceIosxeInterfaceVLANConfig() string {
 	config := `resource "iosxe_interface_vlan" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	name = 10` + "\n"
 	config += `	autostate = false` + "\n"
 	config += `	description = "My Interface Description"` + "\n"

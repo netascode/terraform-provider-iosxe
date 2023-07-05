@@ -70,7 +70,7 @@ resource "iosxe_restconf" "PreReq4" {
 
 func testAccDataSourceIosxeBGPIPv6UnicastNeighborConfig() string {
 	config := `resource "iosxe_bgp_ipv6_unicast_neighbor" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	asn = "65000"` + "\n"
 	config += `	ip = "3.3.3.3"` + "\n"
 	config += `	activate = true` + "\n"

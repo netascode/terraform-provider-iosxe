@@ -33,7 +33,7 @@ func TestAccDataSourceIosxeInterfaceOSPF(t *testing.T) {
 
 func testAccDataSourceIosxeInterfaceOSPFConfig() string {
 	config := `resource "iosxe_interface_ospf" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	type = "GigabitEthernet"` + "\n"
 	config += `	name = "3"` + "\n"
 	config += `	cost = 10` + "\n"

@@ -66,7 +66,7 @@ resource "iosxe_restconf" "PreReq1" {
 
 func testAccDataSourceIosxePIMVRFConfig() string {
 	config := `resource "iosxe_pim_vrf" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	vrf = "VRF1"` + "\n"
 	config += `	autorp = false` + "\n"
 	config += `	autorp_listener = false` + "\n"

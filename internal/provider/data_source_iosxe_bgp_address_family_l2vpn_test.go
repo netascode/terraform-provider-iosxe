@@ -38,7 +38,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 func testAccDataSourceIosxeBGPAddressFamilyL2VPNConfig() string {
 	config := `resource "iosxe_bgp_address_family_l2vpn" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	asn = "65000"` + "\n"
 	config += `	af_name = "evpn"` + "\n"
 	config += `	depends_on = [iosxe_restconf.PreReq0, ]` + "\n"

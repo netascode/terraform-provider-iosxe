@@ -40,7 +40,7 @@ resource "iosxe_restconf" "PreReq0" {
 
 func testAccDataSourceIosxeLoggingIPv6HostVRFTransportConfig() string {
 	config := `resource "iosxe_logging_ipv6_host_vrf_transport" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	ipv6_host = "2001::1"` + "\n"
 	config += `	vrf = "VRF1"` + "\n"
 	config += `	transport_udp_ports = [{` + "\n"

@@ -41,7 +41,7 @@ resource "iosxe_restconf" "PreReq1" {
 
 func testAccDataSourceIosxeBGPAddressFamilyIPv6Config() string {
 	config := `resource "iosxe_bgp_address_family_ipv6" "test" {` + "\n"
-	config += `	delete_mode = "attributes"\n`
+	config += `	delete_mode = "attributes"` + "\n"
 	config += `	asn = "65000"` + "\n"
 	config += `	af_name = "unicast"` + "\n"
 	config += `	depends_on = [iosxe_restconf.PreReq0, iosxe_restconf.PreReq1, ]` + "\n"
