@@ -25,6 +25,9 @@ func TestAccDataSourceIosxeInterfacePortChannel(t *testing.T) {
 	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "vrf_forwarding", "VRF1"))
 	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address", "192.0.2.1"))
 	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ipv4_address_mask", "255.255.255.0"))
+	if os.Getenv("C9000V") != "" {
+		checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "switchport", "false"))
+	}
 	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_in", "1"))
 	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_in_enable", "true"))
 	checks = append(checks, resource.TestCheckResourceAttr("data.iosxe_interface_port_channel.test", "ip_access_group_out", "1"))
@@ -74,6 +77,9 @@ func testAccDataSourceIosxeInterfacePortChannelConfig() string {
 	config += `	vrf_forwarding = "VRF1"` + "\n"
 	config += `	ipv4_address = "192.0.2.1"` + "\n"
 	config += `	ipv4_address_mask = "255.255.255.0"` + "\n"
+	if os.Getenv("C9000V") != "" {
+		config += `	switchport = false` + "\n"
+	}
 	config += `	ip_access_group_in = "1"` + "\n"
 	config += `	ip_access_group_in_enable = true` + "\n"
 	config += `	ip_access_group_out = "1"` + "\n"
