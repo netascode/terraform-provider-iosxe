@@ -19,6 +19,9 @@ func TestAccIosxeBGP(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeBGPPrerequisitesConfig + testAccIosxeBGPConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeBGPPrerequisitesConfig + testAccIosxeBGPConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

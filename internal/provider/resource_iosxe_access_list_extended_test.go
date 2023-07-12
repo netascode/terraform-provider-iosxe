@@ -33,6 +33,9 @@ func TestAccIosxeAccessListExtended(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeAccessListExtendedConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeAccessListExtendedConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

@@ -18,6 +18,9 @@ func TestAccIosxeDHCP(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeDHCPConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeDHCPConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

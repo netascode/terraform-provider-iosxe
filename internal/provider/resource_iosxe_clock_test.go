@@ -27,6 +27,9 @@ func TestAccIosxeClock(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeClockConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeClockConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

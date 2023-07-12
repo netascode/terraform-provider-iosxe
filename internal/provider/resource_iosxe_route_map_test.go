@@ -80,6 +80,9 @@ func TestAccIosxeRouteMap(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeRouteMapPrerequisitesConfig + testAccIosxeRouteMapConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeRouteMapPrerequisitesConfig + testAccIosxeRouteMapConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

@@ -19,6 +19,9 @@ func TestAccIosxeBanner(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeBannerConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeBannerConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

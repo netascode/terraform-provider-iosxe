@@ -16,6 +16,9 @@ func TestAccIosxeBGPAddressFamilyIPv6(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeBGPAddressFamilyIPv6PrerequisitesConfig + testAccIosxeBGPAddressFamilyIPv6Config_minimum(),
+			},
+			{
 				Config: testAccIosxeBGPAddressFamilyIPv6PrerequisitesConfig + testAccIosxeBGPAddressFamilyIPv6Config_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

@@ -33,6 +33,9 @@ func TestAccIosxeVRF(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeVRFConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeVRFConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

@@ -35,6 +35,9 @@ func TestAccIosxePIMVRF(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxePIMVRFPrerequisitesConfig + testAccIosxePIMVRFConfig_minimum(),
+			},
+			{
 				Config: testAccIosxePIMVRFPrerequisitesConfig + testAccIosxePIMVRFConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

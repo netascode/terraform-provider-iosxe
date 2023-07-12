@@ -20,6 +20,9 @@ func TestAccIosxeBGPAddressFamilyL2VPN(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeBGPAddressFamilyL2VPNPrerequisitesConfig + testAccIosxeBGPAddressFamilyL2VPNConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeBGPAddressFamilyL2VPNPrerequisitesConfig + testAccIosxeBGPAddressFamilyL2VPNConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

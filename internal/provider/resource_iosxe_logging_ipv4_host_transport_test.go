@@ -19,6 +19,9 @@ func TestAccIosxeLoggingIPv4HostTransport(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeLoggingIPv4HostTransportConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeLoggingIPv4HostTransportConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

@@ -83,6 +83,9 @@ func TestAccIosxeTemplate(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeTemplateConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeTemplateConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

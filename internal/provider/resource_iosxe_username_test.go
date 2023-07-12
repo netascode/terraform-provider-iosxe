@@ -20,6 +20,9 @@ func TestAccIosxeUsername(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeUsernameConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeUsernameConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

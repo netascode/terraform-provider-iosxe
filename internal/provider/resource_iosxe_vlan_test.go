@@ -22,6 +22,9 @@ func TestAccIosxeVLAN(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeVLANConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeVLANConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

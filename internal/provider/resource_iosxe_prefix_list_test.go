@@ -21,6 +21,9 @@ func TestAccIosxePrefixList(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxePrefixListConfig_minimum(),
+			},
+			{
 				Config: testAccIosxePrefixListConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

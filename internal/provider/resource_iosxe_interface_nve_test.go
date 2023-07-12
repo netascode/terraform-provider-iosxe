@@ -26,6 +26,9 @@ func TestAccIosxeInterfaceNVE(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeInterfaceNVEConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeInterfaceNVEConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

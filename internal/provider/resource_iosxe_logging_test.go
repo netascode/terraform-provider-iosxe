@@ -34,6 +34,9 @@ func TestAccIosxeLogging(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeLoggingPrerequisitesConfig + testAccIosxeLoggingConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeLoggingPrerequisitesConfig + testAccIosxeLoggingConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

@@ -28,6 +28,9 @@ func TestAccIosxeInterfaceLoopback(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeInterfaceLoopbackPrerequisitesConfig + testAccIosxeInterfaceLoopbackConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeInterfaceLoopbackPrerequisitesConfig + testAccIosxeInterfaceLoopbackConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

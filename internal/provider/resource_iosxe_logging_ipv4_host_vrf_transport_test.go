@@ -20,6 +20,9 @@ func TestAccIosxeLoggingIPv4HostVRFTransport(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeLoggingIPv4HostVRFTransportPrerequisitesConfig + testAccIosxeLoggingIPv4HostVRFTransportConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeLoggingIPv4HostVRFTransportPrerequisitesConfig + testAccIosxeLoggingIPv4HostVRFTransportConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

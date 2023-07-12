@@ -49,6 +49,9 @@ func TestAccIosxeNTP(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeNTPPrerequisitesConfig + testAccIosxeNTPConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeNTPPrerequisitesConfig + testAccIosxeNTPConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

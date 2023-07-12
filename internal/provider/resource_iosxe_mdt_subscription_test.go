@@ -25,6 +25,9 @@ func TestAccIosxeMDTSubscription(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeMDTSubscriptionConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeMDTSubscriptionConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

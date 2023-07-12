@@ -21,6 +21,9 @@ func TestAccIosxeBGPIPv6UnicastNeighbor(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeBGPIPv6UnicastNeighborPrerequisitesConfig + testAccIosxeBGPIPv6UnicastNeighborConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeBGPIPv6UnicastNeighborPrerequisitesConfig + testAccIosxeBGPIPv6UnicastNeighborConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

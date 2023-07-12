@@ -24,6 +24,9 @@ func TestAccIosxeInterfaceOSPF(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeInterfaceOSPFPrerequisitesConfig + testAccIosxeInterfaceOSPFConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeInterfaceOSPFPrerequisitesConfig + testAccIosxeInterfaceOSPFConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

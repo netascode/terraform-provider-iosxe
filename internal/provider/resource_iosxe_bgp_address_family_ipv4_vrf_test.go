@@ -20,6 +20,9 @@ func TestAccIosxeBGPAddressFamilyIPv4VRF(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeBGPAddressFamilyIPv4VRFPrerequisitesConfig + testAccIosxeBGPAddressFamilyIPv4VRFConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeBGPAddressFamilyIPv4VRFPrerequisitesConfig + testAccIosxeBGPAddressFamilyIPv4VRFConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

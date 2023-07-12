@@ -41,6 +41,9 @@ func TestAccIosxeSNMPServer(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeSNMPServerPrerequisitesConfig + testAccIosxeSNMPServerConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeSNMPServerPrerequisitesConfig + testAccIosxeSNMPServerConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

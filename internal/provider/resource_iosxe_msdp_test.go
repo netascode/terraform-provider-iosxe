@@ -22,6 +22,9 @@ func TestAccIosxeMSDP(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeMSDPPrerequisitesConfig + testAccIosxeMSDPConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeMSDPPrerequisitesConfig + testAccIosxeMSDPConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

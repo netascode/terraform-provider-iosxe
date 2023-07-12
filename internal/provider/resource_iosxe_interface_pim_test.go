@@ -23,6 +23,9 @@ func TestAccIosxeInterfacePIM(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeInterfacePIMPrerequisitesConfig + testAccIosxeInterfacePIMConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeInterfacePIMPrerequisitesConfig + testAccIosxeInterfacePIMConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

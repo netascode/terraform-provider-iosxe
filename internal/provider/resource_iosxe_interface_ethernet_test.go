@@ -37,6 +37,9 @@ func TestAccIosxeInterfaceEthernet(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeInterfaceEthernetPrerequisitesConfig + testAccIosxeInterfaceEthernetConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeInterfaceEthernetPrerequisitesConfig + testAccIosxeInterfaceEthernetConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

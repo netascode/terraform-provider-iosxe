@@ -37,6 +37,9 @@ func TestAccIosxeInterfaceVLAN(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeInterfaceVLANPrerequisitesConfig + testAccIosxeInterfaceVLANConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeInterfaceVLANPrerequisitesConfig + testAccIosxeInterfaceVLANConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

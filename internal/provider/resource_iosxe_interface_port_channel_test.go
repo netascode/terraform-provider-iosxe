@@ -41,6 +41,9 @@ func TestAccIosxeInterfacePortChannel(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				Config: testAccIosxeInterfacePortChannelPrerequisitesConfig + testAccIosxeInterfacePortChannelConfig_minimum(),
+			},
+			{
 				Config: testAccIosxeInterfacePortChannelPrerequisitesConfig + testAccIosxeInterfacePortChannelConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
