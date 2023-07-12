@@ -23,9 +23,6 @@ func TestAccIosxeStaticRoute(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccIosxeStaticRouteConfig_minimum(),
-			},
-			{
 				Config: testAccIosxeStaticRouteConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

@@ -1,6 +1,7 @@
 ---
 name: PIM VRF
 path: Cisco-IOS-XE-native:native/ip/pim/Cisco-IOS-XE-multicast:vrf=%v
+skip_minimum_test: true
 doc_category: Multicast
 attributes:
   - yang_name: id

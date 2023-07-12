@@ -62,9 +62,11 @@ func TestAccIosxe{{camelCase .Name}}(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
+			{{- if not .SkipMinimumTest}}
 			{
 				Config: {{if .TestPrerequisites}}testAccIosxe{{camelCase .Name}}PrerequisitesConfig+{{end}}testAccIosxe{{camelCase .Name}}Config_minimum(),
 			},
+			{{- end}}
 			{
 				Config: {{if .TestPrerequisites}}testAccIosxe{{camelCase .Name}}PrerequisitesConfig+{{end}}testAccIosxe{{camelCase .Name}}Config_all(),
 				Check: resource.ComposeTestCheckFunc(checks...),

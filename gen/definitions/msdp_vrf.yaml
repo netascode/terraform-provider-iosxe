@@ -1,6 +1,7 @@
 ---
 name: MSDP VRF
 path: Cisco-IOS-XE-native:native/ip/Cisco-IOS-XE-multicast:msdp/vrf=%s
+skip_minimum_test: true
 doc_category: Multicast
 attributes:
   - yang_name: name

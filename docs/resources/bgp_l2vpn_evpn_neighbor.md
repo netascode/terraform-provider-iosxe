@@ -33,6 +33,7 @@ resource "iosxe_bgp_l2vpn_evpn_neighbor" "example" {
 ### Optional
 
 - `activate` (Boolean) Enable the address family for this neighbor
+  - Default value: `true`
 - `delete_mode` (String) Configure behavior when deleting/destroying the resource. Either delete the entire object (YANG container) being managed, or only delete the individual resource attributes configured explicitly and leave everything else as-is. Default value is `all`.
   - Choices: `all`, `attributes`
 - `device` (String) A device name from the provider configuration.

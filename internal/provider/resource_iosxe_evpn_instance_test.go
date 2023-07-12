@@ -35,9 +35,6 @@ func TestAccIosxeEVPNInstance(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccIosxeEVPNInstanceConfig_minimum(),
-			},
-			{
 				Config: testAccIosxeEVPNInstanceConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

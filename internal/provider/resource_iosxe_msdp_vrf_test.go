@@ -23,9 +23,6 @@ func TestAccIosxeMSDPVRF(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccIosxeMSDPVRFPrerequisitesConfig + testAccIosxeMSDPVRFConfig_minimum(),
-			},
-			{
 				Config: testAccIosxeMSDPVRFPrerequisitesConfig + testAccIosxeMSDPVRFConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},

@@ -12,6 +12,7 @@ attributes:
     tf_name: ip
     example: 3.3.3.3
   - yang_name: activate
+    default_value: true
     example: true
     no_delete: true
   - yang_name: send-community/send-community-where

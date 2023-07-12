@@ -28,6 +28,7 @@ attributes:
     type: Int64
     example: 100
   - yang_name: activate
+    default_value: true
     example: true
     no_delete: true
   - yang_name: send-community/send-community-where
