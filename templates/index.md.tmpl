@@ -16,6 +16,15 @@ The following example repositories exist to demonstrate the use of the provider:
 
 It communicates with IOS-XE devices via the RESTCONF API, which requires the following device configuration.
 
+All resources and data sources have been tested with the following releases.
+
+| Platform       | Version |
+| -------------- | ------- |
+| Catalyst 8000v | 17.6.1  |
+| Catalyst 8000v | 17.9.1  |
+| Catalyst 9000v | 17.10.1 |
+
+
 ```
 ip http secure-server
 restconf
