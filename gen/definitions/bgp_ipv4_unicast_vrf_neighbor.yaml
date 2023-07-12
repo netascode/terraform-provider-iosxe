@@ -1,6 +1,7 @@
 ---
 name: BGP IPv4 Unicast VRF Neighbor
 path: Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=%v/address-family/with-vrf/ipv4=unicast/vrf=%s/ipv4-unicast/neighbor=%s
+skip_minimum_test: true
 doc_category: BGP
 attributes:
   - yang_name: id

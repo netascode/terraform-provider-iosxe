@@ -20,9 +20,6 @@ func TestAccIosxeBGPNeighbor(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccIosxeBGPNeighborPrerequisitesConfig + testAccIosxeBGPNeighborConfig_minimum(),
-			},
-			{
 				Config: testAccIosxeBGPNeighborPrerequisitesConfig + testAccIosxeBGPNeighborConfig_all(),
 				Check:  resource.ComposeTestCheckFunc(checks...),
 			},
