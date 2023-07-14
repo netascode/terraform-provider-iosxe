@@ -1,5 +1,7 @@
 [![Tests](https://github.com/netascode/terraform-provider-iosxe/actions/workflows/test.yml/badge.svg)](https://github.com/netascode/terraform-provider-iosxe/actions/workflows/test.yml)
 
+This provider has been moved to <https://github.com/CiscoDevNet/terraform-provider-iosxe>.
+
 # Terraform Provider IOS-XE
 
 ## Requirements
